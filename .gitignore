@@ -1,0 +1,74 @@
+# ====================================================================
+# 1. MAVEN & BUILD OUTPUTS (Tuyệt đối không push file đã biên dịch)
+# ====================================================================
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# ====================================================================
+# 2. INTELLIJ IDEA (Chặn toàn bộ file cấu hình cá nhân của IDE)
+# ====================================================================
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+gen/
+
+# Nếu sau này bạn hoặc đồng đội có lỡ mở bằng Eclipse/NetBeans
+.metadata/
+.classpath
+.project
+.settings/
+nbproject/
+build/
+nb-configuration.xml
+
+# ====================================================================
+# 3. TOMCAT & EMBEDDED SERVERS (Chặn cấu hình chạy server local)
+# ====================================================================
+.smarttomcat/
+.tomcat/
+logging.properties
+
+# ====================================================================
+# 4. OPERATING SYSTEM RÁC (Đặc biệt quan trọng khi dùng macOS)
+# ====================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotbackup
+
+# Windows (Phòng trường hợp đồng đội dùng Windows)
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]ownloads/
+$RECYCLE.BIN/
+*.lnk
+
+# ====================================================================
+# 5. SENSITIVE DATA & LOGS (Bảo mật thông tin tài khoản, mật khẩu DB)
+# ====================================================================
+*.log
+*.env
+*.local
+*.war
+*.jar
+config/properties/local.properties

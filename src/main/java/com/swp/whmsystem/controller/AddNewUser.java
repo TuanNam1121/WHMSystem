@@ -81,7 +81,7 @@ public class AddNewUser extends HttpServlet {
         if (roleId == null) {
             errors.add("Role is required.");
         }
-        if (!UserFormValidation.isValidPhoneOrEmpty(phone)) {
+        if (!UserFormValidation.isValidPhone(phone)) {
             errors.add("Phone must be 9-15 digits");
         }
         if (!UserFormValidation.isValidEmail(email)) {

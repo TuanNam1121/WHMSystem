@@ -1,13 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
+
 package com.swp.whmsystem.controller.authentication;
 
 import com.swp.whmsystem.dal.*;
 import com.swp.whmsystem.model.*;
 import com.swp.whmsystem.utils.*;
+
 import java.io.IOException;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -46,12 +45,23 @@ public class ChangePassword extends HttpServlet {
         String currPass = request.getParameter("currentPass");
         String newPass = request.getParameter("newPass");
         String cfNewPass = request.getParameter("cfNewPass");
+        String currentHashedInDB = uDao.getPasswordById(user.getId());
 
-        if (currPass == null || newPass == null || newPass.trim().isEmpty()) {
-            request.setAttribute("error", "Passwords cannot be empty!");
+        if (!InputValidationUtil.isValidPassword(currPass)
+                || !InputValidationUtil.isValidPassword(newPass)
+                || !InputValidationUtil.isValidPassword(cfNewPass)) {
+
+            request.setAttribute("error", "Passwords invalid ! \n Password must contain at least 1 uppercase, 1 digit and at least 6 characters!");
             request.getRequestDispatcher("changePassword.jsp").forward(request, response);
             return;
         }
+
+        if (!BCrypt.checkpw(currPass, currentHashedInDB)) {
+            request.setAttribute("error", "Incorrect current password !");
+            request.getRequestDispatcher("changePassword.jsp").forward(request, response);
+            return;
+        }
+
 
         if (!cfNewPass.equals(newPass)) {
             request.setAttribute("error", "Confirm password does not match");
@@ -59,16 +69,14 @@ public class ChangePassword extends HttpServlet {
             return;
         }
 
-        String currentHashedInDB = uDao.getPasswordById(user.getId());
-
         if (currentHashedInDB == null) {
             request.setAttribute("error", "System error, please try again!");
             request.getRequestDispatcher("changePassword.jsp").forward(request, response);
             return;
         }
 
-        if (!BCrypt.checkpw(currPass, currentHashedInDB)) {
-            request.setAttribute("error", "Incorrect current password !");
+        if (BCrypt.checkpw(newPass, currentHashedInDB)) {
+            request.setAttribute("error", "New password cannot be the same as your current password!");
             request.getRequestDispatcher("changePassword.jsp").forward(request, response);
             return;
         }

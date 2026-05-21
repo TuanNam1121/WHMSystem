@@ -9,8 +9,7 @@ public final class UserFormValidation {
 
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[A-Za-z0-9]{3,30}$");
     private static final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{9,15}$");
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
-
+    
     private static final Set<String> ALLOWED_GENDERS = new HashSet<>(Arrays.asList(
             "MALE", "FEMALE", "OTHER"
     ));
@@ -60,12 +59,12 @@ public final class UserFormValidation {
     }
 
     public static boolean isValidEmail(String email) {
-        return email != null && email.length() <= 254 && EMAIL_PATTERN.matcher(email).matches();
+        return email != null && email.length() <= 254;
     }
 
-    public static boolean isValidPhoneOrEmpty(String phone) {
+    public static boolean isValidPhone(String phone) {
         if (phone == null || phone.trim().isEmpty()) {
-            return true;
+            return false;
         }
         return PHONE_PATTERN.matcher(phone.trim()).matches();
     }

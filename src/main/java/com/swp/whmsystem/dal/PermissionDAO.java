@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package com.swp.whmsystem.dal;
 
 import com.swp.whmsystem.model.*;
@@ -14,35 +13,75 @@ import java.util.ArrayList;
 import java.util.List;
 
 //
-
-public class PermissionDAO extends DBContext{
+public class PermissionDAO extends DBContext {
 //    Connection connection;
+
     PreparedStatement st;
     ResultSet rs;
 
-    public PermissionDAO(){
+    public PermissionDAO() {
     }
-public List<Permission> getAllPermission(){
+
+    public List<Permission> getAllPermission() {
         String sql = "select * from permission";
-        
-        try(Connection conn = DBContext.getConnection(); 
-             PreparedStatement ps = conn.prepareStatement(sql); 
-             ResultSet rs = ps.executeQuery()){
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             List<Permission> result = new ArrayList<>();
-            while(rs.next()){
+            while (rs.next()) {
                 Permission p = mapResultSetToPermission(rs);
                 result.add(p);
             }
             return result;
-        } catch(SQLException ex){
+        } catch (SQLException ex) {
             System.err.println(ex.getMessage());
         }
         return null;
     }
 
+    public List<Permission> searchPermissionByName(String permission_name, int roleid) {
+        String sql = "select distinct p.permissionid, p.permissionname, p.description from permission p "
+                + "join role_permissions rp on p.permissionid = rp.permissionid "
+                + "where p.permissionname like ? ";
+        if (roleid != 0) {
+            sql += "and rp.roleid = ?";
+        }
+        if (permission_name.equals("")) {
+            sql = "select distinct p.permissionid, p.permissionname, p.description from permission p "
+                    + "join role_permissions rp on p.permissionid = rp.permissionid "
+                    + "where rp.roleid = ?";
+        }
 
- public Permission getPermission(int permission_id) {
-        try {Connection conn = DBContext.getConnection(); 
+        List<Permission> result = new ArrayList<>();
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            if (permission_name.equals("")) {
+                ps.setInt(1, roleid);
+            } else {
+                ps.setString(1, "%" + permission_name + "%");
+
+                if (roleid != 0) {
+                    ps.setInt(2, roleid);
+                }
+            }
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Permission p = mapResultSetToPermission(rs);
+                if(!result.contains(p)){
+                    result.add(p);
+                }
+            }
+            return result;
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return null;
+    }
+
+    public Permission getPermission(int permission_id) {
+        try {
+            Connection conn = DBContext.getConnection();
             String sql = "select * from permission where permissionid=?";
             PreparedStatement st;
             ResultSet rs;
@@ -62,9 +101,10 @@ public List<Permission> getAllPermission(){
             return null;
         }
     }
- 
-  public Permission getPermissionByName(String permission_name) {
-        try {Connection conn = DBContext.getConnection(); 
+
+    public Permission getPermissionByName(String permission_name) {
+        try {
+            Connection conn = DBContext.getConnection();
             String sql = "select * from permission where permissionname=?";
             PreparedStatement st;
             ResultSet rs;
@@ -85,7 +125,8 @@ public List<Permission> getAllPermission(){
     }
 
     public void insertPermission(Permission p) {
-        try {Connection conn = DBContext.getConnection();
+        try {
+            Connection conn = DBContext.getConnection();
             String sql = "insert into permission (permissionname,description) values (?,?)";
             st = conn.prepareStatement(sql);
             st.setString(1, p.getPermissionName());
@@ -97,7 +138,8 @@ public List<Permission> getAllPermission(){
     }
 
     public void updatePermission(Permission p) {
-        try {Connection conn = DBContext.getConnection();
+        try {
+            Connection conn = DBContext.getConnection();
             String sql = "UPDATE permission SET permissionname = ?, description = ? WHERE permissionid = ?";
             st = conn.prepareStatement(sql);
             st.setString(1, p.getPermissionName());
@@ -110,7 +152,8 @@ public List<Permission> getAllPermission(){
     }
 
     public void deletePermission(Permission p) {
-        try {Connection conn = DBContext.getConnection();
+        try {
+            Connection conn = DBContext.getConnection();
             String sql = "DELETE FROM permission WHERE permissionid = ?";
             st = conn.prepareStatement(sql);
             st.setInt(1, p.getPermissionId());
@@ -119,8 +162,8 @@ public List<Permission> getAllPermission(){
             exception.printStackTrace();
         }
     }
-    
-        private Permission mapResultSetToPermission(ResultSet rs) throws SQLException {
+
+    private Permission mapResultSetToPermission(ResultSet rs) throws SQLException {
         Permission i = new Permission();
         i.setPermissionId(rs.getInt("permissionid"));
         i.setPermissionName(rs.getString("permissionname"));
@@ -128,17 +171,17 @@ public List<Permission> getAllPermission(){
         return i;
     }
 
-     public static void main(String[] args) {
+    public static void main(String[] args) {
         PermissionDAO dao = null;
-            dao = new PermissionDAO();
+        dao = new PermissionDAO();
         List<Permission> list = dao.getAllPermission();
         Permission per = new Permission();
         per.setPermissionId(1);
         per.setDescription("Xem thong tin user");
         per.setPermissionName("VIEWUSER");
         dao.updatePermission(per);
-        
-        for(Permission i : dao.getAllPermission()){
+
+        for (Permission i : dao.getAllPermission()) {
             System.out.println(i.toString());
         }
     }

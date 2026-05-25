@@ -34,7 +34,6 @@ public class AdminDashBoard extends HttpServlet {
         RequestDAO requestDao = new RequestDAO();
         List<Request> requestList = requestDao.getAllRequest();
         request.setAttribute("requestlist", requestList);
-        request.setAttribute("num", 12);
         request.getRequestDispatcher("AdminDashBoard.jsp").forward(request, response);
     } 
 
@@ -51,7 +50,6 @@ public class AdminDashBoard extends HttpServlet {
         RequestDAO requestDao = new RequestDAO();
         List<Request> requestList = requestDao.getAllRequest();
         request.setAttribute("requestlist", requestList);
-        request.setAttribute("num", 12);
         request.getRequestDispatcher("AdminDashBoard.jsp").forward(request, response);
     }
 

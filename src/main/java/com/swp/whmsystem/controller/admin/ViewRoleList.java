@@ -1,4 +1,4 @@
-package com.swp.whmsystem.controller;
+package com.swp.whmsystem.controller.admin;
 
 import com.swp.whmsystem.dal.*;
 import com.swp.whmsystem.model.*;

@@ -13,17 +13,13 @@
         <a class="sidebar-link ${currentPage == 'overview' ? 'active' : ''}"
            href="${pageContext.request.contextPath}/home">Tổng quan</a>
         <a class="sidebar-link ${currentPage == 'orders' ? 'active' : ''}"
-           href="${pageContext.request.contextPath}/#">Đơn hàng</a>
+           href="${pageContext.request.contextPath}/home">Đơn hàng</a>
         <a class="sidebar-link ${currentPage == 'shipping' ? 'active' : ''}"
-           href="${pageContext.request.contextPath}/#">Vận chuyển</a>
+           href="${pageContext.request.contextPath}/home">Vận chuyển</a>
         <a class="sidebar-link ${currentPage == 'products' ? 'active' : ''}"
-           href="${pageContext.request.contextPath}/#">Sản phẩm</a>
+           href="${pageContext.request.contextPath}/home">Sản phẩm</a>
         <a class="sidebar-link ${currentPage == 'warehouse' ? 'active' : ''}"
-           href="${pageContext.request.contextPath}/#">Quản lý kho</a>
-        <a class="sidebar-link ${currentPage == 'customers' ? 'active' : ''}"
-           href="${pageContext.request.contextPath}/#">Khách hàng</a>
-        <a class="sidebar-link ${currentPage == 'cashbook' ? 'active' : ''}"
-           href="${pageContext.request.contextPath}/#">Sổ quỹ</a>
+           href="${pageContext.request.contextPath}/home">Quản lý kho</a>
         <a class="sidebar-link ${currentPage == 'reports' ? 'active' : ''}"
            href="${pageContext.request.contextPath}/#">Báo cáo</a>
     </nav>

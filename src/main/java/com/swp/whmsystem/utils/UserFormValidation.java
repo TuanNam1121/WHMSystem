@@ -7,15 +7,11 @@ import java.util.regex.Pattern;
 
 public final class UserFormValidation {
 
-    private static final Pattern USERNAME_PATTERN = Pattern.compile("^[A-Za-z0-9]{3,30}$");
-    private static final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{9,15}$");
-    
+    private static final String USERNAME_PATTERN ="^[A-Za-z0-9]{3,30}$";
+    private static final String PHONE_PATTERN = "^[0-9]{9,15}$";
     private static final Set<String> ALLOWED_GENDERS = new HashSet<>(Arrays.asList(
             "MALE", "FEMALE", "OTHER"
     ));
-
-    private UserFormValidation() {
-    }
 
     public static String trimToNull(String value) {
         if (value == null) {
@@ -39,7 +35,7 @@ public final class UserFormValidation {
     }
 
     public static boolean isValidUsername(String username) {
-        return username != null && USERNAME_PATTERN.matcher(username).matches();
+        return username != null && username.matches(USERNAME_PATTERN);
     }
 
     public static boolean isValidFullName(String fullName) {
@@ -66,7 +62,7 @@ public final class UserFormValidation {
         if (phone == null || phone.trim().isEmpty()) {
             return false;
         }
-        return PHONE_PATTERN.matcher(phone.trim()).matches();
+        return phone.matches(PHONE_PATTERN);
     }
 
     public static boolean isValidGender(String gender) {

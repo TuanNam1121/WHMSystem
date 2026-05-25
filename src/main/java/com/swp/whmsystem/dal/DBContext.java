@@ -16,7 +16,7 @@ public class DBContext {
 
     private static String url = "jdbc:mysql://localhost:3306/Requirement_W1_V2?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true";
     private static String user = "root";
-    private static String pass = "123";
+    private static String pass = "admin";
 
     public static Connection getConnection() throws SQLException {
         try {

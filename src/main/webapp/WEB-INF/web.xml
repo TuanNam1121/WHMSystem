@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
-   version="6.0">
+<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
-	<servlet>
+    <servlet>
         <servlet-name>AddNewUser</servlet-name>
-        <servlet-class>com.swp.whmsystem.controller.AddNewUser</servlet-class>
+        <servlet-class>com.swp.whmsystem.controller.admin.AddNewUser</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UpdateUserInformation</servlet-name>
-        <servlet-class>com.swp.whmsystem.controller.UpdateUserInformation</servlet-class>
+        <servlet-class>com.swp.whmsystem.controller.admin.UpdateUserInformation</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ForgetPassword</servlet-name>
@@ -26,27 +23,27 @@
     </servlet>
     <servlet>
         <servlet-name>ViewProfile</servlet-name>
-        <servlet-class>com.swp.whmsystem.controller.ViewProfile</servlet-class>
+        <servlet-class>com.swp.whmsystem.controller.home.ViewProfile</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ViewPermissionList</servlet-name>
-        <servlet-class>com.swp.whmsystem.controller.ViewPermissionList</servlet-class>
+        <servlet-class>com.swp.whmsystem.controller.admin.ViewPermissionList</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>PermissionDetail</servlet-name>
-        <servlet-class>com.swp.whmsystem.controller.PermissionDetail</servlet-class>
+        <servlet-class>com.swp.whmsystem.controller.admin.PermissionDetail</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>AddNewPermission</servlet-name>
-        <servlet-class>com.swp.whmsystem.controller.AddNewPermission</servlet-class>
+        <servlet-class>com.swp.whmsystem.controller.admin.AddNewPermission</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>EditPermission</servlet-name>
-        <servlet-class>com.swp.whmsystem.controller.EditPermission</servlet-class>
+        <servlet-class>com.swp.whmsystem.controller.admin.EditPermission</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UpdateRole</servlet-name>
-        <servlet-class>com.swp.whmsystem.controller.UpdateRole</servlet-class>
+        <servlet-class>com.swp.whmsystem.controller.admin.UpdateRole</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ChangePassByAdmin</servlet-name>
@@ -54,7 +51,7 @@
     </servlet>
     <servlet>
         <servlet-name>AddNewRole</servlet-name>
-        <servlet-class>com.swp.whmsystem.controller.AddNewRole</servlet-class>
+        <servlet-class>com.swp.whmsystem.controller.admin.AddNewRole</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>AddNewUser</servlet-name>
@@ -107,5 +104,4 @@
     <welcome-file-list>
         <welcome-file>login.jsp</welcome-file>
     </welcome-file-list>
-
 </web-app>

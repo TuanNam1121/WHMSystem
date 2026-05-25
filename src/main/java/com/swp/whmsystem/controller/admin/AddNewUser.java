@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package com.swp.whmsystem.controller;
+package com.swp.whmsystem.controller.admin;
 
 import com.swp.whmsystem.dal.*;
 import com.swp.whmsystem.model.*;
@@ -33,7 +33,7 @@ public class AddNewUser extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         RoleDAO roleDao = new RoleDAO();
-        List<Role> list = roleDao.getAllRole();
+        List<Role> list = roleDao.getAllRoleToAssign();
         String action = "new";
         request.setAttribute("act", action);
         request.setAttribute("roleDao", roleDao);

@@ -12,7 +12,7 @@ import org.mindrot.jbcrypt.BCrypt;
  */
 public class HashPassword {
 
-    private static final int BCRYPT_COST = 5;
+    private static final int BCRYPT_COST = 12;
 
     public static String hashPassword(String password) {
         if (password == null) {

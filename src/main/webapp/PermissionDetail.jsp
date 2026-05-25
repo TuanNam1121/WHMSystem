@@ -2,7 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <c:set var="activeMenu" value="permissions" scope="request" />
 <c:set var="pageTitle" value="${act.equals('new') ? 'Add Permission' : 'Edit Permission'}" scope="request" />
-<!DOCTYPE html>
+<!DOCTYPE html
 <html lang="vi">
 <head>
     <meta charset="UTF-8">

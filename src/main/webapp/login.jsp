@@ -19,7 +19,6 @@
         <div class="right-section">
             <div class="login-card">
                 <h1 class="signin-title">Sign in</h1>
-                <p class="register-text">Do not have account yet? <a href="register">Register now</a></p>
                 <c:if test="${not empty error}">
                     <div class="alert-error">${error}</div>
                 </c:if>

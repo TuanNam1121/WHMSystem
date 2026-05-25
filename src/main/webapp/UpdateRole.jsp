@@ -33,7 +33,7 @@
                             <input type="text" name="roleId" value="${role != null ? role.roleId : ''}" readonly>
                         </c:if>
                         <label>Role name</label>
-                        <input type="text" name="roleName" value="${role != null ? role.roleName : ''}">
+                        <input type="text" name="roleName" maxlength="100" value="${role != null ? role.roleName : ''}">
                         <label>Status</label>
                         <label style="display:inline-flex;margin-right:16px;">
                             <input type="radio" name="isActive" value="true" ${role.isActive ? 'checked' : ''}> Activated

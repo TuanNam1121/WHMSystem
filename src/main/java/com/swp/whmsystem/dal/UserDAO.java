@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import com.swp.whmsystem.model.User;
 import com.swp.whmsystem.utils.HashPassword;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -33,6 +35,34 @@ public class UserDAO {
             System.out.println(ex.getMessage());
         }
         return null;
+    }
+    
+    public List<User> searchUser(String keyword, String roleId, String sortBy){
+        List<String> acceptedSortField = new ArrayList<>(List.of("roleid", "username", "isactive"));
+        String sql = "Select * from user where roleid != 1";
+        List<User> list = new ArrayList<>();
+        try (Connection conn = DBContext.getConnection()) {
+            if(keyword != null && !keyword.isBlank()) sql += " AND fullname like '%" + keyword + "%' ";
+            if(roleId != null && !roleId.isBlank()){
+                int roleIdParse = Integer.parseInt(roleId);
+                sql += " AND roleid = " + roleIdParse + " ";
+            }
+            if(sortBy != null && acceptedSortField.contains(sortBy)){
+                sql += " ORDER BY " + sortBy;
+                if(sortBy.equals("isactive")) sql += " DESC";
+            }
+         
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User i = mapResultSetToUser(rs);
+                list.add(i);
+            }
+            return list;
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        return list;
     }
 
     public User getUserFromId(int userId) {
@@ -119,7 +149,7 @@ public class UserDAO {
     }
 
     public boolean existsByUsername(String username) {
-        String sql = "SELECT 1 FROM user WHERE LOWER(username) = LOWER(?) LIMIT 1";
+        String sql = "SELECT 1 FROM user WHERE LOWER(username) = LOWER(?)";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
             try (ResultSet rs = ps.executeQuery()) {
@@ -132,7 +162,7 @@ public class UserDAO {
     }
 
     public boolean existsByEmail(String email) {
-        String sql = "SELECT 1 FROM user WHERE LOWER(email) = LOWER(?) LIMIT 1";
+        String sql = "SELECT 1 FROM user WHERE LOWER(email) = LOWER(?)";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
@@ -143,9 +173,10 @@ public class UserDAO {
         }
         return false;
     }
+    
 
     public boolean existsByUsernameExceptUserId(String username, int userId) {
-        String sql = "SELECT 1 FROM user WHERE LOWER(username) = LOWER(?) AND userid <> ? LIMIT 1";
+        String sql = "SELECT 1 FROM user WHERE LOWER(username) = LOWER(?) AND userid != ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
             ps.setInt(2, userId);
@@ -159,7 +190,7 @@ public class UserDAO {
     }
 
     public boolean existsByEmailExceptUserId(String email, int userId) {
-        String sql = "SELECT 1 FROM user WHERE LOWER(email) = LOWER(?) AND userid <> ? LIMIT 1";
+        String sql = "SELECT 1 FROM user WHERE LOWER(email) = LOWER(?) AND userid != ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, email);
             ps.setInt(2, userId);

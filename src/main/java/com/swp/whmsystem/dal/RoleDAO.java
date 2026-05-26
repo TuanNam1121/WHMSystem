@@ -173,7 +173,7 @@ public class RoleDAO {
             }
 
             PreparedStatement rt = con.prepareStatement(sql);
-            if (keyword != null) {
+            if (keyword != null && keyword != "") {
                 rt.setString(1, "%" + keyword + "%");
             }
             ResultSet result = rt.executeQuery();

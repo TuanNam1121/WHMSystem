@@ -21,7 +21,10 @@ public class ViewRoleList extends HttpServlet {
             throws ServletException, IOException {
 
         RoleDAO roleDAO = new RoleDAO();
-        List<Role> roleList = roleDAO.getAllRole();
+
+        String keyword= request.getParameter("keyword");
+        String sortBy=request.getParameter("sortBy");
+        List<Role> roleList = roleDAO.findRoleByFilter(keyword,sortBy);
         request.setAttribute("rolelist", roleList);
         request.getRequestDispatcher("ViewRoleList.jsp").forward(request, response);
     }

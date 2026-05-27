@@ -14,7 +14,7 @@ import java.util.List;
 @WebServlet(name = "ViewRomList", urlPatterns = {"/ViewRomList"})
 public class ViewRomList extends HttpServlet {
     private RomDAO romDao;
-    private static final int PAGE_SIZE = 5;
+    private static final int PAGE_SIZE = 8;
 
     @Override
     public void init() {

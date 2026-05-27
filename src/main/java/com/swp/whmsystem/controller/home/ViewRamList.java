@@ -14,7 +14,7 @@ import java.util.List;
 @WebServlet(name = "ViewRamList", urlPatterns = {"/ViewRamList"})
 public class ViewRamList extends HttpServlet {
     private RamDAO ramDao;
-    private static final int PAGE_SIZE = 5;
+    private static final int PAGE_SIZE = 8;
 
     @Override
     public void init() {

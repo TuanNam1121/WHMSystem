@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "ViewChipList", urlPatterns = {"/ViewChipList"})
 public class ViewChipList extends HttpServlet {
     private ChipDAO chipDao;
-    private static final int PAGE_SIZE = 5;
+    private static final int PAGE_SIZE = 8;
 
     @Override
     public void init() {

@@ -1,45 +1,107 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign in - WMS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assests/css/wms-theme.css">
-    <style>body, html { font-family: 'Inter', sans-serif; }</style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta name="description" content="POS - Bootstrap Admin Template">
+    <meta name="keywords"
+          content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
+    <meta name="author" content="Dreamguys - Bootstrap Admin Template">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Login - Pos admin template</title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
+
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
+
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="auth-page">
-    <div class="page-wrapper">
-        <div class="left-section">
-            <div class="logo-box">WMS</div>
-            <div class="photo-placeholder">Warehouse Management System</div>
-        </div>
-        <div class="right-section">
-            <div class="login-card">
-                <h1 class="signin-title">Sign in</h1>
-                <c:if test="${not empty error}">
-                    <div class="alert-error">${error}</div>
-                </c:if>
-                <form action="login" method="post">
-                    <div class="form-group">
-                        <label>Username</label>
-                        <input type="text" name="username" class="input-field" value="${param.username}" placeholder="username" required/>
+<body class="account-page">
+
+<div class="main-wrapper">
+    <div class="account-content">
+        <div class="login-wrapper">
+            <div class="login-content">
+                <div class="login-userset">
+                    <div class="login-logo">
+                        <img src="assets/img/logo.png" alt="img">
                     </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" name="password" class="input-field" placeholder="••••••••" required/>
+                    <div class="login-userheading">
+                        <h3>Sign In</h3>
+                        <h4>Please login to your account</h4>
                     </div>
-                    <div class="options-row">
-                        <input type="checkbox" id="remember" name="remember">
-                        <label for="remember">Remember me</label>
+                    <form action="login" method="post">
+
+                        <div class="form-login">
+                            <label>Username</label>
+                            <div class="form-addons">
+                                <input type="text" name="username" placeholder="Enter your username">
+                                <img src="assets/img/icons/mail.svg" alt="img">
+                            </div>
+                        </div>
+                        <div class="form-login">
+                            <label>Password</label>
+                            <div class="pass-group">
+                                <input type="password" name="password" class="pass-input"
+                                       placeholder="Enter your password">
+                                <span class="fas toggle-password fa-eye-slash"></span>
+                            </div>
+                        </div>
+                        <div class="form-login">
+                            <div class="alreadyuser">
+                                <h4><a href="forgetpassword" class="hover-a">Forgot Password?</a></h4>
+                            </div>
+                        </div>
+                        <div class="form-login">
+                            <button type="submit" class="btn btn-login">Login</button>
+                        </div>
+                    </form>
+
+                    <div class="signinform text-center">
+                        <h4>Don’t have an account? <a href="signup.html" class="hover-a">Sign Up</a></h4>
                     </div>
-                    <button type="submit" class="login-btn">Login</button>
-                    <a href="forgetpassword" class="forgot-pass">Forgot password</a>
-                </form>
+
+                    <%--<div class="form-setlogin">
+                        <h4>Or sign up with</h4>
+                    </div>
+                    <div class="form-sociallink">
+                        <ul>
+                            <li>
+                                <a href="javascript:void(0);">
+                                    <img src="assets/img/icons/google.png" class="me-2" alt="google">
+                                    Sign Up using Google
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);">
+                                    <img src="assets/img/icons/facebook.png" class="me-2" alt="google">
+                                    Sign Up using Facebook
+                                </a>
+                            </li>
+                        </ul>
+                    </div>--%>
+
+                </div>
+            </div>
+            <div class="login-img">
+                <img src="assets/img/login.jpg" alt="img">
             </div>
         </div>
     </div>
+</div>
+
+
+<script src="assets/js/jquery-3.6.0.min.js"></script>
+
+<script src="assets/js/feather.min.js"></script>
+
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+
+<script src="assets/js/script.js"></script>
 </body>
 </html>

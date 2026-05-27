@@ -7,7 +7,9 @@ package com.swp.whmsystem.controller.authentication;
 import com.swp.whmsystem.dal.*;
 import com.swp.whmsystem.model.*;
 import com.swp.whmsystem.utils.*;
+
 import java.io.IOException;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -27,22 +29,25 @@ public class Login extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String user = request.getParameter("username");
-        String pass = request.getParameter("password");
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
 
-        UserDAO dao = new UserDAO();
-        User account = dao.checkLogin(user, pass);
-        
-        if(account != null && dao.isActiveUser(account)){
+        UserDAO userDAO = new UserDAO();
+        RoleDAO roleDAO = new RoleDAO();
+
+        User account = userDAO.checkLogin(username, password);
+
+        if (account != null && userDAO.isActiveUser(account)) {
             HttpSession session = request.getSession();
-            session.setAttribute("user", account);
+            User user = userDAO.getUserFullInformation(account.getId());
+            String roleName = roleDAO.getRoleNameFromUserID(account.getId());
+            session.setAttribute("roleName", roleName);
+            session.setAttribute("user", user);
             response.sendRedirect("home");
-        }
-        else if (account != null && !dao.isActiveUser(account)) {
-            request.setAttribute("error", "Your account is deative!");
+        } else if (account != null && !userDAO.isActiveUser(account)) {
+            request.setAttribute("error", "Your account is deactive!");
             request.getRequestDispatcher("login.jsp").forward(request, response);
-        }
-        else {
+        } else {
             request.setAttribute("error", "Username or Password is not correct!");
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }

@@ -21,7 +21,7 @@ import java.util.Map;
 public class UserDAO {
 
     public List<User> getAllUsers() {
-        String sql = "Select * from user where roleid != 1";
+        String sql = "Select * from users where roleid != 1";
         List<User> list = new ArrayList<>();
         try (Connection conn = DBContext.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -39,7 +39,7 @@ public class UserDAO {
     
     public List<User> searchUser(String keyword, String roleId, String sortBy){
         List<String> acceptedSortField = new ArrayList<>(List.of("roleid", "username", "isactive"));
-        String sql = "Select * from user where roleid != 1";
+        String sql = "Select * from users where roleid != 1";
         List<User> list = new ArrayList<>();
         try (Connection conn = DBContext.getConnection()) {
             if(keyword != null && !keyword.isBlank()) sql += " AND fullname like '%" + keyword + "%' ";
@@ -66,7 +66,7 @@ public class UserDAO {
     }
 
     public User getUserFromId(int userId) {
-        String sql = "Select * from user where userid = ?";
+        String sql = "Select * from users where userid = ?";
         try (Connection conn = DBContext.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userId);
@@ -82,7 +82,7 @@ public class UserDAO {
     }
 
     public User checkLogin(String username, String password) {
-        String sql = "Select * from user where username = ?";
+        String sql = "Select * from users where username = ?";
         try (Connection conn = DBContext.getConnection();) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, username);
@@ -101,7 +101,7 @@ public class UserDAO {
     }
     
     public boolean isActiveUser(User i){
-        String sql = "select isActive from user where userid = ?";
+        String sql = "select isActive from users where userid = ?";
         try (Connection conn = DBContext.getConnection();) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, i.getId());
@@ -129,7 +129,7 @@ public class UserDAO {
     }
 
     public boolean addNewUser(User user) {
-        String sql = "Insert into user(username, passwordhash, roleid, phone, email, gender, fullname, isActive)"
+        String sql = "Insert into users(username, passwordhash, roleid, phone, email, gender, fullname, isActive)"
                 + "values (?,?,?,?,?,?,?,?)";
         try (Connection conn = DBContext.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -149,7 +149,7 @@ public class UserDAO {
     }
 
     public boolean existsByUsername(String username) {
-        String sql = "SELECT 1 FROM user WHERE LOWER(username) = LOWER(?)";
+        String sql = "SELECT 1 FROM users WHERE LOWER(username) = LOWER(?)";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
             try (ResultSet rs = ps.executeQuery()) {
@@ -162,7 +162,7 @@ public class UserDAO {
     }
 
     public boolean existsByEmail(String email) {
-        String sql = "SELECT 1 FROM user WHERE LOWER(email) = LOWER(?)";
+        String sql = "SELECT 1 FROM users WHERE LOWER(email) = LOWER(?)";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
@@ -176,7 +176,7 @@ public class UserDAO {
     
 
     public boolean existsByUsernameExceptUserId(String username, int userId) {
-        String sql = "SELECT 1 FROM user WHERE LOWER(username) = LOWER(?) AND userid != ?";
+        String sql = "SELECT 1 FROM users WHERE LOWER(username) = LOWER(?) AND userid != ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
             ps.setInt(2, userId);
@@ -190,7 +190,7 @@ public class UserDAO {
     }
 
     public boolean existsByEmailExceptUserId(String email, int userId) {
-        String sql = "SELECT 1 FROM user WHERE LOWER(email) = LOWER(?) AND userid != ?";
+        String sql = "SELECT 1 FROM users WHERE LOWER(email) = LOWER(?) AND userid != ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, email);
             ps.setInt(2, userId);
@@ -204,7 +204,7 @@ public class UserDAO {
     }
 
     public boolean updateUserInformation(User user) {
-        String sql = "Update User SET username = ?, roleid = ? , phone = ?, email = ?, gender = ?, fullname = ?, isActive = ? where userid = ?";
+        String sql = "Update Users SET username = ?, roleid = ? , phone = ?, email = ?, gender = ?, fullname = ?, isActive = ? where userid = ?";
         try (Connection conn = DBContext.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, user.getUserName());
@@ -223,7 +223,7 @@ public class UserDAO {
     }
 
     public boolean updateUserPassword(int userID, String newHashedPassword) {
-        String sql = "Update User SET passwordhash = ? where userid = ?";
+        String sql = "Update Users SET passwordhash = ? where userid = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setString(1, newHashedPassword);
             ps.setInt(2, userID);
@@ -236,7 +236,7 @@ public class UserDAO {
     }
 
     public String getPasswordById(int userId) {
-        String sql = "SELECT passwordhash FROM User WHERE userid = ?";
+        String sql = "SELECT passwordhash FROM Users WHERE userid = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
@@ -250,7 +250,7 @@ public class UserDAO {
     }
 
     public User getUser(String username, String email) {
-        String sql = "select userid, username, email from user where email = ? and username = ?";
+        String sql = "select userid, username, email from users where email = ? and username = ?";
         try (
                 Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setString(1, email);

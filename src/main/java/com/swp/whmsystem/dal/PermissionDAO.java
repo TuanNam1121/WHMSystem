@@ -23,7 +23,7 @@ public class PermissionDAO extends DBContext {
     }
 
     public List<Permission> getAllPermission() {
-        String sql = "select * from permission";
+        String sql = "select * from permissions";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             List<Permission> result = new ArrayList<>();
@@ -39,15 +39,15 @@ public class PermissionDAO extends DBContext {
     }
 
     public List<Permission> searchPermissionByName(String permission_name, int roleid) {
-        String sql = "select distinct p.permissionid, p.permissionname, p.description from permission p "
-                + "join role_permissions rp on p.permissionid = rp.permissionid "
+        String sql = "select distinct p.permissionid, p.permissionname, p.description from permissions p "
+                + "join role_permission rp on p.permissionid = rp.permissionid "
                 + "where p.permissionname like ? ";
         if (roleid != 0) {
             sql += "and rp.roleid = ?";
         }
         if (permission_name.equals("")) {
-            sql = "select distinct p.permissionid, p.permissionname, p.description from permission p "
-                    + "join role_permissions rp on p.permissionid = rp.permissionid "
+            sql = "select distinct p.permissionid, p.permissionname, p.description from permissions p "
+                    + "join role_permission rp on p.permissionid = rp.permissionid "
                     + "where rp.roleid = ?";
         }
 
@@ -68,9 +68,7 @@ public class PermissionDAO extends DBContext {
 
             while (rs.next()) {
                 Permission p = mapResultSetToPermission(rs);
-                if(!result.contains(p)){
-                    result.add(p);
-                }
+                result.add(p);
             }
             return result;
         } catch (SQLException ex) {
@@ -79,11 +77,10 @@ public class PermissionDAO extends DBContext {
         return null;
     }
 
-
     public Permission getPermission(int permission_id) {
         try {
             Connection conn = DBContext.getConnection();
-            String sql = "select * from permission where permissionid=?";
+            String sql = "select * from permissions where permissionid=?";
             PreparedStatement st;
             ResultSet rs;
             st = conn.prepareStatement(sql);
@@ -106,7 +103,7 @@ public class PermissionDAO extends DBContext {
     public Permission getPermissionByName(String permission_name) {
         try {
             Connection conn = DBContext.getConnection();
-            String sql = "select * from permission where permissionname=?";
+            String sql = "select * from permissions where permissionname=?";
             PreparedStatement st;
             ResultSet rs;
             st = conn.prepareStatement(sql);
@@ -128,7 +125,7 @@ public class PermissionDAO extends DBContext {
     public void insertPermission(Permission p) {
         try {
             Connection conn = DBContext.getConnection();
-            String sql = "insert into permission (permissionname,description) values (?,?)";
+            String sql = "insert into permissions (permissionname,description) values (?,?)";
             st = conn.prepareStatement(sql);
             st.setString(1, p.getPermissionName());
             st.setString(2, p.getDescription());
@@ -141,7 +138,7 @@ public class PermissionDAO extends DBContext {
     public void updatePermission(Permission p) {
         try {
             Connection conn = DBContext.getConnection();
-            String sql = "UPDATE permission SET permissionname = ?, description = ? WHERE permissionid = ?";
+            String sql = "UPDATE permissions SET permissionname = ?, description = ? WHERE permissionid = ?";
             st = conn.prepareStatement(sql);
             st.setString(1, p.getPermissionName());
             st.setString(2, p.getDescription());
@@ -155,7 +152,7 @@ public class PermissionDAO extends DBContext {
     public void deletePermission(Permission p) {
         try {
             Connection conn = DBContext.getConnection();
-            String sql = "DELETE FROM permission WHERE permissionid = ?";
+            String sql = "DELETE FROM permissions WHERE permissionid = ?";
             st = conn.prepareStatement(sql);
             st.setInt(1, p.getPermissionId());
             st.executeUpdate();

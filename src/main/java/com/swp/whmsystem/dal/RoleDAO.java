@@ -19,7 +19,7 @@ import java.util.List;
 public class RoleDAO {
 
     public List<Role> getAllRole() {
-        String sql = "select * from role";
+        String sql = "select * from roles";
 
         try (Connection conn = DBContext.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql);
@@ -37,7 +37,7 @@ public class RoleDAO {
     }
 
     public List<Role> getAllRoleToAssign() {
-        String sql = "select * from role where rolename != 'Admin'";
+        String sql = "select * from roles where rolename != 'Admin' or isactive = 1";
 
         try (Connection conn = DBContext.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql);
@@ -55,7 +55,7 @@ public class RoleDAO {
     }
 
     public String getRoleNameFromUserID(int userId) {
-        String sql = "select r.rolename from role r join user u on u.roleid = r.roleid where u.userid = ?;";
+        String sql = "select r.rolename from roles r join users u on u.roleid = r.roleid where u.userid = ?;";
 
         try (Connection conn = DBContext.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -71,7 +71,7 @@ public class RoleDAO {
     }
 
     public String getRoleNamFromRoleID(int id) {
-        String sql = "select rolename from role where roleid = ?";
+        String sql = "select rolename from roles where roleid = ?";
 
         try (Connection conn = DBContext.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -86,7 +86,7 @@ public class RoleDAO {
     }
 
     public Integer getRoleIdFromRoleName(String roleName) {
-        String sql = "select roleid from role where rolename = ?";
+        String sql = "select roleid from roles where rolename = ?";
 
         try (Connection conn = DBContext.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -105,13 +105,13 @@ public class RoleDAO {
         Role i = new Role();
         i.setRoleId(rs.getInt("roleid"));
         i.setRoleName(rs.getString("rolename"));
-        i.setIsActive(rs.getBoolean("isActive"));
+        i.setIsActive(rs.getBoolean("isactive"));
         return i;
     }
 
     // HungTQ added
     public Role getRoleById(int id) {
-        String sql = "select * from role where roleid = ?";
+        String sql = "select * from roles where roleid = ?";
         try (Connection conn = DBContext.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, id);
@@ -130,7 +130,7 @@ public class RoleDAO {
     public void updateRole(Role r) {
         try {
             Connection conn = DBContext.getConnection();
-            String sql = "UPDATE role SET rolename = ?, isActive = ? WHERE roleid = ?";
+            String sql = "UPDATE roles SET rolename = ?, isactive = ? WHERE roleid = ?";
             PreparedStatement st;
             ResultSet rs;
             st = conn.prepareStatement(sql);
@@ -146,7 +146,7 @@ public class RoleDAO {
     public void insertRole(Role r) {
         try {
             Connection conn = DBContext.getConnection();
-            String sql = "insert into role (rolename,isActive) values (?,?)";
+            String sql = "insert into roles (rolename,isactive) values (?,?)";
             PreparedStatement st;
             ResultSet rs;
             st = conn.prepareStatement(sql);
@@ -161,7 +161,7 @@ public class RoleDAO {
     public List<Role> findRoleByFilter(String keyword, String sortBy) {
         try {
             Connection con = DBContext.getConnection();
-            String sql = "select * from role";
+            String sql = "select * from roles";
             if (keyword != null && keyword != "") {
                 sql += " where rolename like ?";
             }
@@ -169,7 +169,7 @@ public class RoleDAO {
                 sql += " order by rolename";
             }
             if (sortBy != null && sortBy.equals("isactive")) {
-                sql += " order by isActive";
+                sql += " order by isactive";
             }
 
             PreparedStatement rt = con.prepareStatement(sql);
@@ -191,12 +191,12 @@ public class RoleDAO {
 
     public static void main(String[] args) {
         RoleDAO dao = new RoleDAO();
-        List<Role> res = dao.findRoleByFilter(null, "isactive");
+        List<Role> res = dao.getAllRoleToAssign();
         if (res != null) {
             for (Role i : res) {
                 System.out.println(i.getRoleId() + " " + i.getRoleName());
             }
         }
-
+        dao.updateRole(new Role(5, "WAREHOUSE_PROCESSOR", false));
     }
 }

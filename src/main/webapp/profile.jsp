@@ -1,3 +1,4 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,10 +36,10 @@
     <div class="header">
 
         <div class="header-left active">
-            <a href="index.html" class="logo">
+            <a href="home.jsp" class="logo">
                 <img src="assets/img/logo.png" alt="">
             </a>
-            <a href="index.html" class="logo-small">
+            <a href="home.jsp" class="logo-small">
                 <img src="assets/img/logo-small.png" alt="">
             </a>
             <a id="toggle_btn" href="javascript:void(0);">
@@ -107,7 +108,7 @@
                     <div class="noti-content">
                         <ul class="notification-list">
                             <li class="notification-message">
-                                <a href="activities.html">
+                                <a href="activities.jsp">
                                     <div class="media d-flex">
 <span class="avatar flex-shrink-0">
 <img alt="" src="assets/img/profiles/avatar-02.jpg">
@@ -121,7 +122,7 @@
                                 </a>
                             </li>
                             <li class="notification-message">
-                                <a href="activities.html">
+                                <a href="activities.jsp">
                                     <div class="media d-flex">
 <span class="avatar flex-shrink-0">
 <img alt="" src="assets/img/profiles/avatar-03.jpg">
@@ -136,7 +137,7 @@
                                 </a>
                             </li>
                             <li class="notification-message">
-                                <a href="activities.html">
+                                <a href="activities.jsp">
                                     <div class="media d-flex">
 <span class="avatar flex-shrink-0">
 <img alt="" src="assets/img/profiles/avatar-06.jpg">
@@ -152,7 +153,7 @@
                                 </a>
                             </li>
                             <li class="notification-message">
-                                <a href="activities.html">
+                                <a href="activities.jsp">
                                     <div class="media d-flex">
 <span class="avatar flex-shrink-0">
 <img alt="" src="assets/img/profiles/avatar-17.jpg">
@@ -167,7 +168,7 @@
                                 </a>
                             </li>
                             <li class="notification-message">
-                                <a href="activities.html">
+                                <a href="activities.jsp">
                                     <div class="media d-flex">
 <span class="avatar flex-shrink-0">
 <img alt="" src="assets/img/profiles/avatar-13.jpg">
@@ -183,7 +184,7 @@
                         </ul>
                     </div>
                     <div class="topnav-dropdown-footer">
-                        <a href="activities.html">View all Notifications</a>
+                        <a href="activities.jsp">View all Notifications</a>
                     </div>
                 </div>
             </li>
@@ -204,7 +205,7 @@
                             </div>
                         </div>
                         <hr class="m-0">
-                        <a class="dropdown-item" href="profile.jsp"> <i class="me-2" data-feather="user"></i> My
+                        <a class="dropdown-item" href="profile.html"> <i class="me-2" data-feather="user"></i> My
                             Profile</a>
                         <a class="dropdown-item" href="generalsettings.html"><i class="me-2"
                                                                                 data-feather="settings"></i>Settings</a>
@@ -221,7 +222,7 @@
             <a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
                aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
             <div class="dropdown-menu dropdown-menu-right">
-                <a class="dropdown-item" href="profile.jsp">My Profile</a>
+                <a class="dropdown-item" href="profile.html">My Profile</a>
                 <a class="dropdown-item" href="generalsettings.html">Settings</a>
                 <a class="dropdown-item" href="signin.html">Logout</a>
             </div>
@@ -235,7 +236,7 @@
             <div id="sidebar-menu" class="sidebar-menu">
                 <ul>
                     <li>
-                        <a href="index.html"><img src="assets/img/icons/dashboard.svg" alt="img"><span> Dashboard</span>
+                        <a href="home.jsp"><img src="assets/img/icons/dashboard.svg" alt="img"><span> Dashboard</span>
                         </a>
                     </li>
                     <li class="submenu">
@@ -244,15 +245,15 @@
                                 class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="productlist.html">Product List</a></li>
-                            <li><a href="addproduct.html" class="active">Add Product</a></li>
-                            <li><a href="categorylist.html">Category List</a></li>
-                            <li><a href="addcategory.html">Add Category</a></li>
+                            <li><a href="addproduct.jsp">Add Product</a></li>
+                            <li><a href="categorylist.jsp">Category List</a></li>
+                            <li><a href="addcategory.jsp">Add Category</a></li>
                             <li><a href="subcategorylist.html">Sub Category List</a></li>
                             <li><a href="subaddcategory.html">Add Sub Category</a></li>
-                            <li><a href="brandlist.html">Brand List</a></li>
-                            <li><a href="addbrand.html">Add Brand</a></li>
+                            <li><a href="brandlist.jsp">Brand List</a></li>
+                            <li><a href="addbrand.jsp">Add Brand</a></li>
                             <li><a href="importproduct.html">Import Products</a></li>
-                            <li><a href="barcode.html">Print Barcode</a></li>
+                            <li><a href="barcode.jsp">Print Barcode</a></li>
                         </ul>
                     </li>
                     <li class="submenu">
@@ -272,7 +273,7 @@
                             <span class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="purchaselist.html">Purchase List</a></li>
-                            <li><a href="addpurchase.html">Add Purchase</a></li>
+                            <li><a href="addpurchase.jsp">Add Purchase</a></li>
                             <li><a href="importpurchase.html">Import Purchase</a></li>
                         </ul>
                     </li>
@@ -291,7 +292,7 @@
                             <span class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="quotationList.html">Quotation List</a></li>
-                            <li><a href="addquotation.html">Add Quotation</a></li>
+                            <li><a href="addquotation.jsp">Add Quotation</a></li>
                         </ul>
                     </li>
                     <li class="submenu">
@@ -299,7 +300,7 @@
                             <span class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="transferlist.html">Transfer List</a></li>
-                            <li><a href="addtransfer.html">Add Transfer </a></li>
+                            <li><a href="addtransfer.jsp">Add Transfer </a></li>
                             <li><a href="importtransfer.html">Import Transfer </a></li>
                         </ul>
                     </li>
@@ -320,13 +321,13 @@
                                 class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="customerlist.html">Customer List</a></li>
-                            <li><a href="addcustomer.html">Add Customer </a></li>
+                            <li><a href="addcustomer.jsp">Add Customer </a></li>
                             <li><a href="supplierlist.html">Supplier List</a></li>
-                            <li><a href="addsupplier.html">Add Supplier </a></li>
+                            <li><a href="addsupplier.jsp">Add Supplier </a></li>
                             <li><a href="userlist.html">User List</a></li>
-                            <li><a href="adduser.html">Add User</a></li>
+                            <li><a href="adduser.jsp">Add User</a></li>
                             <li><a href="storelist.html">Store List</a></li>
-                            <li><a href="addstore.html">Add Store</a></li>
+                            <li><a href="addstore.jsp">Add Store</a></li>
                         </ul>
                     </li>
                     <li class="submenu">
@@ -338,102 +339,6 @@
                             <li><a href="countrieslist.html">Countries list</a></li>
                             <li><a href="newstate.html">New State </a></li>
                             <li><a href="statelist.html">State list</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="components.html"><i data-feather="layers"></i><span> Components</span> </a>
-                    </li>
-                    <li>
-                        <a href="blankpage.html"><i data-feather="file"></i><span> Blank Page</span> </a>
-                    </li>
-                    <li class="submenu">
-                        <a href="javascript:void(0);"><i data-feather="alert-octagon"></i> <span> Error Pages </span>
-                            <span class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="error-404.html">404 Error </a></li>
-                            <li><a href="error-500.html">500 Error </a></li>
-                        </ul>
-                    </li>
-                    <li class="submenu">
-                        <a href="javascript:void(0);"><i data-feather="box"></i> <span>Elements </span> <span
-                                class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="sweetalerts.html">Sweet Alerts</a></li>
-                            <li><a href="tooltip.html">Tooltip</a></li>
-                            <li><a href="popover.html">Popover</a></li>
-                            <li><a href="ribbon.html">Ribbon</a></li>
-                            <li><a href="clipboard.html">Clipboard</a></li>
-                            <li><a href="drag-drop.html">Drag & Drop</a></li>
-                            <li><a href="rangeslider.html">Range Slider</a></li>
-                            <li><a href="rating.html">Rating</a></li>
-                            <li><a href="toastr.html">Toastr</a></li>
-                            <li><a href="text-editor.html">Text Editor</a></li>
-                            <li><a href="counter.html">Counter</a></li>
-                            <li><a href="scrollbar.html">Scrollbar</a></li>
-                            <li><a href="spinner.html">Spinner</a></li>
-                            <li><a href="notification.html">Notification</a></li>
-                            <li><a href="lightbox.html">Lightbox</a></li>
-                            <li><a href="stickynote.html">Sticky Note</a></li>
-                            <li><a href="timeline.html">Timeline</a></li>
-                            <li><a href="form-wizard.html">Form Wizard</a></li>
-                        </ul>
-                    </li>
-                    <li class="submenu">
-                        <a href="javascript:void(0);"><i data-feather="bar-chart-2"></i> <span> Charts </span> <span
-                                class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="chart-apex.html">Apex Charts</a></li>
-                            <li><a href="chart-js.html">Chart Js</a></li>
-                            <li><a href="chart-morris.html">Morris Charts</a></li>
-                            <li><a href="chart-flot.html">Flot Charts</a></li>
-                            <li><a href="chart-peity.html">Peity Charts</a></li>
-                        </ul>
-                    </li>
-                    <li class="submenu">
-                        <a href="javascript:void(0);"><i data-feather="award"></i><span> Icons </span> <span
-                                class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="icon-fontawesome.html">Fontawesome Icons</a></li>
-                            <li><a href="icon-feather.html">Feather Icons</a></li>
-                            <li><a href="icon-ionic.html">Ionic Icons</a></li>
-                            <li><a href="icon-material.html">Material Icons</a></li>
-                            <li><a href="icon-pe7.html">Pe7 Icons</a></li>
-                            <li><a href="icon-simpleline.html">Simpleline Icons</a></li>
-                            <li><a href="icon-themify.html">Themify Icons</a></li>
-                            <li><a href="icon-weather.html">Weather Icons</a></li>
-                            <li><a href="icon-typicon.html">Typicon Icons</a></li>
-                            <li><a href="icon-flag.html">Flag Icons</a></li>
-                        </ul>
-                    </li>
-                    <li class="submenu">
-                        <a href="javascript:void(0);"><i data-feather="columns"></i> <span> Forms </span> <span
-                                class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="form-basic-inputs.html">Basic Inputs </a></li>
-                            <li><a href="form-input-groups.html">Input Groups </a></li>
-                            <li><a href="form-horizontal.html">Horizontal Form </a></li>
-                            <li><a href="form-vertical.html"> Vertical Form </a></li>
-                            <li><a href="form-mask.html">Form Mask </a></li>
-                            <li><a href="form-validation.html">Form Validation </a></li>
-                            <li><a href="form-select2.html">Form Select2 </a></li>
-                            <li><a href="form-fileupload.html">File Upload </a></li>
-                        </ul>
-                    </li>
-                    <li class="submenu">
-                        <a href="javascript:void(0);"><i data-feather="layout"></i> <span> Table </span> <span
-                                class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="tables-basic.html">Basic Tables </a></li>
-                            <li><a href="data-tables.html">Data Table </a></li>
-                        </ul>
-                    </li>
-                    <li class="submenu">
-                        <a href="javascript:void(0);"><img src="assets/img/icons/product.svg" alt="img"><span> Application</span>
-                            <span class="menu-arrow"></span></a>
-                        <ul>
-                            <li><a href="chat.html">Chat</a></li>
-                            <li><a href="calendar.html">Calendar</a></li>
-                            <li><a href="email.html">Email</a></li>
                         </ul>
                     </li>
                     <li class="submenu">
@@ -481,130 +386,80 @@
         <div class="content">
             <div class="page-header">
                 <div class="page-title">
-                    <h4>Product Add</h4>
-                    <h6>Create new product</h6>
+                    <h4>Profile</h4>
+                    <h6>User Profile</h6>
                 </div>
             </div>
-
+            <form action="viewProfile" method="post"></form>
             <div class="card">
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Product Name</label>
-                                <input type="text">
-                            </div>
+                    <div class="profile-set">
+                        <div class="profile-head">
                         </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Category</label>
-                                <select class="select">
-                                    <option>Choose Category</option>
-                                    <option>Computers</option>
-                                    <option>Ok k anh Nam</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Sub Category</label>
-                                <select class="select">
-                                    <option>Choose Sub Category</option>
-                                    <option>Fruits</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Brand</label>
-                                <select class="select">
-                                    <option>Choose Brand</option>
-                                    <option>Brand</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Unit</label>
-                                <select class="select">
-                                    <option>Choose Unit</option>
-                                    <option>Unit</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>SKU</label>
-                                <input type="text">
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Minimum Qty</label>
-                                <input type="text">
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Quantity</label>
-                                <input type="text">
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                            <div class="form-group">
-                                <label>Description</label>
-                                <textarea class="form-control"></textarea>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Tax</label>
-                                <select class="select">
-                                    <option>Choose Tax</option>
-                                    <option>2%</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Discount Type</label>
-                                <select class="select">
-                                    <option>Percentage</option>
-                                    <option>10%</option>
-                                    <option>20%</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Price</label>
-                                <input type="text">
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label> Status</label>
-                                <select class="select">
-                                    <option>Closed</option>
-                                    <option>Open</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                            <div class="form-group">
-                                <label> Product Image</label>
-                                <div class="image-upload">
-                                    <input type="file">
-                                    <div class="image-uploads">
-                                        <img src="assets/img/icons/upload.svg" alt="img">
-                                        <h4>Drag and drop a file to upload</h4>
+                        <div class="profile-top">
+                            <div class="profile-content">
+                                <div class="profile-contentimg">
+                                    <img src="assets/img/customer/customer5.jpg" alt="img" id="blah">
+                                    <div class="profileupload">
+                                        <input type="file" id="imgInp">
+                                        <a href="javascript:void(0);"><img src="assets/img/icons/edit-set.svg"
+                                                                           alt="img"></a>
                                     </div>
+                                </div>
+                                <div class="profile-contentname">
+                                    <h2>William Castillo</h2>
+                                    <h4>Updates Your Photo and Personal Details.</h4>
+                                </div>
+                            </div>
+                            <div class="ms-auto">
+                                <a href="javascript:void(0);" class="btn btn-submit me-2">Save</a>
+                                <a href="javascript:void(0);" class="btn btn-cancel">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" placeholder="William">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" placeholder="Castilo">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="text" placeholder="william@example.com">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="text" placeholder="+1452 876 5432">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label>User Name</label>
+                                <input type="text" placeholder="+1452 876 5432">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label>Password</label>
+                                <div class="pass-group">
+                                    <input type="password" class=" pass-input">
+                                    <span class="fas toggle-password fa-eye-slash"></span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-12">
+                        <div class="col-12">
                             <a href="javascript:void(0);" class="btn btn-submit me-2">Submit</a>
-                            <a href="productlist.html" class="btn btn-cancel">Cancel</a>
+                            <a href="javascript:void(0);" class="btn btn-cancel">Cancel</a>
                         </div>
                     </div>
                 </div>

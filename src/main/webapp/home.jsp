@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <meta name="description" content="POS - Bootstrap Admin Template">
     <meta name="keywords"
-          content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
+          content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern,  html5, responsive">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
     <title>Dreams Pos admin template</title>
@@ -15,8 +15,6 @@
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
 
     <link rel="stylesheet" href="assets/css/animate.css">
-
-    <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
 
     <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
 
@@ -107,7 +105,7 @@
                     <div class="noti-content">
                         <ul class="notification-list">
                             <li class="notification-message">
-                                <a href="activities.html">
+                                <a href="activities.jsp">
                                     <div class="media d-flex">
 <span class="avatar flex-shrink-0">
 <img alt="" src="assets/img/profiles/avatar-02.jpg">
@@ -121,7 +119,7 @@
                                 </a>
                             </li>
                             <li class="notification-message">
-                                <a href="activities.html">
+                                <a href="activities.jsp">
                                     <div class="media d-flex">
 <span class="avatar flex-shrink-0">
 <img alt="" src="assets/img/profiles/avatar-03.jpg">
@@ -136,7 +134,7 @@
                                 </a>
                             </li>
                             <li class="notification-message">
-                                <a href="activities.html">
+                                <a href="activities.jsp">
                                     <div class="media d-flex">
 <span class="avatar flex-shrink-0">
 <img alt="" src="assets/img/profiles/avatar-06.jpg">
@@ -152,7 +150,7 @@
                                 </a>
                             </li>
                             <li class="notification-message">
-                                <a href="activities.html">
+                                <a href="activities.jsp">
                                     <div class="media d-flex">
 <span class="avatar flex-shrink-0">
 <img alt="" src="assets/img/profiles/avatar-17.jpg">
@@ -167,7 +165,7 @@
                                 </a>
                             </li>
                             <li class="notification-message">
-                                <a href="activities.html">
+                                <a href="activities.jsp">
                                     <div class="media d-flex">
 <span class="avatar flex-shrink-0">
 <img alt="" src="assets/img/profiles/avatar-13.jpg">
@@ -183,7 +181,7 @@
                         </ul>
                     </div>
                     <div class="topnav-dropdown-footer">
-                        <a href="activities.html">View all Notifications</a>
+                        <a href="activities.jsp">View all Notifications</a>
                     </div>
                 </div>
             </li>
@@ -209,7 +207,7 @@
                         <a class="dropdown-item" href="generalsettings.html"><i class="me-2"
                                                                                 data-feather="settings"></i>Settings</a>
                         <hr class="m-0">
-                        <a class="dropdown-item logout pb-0" href="signin.html"><img src="assets/img/icons/log-out.svg"
+                        <a class="dropdown-item logout pb-0" href="logout"><img src="assets/img/icons/log-out.svg"
                                                                                      class="me-2" alt="img">Logout</a>
                     </div>
                 </div>
@@ -234,7 +232,7 @@
         <div class="sidebar-inner slimscroll">
             <div id="sidebar-menu" class="sidebar-menu">
                 <ul>
-                    <li>
+                    <li class="active">
                         <a href="index.html"><img src="assets/img/icons/dashboard.svg" alt="img"><span> Dashboard</span>
                         </a>
                     </li>
@@ -244,15 +242,15 @@
                                 class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="productlist.html">Product List</a></li>
-                            <li><a href="addproduct.html" class="active">Add Product</a></li>
-                            <li><a href="categorylist.html">Category List</a></li>
-                            <li><a href="addcategory.html">Add Category</a></li>
+                            <li><a href="addproduct.jsp">Add Product</a></li>
+                            <li><a href="categorylist.jsp">Category List</a></li>
+                            <li><a href="addcategory.jsp">Add Category</a></li>
                             <li><a href="subcategorylist.html">Sub Category List</a></li>
                             <li><a href="subaddcategory.html">Add Sub Category</a></li>
-                            <li><a href="brandlist.html">Brand List</a></li>
-                            <li><a href="addbrand.html">Add Brand</a></li>
+                            <li><a href="brandlist.jsp">Brand List</a></li>
+                            <li><a href="addbrand.jsp">Add Brand</a></li>
                             <li><a href="importproduct.html">Import Products</a></li>
-                            <li><a href="barcode.html">Print Barcode</a></li>
+                            <li><a href="barcode.jsp">Print Barcode</a></li>
                         </ul>
                     </li>
                     <li class="submenu">
@@ -272,7 +270,7 @@
                             <span class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="purchaselist.html">Purchase List</a></li>
-                            <li><a href="addpurchase.html">Add Purchase</a></li>
+                            <li><a href="addpurchase.jsp">Add Purchase</a></li>
                             <li><a href="importpurchase.html">Import Purchase</a></li>
                         </ul>
                     </li>
@@ -291,7 +289,7 @@
                             <span class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="quotationList.html">Quotation List</a></li>
-                            <li><a href="addquotation.html">Add Quotation</a></li>
+                            <li><a href="addquotation.jsp">Add Quotation</a></li>
                         </ul>
                     </li>
                     <li class="submenu">
@@ -299,7 +297,7 @@
                             <span class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="transferlist.html">Transfer List</a></li>
-                            <li><a href="addtransfer.html">Add Transfer </a></li>
+                            <li><a href="addtransfer.jsp">Add Transfer </a></li>
                             <li><a href="importtransfer.html">Import Transfer </a></li>
                         </ul>
                     </li>
@@ -320,13 +318,13 @@
                                 class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="customerlist.html">Customer List</a></li>
-                            <li><a href="addcustomer.html">Add Customer </a></li>
+                            <li><a href="addcustomer.jsp">Add Customer </a></li>
                             <li><a href="supplierlist.html">Supplier List</a></li>
-                            <li><a href="addsupplier.html">Add Supplier </a></li>
+                            <li><a href="addsupplier.jsp">Add Supplier </a></li>
                             <li><a href="userlist.html">User List</a></li>
-                            <li><a href="adduser.html">Add User</a></li>
+                            <li><a href="adduser.jsp">Add User</a></li>
                             <li><a href="storelist.html">Store List</a></li>
-                            <li><a href="addstore.html">Add Store</a></li>
+                            <li><a href="addstore.jsp">Add Store</a></li>
                         </ul>
                     </li>
                     <li class="submenu">
@@ -344,7 +342,7 @@
                         <a href="components.html"><i data-feather="layers"></i><span> Components</span> </a>
                     </li>
                     <li>
-                        <a href="blankpage.html"><i data-feather="file"></i><span> Blank Page</span> </a>
+                        <a href="blankpage.jsp"><i data-feather="file"></i><span> Blank Page</span> </a>
                     </li>
                     <li class="submenu">
                         <a href="javascript:void(0);"><i data-feather="alert-octagon"></i> <span> Error Pages </span>
@@ -382,7 +380,7 @@
                         <a href="javascript:void(0);"><i data-feather="bar-chart-2"></i> <span> Charts </span> <span
                                 class="menu-arrow"></span></a>
                         <ul>
-                            <li><a href="chart-apex.html">Apex Charts</a></li>
+                            <li><a href="chart-apex.jsp">Apex Charts</a></li>
                             <li><a href="chart-js.html">Chart Js</a></li>
                             <li><a href="chart-morris.html">Morris Charts</a></li>
                             <li><a href="chart-flot.html">Flot Charts</a></li>
@@ -432,7 +430,7 @@
                             <span class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="chat.html">Chat</a></li>
-                            <li><a href="calendar.html">Calendar</a></li>
+                            <li><a href="calendar.jsp">Calendar</a></li>
                             <li><a href="email.html">Email</a></li>
                         </ul>
                     </li>
@@ -479,137 +477,285 @@
 
     <div class="page-wrapper">
         <div class="content">
-            <div class="page-header">
-                <div class="page-title">
-                    <h4>Product Add</h4>
-                    <h6>Create new product</h6>
+            <div class="row">
+                <div class="col-lg-3 col-sm-6 col-12">
+                    <div class="dash-widget">
+                        <div class="dash-widgetimg">
+                            <span><img src="assets/img/icons/dash1.svg" alt="img"></span>
+                        </div>
+                        <div class="dash-widgetcontent">
+                            <h5>$<span class="counters" data-count="307144.00">$307,144.00</span></h5>
+                            <h6>Total Purchase Due</h6>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Product Name</label>
-                                <input type="text">
-                            </div>
+                <div class="col-lg-3 col-sm-6 col-12">
+                    <div class="dash-widget dash1">
+                        <div class="dash-widgetimg">
+                            <span><img src="assets/img/icons/dash2.svg" alt="img"></span>
                         </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Category</label>
-                                <select class="select">
-                                    <option>Choose Category</option>
-                                    <option>Computers</option>
-                                    <option>Ok k anh Nam</option>
-                                </select>
-                            </div>
+                        <div class="dash-widgetcontent">
+                            <h5>$<span class="counters" data-count="4385.00">$4,385.00</span></h5>
+                            <h6>Total Sales Due</h6>
                         </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Sub Category</label>
-                                <select class="select">
-                                    <option>Choose Sub Category</option>
-                                    <option>Fruits</option>
-                                </select>
-                            </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 col-12">
+                    <div class="dash-widget dash2">
+                        <div class="dash-widgetimg">
+                            <span><img src="assets/img/icons/dash3.svg" alt="img"></span>
                         </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Brand</label>
-                                <select class="select">
-                                    <option>Choose Brand</option>
-                                    <option>Brand</option>
-                                </select>
-                            </div>
+                        <div class="dash-widgetcontent">
+                            <h5>$<span class="counters" data-count="385656.50">385,656.50</span></h5>
+                            <h6>Total Sale Amount</h6>
                         </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Unit</label>
-                                <select class="select">
-                                    <option>Choose Unit</option>
-                                    <option>Unit</option>
-                                </select>
-                            </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 col-12">
+                    <div class="dash-widget dash3">
+                        <div class="dash-widgetimg">
+                            <span><img src="assets/img/icons/dash4.svg" alt="img"></span>
                         </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>SKU</label>
-                                <input type="text">
-                            </div>
+                        <div class="dash-widgetcontent">
+                            <h5>$<span class="counters" data-count="40000.00">400.00</span></h5>
+                            <h6>Total Sale Amount</h6>
                         </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Minimum Qty</label>
-                                <input type="text">
-                            </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 col-12 d-flex">
+                    <div class="dash-count">
+                        <div class="dash-counts">
+                            <h4>100</h4>
+                            <h5>Customers</h5>
                         </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Quantity</label>
-                                <input type="text">
-                            </div>
+                        <div class="dash-imgs">
+                            <i data-feather="user"></i>
                         </div>
-                        <div class="col-lg-12">
-                            <div class="form-group">
-                                <label>Description</label>
-                                <textarea class="form-control"></textarea>
-                            </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 col-12 d-flex">
+                    <div class="dash-count das1">
+                        <div class="dash-counts">
+                            <h4>100</h4>
+                            <h5>Suppliers</h5>
                         </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Tax</label>
-                                <select class="select">
-                                    <option>Choose Tax</option>
-                                    <option>2%</option>
-                                </select>
-                            </div>
+                        <div class="dash-imgs">
+                            <i data-feather="user-check"></i>
                         </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Discount Type</label>
-                                <select class="select">
-                                    <option>Percentage</option>
-                                    <option>10%</option>
-                                    <option>20%</option>
-                                </select>
-                            </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 col-12 d-flex">
+                    <div class="dash-count das2">
+                        <div class="dash-counts">
+                            <h4>100</h4>
+                            <h5>Purchase Invoice</h5>
                         </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Price</label>
-                                <input type="text">
-                            </div>
+                        <div class="dash-imgs">
+                            <i data-feather="file-text"></i>
                         </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label> Status</label>
-                                <select class="select">
-                                    <option>Closed</option>
-                                    <option>Open</option>
-                                </select>
-                            </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 col-12 d-flex">
+                    <div class="dash-count das3">
+                        <div class="dash-counts">
+                            <h4>105</h4>
+                            <h5>Sales Invoice</h5>
                         </div>
-                        <div class="col-lg-12">
-                            <div class="form-group">
-                                <label> Product Image</label>
-                                <div class="image-upload">
-                                    <input type="file">
-                                    <div class="image-uploads">
-                                        <img src="assets/img/icons/upload.svg" alt="img">
-                                        <h4>Drag and drop a file to upload</h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                            <a href="javascript:void(0);" class="btn btn-submit me-2">Submit</a>
-                            <a href="productlist.html" class="btn btn-cancel">Cancel</a>
+                        <div class="dash-imgs">
+                            <i data-feather="file"></i>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-lg-7 col-sm-12 col-12 d-flex">
+                    <div class="card flex-fill">
+                        <div class="card-header pb-0 d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">Purchase & Sales</h5>
+                            <div class="graph-sets">
+                                <ul>
+                                    <li>
+                                        <span>Sales</span>
+                                    </li>
+                                    <li>
+                                        <span>Purchase</span>
+                                    </li>
+                                </ul>
+                                <div class="dropdown">
+                                    <button class="btn btn-white btn-sm dropdown-toggle" type="button"
+                                            id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                        2022 <img src="assets/img/icons/dropdown.svg" alt="img" class="ms-2">
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <li>
+                                            <a href="javascript:void(0);" class="dropdown-item">2022</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);" class="dropdown-item">2021</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);" class="dropdown-item">2020</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="sales_charts"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 col-sm-12 col-12 d-flex">
+                    <div class="card flex-fill">
+                        <div class="card-header pb-0 d-flex justify-content-between align-items-center">
+                            <h4 class="card-title mb-0">Recently Added Products</h4>
+                            <div class="dropdown">
+                                <a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false"
+                                   class="dropset">
+                                    <i class="fa fa-ellipsis-v"></i>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <li>
+                                        <a href="productlist.html" class="dropdown-item">Product List</a>
+                                    </li>
+                                    <li>
+                                        <a href="addproduct.jsp" class="dropdown-item">Product Add</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive dataview">
+                                <table class="table datatable ">
+                                    <thead>
+                                    <tr>
+                                        <th>Sno</th>
+                                        <th>Products</th>
+                                        <th>Price</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td class="productimgname">
+                                            <a href="productlist.html" class="product-img">
+                                                <img src="assets/img/product/product22.jpg" alt="product">
+                                            </a>
+                                            <a href="productlist.html">Apple Earpods</a>
+                                        </td>
+                                        <td>$891.2</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td class="productimgname">
+                                            <a href="productlist.html" class="product-img">
+                                                <img src="assets/img/product/product23.jpg" alt="product">
+                                            </a>
+                                            <a href="productlist.html">iPhone 11</a>
+                                        </td>
+                                        <td>$668.51</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td class="productimgname">
+                                            <a href="productlist.html" class="product-img">
+                                                <img src="assets/img/product/product24.jpg" alt="product">
+                                            </a>
+                                            <a href="productlist.html">samsung</a>
+                                        </td>
+                                        <td>$522.29</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td class="productimgname">
+                                            <a href="productlist.html" class="product-img">
+                                                <img src="assets/img/product/product6.jpg" alt="product">
+                                            </a>
+                                            <a href="productlist.html">Macbook Pro</a>
+                                        </td>
+                                        <td>$291.01</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-0">
+                <div class="card-body">
+                    <h4 class="card-title">Expired Products</h4>
+                    <div class="table-responsive dataview">
+                        <table class="table datatable ">
+                            <thead>
+                            <tr>
+                                <th>SNo</th>
+                                <th>Product Code</th>
+                                <th>Product Name</th>
+                                <th>Brand Name</th>
+                                <th>Category Name</th>
+                                <th>Expiry Date</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><a href="javascript:void(0);">IT0001</a></td>
+                                <td class="productimgname">
+                                    <a class="product-img" href="productlist.html">
+                                        <img src="assets/img/product/product2.jpg" alt="product">
+                                    </a>
+                                    <a href="productlist.html">Orange</a>
+                                </td>
+                                <td>N/D</td>
+                                <td>Fruits</td>
+                                <td>12-12-2022</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><a href="javascript:void(0);">IT0002</a></td>
+                                <td class="productimgname">
+                                    <a class="product-img" href="productlist.html">
+                                        <img src="assets/img/product/product3.jpg" alt="product">
+                                    </a>
+                                    <a href="productlist.html">Pineapple</a>
+                                </td>
+                                <td>N/D</td>
+                                <td>Fruits</td>
+                                <td>25-11-2022</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><a href="javascript:void(0);">IT0003</a></td>
+                                <td class="productimgname">
+                                    <a class="product-img" href="productlist.html">
+                                        <img src="assets/img/product/product4.jpg" alt="product">
+                                    </a>
+                                    <a href="productlist.html">Stawberry</a>
+                                </td>
+                                <td>N/D</td>
+                                <td>Fruits</td>
+                                <td>19-11-2022</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td><a href="javascript:void(0);">IT0004</a></td>
+                                <td class="productimgname">
+                                    <a class="product-img" href="productlist.html">
+                                        <img src="assets/img/product/product5.jpg" alt="product">
+                                    </a>
+                                    <a href="productlist.html">Avocat</a>
+                                </td>
+                                <td>N/D</td>
+                                <td>Fruits</td>
+                                <td>20-11-2022</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -626,10 +772,8 @@
 
 <script src="assets/js/bootstrap.bundle.min.js"></script>
 
-<script src="assets/plugins/select2/js/select2.min.js"></script>
-
-<script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
-<script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
+<script src="assets/plugins/apexchart/apexcharts.min.js"></script>
+<script src="assets/plugins/apexchart/chart-data.js"></script>
 
 <script src="assets/js/script.js"></script>
 </body>

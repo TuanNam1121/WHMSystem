@@ -1,4 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -62,9 +62,9 @@
                         </div>
                     </form>
 
-                    <div class="signinform text-center">
+                    <%--<div class="signinform text-center">
                         <h4>Don’t have an account? <a href="signup.html" class="hover-a">Sign Up</a></h4>
-                    </div>
+                    </div>--%>
 
                     <%--<div class="form-setlogin">
                         <h4>Or sign up with</h4>

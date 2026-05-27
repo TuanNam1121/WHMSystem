@@ -101,7 +101,7 @@ public class UserDAO {
     }
     
     public boolean isActiveUser(User i){
-        String sql = "select isActive from users where userid = ?";
+        String sql = "select isactive from users where userid = ?";
         try (Connection conn = DBContext.getConnection();) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, i.getId());
@@ -129,7 +129,7 @@ public class UserDAO {
     }
 
     public boolean addNewUser(User user) {
-        String sql = "Insert into users(username, passwordhash, roleid, phone, email, gender, fullname, isActive)"
+        String sql = "Insert into users(username, passwordhash, roleid, phone, email, gender, fullname, isactive)"
                 + "values (?,?,?,?,?,?,?,?)";
         try (Connection conn = DBContext.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);

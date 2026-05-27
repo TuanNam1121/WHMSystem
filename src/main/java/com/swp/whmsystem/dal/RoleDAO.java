@@ -198,5 +198,6 @@ public class RoleDAO {
             }
         }
         dao.updateRole(new Role(5, "WAREHOUSE_PROCESSOR", false));
+
     }
 }

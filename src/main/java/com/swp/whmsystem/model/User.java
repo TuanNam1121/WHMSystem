@@ -19,6 +19,8 @@ public class User {
     private String email;
     private String gender;
     private boolean isActive;
+    private String firstname;
+    private String lastname;
 
     public User() {
     }
@@ -115,6 +117,22 @@ public class User {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     @Override

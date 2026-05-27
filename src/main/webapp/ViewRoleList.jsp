@@ -23,11 +23,42 @@
             <div class="table-header">
                 <h2>Role List</h2>
                 <div class="header-actions">
-                    <input type="text" class="search-input" placeholder="Search role by name">
+                    <form action="${pageContext.request.contextPath}/ViewRoleList" method="get">
+
+                        <!-- Search name -->
+                        <input
+                                id="keyword"
+                                type="text"
+                                name="keyword"
+                                class="filter-input"
+                                placeholder="Search by rolename"
+                                value="${param.keyword}"
+                        >
+
+                        <select name="sortBy" class="filter-select" id="sortBy">
+                            <option value="">Sort</option>
+                            <option value="rolename"
+                            ${param.sortBy == 'rolename' ? 'selected' : ''}>
+                                Role Name
+                            </option>
+                            <option value="isactive"
+                            ${param.sortBy == 'isactive' ? 'selected' : ''}>
+                                Active
+                            </option>
+                        </select>
+
+
+
+                        <!-- Search button -->
+                        <button type="submit" class="search-btn">
+                            Search
+                        </button>
+                    </form>
                     <button class="add-btn">
                         <a href="${pageContext.request.contextPath}/AddNewRole">Add new role</a>
                     </button>
                 </div>
+
             </div>
             <table>
                 <thead>

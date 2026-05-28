@@ -1,9 +1,7 @@
 package com.swp.whmsystem.controller.product;
 
 import com.swp.whmsystem.dal.CategoryDAO;
-import com.swp.whmsystem.dal.RoleDAO;
 import com.swp.whmsystem.model.Category;
-import com.swp.whmsystem.model.Role;
 import com.swp.whmsystem.utils.InputStandization;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -11,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.List;
 
 public class AddNewCategory extends HttpServlet {
     @Override

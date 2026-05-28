@@ -28,7 +28,7 @@ public class CategoryDAO {
     }
 
     public Category getCategoryByName(String categoryName) {
-        String sql = "select * from categories where categoryName = ?";
+        String sql = "select * from categories where name = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, categoryName);
@@ -44,16 +44,33 @@ public class CategoryDAO {
         return null;
     }
 
+    public Category getCategoryById(int categoryId) {
+        String sql = "select * from categories where categoryid = ? limit 1";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, categoryId);
+            try (ResultSet resultSet = preparedStatement.executeQuery();) {
+                if(resultSet.next()) {
+                    Category c = mapResultSetToCategory(resultSet);
+                    return c;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
     public Category mapResultSetToCategory(ResultSet rs) throws SQLException {
         Category c = new Category();
-        c.setCategoryId(rs.getInt("categoryId"));
-        c.setCategoryName(rs.getString("categoryName"));
+        c.setCategoryId(rs.getInt("categoryid"));
+        c.setCategoryName(rs.getString("name"));
         c.setDescription(rs.getString("description"));
         return c;
     }
 
     public boolean addNewCategory(Category category) {
-        String sql = "insert into Categories(categoryName, description) values (?, ?)";
+        String sql = "insert into Categories(name, description) values (?, ?)";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1 ,category.getCategoryName());
@@ -66,7 +83,7 @@ public class CategoryDAO {
     }
 
     public boolean updateCategory(Category category) {
-        String sql = "update Categories set categoryName = ?, description = ? where categoryId = ?";
+        String sql = "update Categories set name = ?, description = ? where categoryid = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, category.getCategoryName());

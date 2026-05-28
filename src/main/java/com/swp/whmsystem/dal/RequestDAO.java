@@ -21,7 +21,7 @@ import java.util.List;
 public class RequestDAO {
 
     public List<Request> getAllRequest() {
-        String sql = "select * from request order by createdat desc";
+        String sql = "select * from password_resets order by createdat desc";
 
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -38,7 +38,7 @@ public class RequestDAO {
     }
 
     public Request getLatestRequestByUserId(int userId) {
-        String sql = "select * from request where userid = ? order by createdat desc limit 1";
+        String sql = "select * from password_resets where userid = ? order by createdat desc limit 1";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -57,7 +57,7 @@ public class RequestDAO {
     }
 
     public boolean updateRequestStatus(int requestId, String newStatus) {
-    String sql = "update request set status = ?, completedat = CURRENT_TIMESTAMP WHERE requestid = ?";
+    String sql = "update password_resets set status = ?, completedat = CURRENT_TIMESTAMP WHERE requestid = ?";
 
     try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
         ps.setString(1, newStatus);
@@ -78,7 +78,6 @@ public class RequestDAO {
         i.setRequestId(rs.getInt("requestid"));
         i.setUserId(rs.getInt("userid"));
         i.setStatus(rs.getString("status"));
-        i.setMessage(rs.getString("message"));
         Timestamp createdAt = rs.getTimestamp("createdat");
         DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
         i.setCreatedAt(createdAt.toLocalDateTime().format(format));
@@ -86,7 +85,7 @@ public class RequestDAO {
     }
 
     public boolean addNewRequest(Request request) {
-        String sql = "Insert into request(userid, status, message)"
+        String sql = "Insert into password_resets(userid, status)"
                 + " values (?,?,?)";
         try (Connection conn = DBContext.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);

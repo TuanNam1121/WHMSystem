@@ -10,6 +10,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChipDAO {
+    
+    public List<Chip> getAllChip(){
+        List<Chip> list = new ArrayList<>();
+
+        String sql = "SELECT * FROM chips ORDER BY id ";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Chip chip = new Chip();
+                chip.setId(rs.getInt("id"));
+                chip.setName(rs.getString("name"));
+                chip.setActive(rs.getBoolean("isactive"));
+                list.add(chip);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
+    
     public List<Chip> getChipsByPage(int pageNo, int pageSize) {
 
         List<Chip> list = new ArrayList<>();
@@ -23,7 +44,7 @@ public class ChipDAO {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Chip chip = new Chip();
-                chip.setId(rs.getLong("id"));
+                chip.setId(rs.getInt("id"));
                 chip.setName(rs.getString("name"));
                 chip.setActive(rs.getBoolean("isactive"));
                 list.add(chip);

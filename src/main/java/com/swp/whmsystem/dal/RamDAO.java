@@ -10,6 +10,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RamDAO {
+    
+    public List<Ram> getAllRam(){
+        List<Ram> list = new ArrayList<>();
+
+        String sql = "SELECT id, size, isactive FROM rams ORDER BY id";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Ram ram = new Ram();
+                ram.setId(rs.getInt("id"));
+                ram.setSize(rs.getString("size"));
+                ram.setActive(rs.getBoolean("isactive"));
+                list.add(ram);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
+    
     public List<Ram> getRamsByPage(int pageNo, int pageSize) {
 
         List<Ram> list = new ArrayList<>();

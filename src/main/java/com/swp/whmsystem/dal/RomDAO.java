@@ -10,6 +10,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RomDAO {
+    public List<Rom> getAllRom(){
+        List<Rom> list = new ArrayList<>();
+
+        String sql = "SELECT id, size, isactive FROM roms ORDER BY id";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Rom rom = new Rom();
+                rom.setId(rs.getInt("id"));
+                rom.setSize(rs.getString("size"));
+                rom.setActive(rs.getBoolean("isactive"));
+                list.add(rom);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
+    
     public List<Rom> getRomsByPage(int pageNo, int pageSize) {
 
         List<Rom> list = new ArrayList<>();

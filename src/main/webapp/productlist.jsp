@@ -240,7 +240,7 @@
                     <h6>Manage your products</h6>
                 </div>
                 <div class="page-btn">
-                    <a href="addproduct.jsp" class="btn btn-added"><img src="assets/img/icons/plus.svg" alt="img"
+                    <a href="AddProduct" class="btn btn-added"><img src="assets/img/icons/plus.svg" alt="img"
                                                                         class="me-1">Add New Product</a>
                 </div>
             </div>

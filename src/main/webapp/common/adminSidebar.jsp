@@ -3,13 +3,11 @@
 <c:set var="activeMenu" value="${empty requestScope.activeMenu ? '' : requestScope.activeMenu}" />
 
 <aside class="sidebar">
-    <a class="logo-box sidebar-logo" href="${pageContext.request.contextPath}/home">
+    <a class="logo-box sidebar-logo" href="${pageContext.request.contextPath}/AdminDashBoard">
         <span class="logo-mark">W</span>
         <span>Admin</span>
     </a>
     <nav class="menu">
-        <a href="${pageContext.request.contextPath}/home"
-           class="menu-item ${activeMenu == 'userhome' ? 'active' : ''}">Home</a>
         <a href="${pageContext.request.contextPath}/AdminDashBoard"
            class="menu-item ${activeMenu == 'dashboard' ? 'active' : ''}">Dashboard</a>
         <a href="${pageContext.request.contextPath}/ViewUserList"

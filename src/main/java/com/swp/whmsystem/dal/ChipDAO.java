@@ -153,12 +153,13 @@ public class ChipDAO {
         return 0;
     }
 
-    public boolean insertChip(String name) {
-        String sql = "Insert into chips (name, isactive) VALUES (?, ?)";
+    public boolean insertChip(String name,Boolean active)
+    {
+        String sql ="Insert into chips (name, isactive) VALUES (?, ?)";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setString(1, name);
-            ps.setBoolean(2, true);
-            ResultSet rs = ps.executeQuery();
+            ps.setBoolean(2, active);
+            System.out.println(sql+name+active);
             return ps.executeUpdate() != 0;
         } catch (Exception e) {
             e.printStackTrace();

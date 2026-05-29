@@ -4,11 +4,14 @@ import com.swp.whmsystem.dal.CategoryDAO;
 import com.swp.whmsystem.model.Category;
 import com.swp.whmsystem.utils.InputStandization;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+
+@WebServlet(name = "AddCategory", urlPatterns = {"/addCategory"})
 
 public class AddCategory extends HttpServlet {
     @Override
@@ -16,7 +19,7 @@ public class AddCategory extends HttpServlet {
             throws ServletException, IOException {
         String action = "new";
         request.setAttribute("act", action);
-        request.getRequestDispatcher("CategoryDetail.jsp").forward(request, response);
+        request.getRequestDispatcher("addcategory.jsp").forward(request, response);
     }
 
     @Override
@@ -31,7 +34,7 @@ public class AddCategory extends HttpServlet {
         CategoryDAO categoryDAO = new CategoryDAO();
         if (categoryDAO.getCategoryByName(categoryName) != null) {
             String error = "Category name has already exsisted! Please input another one!";
-            request.getRequestDispatcher("CategoryDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("addcategory.jsp").forward(request, response);
         }
 
         Category category = new Category();
@@ -39,11 +42,11 @@ public class AddCategory extends HttpServlet {
         category.setDescription(description);
 
         if (categoryDAO.addNewCategory(category)) {
-            response.sendRedirect("ViewCategoryList");
+            response.sendRedirect("categorylist");
         } else {
             String message = "Đã xảy ra lỗi!";
             request.setAttribute("error", message);
-            request.getRequestDispatcher("CategoryDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("categorylist.jsp").forward(request, response);
         }
     }
 

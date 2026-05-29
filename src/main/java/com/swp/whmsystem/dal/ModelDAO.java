@@ -26,27 +26,7 @@ public class ModelDAO {
 
         return model;
     }
-    
-    public List<Model> getModelById(int brandId){
-        List<Model> list = new ArrayList<>();
 
-        String sql = "SELECT m.modelid, m.name, m.isactive, " +
-                "b.brandid, b.name AS brand_name, b.description, b.createdat, b.updatedat " +
-                "FROM models m JOIN brands b ON m.brandid = b.brandid where b.brandid = ?";
-
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, brandId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                list.add(mapModel(rs));
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return list;
-    }
 
     public List<Model> getAll() {
         List<Model> list = new ArrayList<>();
@@ -71,24 +51,6 @@ public class ModelDAO {
         return list;
     }
 
-    public Model getModelById(int id) {
-        String sql = "SELECT m.modelid, m.name, m.isactive, " +
-                "b.brandid, b.name AS brand_name, b.description, b.createdat, b.updatedat " +
-                "FROM models m JOIN brands b ON m.brandid = b.brandid " +
-                "WHERE m.modelid = ?";
-
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return mapModel(rs);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return null;
-    }
 
     public List<Model> getModelsByFilter(String keyword, Integer brandId, String status) {
         List<Model> list = new ArrayList<>();
@@ -183,7 +145,7 @@ public class ModelDAO {
                     model.setId(rs.getInt("modelid"));
                     model.setName(rs.getString("name"));
                     BrandDAO brandDAO = new BrandDAO();
-                    Brand brand = brandDAO.getBrand(rs.getInt("brandid"));
+                    Brand brand = brandDAO.getBrandById(rs.getInt("brandid"));
                     model.setBrand(brand);
                     model.setActive(rs.getBoolean("isactive"));
                     return model;
@@ -210,6 +172,6 @@ public class ModelDAO {
 
     public static void main(String[] args) {
         ModelDAO dao = new ModelDAO();
-        System.out.println(dao.getModelsByPage(1, 10));
+//        System.out.println(dao.getModelsByPage(1, 10));
     }
 }

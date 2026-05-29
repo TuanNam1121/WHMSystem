@@ -14,7 +14,7 @@
                         <li><a href="productlist">Product List</a></li>
                         <li><a href="AddProduct">Add Product</a></li>
                         <li><a href="categorylist.jsp">Category List</a></li>
-                        <li><a href="addcategory.jsp">Add Category</a></li>
+                        <li><a href="addCategory">Add Category</a></li>
                         <li><a href="subcategorylist.html">Sub Category List</a></li>
                         <li><a href="subaddcategory.html">Add Sub Category</a></li>
                         <li><a href="ViewBrandList">Brand List</a></li>

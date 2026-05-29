@@ -62,7 +62,7 @@ public class BrandDetail extends HttpServlet {
         if (act == null || !act.equals("new")) {
             int id = Integer.parseInt(request.getParameter("id"));
             BrandDAO bd = new BrandDAO();
-            Brand b = bd.getBrand(id);
+            Brand b = bd.getBrandById(id);
 
             request.setAttribute("act", "update");
             request.setAttribute("brand", b);

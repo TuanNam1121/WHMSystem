@@ -120,25 +120,6 @@ public class RamDAO {
         return list;
     }
 
-    public Ram getRamById(int ramid) {
-        String sql = "select * from rams where id = ?";
-        try (
-                Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
-            ps.setInt(1, ramid);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Ram ram = new Ram();
-                    ram.setId(rs.getInt("id"));
-                    ram.setSize(rs.getString("size"));
-                    ram.setActive(rs.getBoolean("isactive"));
-                    return ram;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     public int count() {
         String sql = "SELECT COUNT(*) FROM rams";

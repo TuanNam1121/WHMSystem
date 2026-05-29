@@ -30,23 +30,6 @@ public class RomDAO {
         return list;
     }
 
-    public Rom getRomById(int id) {
-        String sql = "SELECT id, size, isactive FROM roms WHERE id = ?";
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Rom rom = new Rom();
-                rom.setId(rs.getInt("id"));
-                rom.setSize(rs.getString("size"));
-                rom.setActive(rs.getBoolean("isactive"));
-                return rom;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
-    }
 
     public List<Rom> getRomsByFilter(String keyword, String status) {
         List<Rom> list = new ArrayList<>();

@@ -4,17 +4,14 @@
  */
 package com.swp.whmsystem.dal;
 
-import java.util.List;
+import java.util.*;
 import java.sql.Connection;
 import java.sql.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 import com.swp.whmsystem.model.User;
+import com.swp.whmsystem.model.UserDTO;
 import com.swp.whmsystem.utils.HashPassword;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -300,6 +297,63 @@ public class UserDAO {
             System.out.println(ex.getMessage());
         }
         return null;
+    }
+
+    public boolean updateProfile(UserDTO dto) {
+        if (dto == null) {
+            return false;
+        }
+
+        StringBuilder sql = new StringBuilder("update users set ");
+        List<Object> parameter = new ArrayList<>();
+
+        if (dto.getFirstname() != null && !dto.getFirstname().trim().isEmpty()) {
+            sql.append("firstname = ?, ");
+            parameter.add(dto.getFirstname());
+        }
+
+        if (dto.getLastname() != null && !dto.getLastname().trim().isEmpty()) {
+            sql.append("lastname = ?, ");
+            parameter.add(dto.getLastname());
+        }
+
+        if (dto.getEmail() != null && !dto.getEmail().trim().isEmpty()) {
+            sql.append("email = ?, ");
+            parameter.add(dto.getEmail());
+        }
+
+        if (dto.getPhone() != null && !dto.getPhone().trim().isEmpty()) {
+            sql.append("phone = ?, ");
+            parameter.add(dto.getPhone());
+        }
+
+        if (dto.getUsername() != null && !dto.getUsername().trim().isEmpty()) {
+            sql.append("username = ?, ");
+            parameter.add(dto.getUsername());
+        }
+
+        if (parameter.isEmpty()) {
+            return false;
+        }
+
+        sql.setLength(sql.length() - 2);
+        sql.append("where userid = ?");
+        parameter.add(dto.getId());
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString());) {
+
+            for (int i = 0; i < parameter.size(); i++) {
+                ps.setObject(i + 1, parameter.get(i));
+            }
+
+            int rowAffected = ps.executeUpdate();
+
+            return rowAffected > 0;
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return false;
     }
 
     public static void main(String[] args) {

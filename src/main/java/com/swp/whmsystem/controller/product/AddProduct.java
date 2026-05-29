@@ -10,6 +10,7 @@ import com.swp.whmsystem.dal.ModelDAO;
 import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.dal.RamDAO;
 import com.swp.whmsystem.dal.RomDAO;
+import com.swp.whmsystem.dal.UnitDAO;
 import com.swp.whmsystem.dal.UserDAO;
 import com.swp.whmsystem.model.Brand;
 import com.swp.whmsystem.model.Chip;
@@ -17,6 +18,7 @@ import com.swp.whmsystem.model.Model;
 import com.swp.whmsystem.model.Product;
 import com.swp.whmsystem.model.Ram;
 import com.swp.whmsystem.model.Rom;
+import com.swp.whmsystem.model.Unit;
 import com.swp.whmsystem.utils.FileUtils;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -56,18 +58,21 @@ public class AddProduct extends HttpServlet {
         ChipDAO chip = new ChipDAO();
         ModelDAO model = new ModelDAO();
         BrandDAO brand = new BrandDAO();
+        UnitDAO unit = new UnitDAO();
+        
         List<Ram> ramList = ram.getAllRam();
         List<Rom> romList = rom.getAllRom();
         List<Chip> chipList = chip.getAllChip();
         List<Model> modelList = model.getAll();
         List<Brand> brandList = brand.getAllBrand();
+        List<Unit> unitList = unit.getAllUnit();
         // category
-        // unit
         request.setAttribute("ramList", ramList);
         request.setAttribute("romList", romList);
         request.setAttribute("chipList", chipList);
         request.setAttribute("modelList", modelList);
         request.setAttribute("brandList", brandList);
+        request.setAttribute("unitList", unitList);
         request.getRequestDispatcher("addproduct.jsp").forward(request, response);
     }
 
@@ -97,8 +102,7 @@ public class AddProduct extends HttpServlet {
         // unit
         Part part = request.getPart("image");
         String uploadPath = getServletContext().getRealPath("/uploadImages");
-        String imgUrl = FileUtils.saveFile(part, uploadPath);
-        
+        String imgUrl = FileUtils.saveFile(part, request);
         Ram ram = new Ram();
         ram.setId(Integer.parseInt(ramId));
         Rom rom = new Rom();

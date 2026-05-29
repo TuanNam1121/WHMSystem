@@ -20,6 +20,8 @@
                         <li><a href="brandlist.jsp">Brand List</a></li>
                         <li><a href="addbrand.jsp">Add Brand</a></li>
                         <li><a href="AddChip">Add Chip</a></li>
+                        <li><a href="ViewBrandList">Brand List</a></li>
+                        <li><a href="BrandDetail?act=new">Add Brand</a></li>
                         <li><a href="ViewChipList">Chip List</a></li>
                         <li><a href="ViewRamList">Ram List</a></li>
                         <li><a href="ViewRomList">Rom List</a></li>

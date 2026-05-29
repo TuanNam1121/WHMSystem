@@ -40,7 +40,7 @@ public class ViewModelList extends HttpServlet {
 
         List<Model> models = modelDao.getModelsByFilter(keyword, brandId, status);
         List<Brand> brands = brandDao.getAllBrand();
-
+      
         request.setAttribute("models", models);
         request.setAttribute("brands", brands);
         request.setAttribute("keyword", keyword);

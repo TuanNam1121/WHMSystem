@@ -1,3 +1,5 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,9 +34,8 @@
 
 <div class="main-wrapper">
 
-    <jsp:include page="common/header.jsp"></jsp:include>
     <jsp:include page="common/sidebar.jsp"></jsp:include>
-
+    <jsp:include page="common/header.jsp"></jsp:include>
 
     <div class="page-wrapper">
         <div class="content">
@@ -51,7 +52,7 @@
                         <div class="col-lg-6 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Category Name</label>
-                                <input type="text">
+                                <input type="text" name="">
                             </div>
                         </div>
 

@@ -4,11 +4,13 @@
  */
 package com.swp.whmsystem.utils;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 /**
@@ -17,20 +19,35 @@ import java.util.UUID;
  */
 public class FileUtils {
 
-    public static String saveFile(Part part, String uploadRealPath) {
-        String fileName = UUID.randomUUID().toString() + "-" + part.getSubmittedFileName();
+    private static final String FOLDER_PATH = "images/products";
 
-        Path uploadDir = Paths.get(uploadRealPath);
-        if (Files.notExists(uploadDir)) {
-            try {
-                Files.createDirectories(uploadDir);
-                uploadDir.resolve(fileName); // an toàn hơn + "/"; tránh bị lỗi slash / \
-                part.write(uploadDir.toString());
-                return "/uploadImages/" + fileName;
-            } catch (IOException ex) {
-                throw new RuntimeException(ex.getMessage());
-            }
+    public static String saveFile(Part filePart, HttpServletRequest request) throws IOException {
+        String fileName = System.currentTimeMillis() + "_" + filePart.getSubmittedFileName();
+
+        // Save to /target (load immediately after upload, missing after redeploy)
+        // Paths.get auto control "\" or "/" --> Ok with all OS
+        Path targetBase = Paths.get(request.getServletContext().getRealPath(""));
+        Path targetDir = targetBase.resolve(FOLDER_PATH);
+
+        if (Files.notExists(targetDir)) Files.createDirectories(targetDir);
+
+        Path targetFilePath = targetDir.resolve(fileName);
+        filePart.write(targetFilePath.toString());
+
+        // Save to /src (Not load immediately after upload, keeping after redeploy)
+        try {
+            Path projectRoot = targetBase.getParent().getParent();
+            Path sourceDir = projectRoot.resolve(Paths.get("src", "main", "webapp", FOLDER_PATH));
+
+            if (Files.notExists(sourceDir)) Files.createDirectories(sourceDir);
+
+            Path sourceFilePath = sourceDir.resolve(fileName);
+            Files.copy(targetFilePath, sourceFilePath, StandardCopyOption.REPLACE_EXISTING); // Can throw IOException
+
+        } catch (Exception e) {
+            System.err.println("Fail to save to src: " + e.getMessage());
         }
-        return null;
+        // Return for web display (user "/")
+        return "/" + FOLDER_PATH + "/" + fileName;
     }
 }

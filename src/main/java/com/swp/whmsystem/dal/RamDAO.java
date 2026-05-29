@@ -1,6 +1,7 @@
 package com.swp.whmsystem.dal;
 
 import com.swp.whmsystem.model.Ram;
+import com.swp.whmsystem.model.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RamDAO {
-    
-    public List<Ram> getAllRam(){
+
+    public List<Ram> getAllRam() {
         List<Ram> list = new ArrayList<>();
 
         String sql = "SELECT id, size, isactive FROM rams ORDER BY id";
@@ -119,6 +120,26 @@ public class RamDAO {
         return list;
     }
 
+    public Ram getRamById(int ramid) {
+        String sql = "select * from rams where id = ?";
+        try (
+                Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+            ps.setInt(1, ramid);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Ram ram = new Ram();
+                    ram.setId(rs.getInt("id"));
+                    ram.setSize(rs.getString("size"));
+                    ram.setActive(rs.getBoolean("isactive"));
+                    return ram;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public int count() {
         String sql = "SELECT COUNT(*) FROM rams";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
@@ -132,9 +153,8 @@ public class RamDAO {
         return 0;
     }
 
-    public boolean insertRam(String size)
-    {
-        String sql ="Insert into rams (size, isactive) VALUES (?, ?)";
+    public boolean insertRam(String size) {
+        String sql = "Insert into rams (size, isactive) VALUES (?, ?)";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setString(1, size);
             ps.setBoolean(2, true);

@@ -40,8 +40,7 @@ public class Product {
         this.brandId = brandId;
     }
 
-    
-    
+
     public int getProductId() {
         return productId;
     }
@@ -137,7 +136,6 @@ public class Product {
     public void setBrandId(int brandId) {
         this.brandId = brandId;
     }
-    
-   
-    
+
+
 }

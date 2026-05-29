@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChipDAO {
-    
-    public List<Chip> getAllChip(){
+
+    public List<Chip> getAllChip() {
         List<Chip> list = new ArrayList<>();
 
         String sql = "SELECT * FROM chips ORDER BY id ";
@@ -30,7 +30,7 @@ public class ChipDAO {
         }
         return list;
     }
-    
+
     public List<Chip> getChipsByPage(int pageNo, int pageSize) {
 
         List<Chip> list = new ArrayList<>();
@@ -55,6 +55,26 @@ public class ChipDAO {
         return list;
     }
 
+    public Chip getChipById(int chipid) {
+        String sql = "select * from chips where id = ?";
+        try (
+                Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+            ps.setInt(1, chipid);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Chip chip = new Chip();
+                    chip.setId(rs.getInt("id"));
+                    chip.setName(rs.getString("name"));
+                    chip.setActive(rs.getBoolean("isactive"));
+                    return chip;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public int count() {
         String sql = "SELECT COUNT(*) FROM chips";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
@@ -68,9 +88,8 @@ public class ChipDAO {
         return 0;
     }
 
-    public boolean insertChip(String name)
-    {
-        String sql ="Insert into chips (name, isactive) VALUES (?, ?)";
+    public boolean insertChip(String name) {
+        String sql = "Insert into chips (name, isactive) VALUES (?, ?)";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setString(1, name);
             ps.setBoolean(2, true);

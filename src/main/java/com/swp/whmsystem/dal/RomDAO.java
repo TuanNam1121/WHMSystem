@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RomDAO {
-    public List<Rom> getAllRom(){
+    public List<Rom> getAllRom() {
         List<Rom> list = new ArrayList<>();
 
         String sql = "SELECT id, size, isactive FROM roms ORDER BY id";
@@ -29,7 +29,7 @@ public class RomDAO {
         }
         return list;
     }
-    
+
     public List<Rom> getRomsByPage(int pageNo, int pageSize) {
 
         List<Rom> list = new ArrayList<>();
@@ -54,6 +54,26 @@ public class RomDAO {
         return list;
     }
 
+    public Rom getRomById(int romid) {
+        String sql = "select * from roms where id = ?";
+        try (
+                Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+            ps.setInt(1, romid);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Rom rom = new Rom();
+                    rom.setId(rs.getInt("id"));
+                    rom.setSize(rs.getString("size"));
+                    rom.setActive(rs.getBoolean("isactive"));
+                    return rom;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public int count() {
         String sql = "SELECT COUNT(*) FROM roms";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
@@ -67,9 +87,8 @@ public class RomDAO {
         return 0;
     }
 
-    public boolean insertRom(String size)
-    {
-        String sql ="Insert into roms (size, isactive) VALUES (?, ?)";
+    public boolean insertRom(String size) {
+        String sql = "Insert into roms (size, isactive) VALUES (?, ?)";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setString(1, size);
             ps.setBoolean(2, true);

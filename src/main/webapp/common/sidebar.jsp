@@ -22,6 +22,8 @@
                         <li><a href="ViewChipList">Chip List</a></li>
                         <li><a href="ViewRamList">Ram List</a></li>
                         <li><a href="ViewRomList">Rom List</a></li>
+                        <li><a href="ViewModelList">Model List</a></li>
+                        <li><a href="ViewUnitList">Unit List</a></li>
                         <li><a href="importproduct.html">Import Products</a></li>
                         <li><a href="barcode.jsp">Print Barcode</a></li>
                     </ul>

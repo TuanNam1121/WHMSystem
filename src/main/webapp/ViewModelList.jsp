@@ -10,7 +10,7 @@
           content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Ram List</title>
+    <title>Model List</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
 
@@ -43,11 +43,11 @@
         <div class="content">
             <div class="page-header">
                 <div class="page-title">
-                    <h4>Ram List</h4>
+                    <h4>Model List</h4>
                 </div>
                 <div class="page-btn">
-                    <a href="AddRam" class="btn btn-added"><img src="assets/img/icons/plus.svg"
-                                                                 alt="img" class="me-2">Add New Ram</a>
+                    <a href="AddModel" class="btn btn-added"><img src="assets/img/icons/plus.svg"
+                                                                  alt="img" class="me-2">Add New Model</a>
                 </div>
             </div>
 
@@ -119,19 +119,20 @@
                             <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Size</th>
+                                <th>Model Name</th>
+                                <th>Brand Name</th>
                                 <th>Status</th>
                             </tr>
                             </thead>
-
                             <tbody>
-                            <c:forEach var="ram" items="${rams}">
+                            <c:forEach var="model" items="${models}">
                                 <tr>
-                                    <td>${ram.id}</td>
-                                    <td>${ram.size}</td>
+                                    <td>${model.id}</td>
+                                    <td>${model.name}</td>
+                                    <td>${model.brand.name}</td>
                                     <td>
                                         <c:choose>
-                                            <c:when test="${ram.active}">
+                                            <c:when test="${model.active}">
                                                 <span class="badges bg-lightgreen">Active</span>
                                             </c:when>
                                             <c:otherwise>
@@ -150,6 +151,7 @@
         </div>
     </div>
 </div>
+
 
 <script src="assets/js/jquery-3.6.0.min.js"></script>
 

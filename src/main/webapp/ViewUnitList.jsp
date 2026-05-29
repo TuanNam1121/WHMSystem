@@ -10,7 +10,7 @@
           content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Ram List</title>
+    <title>Unit List</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
 
@@ -43,11 +43,11 @@
         <div class="content">
             <div class="page-header">
                 <div class="page-title">
-                    <h4>Ram List</h4>
+                    <h4>Unit List</h4>
                 </div>
                 <div class="page-btn">
-                    <a href="AddRam" class="btn btn-added"><img src="assets/img/icons/plus.svg"
-                                                                 alt="img" class="me-2">Add New Ram</a>
+                    <a href="AddUnit" class="btn btn-added"><img src="assets/img/icons/plus.svg"
+                                                                  alt="img" class="me-2">Add New Unit</a>
                 </div>
             </div>
 
@@ -119,19 +119,19 @@
                             <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Size</th>
+                                <th>Name</th>
                                 <th>Status</th>
                             </tr>
                             </thead>
 
                             <tbody>
-                            <c:forEach var="ram" items="${rams}">
+                            <c:forEach var="unit" items="${units}">
                                 <tr>
-                                    <td>${ram.id}</td>
-                                    <td>${ram.size}</td>
+                                    <td>${unit.id}</td>
+                                    <td>${unit.name}</td>
                                     <td>
                                         <c:choose>
-                                            <c:when test="${ram.active}">
+                                            <c:when test="${unit.active}">
                                                 <span class="badges bg-lightgreen">Active</span>
                                             </c:when>
                                             <c:otherwise>

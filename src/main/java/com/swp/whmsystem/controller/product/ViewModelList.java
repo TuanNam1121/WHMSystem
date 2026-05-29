@@ -34,7 +34,6 @@ public class ViewModelList extends HttpServlet {
         int totalPages = (int) Math.ceil((double) totalModels / PAGE_SIZE);
 
         List<Model> models = modelDao.getModelsByPage(page, PAGE_SIZE);
-
         request.setAttribute("models", models);
         request.setAttribute("pageNo", page);
         request.setAttribute("pageSize", PAGE_SIZE);

@@ -32,7 +32,8 @@ public class ModelDAO {
 
         String sql = "SELECT m.modelid, m.name, m.isactive, " +
                 "b.brandid, b.name AS brand_name, b.description, b.createdat, b.updatedat " +
-                "FROM models m JOIN brands b ON m.brandid = b.brandid";
+                "FROM models m JOIN brands b ON m.brandid = b.brandid " +
+                "ORDER BY m.modelid";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -48,19 +49,97 @@ public class ModelDAO {
 
         return list;
     }
-    public List<Model> getModelsByPage(int pageNo, int pageSize) {
 
-        List<Model> list = new ArrayList<>();
-
+    public Model getModelById(int id) {
         String sql = "SELECT m.modelid, m.name, m.isactive, " +
                 "b.brandid, b.name AS brand_name, b.description, b.createdat, b.updatedat " +
                 "FROM models m JOIN brands b ON m.brandid = b.brandid " +
-                "ORDER BY m.modelid LIMIT ? OFFSET ?";
+                "WHERE m.modelid = ?";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            int offset = (pageNo - 1) * pageSize;
-            ps.setInt(1, pageSize);
-            ps.setInt(2, offset);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapModel(rs);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
+    }
+
+    public List<Model> getModelsByFilter(String keyword, Integer brandId, String status) {
+        List<Model> list = new ArrayList<>();
+
+        String keywordTrimmed = keyword == null ? null : keyword.trim();
+        if (keywordTrimmed != null && keywordTrimmed.isEmpty()) {
+            keywordTrimmed = null;
+        }
+
+        Integer keywordId = null;
+        if (keywordTrimmed != null) {
+            try {
+                keywordId = Integer.valueOf(keywordTrimmed);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
+        Integer normalizedBrandId = (brandId != null && brandId > 0) ? brandId : null;
+
+        String statusTrimmed = status == null ? null : status.trim();
+        if (statusTrimmed != null && statusTrimmed.isEmpty()) {
+            statusTrimmed = null;
+        }
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT m.modelid, m.name, m.isactive, ")
+                .append("b.brandid, b.name AS brand_name, b.description, b.createdat, b.updatedat ")
+                .append("FROM models m JOIN brands b ON m.brandid = b.brandid");
+
+        boolean hasWhere = false;
+        if (keywordTrimmed != null) {
+            if (keywordId != null) {
+                sql.append(" WHERE (m.modelid = ? OR m.name LIKE ?)");
+            } else {
+                sql.append(" WHERE m.name LIKE ?");
+            }
+            hasWhere = true;
+        }
+
+        if (normalizedBrandId != null) {
+            sql.append(hasWhere ? " AND" : " WHERE");
+            sql.append(" m.brandid = ?");
+            hasWhere = true;
+        }
+
+        if ("active".equalsIgnoreCase(statusTrimmed)) {
+            sql.append(hasWhere ? " AND" : " WHERE");
+            sql.append(" m.isactive = 1");
+            hasWhere = true;
+        } else if ("inactive".equalsIgnoreCase(statusTrimmed)) {
+            sql.append(hasWhere ? " AND" : " WHERE");
+            sql.append(" m.isactive = 0");
+            hasWhere = true;
+        }
+
+        sql.append(" ORDER BY m.modelid");
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            if (keywordTrimmed != null) {
+                if (keywordId != null) {
+                    ps.setInt(paramIndex++, keywordId);
+                    ps.setString(paramIndex++, "%" + keywordTrimmed + "%");
+                } else {
+                    ps.setString(paramIndex++, "%" + keywordTrimmed + "%");
+                }
+            }
+
+            if (normalizedBrandId != null) {
+                ps.setInt(paramIndex++, normalizedBrandId);
+            }
+
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 list.add(mapModel(rs));
@@ -68,6 +147,7 @@ public class ModelDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
         return list;
     }
 
@@ -82,9 +162,5 @@ public class ModelDAO {
             e.printStackTrace();
         }
         return 0;
-    }
-    public static void main(String[] args) {
-        ModelDAO dao = new ModelDAO();
-        System.out.println(dao.getModelsByPage(1,10));
     }
 }

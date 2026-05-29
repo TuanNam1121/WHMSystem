@@ -30,17 +30,81 @@ public class ChipDAO {
         }
         return list;
     }
-    
-    public List<Chip> getChipsByPage(int pageNo, int pageSize) {
 
+    public Chip getChipById(int id) {
+        String sql = "SELECT * FROM chips WHERE id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Chip chip = new Chip();
+                chip.setId(rs.getInt("id"));
+                chip.setName(rs.getString("name"));
+                chip.setActive(rs.getBoolean("isactive"));
+                return chip;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public List<Chip> getChipsByFilter(String keyword, String status) {
         List<Chip> list = new ArrayList<>();
 
-        String sql = "SELECT * FROM chips ORDER BY id LIMIT ? OFFSET ?";
+        String keywordTrimmed = keyword == null ? null : keyword.trim();
+        if (keywordTrimmed != null && keywordTrimmed.isEmpty()) {
+            keywordTrimmed = null;
+        }
 
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            int offset = (pageNo - 1) * pageSize;
-            ps.setInt(1, pageSize);
-            ps.setInt(2, offset);
+        String statusTrimmed = status == null ? null : status.trim();
+        if (statusTrimmed != null && statusTrimmed.isEmpty()) {
+            statusTrimmed = null;
+        }
+
+        Integer keywordId = null;
+        if (keywordTrimmed != null) {
+            try {
+                keywordId = Integer.valueOf(keywordTrimmed);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
+        StringBuilder sql = new StringBuilder("SELECT * FROM chips");
+        boolean hasWhere = false;
+
+        if (keywordTrimmed != null) {
+            if (keywordId != null) {
+                sql.append(" WHERE (id = ? OR name LIKE ?)");
+            } else {
+                sql.append(" WHERE name LIKE ?");
+            }
+            hasWhere = true;
+        }
+
+        if ("active".equalsIgnoreCase(statusTrimmed)) {
+            sql.append(hasWhere ? " AND" : " WHERE");
+            sql.append(" isactive = 1");
+            hasWhere = true;
+        } else if ("inactive".equalsIgnoreCase(statusTrimmed)) {
+            sql.append(hasWhere ? " AND" : " WHERE");
+            sql.append(" isactive = 0");
+            hasWhere = true;
+        }
+
+        sql.append(" ORDER BY id");
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            if (keywordTrimmed != null) {
+                if (keywordId != null) {
+                    ps.setInt(paramIndex++, keywordId);
+                    ps.setString(paramIndex++, "%" + keywordTrimmed + "%");
+                } else {
+                    ps.setString(paramIndex++, "%" + keywordTrimmed + "%");
+                }
+            }
+
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Chip chip = new Chip();
@@ -52,6 +116,7 @@ public class ChipDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
         return list;
     }
 

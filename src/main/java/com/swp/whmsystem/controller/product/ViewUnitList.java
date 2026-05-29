@@ -14,7 +14,6 @@ import java.util.List;
 @WebServlet(name = "ViewUnitList", urlPatterns = {"/ViewUnitList"})
 public class ViewUnitList extends HttpServlet {
     private UnitDAO unitDao;
-    private static final int PAGE_SIZE = 8;
 
     @Override
     public void init() {
@@ -24,21 +23,11 @@ public class ViewUnitList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int page = 1;
-
-        try {
-            page = Integer.parseInt(request.getParameter("page"));
-        } catch (Exception e) {
-        }
-        int totalUnits = unitDao.count();
-        int totalPages = (int) Math.ceil((double) totalUnits / PAGE_SIZE);
-
-        List<Unit> units = unitDao.getUnitsByPage(page, PAGE_SIZE);
+        String keyword = request.getParameter("keyword");
+        String status = request.getParameter("status");
+        List<Unit> units = unitDao.getUnitsByFilter(keyword, status);
 
         request.setAttribute("units", units);
-        request.setAttribute("pageNo", page);
-        request.setAttribute("pageSize", PAGE_SIZE);
-        request.setAttribute("totalPages", totalPages);
         request.getRequestDispatcher("ViewUnitList.jsp").forward(request, response);
     }
 }

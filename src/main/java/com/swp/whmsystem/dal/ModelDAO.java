@@ -20,8 +20,8 @@ public class ModelDAO {
         brand.setId(rs.getInt("brandid"));
         brand.setName(rs.getString("brand_name"));
         brand.setDescription(rs.getString("description"));
-        brand.setCreatedAt(rs.getDate("createdat"));
-        brand.setUpdatedAt(rs.getDate("updatedat"));
+        brand.setCreatedAt(rs.getTimestamp("createdat"));
+        brand.setUpdatedAt(rs.getTimestamp("updatedat"));
         model.setBrand(brand);
 
         return model;

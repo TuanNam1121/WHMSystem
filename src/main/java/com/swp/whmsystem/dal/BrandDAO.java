@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 public class BrandDAO {
 
@@ -104,8 +105,8 @@ public class BrandDAO {
             st = conn.prepareStatement(sql);
             st.setString(1, b.getName());
             st.setString(2, b.getDescription());
-            st.setDate(3, b.getCreatedAt());
-            st.setDate(4, new Date(System.currentTimeMillis()));
+            st.setTimestamp(3, b.getCreatedAt());
+            st.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
             st.setInt(5, b.getId());
             st.executeUpdate();
         } catch (Exception exception) {
@@ -132,8 +133,8 @@ public class BrandDAO {
         b.setId(rs.getInt("brandid"));
         b.setName(rs.getString("name"));
         b.setDescription(rs.getString("description"));
-        b.setCreatedAt(rs.getDate("createdat"));
-        b.setUpdatedAt(rs.getDate("updatedat"));
+        b.setCreatedAt(rs.getTimestamp("createdat"));
+        b.setUpdatedAt(rs.getTimestamp("updatedat"));
 
         return b;
     }
@@ -149,7 +150,7 @@ public class BrandDAO {
         b.setId(1);
         b.setName("Dell");
         b.setDescription("Laptop brand");
-        b.setCreatedAt(new Date(System.currentTimeMillis()));
+        b.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
         dao.updateBrand(b);
 

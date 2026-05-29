@@ -86,12 +86,11 @@ public class RequestDAO {
 
     public boolean addNewRequest(Request request) {
         String sql = "Insert into password_resets(userid, status)"
-                + " values (?,?,?)";
+                + " values (?,?)";
         try (Connection conn = DBContext.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, request.getUserId());
             ps.setString(2, request.getStatus());
-            ps.setString(3, request.getMessage());
             return ps.executeUpdate() == 1;
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());

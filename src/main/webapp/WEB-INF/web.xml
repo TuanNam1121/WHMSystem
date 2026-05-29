@@ -26,10 +26,6 @@
         <servlet-class>com.swp.whmsystem.controller.authentication.ForgetPassword</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>VerifyPin</servlet-name>
-        <servlet-class>com.swp.whmsystem.controller.authentication.VerifyPin</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>ViewProfile</servlet-name>
         <servlet-class>com.swp.whmsystem.controller.home.ViewProfile</servlet-class>
     </servlet>
@@ -52,10 +48,6 @@
     <servlet>
         <servlet-name>UpdateRole</servlet-name>
         <servlet-class>com.swp.whmsystem.controller.admin.UpdateRole</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ChangePassByAdmin</servlet-name>
-        <servlet-class>com.swp.whmsystem.controller.admin.ChangePassByAdmin</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>AddNewRole</servlet-name>
@@ -82,10 +74,6 @@
         <url-pattern>/forgetpassword</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>VerifyPin</servlet-name>
-        <url-pattern>/verifypin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>ViewProfile</servlet-name>
         <url-pattern>/viewprofile</url-pattern>
     </servlet-mapping>
@@ -108,10 +96,6 @@
     <servlet-mapping>
         <servlet-name>UpdateRole</servlet-name>
         <url-pattern>/UpdateRole</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ChangePassByAdmin</servlet-name>
-        <url-pattern>/changepassbyadmin</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AddNewRole</servlet-name>

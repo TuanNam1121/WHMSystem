@@ -11,12 +11,14 @@ import com.swp.whmsystem.utils.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.swp.whmsystem.model.Request;
 import org.mindrot.jbcrypt.BCrypt;
 
+@WebServlet(name = "ChangePassByAdmin", urlPatterns = {"/changepassbyadmin"})
 public class ChangePassByAdmin extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -60,7 +62,7 @@ public class ChangePassByAdmin extends HttpServlet {
             request.getRequestDispatcher("ChangePassByAdmin.jsp").forward(request, response);
             return;
         }
-        
+
         if (!cfNewPass.equals(newPass)) {
             request.setAttribute("error", "Confirm password does not match");
             request.setAttribute("userId", userId);
@@ -78,7 +80,7 @@ public class ChangePassByAdmin extends HttpServlet {
             Request req = rDao.getLatestRequestByUserId(userId);
             req.setStatus("COMPLETED");
             rDao.updateRequestStatus(req.getRequestId(), req.getStatus());
-            
+
             boolean isEmailSent = EmailApi.sendEmail(user.getEmail(), newPass);
             if (isEmailSent) {
                 request.setAttribute("message", "Change password successfully and email sent!");

@@ -28,29 +28,31 @@ public class ViewProfile extends HttpServlet {
         HttpSession session = request.getSession();
         UserDAO userDAO = new UserDAO();
         UserDTO dto = new UserDTO();
-        InputValidationUtil utils = new InputValidationUtil();
         User user = (User) session.getAttribute("user");
 
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
 
         int id = user.getId();
         String firstname = request.getParameter("firstname");
         String lastname = request.getParameter("lastname");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
-        String username = request.getParameter("username");
-        String passwordRaw = request.getParameter("password");
 
         dto.setId(id);
         dto.setFirstname(firstname);
         dto.setLastname(lastname);
         dto.setEmail(email);
         dto.setPhone(phone);
-        dto.setUsername(username);
 
 
         boolean isSuccess = userDAO.updateProfile(dto);
 
         if (isSuccess) {
+            User userUpdated = userDAO.getUserFullInformation(user.getId());
+            session.setAttribute("user", userUpdated);
             request.setAttribute("successMessage", "Update successfully");
             response.sendRedirect("viewprofile");
         } else {

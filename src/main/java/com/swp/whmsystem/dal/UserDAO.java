@@ -337,7 +337,8 @@ public class UserDAO {
         }
 
         sql.setLength(sql.length() - 2);
-        sql.append("where id = ?");
+        sql.append("where userid = ?");
+        parameter.add(dto.getId());
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString());) {
 

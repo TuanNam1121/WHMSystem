@@ -23,12 +23,10 @@ public class ViewRamList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String keyword = request.getParameter("keyword");
         String status = request.getParameter("status");
-        List<Ram> rams = ramDao.getRamsByFilter(keyword, status);
+        List<Ram> rams = ramDao.getRamsByFilter(status);
 
         request.setAttribute("rams", rams);
-        request.setAttribute("keyword", keyword);
         request.setAttribute("status", status);
         request.getRequestDispatcher("ViewRamList.jsp").forward(request, response);
     }

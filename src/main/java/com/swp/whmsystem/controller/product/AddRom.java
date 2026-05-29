@@ -6,34 +6,34 @@ package com.swp.whmsystem.controller.product;
 
 import java.io.IOException;
 
-import com.swp.whmsystem.dal.ChipDAO;
+import com.swp.whmsystem.dal.RomDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "AddChip", urlPatterns = {"/AddChip"})
-public class AddChip extends HttpServlet {
-    private ChipDAO chipDao;
+@WebServlet(name = "AddRom", urlPatterns = {"/AddRom"})
+public class AddRom extends HttpServlet {
+    private RomDAO romDao;
 
     @Override
     public void init() {
-        chipDao = new ChipDAO();
+        romDao = new RomDAO();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("AddChip.jsp").forward(request, response);
+        request.getRequestDispatcher("AddRom.jsp").forward(request, response);
     }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String name = request.getParameter("name");
+        String size = request.getParameter("size");
         String active = request.getParameter("active");
 
-        chipDao.insertChip(name, active != null);
-        response.sendRedirect("ViewChipList");
+        romDao.insertRom(size, active != null);
+        response.sendRedirect("ViewRomList");
     }
 }

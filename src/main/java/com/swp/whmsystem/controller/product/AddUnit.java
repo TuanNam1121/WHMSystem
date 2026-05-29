@@ -6,26 +6,26 @@ package com.swp.whmsystem.controller.product;
 
 import java.io.IOException;
 
-import com.swp.whmsystem.dal.ChipDAO;
+import com.swp.whmsystem.dal.UnitDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "AddChip", urlPatterns = {"/AddChip"})
-public class AddChip extends HttpServlet {
-    private ChipDAO chipDao;
+@WebServlet(name = "AddUnit", urlPatterns = {"/AddUnit"})
+public class AddUnit extends HttpServlet {
+    private UnitDAO unitDao;
 
     @Override
     public void init() {
-        chipDao = new ChipDAO();
+        unitDao = new UnitDAO();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("AddChip.jsp").forward(request, response);
+        request.getRequestDispatcher("AddUnit.jsp").forward(request, response);
     }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -33,7 +33,7 @@ public class AddChip extends HttpServlet {
         String name = request.getParameter("name");
         String active = request.getParameter("active");
 
-        chipDao.insertChip(name, active != null);
-        response.sendRedirect("ViewChipList");
+        unitDao.insertUnit(name, active != null);
+        response.sendRedirect("ViewUnitList");
     }
 }

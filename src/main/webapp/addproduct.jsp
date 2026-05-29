@@ -69,8 +69,8 @@
                                         <div class="col-lg-3 col-sm-6 col-12">
                                             <div class="form-group">
                                                 <label>Brand</label>
-                                                <select class="select" name="brand">
-                                                    <option>Choose Brand</option>
+                                                <select class="select" name="brand" id="brandSelect">
+                                                    <option value="">Choose Brand</option>
                                                 <c:forEach var="i" items="${brandList}">
                                                     <option value="${i.id}">${i.name}</option>
                                                 </c:forEach>
@@ -81,8 +81,9 @@
                                         <div class="form-group">
                                             <label>Unit</label>
                                             <select class="select" name="unit">
-                                                <option>Choose Unit</option>
-                                                <option>Unit</option>
+                                                <c:forEach var="i" items="${unitList}">
+                                                    <option value="${i.id}">${i.name}</option>
+                                                </c:forEach>
                                             </select>
                                         </div>
                                     </div>
@@ -96,10 +97,10 @@
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Model</label>
-                                            <select class="select" name="model">
-                                                <option>Choose Model</option>
+                                            <select class="select" name="model" id="modelSelect">
+                                                <option value="">Choose Model</option>
                                                 <c:forEach var="i" items="${modelList}">
-                                                    <option value="${i.id}">${i.name}</option>
+                                                    <option value="${i.id}" data-brand="${i.brand.getId()}">${i.name}</option>
                                                 </c:forEach>
                                             </select>
                                         </div>
@@ -170,7 +171,7 @@
                                         <a href="productlist.html" class="btn btn-cancel">Cancel</a>
                                     </div>
                                 </div>
-                                    ${filePath}
+                                ${filePath}
                             </div>
                         </div>
                     </form>
@@ -180,18 +181,12 @@
 
 
         <script src="assets/js/jquery-3.6.0.min.js"></script>
-
         <script src="assets/js/feather.min.js"></script>
-
         <script src="assets/js/jquery.slimscroll.min.js"></script>
-
         <script src="assets/js/jquery.dataTables.min.js"></script>
         <script src="assets/js/dataTables.bootstrap4.min.js"></script>
-
         <script src="assets/js/bootstrap.bundle.min.js"></script>
-
         <script src="assets/plugins/select2/js/select2.min.js"></script>
-
         <script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
         <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
@@ -204,6 +199,55 @@
                 if (input.files.length > 0) {
                     text.textContent = input.files[0].name;
                 }
+            });
+
+            $(function () {
+                const $brandSelect = $("#brandSelect");
+                const $modelSelect = $("#modelSelect");
+                const modelSelect = $modelSelect[0];
+
+                const allModelOptions = $modelSelect.find("option[data-brand]").map(function () {
+                    return {
+                        value: this.value,
+                        text: $(this).text(),
+                        brandId: $(this).attr("data-brand")
+                    };
+                }).get();
+
+                const select2Options = { minimumResultsForSearch: -1, width: "100%" };
+
+                function rebuildModelSelect(selectedBrandId) {
+                    if ($modelSelect.hasClass("select2-hidden-accessible")) {
+                        $modelSelect.select2("destroy");
+                    }
+
+                    $modelSelect.empty().append(
+                        $("<option>", { value: "", text: "Choose Model" })
+                    );
+
+                    if (selectedBrandId) {
+                        allModelOptions.forEach(function (opt) {
+                            if (opt.brandId === selectedBrandId) {
+                                $modelSelect.append(
+                                    $("<option>", {
+                                        value: opt.value,
+                                        text: opt.text,
+                                        "data-brand": opt.brandId
+                                    })
+                                );
+                            }
+                        });
+                    }
+
+                    $modelSelect.select2(select2Options);
+                }
+
+                function onBrandChange() {
+                    rebuildModelSelect($brandSelect.val() || "");
+                }
+
+                $brandSelect.on("change", onBrandChange);
+                onBrandChange();
             });
         </script>
     </body>

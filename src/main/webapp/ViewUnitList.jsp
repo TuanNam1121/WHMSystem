@@ -47,7 +47,7 @@
                 </div>
                 <div class="page-btn">
                     <a href="AddUnit" class="btn btn-added"><img src="assets/img/icons/plus.svg"
-                                                                  alt="img" class="me-2">Add New Unit</a>
+                                                                 alt="img" class="me-2">Add New Unit</a>
                 </div>
             </div>
 
@@ -61,59 +61,42 @@
                                     <span><img src="assets/img/icons/closes.svg" alt="img"></span>
                                 </a>
                             </div>
-                            <div class="search-input">
-                                <a class="btn btn-searchset"><img src="assets/img/icons/search-white.svg" alt="img"></a>
-                            </div>
                         </div>
-                    </div>
 
-                    <div class="card" id="filter_inputs">
-                        <div class="card-body pb-0">
-                            <div class="row">
-                                <div class="col-lg-2 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <input type="text" class="datetimepicker cal-icon" placeholder="Choose Date">
-                                    </div>
-                                </div>
-                                <div class="col-lg-2 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <input type="text" placeholder="Enter Reference">
-                                    </div>
-                                </div>
-                                <div class="col-lg-2 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <select class="select">
-                                            <option>Choose Customer</option>
-                                            <option>Customer</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-2 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <select class="select">
-                                            <option>Choose Status</option>
-                                            <option>Inprogress</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-2 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <select class="select">
-                                            <option>Choose Payment Status</option>
-                                            <option>Payment Status</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-2 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <a class="btn btn-filters ms-auto"><img src="assets/img/icons/search-whites.svg"
-                                                                                alt="img"></a>
+                    </div>
+                    <form id="filterForm" action="" method="GET">
+                        <div class="card mb-0" id="filter_inputs">
+                            <div class="card-body pb-0">
+                                <div class="row">
+                                    <div class="col-lg-12 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <input type="text" name="keyword" placeholder="Search id, name">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <select class="select" name="status">
+                                                        <option>Choose Status</option>
+                                                        <option value="active">Active</option>
+                                                        <option value="inactive">Inactive</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-1 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <button type="submit" class="btn btn-filters ms-auto">
+                                                        <img src="assets/img/icons/search-whites.svg" alt="img">
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
+                    </form>
                     <div class="table-responsive">
                         <table class="table datanew">
                             <thead>

@@ -18,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "ViewChipList", urlPatterns = {"/ViewChipList"})
 public class ViewChipList extends HttpServlet {
     private ChipDAO chipDao;
-    private static final int PAGE_SIZE = 8;
 
     @Override
     public void init() {
@@ -28,21 +27,13 @@ public class ViewChipList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int page = 1;
-
-        try {
-            page = Integer.parseInt(request.getParameter("page"));
-        } catch (Exception e) {
-        }
-        int totalChips = chipDao.count();
-        int totalPages = (int) Math.ceil((double) totalChips / PAGE_SIZE);
-
-        List<Chip> chips = chipDao.getChipsByPage(page, PAGE_SIZE);
+        String keyword = request.getParameter("keyword");
+        String status = request.getParameter("status");
+        List<Chip> chips = chipDao.getChipsByFilter(keyword, status);
 
         request.setAttribute("chips", chips);
-        request.setAttribute("pageNo", page);
-        request.setAttribute("pageSize", PAGE_SIZE);
-        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("status", status);
         request.getRequestDispatcher("ViewChipList.jsp").forward(request, response);
     }
 }

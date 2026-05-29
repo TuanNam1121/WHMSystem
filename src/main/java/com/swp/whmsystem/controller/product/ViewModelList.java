@@ -1,6 +1,8 @@
 package com.swp.whmsystem.controller.product;
 
 import com.swp.whmsystem.dal.ModelDAO;
+import com.swp.whmsystem.dal.BrandDAO;
+import com.swp.whmsystem.model.Brand;
 import com.swp.whmsystem.model.Model;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,31 +16,36 @@ import java.util.List;
 @WebServlet(name = "ViewModelList", urlPatterns = {"/ViewModelList"})
 public class ViewModelList extends HttpServlet {
     private ModelDAO modelDao;
-    private static final int PAGE_SIZE = 8;
+    private BrandDAO brandDao;
 
     @Override
     public void init() {
         modelDao = new ModelDAO();
+        brandDao = new BrandDAO();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int page = 1;
-
+        String keyword = request.getParameter("keyword");
+        String status = request.getParameter("status");
+        Integer brandId = null;
         try {
-            page = Integer.parseInt(request.getParameter("page"));
-        } catch (Exception e) {
+            String brandIdParam = request.getParameter("brandId");
+            if (brandIdParam != null && !brandIdParam.trim().isEmpty()) {
+                brandId = Integer.valueOf(brandIdParam.trim());
+            }
+        } catch (NumberFormatException ignored) {
         }
-        int totalModels = modelDao.count();
-        int totalPages = (int) Math.ceil((double) totalModels / PAGE_SIZE);
 
-        List<Model> models = modelDao.getModelsByPage(page, PAGE_SIZE);
-
+        List<Model> models = modelDao.getModelsByFilter(keyword, brandId, status);
+        List<Brand> brands = brandDao.getAllBrand();
+      
         request.setAttribute("models", models);
-        request.setAttribute("pageNo", page);
-        request.setAttribute("pageSize", PAGE_SIZE);
-        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("brands", brands);
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("status", status);
+        request.setAttribute("selectedBrandId", brandId);
         request.getRequestDispatcher("ViewModelList.jsp").forward(request, response);
     }
 }

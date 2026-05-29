@@ -32,16 +32,79 @@ public class RamDAO {
         return list;
     }
 
-    public List<Ram> getRamsByPage(int pageNo, int pageSize) {
+    public Ram getRamById(int id) {
+        String sql = "SELECT id, size, isactive FROM rams WHERE id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Ram ram = new Ram();
+                ram.setId(rs.getInt("id"));
+                ram.setSize(rs.getString("size"));
+                ram.setActive(rs.getBoolean("isactive"));
+                return ram;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
 
+    public List<Ram> getRamsByFilter(String keyword, String status) {
         List<Ram> list = new ArrayList<>();
 
-        String sql = "SELECT id, size, isactive FROM rams ORDER BY id LIMIT ? OFFSET ?";
+        String keywordTrimmed = keyword == null ? null : keyword.trim();
+        if (keywordTrimmed != null && keywordTrimmed.isEmpty()) {
+            keywordTrimmed = null;
+        }
 
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            int offset = (pageNo - 1) * pageSize;
-            ps.setInt(1, pageSize);
-            ps.setInt(2, offset);
+        String statusTrimmed = status == null ? null : status.trim();
+        if (statusTrimmed != null && statusTrimmed.isEmpty()) {
+            statusTrimmed = null;
+        }
+
+        Integer keywordId = null;
+        if (keywordTrimmed != null) {
+            try {
+                keywordId = Integer.valueOf(keywordTrimmed);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
+        StringBuilder sql = new StringBuilder("SELECT id, size, isactive FROM rams");
+        boolean hasWhere = false;
+
+        if (keywordTrimmed != null) {
+            if (keywordId != null) {
+                sql.append(" WHERE (id = ? OR size LIKE ?)");
+            } else {
+                sql.append(" WHERE size LIKE ?");
+            }
+            hasWhere = true;
+        }
+
+        if ("active".equalsIgnoreCase(statusTrimmed)) {
+            sql.append(hasWhere ? " AND" : " WHERE");
+            sql.append(" isactive = 1");
+            hasWhere = true;
+        } else if ("inactive".equalsIgnoreCase(statusTrimmed)) {
+            sql.append(hasWhere ? " AND" : " WHERE");
+            sql.append(" isactive = 0");
+            hasWhere = true;
+        }
+        sql.append(" ORDER BY id");
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            if (keywordTrimmed != null) {
+                if (keywordId != null) {
+                    ps.setInt(paramIndex++, keywordId);
+                    ps.setString(paramIndex++, "%" + keywordTrimmed + "%");
+                } else {
+                    ps.setString(paramIndex++, "%" + keywordTrimmed + "%");
+                }
+            }
+
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Ram ram = new Ram();
@@ -53,6 +116,7 @@ public class RamDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
         return list;
     }
 

@@ -13,6 +13,7 @@ import com.swp.whmsystem.dal.RomDAO;
 import com.swp.whmsystem.dal.UnitDAO;
 import com.swp.whmsystem.dal.UserDAO;
 import com.swp.whmsystem.model.Brand;
+import com.swp.whmsystem.model.Category;
 import com.swp.whmsystem.model.Chip;
 import com.swp.whmsystem.model.Model;
 import com.swp.whmsystem.model.Product;
@@ -88,9 +89,9 @@ public class AddProduct extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String productName = request.getParameter("productName");
-        String category = request.getParameter("category");
+        String categoryId = request.getParameter("category");
         String brandId = request.getParameter("brand");
-        String unit = request.getParameter("unit");
+        String unitr = request.getParameter("unit");
         String modelId = request.getParameter("model");
         String ramId = request.getParameter("ram");
         String romId = request.getParameter("rom");
@@ -111,8 +112,16 @@ public class AddProduct extends HttpServlet {
         chip.setId(Integer.parseInt(chipId));
         Model model = new Model();
         model.setId(Integer.parseInt(modelId));
-        Product product = new Product(0, productName, description, imgUrl, 0, true, ram, rom, chip, model, 0, Integer.parseInt(brandId));
+        Category category = new Category();
+        category.setCategoryId(Integer.parseInt(categoryId));
+        Unit unit = new Unit();
+        unit.setId(Integer.parseInt(unitr));
+        model.setId(Integer.parseInt(modelId));
+        Brand brand = new Brand();
+        brand.setId(Integer.parseInt(brandId));
         ProductDAO productDao = new ProductDAO();
+        //int productId, String name, String description, String sku, String imgUrl, int totalQuantity, boolean isActive, Ram ram, Rom rom, Unit unit, Chip chip, Model model, Category category, Brand brand
+        Product product = new Product(0, productName, description, "Generator" + UUID.randomUUID().toString(), imgUrl, 0, true, ram, rom, unit, chip, model, category, brand);
         if(productDao.addProduct(product)){
             response.sendRedirect("productlist.jsp");
         }

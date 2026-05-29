@@ -11,6 +11,8 @@ import com.swp.whmsystem.model.Ram;
 import com.swp.whmsystem.model.Rom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  *
@@ -18,7 +20,7 @@ import java.sql.PreparedStatement;
  */
 public class ProductDAO {
    public boolean addProduct(Product p){
-       String sql = "insert into products(name, description, img_url, isactive, ramid, romid, chipid, brandid, modelid, unitid, categoryid) values (?,?,?,?,?,?,?,?,?,?,?)";
+       String sql = "insert into products(name, description, img_url, isactive, ramid, romid, chipid, brandid, modelid, unitid, categoryid, sku) values (?,?,?,?,?,?,?,?,?,?,?,?)";
        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setString(1, p.getName());
             ps.setString(2, p.getDescription());
@@ -27,17 +29,70 @@ public class ProductDAO {
             ps.setInt(5, p.getRam().getId());
             ps.setInt(6, p.getRom().getId());
             ps.setInt(7, p.getChip().getId());
-            ps.setInt(8, p.getBrandId());
+            ps.setInt(8, p.getBrand().getId());
             ps.setInt(9, p.getModel().getId());
-            // unit
-            // category
-            ps.setInt(10, 1);
-            ps.setInt(11, 1);
+            ps.setInt(10, p.getUnit().getId());
+            ps.setInt(11, p.getCategory().getCategoryId());
+            ps.setString(12, p.getSku());
             return ps.executeUpdate() != 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
        return false;
+   }
+   
+   public Product getProductFromId(int productid){
+       String sql = "select * from products where productid = ?";
+       return null;
+   }
+   
+   public boolean updateProduct(Product p){
+       String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, ramid = ?, romid = ?, chipid = ?, unitid = , categoryid = , brandid = , modelid = ?  WHERE productid = ?";
+       try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+            ps.setString(1, p.getName());
+            ps.setString(2, p.getDescription());
+            ps.setString(3, p.getImgUrl());
+            ps.setBoolean(4, p.isIsActive());
+            ps.setInt(5, p.getRam().getId());
+            ps.setInt(6, p.getRom().getId());
+            ps.setInt(7, p.getChip().getId());
+            ps.setInt(8, p.getUnit().getId());
+            ps.setInt(8, p.getCategory().getCategoryId());
+            ps.setInt(9, p.getBrand().getId());
+            ps.setInt(10, p.getModel().getId());
+            ps.setInt(11, p.getProductId());
+            return ps.executeUpdate() != 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+       return false;
+   }
+   
+   private Product mapFromResultSetToProduct(ResultSet rs) throws SQLException{ 
+//    private int totalQuantity;
+//    private boolean isActive;
+//    private Ram ram;
+//    private Rom rom;
+//    private Chip chip;
+//    private Model model;
+//    private Unit unit;
+//    private Category category;
+//    private Brand brand;
+       RamDAO ram = new RamDAO();
+       RomDAO rom = new RomDAO();
+       ChipDAO chip = new ChipDAO();
+       ModelDAO model = new ModelDAO();
+       UnitDAO unit = new UnitDAO();
+       
+       Product product = new Product();
+       product.setName(rs.getString("name"));
+       product.setProductId(rs.getInt("productid"));
+       product.setDescription(rs.getString("description"));
+       product.setImgUrl(rs.getString("img_url"));
+       product.setSku(rs.getString("sku"));
+       product.setTotalQuantity(rs.getInt("totalquantity"));
+       product.setIsActive(rs.getBoolean("isactive"));
+       return product;
    }
    
     public static void main(String[] args) {
@@ -49,7 +104,6 @@ public class ProductDAO {
         chip.setId(Integer.parseInt("1"));
         Model model = new Model();
         model.setId(Integer.parseInt("1"));
-        Product product = new Product(0, "a", "a", "/a", 0, true, ram, rom, chip, model, 0, 1);
         ProductDAO productDao = new ProductDAO();
     }
 }

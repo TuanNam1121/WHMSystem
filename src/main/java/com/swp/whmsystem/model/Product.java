@@ -12,35 +12,69 @@ public class Product {
     private int productId;
     private String name;
     private String description;
+    private String sku;
     private String imgUrl;
     private int totalQuantity;
     private boolean isActive;
     private Ram ram;
     private Rom rom;
+    private Unit unit;
     private Chip chip;
     private Model model;
-    private int categoryId;
-    private int brandId;
+    private Category category;
+    private Brand brand;
 
     public Product() {
     }
 
-    public Product(int productId, String name, String description, String imgUrl, int totalQuantity, boolean isActive, Ram ram, Rom rom, Chip chip, Model model, int categoryId, int brandId) {
+    public Product(int productId, String name, String description, String sku, String imgUrl, int totalQuantity, boolean isActive, Ram ram, Rom rom, Unit unit, Chip chip, Model model, Category category, Brand brand) {
         this.productId = productId;
         this.name = name;
         this.description = description;
+        this.sku = sku;
         this.imgUrl = imgUrl;
         this.totalQuantity = totalQuantity;
         this.isActive = isActive;
         this.ram = ram;
         this.rom = rom;
+        this.unit = unit;
         this.chip = chip;
         this.model = model;
-        this.categoryId = categoryId;
-        this.brandId = brandId;
+        this.category = category;
+        this.brand = brand;
     }
 
-    
+    public Unit getUnit() {
+        return unit;
+    }
+
+    public void setUnit(Unit unit) {
+        this.unit = unit;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Brand getBrand() {
+        return brand;
+    }
+
+    public void setBrand(Brand brand) {
+        this.brand = brand;
+    }
     
     public int getProductId() {
         return productId;
@@ -121,23 +155,5 @@ public class Product {
     public void setModel(Model model) {
         this.model = model;
     }
-
-    public int getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public int getBrandId() {
-        return brandId;
-    }
-
-    public void setBrandId(int brandId) {
-        this.brandId = brandId;
-    }
-    
-   
     
 }

@@ -19,7 +19,7 @@ public class Home extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-
+        RoleDAO role = new RoleDAO();
         if (session == null || session.getAttribute("user") == null) {
             response.sendRedirect("login.jsp");
             return;
@@ -27,8 +27,10 @@ public class Home extends HttpServlet {
 
         User user = (User) session.getAttribute("user");
         request.setAttribute("user", user);
-
-        request.getRequestDispatcher("home.jsp").forward(request, response);
+        if(role.getRoleNamFromRoleID(user.getRoleId()).equals("ADMIN")){
+            response.sendRedirect("AdminDashBoard");
+        }
+        else request.getRequestDispatcher("home.jsp").forward(request, response);
     }
 
     @Override

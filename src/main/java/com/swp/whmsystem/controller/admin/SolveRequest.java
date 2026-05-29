@@ -36,12 +36,9 @@ public class SolveRequest extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         String userId = request.getParameter("userid");
-        String reqType = request.getParameter("type");
-        if (reqType.equalsIgnoreCase("ResetPassword")) {
-            request.setAttribute("userId", userId);
-            request.getRequestDispatcher("ChangePassByAdmin.jsp").forward(request, response);
-        }
-    } 
+        request.setAttribute("userId", userId);
+        request.getRequestDispatcher("ChangePassByAdmin.jsp").forward(request, response);
+        } 
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

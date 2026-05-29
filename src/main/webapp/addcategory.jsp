@@ -54,7 +54,7 @@
                                 <input type="text">
                             </div>
                         </div>
-                        
+
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Description</label>

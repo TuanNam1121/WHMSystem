@@ -172,6 +172,29 @@ public class ModelDAO {
         return list;
     }
 
+    public Model getModelById(int modelid) {
+        String sql = "select * from models where id = ?";
+        try (
+                Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+            ps.setInt(1, modelid);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Model model = new Model();
+                    model.setId(rs.getInt("modelid"));
+                    model.setName(rs.getString("name"));
+                    BrandDAO brandDAO = new BrandDAO();
+                    Brand brand = brandDAO.getBrand(rs.getInt("brandid"));
+                    model.setBrand(brand);
+                    model.setActive(rs.getBoolean("isactive"));
+                    return model;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public int count() {
         String sql = "SELECT COUNT(*) FROM models";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
@@ -183,5 +206,10 @@ public class ModelDAO {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public static void main(String[] args) {
+        ModelDAO dao = new ModelDAO();
+        System.out.println(dao.getModelsByPage(1, 10));
     }
 }

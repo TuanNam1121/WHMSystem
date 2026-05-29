@@ -19,13 +19,13 @@ public class Product {
     private Rom rom;
     private Chip chip;
     private Model model;
-    private int categoryId;
-    private int brandId;
+    private Category category;
+    private Brand brand;
 
     public Product() {
     }
 
-    public Product(int productId, String name, String description, String imgUrl, int totalQuantity, boolean isActive, Ram ram, Rom rom, Chip chip, Model model, int categoryId, int brandId) {
+    public Product(int productId, String name, String description, String imgUrl, int totalQuantity, boolean isActive, Ram ram, Rom rom, Chip chip, Model model, Category category, Brand brand) {
         this.productId = productId;
         this.name = name;
         this.description = description;
@@ -36,12 +36,10 @@ public class Product {
         this.rom = rom;
         this.chip = chip;
         this.model = model;
-        this.categoryId = categoryId;
-        this.brandId = brandId;
+        this.category = category;
+        this.brand = brand;
     }
 
-    
-    
     public int getProductId() {
         return productId;
     }
@@ -82,12 +80,12 @@ public class Product {
         this.totalQuantity = totalQuantity;
     }
 
-    public boolean isIsActive() {
+    public boolean isActive() {
         return isActive;
     }
 
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     public Ram getRam() {
@@ -122,22 +120,19 @@ public class Product {
         this.model = model;
     }
 
-    public int getCategoryId() {
-        return categoryId;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
-    public int getBrandId() {
-        return brandId;
+    public Brand getBrand() {
+        return brand;
     }
 
-    public void setBrandId(int brandId) {
-        this.brandId = brandId;
+    public void setBrand(Brand brand) {
+        this.brand = brand;
     }
-    
-   
-    
 }

@@ -5,6 +5,7 @@
 package com.swp.whmsystem.dal;
 
 import com.swp.whmsystem.model.Brand;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,7 +39,7 @@ public class BrandDAO {
         return null;
     }
 
-    public Brand getBrand(int brand_id) {
+    public Brand getBrandById(int brand_id) {
         try {
             Connection conn = DBContext.getConnection();
             String sql = "select * from brands where brandid=?";
@@ -155,7 +156,7 @@ public class BrandDAO {
         dao.updateBrand(b);
 
         for (Brand i : dao.getAllBrand()) {
-            System.out.println(i.getId() +" "+i.getName()+" "+i.getDescription());
+            System.out.println(i.getId() + " " + i.getName() + " " + i.getDescription());
         }
     }
 }

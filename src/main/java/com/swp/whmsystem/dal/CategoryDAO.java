@@ -1,7 +1,6 @@
 package com.swp.whmsystem.dal;
 
 import com.swp.whmsystem.model.Category;
-import com.swp.whmsystem.model.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,19 +26,23 @@ public class CategoryDAO {
         }
     }
 
-    public Category getCategoryByName(String categoryName) {
-        String sql = "select * from categories where name = ?";
-        try (Connection connection = DBContext.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, categoryName);
-            try (ResultSet resultSet = preparedStatement.executeQuery();) {
-                if(resultSet.next()) {
-                    Category c = mapResultSetToCategory(resultSet);
-                    return c;
+    public Category getCategoryById(int cateid) {
+        String sql = "select * from categories where id = ?";
+        try (
+                Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+            ps.setInt(1, cateid);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Category category = new Category();
+                    category.setCategoryId(rs.getInt("id"));
+                    category.setCategoryName(rs.getString("name"));
+                    category.setDescription(rs.getString("description"));
+                    category.setIsactive(rs.getBoolean("isactive"));
+                    return category;
                 }
             }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -96,29 +99,4 @@ public class CategoryDAO {
         return false;
     }
 
-    public boolean deactiveCategory(int categoryid) {
-        String sql = "update Products set isactive = 0 where categoryid = ?";
-        try (Connection connection = DBContext.getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, categoryid);
-            return ps.executeUpdate() >= 1;
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return false;
-    }
-
-    public static void main(String[] args) {
-//        CategoryDAO categoryDAO = new CategoryDAO();
-//        List<Category> list = CategoryDAO.getAllCategory();
-//        for (Category i : list) {
-//            System.out.println(i.toString());
-//        }
-
-        // 2 Nguyen Thi Manager 5 Male 0900000002 manager@gmail.com
-        Category a = new Category(1, "Laptop Gaming", "High graphic");
-        System.out.println(a.getCategoryName());
-        System.out.println(a.getDescription());
-        System.out.println(a.isActive());
-    }
 }

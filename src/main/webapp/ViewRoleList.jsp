@@ -36,7 +36,7 @@
                         >
 
                         <select name="sortBy" class="filter-select" id="sortBy">
-                            <option value="">Sort</option>
+                            <option value>Sort</option>
                             <option value="rolename"
                             ${param.sortBy == 'rolename' ? 'selected' : ''}>
                                 Role Name

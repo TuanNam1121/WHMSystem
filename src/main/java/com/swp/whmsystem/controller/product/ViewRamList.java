@@ -14,7 +14,6 @@ import java.util.List;
 @WebServlet(name = "ViewRamList", urlPatterns = {"/ViewRamList"})
 public class ViewRamList extends HttpServlet {
     private RamDAO ramDao;
-    private static final int PAGE_SIZE = 8;
 
     @Override
     public void init() {
@@ -24,21 +23,13 @@ public class ViewRamList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int page = 1;
-
-        try {
-            page = Integer.parseInt(request.getParameter("page"));
-        } catch (Exception e) {
-        }
-        int totalRams = ramDao.count();
-        int totalPages = (int) Math.ceil((double) totalRams / PAGE_SIZE);
-
-        List<Ram> rams = ramDao.getRamsByPage(page, PAGE_SIZE);
+        String keyword = request.getParameter("keyword");
+        String status = request.getParameter("status");
+        List<Ram> rams = ramDao.getRamsByFilter(keyword, status);
 
         request.setAttribute("rams", rams);
-        request.setAttribute("pageNo", page);
-        request.setAttribute("pageSize", PAGE_SIZE);
-        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("status", status);
         request.getRequestDispatcher("ViewRamList.jsp").forward(request, response);
     }
 }

@@ -27,11 +27,11 @@ public class ProductDAO {
             ps.setString(1, p.getName());
             ps.setString(2, p.getDescription());
             ps.setString(3, p.getImgUrl());
-            ps.setBoolean(4, p.isIsActive());
+            ps.setBoolean(4, p.isActive());
             ps.setInt(5, p.getRam().getId());
             ps.setInt(6, p.getRom().getId());
             ps.setInt(7, p.getChip().getId());
-            ps.setInt(8, p.getBrandId());
+            ps.setInt(8, p.getBrand().getId());
             ps.setInt(9, p.getModel().getId());
             // unit
             // category
@@ -65,16 +65,17 @@ public class ProductDAO {
                 p.setDescription(rs.getString("description"));
                 p.setImgUrl(rs.getString("img_url"));
                 p.setTotalQuantity(rs.getInt("total_quantity"));
-                p.setIsActive(rs.getBoolean("isactive"));
+                p.setActive(rs.getBoolean("isactive"));
                 p.setRam(ram);
                 p.setRom(rom);
                 p.setChip(chip);
                 p.setModel(model);
+                productList.add(p);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return productList;
     }
 
     public static void main(String[] args) {
@@ -86,7 +87,7 @@ public class ProductDAO {
         chip.setId(Integer.parseInt("1"));
         Model model = new Model();
         model.setId(Integer.parseInt("1"));
-        Product product = new Product(0, "a", "a", "/a", 0, true, ram, rom, chip, model, 0, 1);
+//        Product product = new Product(0, "a", "a", "/a", 0, true, ram, rom, chip, model, 0, 1);
         ProductDAO productDao = new ProductDAO();
     }
 }

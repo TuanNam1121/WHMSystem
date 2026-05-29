@@ -4,24 +4,13 @@
  */
 package com.swp.whmsystem.controller.product;
 
-import com.swp.whmsystem.dal.BrandDAO;
-import com.swp.whmsystem.dal.ChipDAO;
-import com.swp.whmsystem.dal.ModelDAO;
-import com.swp.whmsystem.dal.ProductDAO;
-import com.swp.whmsystem.dal.RamDAO;
-import com.swp.whmsystem.dal.RomDAO;
-import com.swp.whmsystem.dal.UnitDAO;
-import com.swp.whmsystem.dal.UserDAO;
-import com.swp.whmsystem.model.Brand;
-import com.swp.whmsystem.model.Chip;
-import com.swp.whmsystem.model.Model;
-import com.swp.whmsystem.model.Product;
-import com.swp.whmsystem.model.Ram;
-import com.swp.whmsystem.model.Rom;
-import com.swp.whmsystem.model.Unit;
+import com.swp.whmsystem.dal.*;
+import com.swp.whmsystem.model.*;
 import com.swp.whmsystem.utils.FileUtils;
+
 import java.io.IOException;
 import java.io.PrintWriter;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -29,6 +18,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -45,10 +35,10 @@ public class AddProduct extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -59,7 +49,7 @@ public class AddProduct extends HttpServlet {
         ModelDAO model = new ModelDAO();
         BrandDAO brand = new BrandDAO();
         UnitDAO unit = new UnitDAO();
-        
+
         List<Ram> ramList = ram.getAllRam();
         List<Rom> romList = rom.getAllRom();
         List<Chip> chipList = chip.getAllChip();
@@ -76,17 +66,12 @@ public class AddProduct extends HttpServlet {
         request.getRequestDispatcher("addproduct.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        CategoryDAO categoryDAO = new CategoryDAO();
+        BrandDAO brandDAO = new BrandDAO();
+
         String productName = request.getParameter("productName");
         String category = request.getParameter("category");
         String brandId = request.getParameter("brand");
@@ -101,7 +86,7 @@ public class AddProduct extends HttpServlet {
         // category
         // unit
         Part part = request.getPart("image");
-        String uploadPath = getServletContext().getRealPath("/uploadImages");
+        String uploadPath = getServletContext().getRealPath("/img/products");
         String imgUrl = FileUtils.saveFile(part, request);
         Ram ram = new Ram();
         ram.setId(Integer.parseInt(ramId));
@@ -111,19 +96,15 @@ public class AddProduct extends HttpServlet {
         chip.setId(Integer.parseInt(chipId));
         Model model = new Model();
         model.setId(Integer.parseInt(modelId));
-        Product product = new Product(0, productName, description, imgUrl, 0, true, ram, rom, chip, model, 0, Integer.parseInt(brandId));
+        Category cate = categoryDAO.getCategoryById(Integer.parseInt(category));
+        Brand brand = brandDAO.getBrandById(Integer.parseInt("brandId"));
+        Product product = new Product(0, productName, description, imgUrl, 0, true, ram, rom, chip, model, cate, brand);
         ProductDAO productDao = new ProductDAO();
-        if(productDao.addProduct(product)){
+        if (productDao.addProduct(product)) {
             response.sendRedirect("productlist.jsp");
-        }
-        else request.getRequestDispatcher("addproduct.jsp").forward(request, response);
+        } else request.getRequestDispatcher("addproduct.jsp").forward(request, response);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";

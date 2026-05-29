@@ -4,16 +4,17 @@ public class Category {
     private int categoryId;
     private String categoryName;
     private String description;
-    private boolean isactive;
+    private boolean isActive;
+
 
     public Category() {
     }
 
-    public Category(int categoryId, String categoryName, String description, boolean isactive) {
+    public Category(int categoryId, String categoryName, String description) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.description = description;
-        this.isactive = isactive;
+        this.isActive = true;
     }
 
     public int getCategoryId() {
@@ -40,12 +41,12 @@ public class Category {
         this.description = description;
     }
 
-    public boolean isIsactive() {
-        return isactive;
+    public boolean isActive() {
+        return isActive;
     }
 
-    public void setIsactive(boolean isactive) {
-        this.isactive = isactive;
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     @Override

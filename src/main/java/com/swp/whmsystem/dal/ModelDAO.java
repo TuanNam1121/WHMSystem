@@ -90,27 +90,29 @@ public class ModelDAO {
         return null;
     }
 
-    public List<Model> getModelsByFilter(String keyword, Integer brandId, String status) {
+    public boolean insertModel(String name, int brandId, Boolean active) {
+        String sql = "Insert into models (name, brandid, isactive) VALUES (?, ?, ?)";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, name);
+            ps.setInt(2, brandId);
+            ps.setBoolean(3, active);
+            return ps.executeUpdate() != 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public List<Model> getModelsByFilter(Integer brandId, String status) {
         List<Model> list = new ArrayList<>();
-
-        String keywordTrimmed = keyword == null ? null : keyword.trim();
-        if (keywordTrimmed != null && keywordTrimmed.isEmpty()) {
-            keywordTrimmed = null;
-        }
-
-        Integer keywordId = null;
-        if (keywordTrimmed != null) {
-            try {
-                keywordId = Integer.valueOf(keywordTrimmed);
-            } catch (NumberFormatException ignored) {
-            }
-        }
 
         Integer normalizedBrandId = (brandId != null && brandId > 0) ? brandId : null;
 
-        String statusTrimmed = status == null ? null : status.trim();
-        if (statusTrimmed != null && statusTrimmed.isEmpty()) {
-            statusTrimmed = null;
+        if (status != null) {
+            status = status.trim();
+            if (status.isEmpty()) {
+                status = null;
+            }
         }
 
         StringBuilder sql = new StringBuilder();
@@ -119,14 +121,6 @@ public class ModelDAO {
                 .append("FROM models m JOIN brands b ON m.brandid = b.brandid");
 
         boolean hasWhere = false;
-        if (keywordTrimmed != null) {
-            if (keywordId != null) {
-                sql.append(" WHERE (m.modelid = ? OR m.name LIKE ?)");
-            } else {
-                sql.append(" WHERE m.name LIKE ?");
-            }
-            hasWhere = true;
-        }
 
         if (normalizedBrandId != null) {
             sql.append(hasWhere ? " AND" : " WHERE");
@@ -134,11 +128,11 @@ public class ModelDAO {
             hasWhere = true;
         }
 
-        if ("active".equalsIgnoreCase(statusTrimmed)) {
+        if ("active".equalsIgnoreCase(status)) {
             sql.append(hasWhere ? " AND" : " WHERE");
             sql.append(" m.isactive = 1");
             hasWhere = true;
-        } else if ("inactive".equalsIgnoreCase(statusTrimmed)) {
+        } else if ("inactive".equalsIgnoreCase(status)) {
             sql.append(hasWhere ? " AND" : " WHERE");
             sql.append(" m.isactive = 0");
             hasWhere = true;
@@ -148,14 +142,6 @@ public class ModelDAO {
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             int paramIndex = 1;
-            if (keywordTrimmed != null) {
-                if (keywordId != null) {
-                    ps.setInt(paramIndex++, keywordId);
-                    ps.setString(paramIndex++, "%" + keywordTrimmed + "%");
-                } else {
-                    ps.setString(paramIndex++, "%" + keywordTrimmed + "%");
-                }
-            }
 
             if (normalizedBrandId != null) {
                 ps.setInt(paramIndex++, normalizedBrandId);

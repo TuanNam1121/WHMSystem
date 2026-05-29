@@ -27,12 +27,10 @@ public class ViewChipList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String keyword = request.getParameter("keyword");
         String status = request.getParameter("status");
-        List<Chip> chips = chipDao.getChipsByFilter(keyword, status);
+        List<Chip> chips = chipDao.getChipsByFilter(status);
 
         request.setAttribute("chips", chips);
-        request.setAttribute("keyword", keyword);
         request.setAttribute("status", status);
         request.getRequestDispatcher("ViewChipList.jsp").forward(request, response);
     }

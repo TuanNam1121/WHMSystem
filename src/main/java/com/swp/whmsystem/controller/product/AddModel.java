@@ -6,34 +6,39 @@ package com.swp.whmsystem.controller.product;
 
 import java.io.IOException;
 
-import com.swp.whmsystem.dal.ChipDAO;
+import com.swp.whmsystem.dal.ModelDAO;
+import com.swp.whmsystem.dal.BrandDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "AddChip", urlPatterns = {"/AddChip"})
-public class AddChip extends HttpServlet {
-    private ChipDAO chipDao;
+@WebServlet(name = "AddModel", urlPatterns = {"/AddModel"})
+public class AddModel extends HttpServlet {
+    private ModelDAO modelDao;
+    private BrandDAO brandDao;
 
     @Override
     public void init() {
-        chipDao = new ChipDAO();
+        modelDao = new ModelDAO();
+        brandDao = new BrandDAO();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("AddChip.jsp").forward(request, response);
+        request.setAttribute("brands", brandDao.getAllBrand());
+        request.getRequestDispatcher("AddModel.jsp").forward(request, response);
     }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String name = request.getParameter("name");
+        String brandId = request.getParameter("brandId");
         String active = request.getParameter("active");
 
-        chipDao.insertChip(name, active != null);
-        response.sendRedirect("ViewChipList");
+        modelDao.insertModel(name, Integer.parseInt(brandId), active != null);
+        response.sendRedirect("ViewModelList");
     }
 }

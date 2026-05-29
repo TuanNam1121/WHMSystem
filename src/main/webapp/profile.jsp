@@ -40,79 +40,81 @@
 
     <div class="page-wrapper">
         <div class="content">
-
-            <form action="viewProfile" method="post"></form>
-            <div class="card">
-                <div class="card-body">
-                    <div class="profile-set">
-                        <div class="profile-head">
-                        </div>
-                        <div class="profile-top">
-                            <div class="profile-content">
-                                <div class="profile-contentimg">
-                                    <img src="assets/img/customer/customer5.jpg" alt="img" id="blah">
-                                    <div class="profileupload">
-                                        <input type="file" id="imgInp">
-                                        <a href="javascript:void(0);"><img src="assets/img/icons/edit-set.svg"
-                                                                           alt="img"></a>
+            <form action="viewprofile" method="post">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="profile-set">
+                            <div class="profile-head">
+                            </div>
+                            <div class="profile-top">
+                                <div class="profile-content">
+                                    <div class="profile-contentimg">
+                                        <img src="assets/img/customer/customer5.jpg" alt="img" id="blah">
+                                        <div class="profileupload">
+                                            <input type="file" id="imgInp">
+                                            <a href="javascript:void(0);"><img src="assets/img/icons/edit-set.svg"
+                                                                               alt="img"></a>
+                                        </div>
+                                    </div>
+                                    <div class="profile-contentname">
+                                        <h2>${sessionScope.user.fullName}</h2>
+                                        <h4>${sessionScope.roleName}</h4>
                                     </div>
                                 </div>
-                                <div class="profile-contentname">
-                                    <h2>${sessionScope.user.fullName}</h2>
-                                    <h4>${sessionScope.roleName}</h4>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="form-group">
+                                    <label>First Name</label>
+                                    <input type="text" name="firstname" placeholder= ${sessionScope.user.firstname}>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-6 col-sm-12">
-                            <div class="form-group">
-                                <label>First Name</label>
-                                <input type="text" placeholder= ${sessionScope.user.firstname}>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-sm-12">
-                            <div class="form-group">
-                                <label>Last Name</label>
-                                <input type="text" placeholder=" ${sessionScope.user.lastname}">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-sm-12">
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="text" placeholder=${sessionScope.user.email}>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-sm-12">
-                            <div class="form-group">
-                                <label>Phone</label>
-                                <input type="text" placeholder=${sessionScope.user.phone}>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-sm-12">
-                            <div class="form-group">
-                                <label>User Name</label>
-                                <input type="text" name="username" placeholder=${sessionScope.user.userName}>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-sm-12">
-                            <div class="form-group">
-                                <label>Password</label>
-                                <div class="pass-group">
-                                    <input type="text" class="pass-input" name="password" autocomplete="off"
-                                           onfocus="this.type='password'"
-                                    />
-                                    <span class="fas toggle-password fa-eye-slash"></span>
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="form-group">
+                                    <label>Last Name</label>
+                                    <input type="text" name="lastname" placeholder=" ${sessionScope.user.lastname}">
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-12">
-                            <a href="javascript:void(0);" class="btn btn-submit me-2">Submit</a>
-                            <a href="javascript:void(0);" class="btn btn-cancel">Cancel</a>
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="text" name="email" placeholder=${sessionScope.user.email}>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="form-group">
+                                    <label>Phone</label>
+                                    <input type="text" name="phone" placeholder=${sessionScope.user.phone}>
+                                </div>
+                            </div>
+
+                            <div class="col-12" style="padding-bottom: 20px">
+                                <div class="form-login">
+                                    <div class="alreadyuser">
+                                        <h7 style="font-weight: bold"><a href="changePassword" class="hover-a">
+                                            Change password</a></h7>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-submit d-inline-block me-2">Submit</button>
+                                <a href="javascript:void(0);" class="btn btn-cancel">Cancel</a>
+                            </div>
+
+
+                            <div style="padding-bottom: 20px">
+                                <form action="changePassword" method="post" id="changePasswordForm">
+
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </form>
 
         </div>
     </div>

@@ -4,6 +4,7 @@ public class Category {
     private int categoryId;
     private String categoryName;
     private String description;
+    private boolean isActive;
 
 
     public Category() {
@@ -13,6 +14,7 @@ public class Category {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.description = description;
+        this.isActive = true;
     }
 
     public int getCategoryId() {
@@ -37,6 +39,14 @@ public class Category {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     @Override

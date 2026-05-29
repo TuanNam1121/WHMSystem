@@ -21,62 +21,36 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.mindrot.jbcrypt.BCrypt;
 
-@WebServlet(name="SolveRequest", urlPatterns={"/solverequest"})
+@WebServlet(name = "SolveRequest", urlPatterns = {"/solverequest"})
 public class SolveRequest extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SolveRequest</title>");  
+            out.println("<title>Servlet SolveRequest</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SolveRequest at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet SolveRequest at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    } 
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        String userId_raw = request.getParameter("userid");
-        String reqType = request.getParameter("type");
-        UserDAO uDao = new UserDAO();
-        RequestDAO rDao = new RequestDAO();
-        int userId = Integer.parseInt(userId_raw);
-        User user = uDao.getUserFromId(userId);
-
-        if (reqType.equalsIgnoreCase("ResetPassword")) {
-            String newPass = GenPasssword.genPassword();
-            String hashedNewPass = BCrypt.hashpw(newPass, BCrypt.gensalt(12));
-
-            boolean isUpdated = uDao.updateUserPassword(user.getId(), hashedNewPass);
-            if (isUpdated) {
-                user.setPassword(hashedNewPass);
-                Request req = rDao.getLatestRequestByUserId(userId);
-                req.setStatus("COMPLETED");
-                rDao.updateRequestStatus(req.getRequestId(), req.getStatus());
-
-                boolean isEmailSent = EmailApi.sendEmail(user.getEmail(), newPass);
-                if (isEmailSent) {
-                    request.setAttribute("message", "Change password successfully and email sent!");
-                } else {
-                    request.setAttribute("message", "Error occur in updating!");
-                }
-            } else {
-                request.setAttribute("message", "Error! Please try again!");
-            }
-            request.getRequestDispatcher("AdminDashBoard").forward(request, response);
-        }
-    } 
+            throws ServletException, IOException {
+        String userId = request.getParameter("userid");
+        request.setAttribute("userId", userId);
+        request.getRequestDispatcher("ChangePassByAdmin.jsp").forward(request, response);
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 

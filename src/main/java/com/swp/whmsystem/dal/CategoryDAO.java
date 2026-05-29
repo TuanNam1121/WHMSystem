@@ -96,4 +96,29 @@ public class CategoryDAO {
         return false;
     }
 
+    public boolean deactiveCategory(int categoryid) {
+        String sql = "update Products set isactive = 0 where categoryid = ?";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, categoryid);
+            return ps.executeUpdate() >= 1;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+//        CategoryDAO categoryDAO = new CategoryDAO();
+//        List<Category> list = CategoryDAO.getAllCategory();
+//        for (Category i : list) {
+//            System.out.println(i.toString());
+//        }
+
+        // 2 Nguyen Thi Manager 5 Male 0900000002 manager@gmail.com
+        Category a = new Category(1, "Laptop Gaming", "High graphic");
+        System.out.println(a.getCategoryName());
+        System.out.println(a.getDescription());
+        System.out.println(a.isActive());
+    }
 }

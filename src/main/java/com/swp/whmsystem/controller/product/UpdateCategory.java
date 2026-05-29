@@ -28,6 +28,7 @@ public class UpdateCategory extends HttpServlet {
         String categoryName = InputStandization.validateName(request.getParameter("categoryName"));
         String description = request.getParameter("description");
         int id = Integer.parseInt(request.getParameter("categoryid"));
+        String isActive = request.getParameter("isActive");
 
         CategoryDAO categoryDAO = new CategoryDAO();
         if (categoryDAO.getCategoryByName(categoryName) != null) {
@@ -39,6 +40,18 @@ public class UpdateCategory extends HttpServlet {
         category.setCategoryId(id);
         category.setCategoryName(categoryName);
         category.setDescription(description);
+        if (isActive.equals("true"))
+            category.setActive(true);
+        else if (isActive.equals("false"))
+            category.setActive(false);
+
+        if (category.isActive() == false) {
+            if (!categoryDAO.deactiveCategory(category.getCategoryId())) {
+                String message = "Đã xảy ra lỗi khi deactive danh mục này!";
+                request.setAttribute("error", message);
+                request.getRequestDispatcher("CategoryDetail.jsp").forward(request, response);
+            }
+        }
 
         if (categoryDAO.updateCategory(category)) {
             response.sendRedirect("ViewCategoryList");

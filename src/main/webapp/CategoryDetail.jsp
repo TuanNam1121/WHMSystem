@@ -24,7 +24,7 @@
             <c:if test="${error != null}">
                 <div class="alert-error">${error}</div>
             </c:if>
-            <form action="${act == 'new' ? 'AddNewCategory' : 'UpdateCategoryInformation'}" method="post" novalidate>
+            <form action="${act == 'new' ? 'AddCategory' : 'UpdateCategoryInformation'}" method="post" novalidate>
                 <input type="hidden" name="id" value="${u != null ? u.id : ''}">
                 <div class="form-grid">
                     <div class="form-left">

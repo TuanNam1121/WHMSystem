@@ -1,197 +1,210 @@
 <!DOCTYPE html>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <meta name="description" content="POS - Bootstrap Admin Template">
-    <meta name="keywords"
-          content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
-    <meta name="author" content="Dreamguys - Bootstrap Admin Template">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Dreams Pos admin template</title>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+        <meta name="description" content="POS - Bootstrap Admin Template">
+        <meta name="keywords"
+              content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
+        <meta name="author" content="Dreamguys - Bootstrap Admin Template">
+        <meta name="robots" content="noindex, nofollow">
+        <title>Dreams Pos admin template</title>
 
-    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
+        <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
 
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+        <link rel="stylesheet" href="assets/css/bootstrap.min.css">
 
-    <link rel="stylesheet" href="assets/css/animate.css">
+        <link rel="stylesheet" href="assets/css/animate.css">
 
-    <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
+        <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
 
-    <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
+        <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
 
-    <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
-    <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
+        <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
+        <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
 
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
-<body>
-<div id="global-loader">
-    <div class="whirly-loader"></div>
-</div>
+        <link rel="stylesheet" href="assets/css/style.css">
+    </head>
+    <body>
+        <div id="global-loader">
+            <div class="whirly-loader"></div>
+        </div>
 
-<div class="main-wrapper">
+        <div class="main-wrapper">
 
-    <jsp:include page="common/header.jsp"></jsp:include>
-    <jsp:include page="common/sidebar.jsp"></jsp:include>
+            <jsp:include page="common/header.jsp"></jsp:include>
+            <jsp:include page="common/sidebar.jsp"></jsp:include>
 
 
-    <div class="page-wrapper">
-        <div class="content">
-            <div class="page-header">
-                <div class="page-title">
-                    <h4>Product Add</h4>
-                    <h6>Create new product</h6>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Product Name</label>
-                                <input type="text" name="productName">
+                <div class="page-wrapper">
+                    <div class="content">
+                        <div class="page-header">
+                            <div class="page-title">
+                                <h4>Product Add</h4>
+                                <h6>Create new product</h6>
                             </div>
                         </div>
+                        <form action="AddProduct" method="post" enctype="multipart/form-data">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-lg-3 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label>Product Name</label>
+                                                <input type="text" name="productName" placeholder="VD: Dell XPS V12">
+                                            </div>
+                                        </div>
 
 
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Category</label>
-                                <select class="select">
-                                    <option>Choose Category</option>
-                                    <option>Computers</option>
-                                    <option>Ok k anh Nam</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Sub Category</label>
-                                <select class="select">
-                                    <option>Choose Sub Category</option>
-                                    <option>Fruits</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Brand</label>
-                                <select class="select">
-                                    <option>Choose Brand</option>
-                                    <option>Brand</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Unit</label>
-                                <select class="select">
-                                    <option>Choose Unit</option>
-                                    <option>Unit</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>SKU</label>
-                                <input type="text">
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Minimum Qty</label>
-                                <input type="text">
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Quantity</label>
-                                <input type="text">
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                            <div class="form-group">
-                                <label>Description</label>
-                                <textarea class="form-control"></textarea>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Tax</label>
-                                <select class="select">
-                                    <option>Choose Tax</option>
-                                    <option>2%</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Discount Type</label>
-                                <select class="select">
-                                    <option>Percentage</option>
-                                    <option>10%</option>
-                                    <option>20%</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Price</label>
-                                <input type="text">
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label> Status</label>
-                                <select class="select">
-                                    <option>Closed</option>
-                                    <option>Open</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                            <div class="form-group">
-                                <label> Product Image</label>
-                                <div class="image-upload">
-                                    <input type="file">
-                                    <div class="image-uploads">
-                                        <img src="assets/img/icons/upload.svg" alt="img">
-                                        <h4>Drag and drop a file to upload</h4>
+                                        <div class="col-lg-3 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label>Category</label>
+                                                <select class="select" name="category">
+                                                    <option>Choose Category</option>
+                                                    <option>Computers</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label>Brand</label>
+                                                <select class="select" name="brand">
+                                                    <option>Choose Brand</option>
+                                                <c:forEach var="i" items="${brandList}">
+                                                    <option value="${i.id}">${i.name}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Unit</label>
+                                            <select class="select" name="unit">
+                                                <option>Choose Unit</option>
+                                                <option>Unit</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label>Description</label>
+                                            <textarea class="form-control" name="description"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Model</label>
+                                            <select class="select" name="model">
+                                                <option>Choose Model</option>
+                                                <c:forEach var="i" items="${modelList}">
+                                                    <option value="${i.id}">${i.name}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Ram</label>
+                                            <select class="select" name="ram">
+                                                <option>Choose Ram</option>
+                                                <c:forEach var="i" items="${ramList}">
+                                                    <option value="${i.id}">${i.size}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Rom</label>
+                                            <select class="select" name="rom">
+                                                <option>Choose Rom</option>
+                                                <c:forEach var="i" items="${romList}">
+                                                    <option value="${i.id}">${i.size}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Chip</label>
+                                            <select class="select" name="chip">
+                                                <option>Choose Chip</option>
+                                                <c:forEach var="i" items="${chipList}">
+                                                    <option value="${i.id}">${i.name}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Price</label>
+                                            <input type="text" name="price" placeholder="VD: 100.000">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Status</label>
+                                            <select class="select" name="isActive">
+                                                <option value="1">Active</option>
+                                                <option value="0">Deactive</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label> Product Image</label>
+                                            <div class="image-upload">
+                                                <input type="file" name="image" id="imageInput" accept="image/*">
+
+                                                <div class="image-uploads">
+                                                    <img src="assets/img/icons/upload.svg" alt="img">
+                                                    <h4 id="uploadText">Drag and drop a file to upload</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <button type="submit" class="btn btn-submit me-2">Submit</button>
+                                        <a href="productlist.html" class="btn btn-cancel">Cancel</a>
                                     </div>
                                 </div>
+                                    ${filePath}
                             </div>
                         </div>
-                        <div class="col-lg-12">
-                            <a href="javascript:void(0);" class="btn btn-submit me-2">Submit</a>
-                            <a href="productlist.html" class="btn btn-cancel">Cancel</a>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
-
         </div>
-    </div>
-</div>
 
 
-<script src="assets/js/jquery-3.6.0.min.js"></script>
+        <script src="assets/js/jquery-3.6.0.min.js"></script>
 
-<script src="assets/js/feather.min.js"></script>
+        <script src="assets/js/feather.min.js"></script>
 
-<script src="assets/js/jquery.slimscroll.min.js"></script>
+        <script src="assets/js/jquery.slimscroll.min.js"></script>
 
-<script src="assets/js/jquery.dataTables.min.js"></script>
-<script src="assets/js/dataTables.bootstrap4.min.js"></script>
+        <script src="assets/js/jquery.dataTables.min.js"></script>
+        <script src="assets/js/dataTables.bootstrap4.min.js"></script>
 
-<script src="assets/js/bootstrap.bundle.min.js"></script>
+        <script src="assets/js/bootstrap.bundle.min.js"></script>
 
-<script src="assets/plugins/select2/js/select2.min.js"></script>
+        <script src="assets/plugins/select2/js/select2.min.js"></script>
 
-<script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
-<script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
+        <script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+        <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
-<script src="assets/js/script.js"></script>
-</body>
+        <script src="assets/js/script.js"></script>
+        <script>
+            const input = document.getElementById("imageInput");
+            const text = document.getElementById("uploadText");
+
+            input.addEventListener("change", function () {
+                if (input.files.length > 0) {
+                    text.textContent = input.files[0].name;
+                }
+            });
+        </script>
+    </body>
 </html>

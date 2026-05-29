@@ -12,13 +12,18 @@
                             class="menu-arrow"></span></a>
                     <ul>
                         <li><a href="productlist">Product List</a></li>
-                        <li><a href="addproduct.jsp">Add Product</a></li>
+                        <li><a href="AddProduct">Add Product</a></li>
                         <li><a href="categorylist.jsp">Category List</a></li>
                         <li><a href="addcategory.jsp">Add Category</a></li>
                         <li><a href="subcategorylist.html">Sub Category List</a></li>
                         <li><a href="subaddcategory.html">Add Sub Category</a></li>
                         <li><a href="brandlist.jsp">Brand List</a></li>
                         <li><a href="addbrand.jsp">Add Brand</a></li>
+                        <li><a href="ViewChipList">Chip List</a></li>
+                        <li><a href="ViewRamList">Ram List</a></li>
+                        <li><a href="ViewRomList">Rom List</a></li>
+                        <li><a href="ViewModelList">Model List</a></li>
+                        <li><a href="ViewUnitList">Unit List</a></li>
                         <li><a href="importproduct.html">Import Products</a></li>
                         <li><a href="barcode.jsp">Print Barcode</a></li>
                     </ul>

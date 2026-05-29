@@ -7,16 +7,28 @@ package com.swp.whmsystem.model;
 
 
 public class RolePermission {
+    private int id;
     private int roleId;
     private int permissionId;
 
     public RolePermission() {
     }
 
-    public RolePermission(int roleId, int permissionId) {
+    public RolePermission(int id, int roleId, int permissionId) {
+        this.id = id;
         this.roleId = roleId;
         this.permissionId = permissionId;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    
 
     public int getRoleId() {
         return roleId;

@@ -16,8 +16,6 @@ import org.mindrot.jbcrypt.BCrypt;
 import com.swp.whmsystem.utils.*;
 
 public class ViewProfile extends HttpServlet {
-
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

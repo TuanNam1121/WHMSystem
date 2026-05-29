@@ -18,7 +18,7 @@ public class RolePermissionDAO {
     
 
     public List<RolePermission> getAllRolePermission() {
-        String sql = "select * from role_permissions";
+        String sql = "select * from role_permission";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             List<RolePermission> result = new ArrayList<>();
@@ -35,7 +35,7 @@ public class RolePermissionDAO {
     
     public void insertRolePermission(int permissionId, int roleId) {
         try {Connection conn = DBContext.getConnection();
-            String sql = "insert into role_permissions (roleid, permissionid) values (?,?)";
+            String sql = "insert into role_permission (roleid, permissionid) values (?,?)";
             st = conn.prepareStatement(sql);
             st.setInt(1, roleId);
             st.setInt(2, permissionId);
@@ -47,7 +47,7 @@ public class RolePermissionDAO {
     
     public void deleteRolePermission(Permission p) {
         try {Connection conn = DBContext.getConnection();
-            String sql = "DELETE FROM role_permissions WHERE permissionid = ?";
+            String sql = "DELETE FROM role_permission WHERE permissionid = ?";
             st = conn.prepareStatement(sql);
             st.setInt(1, p.getPermissionId());
             st.executeUpdate();
@@ -58,7 +58,7 @@ public class RolePermissionDAO {
     
     public void deletePermissionRole(Role r) {
         try {Connection conn = DBContext.getConnection();
-            String sql = "DELETE FROM role_permissions WHERE roleid = ?";
+            String sql = "DELETE FROM role_permission WHERE roleid = ?";
             st = conn.prepareStatement(sql);
             st.setInt(1, r.getRoleId());
             st.executeUpdate();
@@ -69,7 +69,7 @@ public class RolePermissionDAO {
     
     public List<Permission> getPermissionByRole(int roleId) {
 
-        String sql =  "SELECT * FROM permission p JOIN role_permissions rp ON rp.permissionid = p.permissionid WHERE rp.roleid = ?";
+        String sql =  "SELECT * FROM permissions p JOIN role_permission rp ON rp.permissionid = p.permissionid WHERE rp.roleid = ?";
 
         try (
                 Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -96,7 +96,7 @@ public class RolePermissionDAO {
 
     public List<Role> getRoleByPermission(Permission p) {
 
-        String sql = "SELECT * FROM role r JOIN role_permissions rp ON rp.roleid = r.roleid WHERE rp.permissionid = ?";
+        String sql = "SELECT * FROM roles r JOIN role_permission rp ON rp.roleid = r.roleid WHERE rp.permissionid = ?";
         try (
                 Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, p.getPermissionId());
@@ -122,6 +122,7 @@ public class RolePermissionDAO {
 
     private RolePermission mapResultSetToRequest(ResultSet rs) throws SQLException {
         RolePermission i = new RolePermission();
+        i.setId(rs.getInt("roleid"));
         i.setPermissionId(rs.getInt("roleid"));
         i.setRoleId(rs.getInt("permissionid"));
         return i;

@@ -83,14 +83,14 @@ public class AddNewPermission extends HttpServlet {
             request.setAttribute("act", "new");
             request.setAttribute("error", "Permission Name is required");
             request.setAttribute("rolelist", rd.getAllRole());
-            request.getRequestDispatcher("PermissionDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("view/permissionDetail.jsp").forward(request, response);
             return;
         }else if(description.equals(null) || description.trim().equals("")){
             request.setAttribute("permissionName", name);
             request.setAttribute("act", "new");
             request.setAttribute("error", "Permission description is required");
             request.setAttribute("rolelist", rd.getAllRole());
-            request.getRequestDispatcher("PermissionDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("view/permissionDetail.jsp").forward(request, response);
             return;
         }
 

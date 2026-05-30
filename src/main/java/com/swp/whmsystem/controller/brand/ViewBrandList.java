@@ -57,7 +57,7 @@ public class ViewBrandList extends HttpServlet {
         BrandDAO bd = new BrandDAO();
         
         request.setAttribute("brands", bd.getAllBrand());
-        request.getRequestDispatcher("ViewBrandList.jsp").forward(request, response);
+        request.getRequestDispatcher("view/viewBrandList.jsp").forward(request, response);
     } 
 
     /** 

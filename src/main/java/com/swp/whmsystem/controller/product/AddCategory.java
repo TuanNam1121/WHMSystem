@@ -16,7 +16,7 @@ public class AddCategory extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("addcategory.jsp").forward(request, response);
+        request.getRequestDispatcher("view/view/addCategory.jsp").forward(request, response);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class AddCategory extends HttpServlet {
         if (categoryDAO.getCategoryByName(categoryName) != null) {
             String error = "Category name has already exsisted! Please input another one!";
             request.setAttribute("error", error);
-            request.getRequestDispatcher("addcategory.jsp").forward(request, response);
+            request.getRequestDispatcher("view/view/addCategory.jsp").forward(request, response);
             return;
         }
 
@@ -42,7 +42,7 @@ public class AddCategory extends HttpServlet {
         } else {
             String message = "Đã xảy ra lỗi!";
             request.setAttribute("error", message);
-            request.getRequestDispatcher("addcategory.jsp").forward(request, response);
+            request.getRequestDispatcher("view/view/addCategory.jsp").forward(request, response);
         }
     }
 

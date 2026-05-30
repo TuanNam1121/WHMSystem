@@ -32,6 +32,6 @@ public class ViewChipList extends HttpServlet {
 
         request.setAttribute("chips", chips);
         request.setAttribute("status", status);
-        request.getRequestDispatcher("ViewChipList.jsp").forward(request, response);
+        request.getRequestDispatcher("view/viewChipList.jsp").forward(request, response);
     }
 }

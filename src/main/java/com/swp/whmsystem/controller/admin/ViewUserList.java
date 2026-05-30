@@ -43,7 +43,7 @@ public class ViewUserList extends HttpServlet {
         request.setAttribute("roleList", roleList);
         request.setAttribute("roleDao", role);
         request.setAttribute("userlist", userList);
-        request.getRequestDispatcher("ViewUserList.jsp").forward(request, response);
+        request.getRequestDispatcher("view/viewUserList.jsp").forward(request, response);
     }
 
     @Override

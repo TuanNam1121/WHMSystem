@@ -77,7 +77,7 @@ public class PermissionDetail extends HttpServlet {
             request.setAttribute("p", p);
         }
 
-        request.getRequestDispatcher("PermissionDetail.jsp").forward(request, response);
+        request.getRequestDispatcher("view/permissionDetail.jsp").forward(request, response);
     }
 
     /**

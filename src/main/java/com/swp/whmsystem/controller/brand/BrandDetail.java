@@ -74,11 +74,11 @@ public class BrandDetail extends HttpServlet {
 
             request.setAttribute("act", "update");
             request.setAttribute("brand", b);
-            request.getRequestDispatcher("addBrand.jsp").forward(request, response);
+            request.getRequestDispatcher("view/view/addBrand.jsp").forward(request, response);
             return;
         } else {
             request.setAttribute("act", "new");
-            request.getRequestDispatcher("addBrand.jsp").forward(request, response);
+            request.getRequestDispatcher("view/view/addBrand.jsp").forward(request, response);
             return;
         }
     }
@@ -110,7 +110,7 @@ public class BrandDetail extends HttpServlet {
                 request.setAttribute("act", "new");
             }
             request.setAttribute("message", "name required");
-            request.getRequestDispatcher("addBrand.jsp").forward(request, response);
+            request.getRequestDispatcher("view/view/addBrand.jsp").forward(request, response);
             return;
 
         }
@@ -126,13 +126,13 @@ public class BrandDetail extends HttpServlet {
                 request.setAttribute("brand", brandById);
                 if (brandById.getId() != check.getId()) {
                     request.setAttribute("message", "name exist");
-                    request.getRequestDispatcher("addBrand.jsp").forward(request, response);
+                    request.getRequestDispatcher("view/view/addBrand.jsp").forward(request, response);
                     return;
                 }
             } else {
                 request.setAttribute("act", "new");
                 request.setAttribute("message", "name exist");
-                request.getRequestDispatcher("addBrand.jsp").forward(request, response);
+                request.getRequestDispatcher("view/view/addBrand.jsp").forward(request, response);
                 return;
             }
         }

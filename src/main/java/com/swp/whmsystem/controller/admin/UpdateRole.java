@@ -70,7 +70,7 @@ public class UpdateRole extends HttpServlet {
         request.setAttribute("permissions", pd.getAllPermission());
         request.setAttribute("includePermissions", rpd.getPermissionByRole(roleId));
 
-        request.getRequestDispatcher("UpdateRole.jsp").forward(request, response);
+        request.getRequestDispatcher("view/updateRole.jsp").forward(request, response);
     }
 
     /**
@@ -103,7 +103,7 @@ public class UpdateRole extends HttpServlet {
 
         request.setAttribute("permissions", pd.getAllPermission());
         request.setAttribute("includePermissions", rpd.getPermissionByRole(roleId));
-            request.getRequestDispatcher("UpdateRole.jsp").forward(request, response);
+            request.getRequestDispatcher("view/updateRole.jsp").forward(request, response);
         return;
         }
         

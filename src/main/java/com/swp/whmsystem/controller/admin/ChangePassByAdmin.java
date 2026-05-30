@@ -59,14 +59,14 @@ public class ChangePassByAdmin extends HttpServlet {
         if (newPass.isEmpty() || cfNewPass.isEmpty()) {
             request.setAttribute("error", "Please fill out this field");
             request.setAttribute("userId", userId);
-            request.getRequestDispatcher("ChangePassByAdmin.jsp").forward(request, response);
+            request.getRequestDispatcher("view/changePassByAdmin.jsp").forward(request, response);
             return;
         }
 
         if (!cfNewPass.equals(newPass)) {
             request.setAttribute("error", "Confirm password does not match");
             request.setAttribute("userId", userId);
-            request.getRequestDispatcher("ChangePassByAdmin.jsp").forward(request, response);
+            request.getRequestDispatcher("view/changePassByAdmin.jsp").forward(request, response);
             return;
         }
 

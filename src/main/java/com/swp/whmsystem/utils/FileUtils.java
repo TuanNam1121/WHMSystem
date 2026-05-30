@@ -6,6 +6,7 @@ package com.swp.whmsystem.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,7 +20,7 @@ import java.util.UUID;
  */
 public class FileUtils {
 
-    private static final String FOLDER_PATH = "images/products";
+    private static final String FOLDER_PATH = "assets/img/product";
 
     public static String saveFile(Part filePart, HttpServletRequest request) throws IOException {
         String fileName = System.currentTimeMillis() + "_" + filePart.getSubmittedFileName();

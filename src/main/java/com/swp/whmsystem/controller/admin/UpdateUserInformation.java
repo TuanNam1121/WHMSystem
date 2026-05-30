@@ -48,11 +48,11 @@ public class UpdateUserInformation extends HttpServlet {
             request.setAttribute("u", user);
             request.setAttribute("roleDao", roleDao);
             request.setAttribute("rolelist", list);
-            request.getRequestDispatcher("UserDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("view/userDetail.jsp").forward(request, response);
         } catch (NumberFormatException ex) {
             String message = ex.getMessage();
             request.setAttribute("error", message);
-            request.getRequestDispatcher("ViewUserList.jsp").forward(request, response);
+            request.getRequestDispatcher("view/viewUserList.jsp").forward(request, response);
         }
     }
 
@@ -121,7 +121,7 @@ public class UpdateUserInformation extends HttpServlet {
 
         if (!errors.isEmpty()) {
             request.setAttribute("error", String.join("<br/>", errors));
-            request.getRequestDispatcher("UserDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("view/userDetail.jsp").forward(request, response);
             return;
         }
 
@@ -130,7 +130,7 @@ public class UpdateUserInformation extends HttpServlet {
         } else {
             String message = "Đã xảy ra lỗi !";
             request.setAttribute("error", message);
-            request.getRequestDispatcher("UserDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("view/userDetail.jsp").forward(request, response);
         }
     }
 

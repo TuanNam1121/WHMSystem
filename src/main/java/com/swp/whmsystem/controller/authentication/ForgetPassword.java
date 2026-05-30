@@ -38,7 +38,7 @@ public class ForgetPassword extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        response.sendRedirect("forget.jsp");
+        response.sendRedirect("view/forgetPassword.jsp");
     } 
 
     @Override
@@ -52,7 +52,7 @@ public class ForgetPassword extends HttpServlet {
         User user = daoU.getUser(username, email);
         if (user == null) {
             request.setAttribute("error", "Username or Email is invalid! Please try again!");
-            request.getRequestDispatcher("forget.jsp").forward(request, response);
+            request.getRequestDispatcher("view/forgetPassword.jsp").forward(request, response);
             return;
         }
         
@@ -63,7 +63,7 @@ public class ForgetPassword extends HttpServlet {
         daoR.addNewRequest(req);
         
         request.setAttribute("error", "Request sent! Please wait for an email!");
-        request.getRequestDispatcher("login.jsp").forward(request, response);
+        request.getRequestDispatcher("view/login.jsp").forward(request, response);
     }
 
     @Override

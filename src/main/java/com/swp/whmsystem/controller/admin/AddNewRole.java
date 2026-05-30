@@ -57,7 +57,7 @@ public class AddNewRole extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         request.setAttribute("action", "new");
-        request.getRequestDispatcher("UpdateRole.jsp").forward(request, response);
+        request.getRequestDispatcher("view/updateRole.jsp").forward(request, response);
     } 
 
     /** 
@@ -76,7 +76,7 @@ public class AddNewRole extends HttpServlet {
         if(name.equals(null) || name.trim().equals("")){
             request.setAttribute("action", "new");
             request.setAttribute("error", "Name is required");
-            request.getRequestDispatcher("UpdateRole.jsp").forward(request, response);
+            request.getRequestDispatcher("view/updateRole.jsp").forward(request, response);
         return;
         }
 

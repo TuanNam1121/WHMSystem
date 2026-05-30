@@ -62,7 +62,9 @@
                                                 <label>Category</label>
                                                 <select class="select" name="category">
                                                     <option>Choose Category</option>
-                                                    <option>Computers</option>
+                                                    <c:forEach var="i" items="${categoryList}">
+                                                    <option value="${i.categoryId}">${i.name}</option>
+                                                </c:forEach>
                                                 </select>
                                             </div>
                                         </div>

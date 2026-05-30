@@ -5,18 +5,16 @@
 package com.swp.whmsystem.controller.product;
 
 import java.io.IOException;
-import java.util.List;
 
 import com.swp.whmsystem.dal.ChipDAO;
-import com.swp.whmsystem.model.Chip;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "ViewChipList", urlPatterns = {"/ViewChipList"})
-public class ViewChipList extends HttpServlet {
+@WebServlet(name = "AddChip", urlPatterns = {"/AddChip"})
+public class AddChip extends HttpServlet {
     private ChipDAO chipDao;
 
     @Override
@@ -27,13 +25,15 @@ public class ViewChipList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String keyword = request.getParameter("keyword");
-        String status = request.getParameter("status");
-        List<Chip> chips = chipDao.getChipsByFilter(keyword, status);
+        request.getRequestDispatcher("AddChip.jsp").forward(request, response);
+    }
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String name = request.getParameter("name");
+        String active = request.getParameter("active");
 
-        request.setAttribute("chips", chips);
-        request.setAttribute("keyword", keyword);
-        request.setAttribute("status", status);
-        request.getRequestDispatcher("ViewChipList.jsp").forward(request, response);
+        chipDao.insertChip(name,Boolean.parseBoolean(active));
+        response.sendRedirect("ViewChipList");
     }
 }

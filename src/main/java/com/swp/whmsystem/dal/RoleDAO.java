@@ -162,7 +162,7 @@ public class RoleDAO {
         try {
             Connection con = DBContext.getConnection();
             String sql = "select * from roles";
-            if (keyword != null && keyword != "") {
+            if (keyword != null) {
                 sql += " where rolename like ?";
             }
             if (sortBy != null && sortBy.equals("rolename")) {
@@ -173,7 +173,7 @@ public class RoleDAO {
             }
 
             PreparedStatement rt = con.prepareStatement(sql);
-            if (keyword != null && keyword != "") {
+            if (keyword != null) {
                 rt.setString(1, "%" + keyword + "%");
             }
             ResultSet result = rt.executeQuery();

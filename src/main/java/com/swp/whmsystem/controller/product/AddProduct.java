@@ -5,6 +5,7 @@
 package com.swp.whmsystem.controller.product;
 
 import com.swp.whmsystem.dal.BrandDAO;
+import com.swp.whmsystem.dal.CategoryDAO;
 import com.swp.whmsystem.dal.ChipDAO;
 import com.swp.whmsystem.dal.ModelDAO;
 import com.swp.whmsystem.dal.ProductDAO;
@@ -60,6 +61,7 @@ public class AddProduct extends HttpServlet {
         ModelDAO model = new ModelDAO();
         BrandDAO brand = new BrandDAO();
         UnitDAO unit = new UnitDAO();
+        CategoryDAO category = new CategoryDAO();
         
         List<Ram> ramList = ram.getAllRam();
         List<Rom> romList = rom.getAllRom();
@@ -67,13 +69,14 @@ public class AddProduct extends HttpServlet {
         List<Model> modelList = model.getAll();
         List<Brand> brandList = brand.getAllBrand();
         List<Unit> unitList = unit.getAllUnit();
-        // category
+        List<Category> categoryList = category.getAllCategory();
         request.setAttribute("ramList", ramList);
         request.setAttribute("romList", romList);
         request.setAttribute("chipList", chipList);
         request.setAttribute("modelList", modelList);
         request.setAttribute("brandList", brandList);
         request.setAttribute("unitList", unitList);
+        request.setAttribute("categoryList", categoryList);
         request.getRequestDispatcher("addproduct.jsp").forward(request, response);
     }
 

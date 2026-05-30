@@ -116,12 +116,12 @@ public class Product {
         this.totalQuantity = totalQuantity;
     }
 
-    public boolean isIsActive() {
+    public boolean isActive() {
         return isActive;
     }
 
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     public Ram getRam() {

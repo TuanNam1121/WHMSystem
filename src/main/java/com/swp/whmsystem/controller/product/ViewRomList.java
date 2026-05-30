@@ -14,7 +14,6 @@ import java.util.List;
 @WebServlet(name = "ViewRomList", urlPatterns = {"/ViewRomList"})
 public class ViewRomList extends HttpServlet {
     private RomDAO romDao;
-    private static final int PAGE_SIZE = 8;
 
     @Override
     public void init() {
@@ -24,21 +23,13 @@ public class ViewRomList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int page = 1;
-
-        try {
-            page = Integer.parseInt(request.getParameter("page"));
-        } catch (Exception e) {
-        }
-        int totalRoms = romDao.count();
-        int totalPages = (int) Math.ceil((double) totalRoms / PAGE_SIZE);
-
-        List<Rom> roms = romDao.getRomsByPage(page, PAGE_SIZE);
+        String keyword = request.getParameter("keyword");
+        String status = request.getParameter("status");
+        List<Rom> roms = romDao.getRomsByFilter(keyword, status);
 
         request.setAttribute("roms", roms);
-        request.setAttribute("pageNo", page);
-        request.setAttribute("pageSize", PAGE_SIZE);
-        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("status", status);
         request.getRequestDispatcher("ViewRomList.jsp").forward(request, response);
     }
 }

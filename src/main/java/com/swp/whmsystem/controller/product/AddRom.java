@@ -32,8 +32,21 @@ public class AddRom extends HttpServlet {
             throws ServletException, IOException {
         String size = request.getParameter("size");
         String active = request.getParameter("active");
+        String romSize = size == null ? "" : size.trim();
 
-        romDao.insertRom(size, active != null);
+        if (romSize.isEmpty()) {
+            request.setAttribute("message", "Rom size is required");
+            request.getRequestDispatcher("view/AddRom.jsp").forward(request, response);
+            return;
+        }
+
+        if (romDao.getRomBySize(romSize) != null) {
+            request.setAttribute("message", "Rom size already exists");
+            request.getRequestDispatcher("view/AddRom.jsp").forward(request, response);
+            return;
+        }
+
+        romDao.insertRom(romSize, active != null);
         response.sendRedirect("ViewRomList");
     }
 }

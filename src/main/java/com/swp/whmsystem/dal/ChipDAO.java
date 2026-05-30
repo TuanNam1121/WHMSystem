@@ -11,6 +11,14 @@ import java.util.List;
 
 public class ChipDAO {
 
+    private Chip mapChip(ResultSet rs) throws SQLException {
+        Chip chip = new Chip();
+        chip.setId(rs.getInt("id"));
+        chip.setName(rs.getString("name"));
+        chip.setActive(rs.getBoolean("isactive"));
+        return chip;
+    }
+
     public List<Chip> getAllChip() {
         List<Chip> list = new ArrayList<>();
 
@@ -19,11 +27,7 @@ public class ChipDAO {
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Chip chip = new Chip();
-                chip.setId(rs.getInt("id"));
-                chip.setName(rs.getString("name"));
-                chip.setActive(rs.getBoolean("isactive"));
-                list.add(chip);
+                list.add(mapChip(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -37,11 +41,7 @@ public class ChipDAO {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Chip chip = new Chip();
-                chip.setId(rs.getInt("id"));
-                chip.setName(rs.getString("name"));
-                chip.setActive(rs.getBoolean("isactive"));
-                return chip;
+                return mapChip(rs);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -71,11 +71,7 @@ public class ChipDAO {
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Chip chip = new Chip();
-                chip.setId(rs.getInt("id"));
-                chip.setName(rs.getString("name"));
-                chip.setActive(rs.getBoolean("isactive"));
-                list.add(chip);
+                list.add(mapChip(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -110,6 +106,20 @@ public class ChipDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public Chip getChipByName(String name) {
+        String sql = "SELECT * FROM chips WHERE name = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapChip(rs);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 
 }

@@ -32,8 +32,21 @@ public class AddRam extends HttpServlet {
             throws ServletException, IOException {
         String size = request.getParameter("size");
         String active = request.getParameter("active");
+        String ramSize = size == null ? "" : size.trim();
 
-        ramDao.insertRam(size, active != null);
+        if (ramSize.isEmpty()) {
+            request.setAttribute("message", "Ram size is required");
+            request.getRequestDispatcher("view/AddRam.jsp").forward(request, response);
+            return;
+        }
+
+        if (ramDao.getRamBySize(ramSize) != null) {
+            request.setAttribute("message", "Ram size already exists");
+            request.getRequestDispatcher("view/AddRam.jsp").forward(request, response);
+            return;
+        }
+
+        ramDao.insertRam(ramSize, active != null);
         response.sendRedirect("ViewRamList");
     }
 }

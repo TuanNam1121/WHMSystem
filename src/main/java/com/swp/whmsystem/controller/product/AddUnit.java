@@ -32,8 +32,21 @@ public class AddUnit extends HttpServlet {
             throws ServletException, IOException {
         String name = request.getParameter("name");
         String active = request.getParameter("active");
+        String unitName = name == null ? "" : name.trim();
 
-        unitDao.insertUnit(name, active != null);
+        if (unitName.isEmpty()) {
+            request.setAttribute("message", "Unit name is required");
+            request.getRequestDispatcher("view/AddUnit.jsp").forward(request, response);
+            return;
+        }
+
+        if (unitDao.getUnitByName(unitName) != null) {
+            request.setAttribute("message", "Unit name already exists");
+            request.getRequestDispatcher("view/AddUnit.jsp").forward(request, response);
+            return;
+        }
+
+        unitDao.insertUnit(unitName, active != null);
         response.sendRedirect("ViewUnitList");
     }
 }

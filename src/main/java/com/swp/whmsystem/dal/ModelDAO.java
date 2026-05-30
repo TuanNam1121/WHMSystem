@@ -104,6 +104,24 @@ public class ModelDAO {
         return false;
     }
 
+    public Model getModelByName(String name) {
+        String sql = "SELECT m.modelid, m.name, m.isactive, " +
+                "b.brandid, b.name AS brand_name, b.description, b.createdat, b.updatedat " +
+                "FROM models m JOIN brands b ON m.brandid = b.brandid WHERE m.name = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapModel(rs);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
+    }
+
     public List<Model> getModelsByFilter(Integer brandId, String status) {
         List<Model> list = new ArrayList<>();
 

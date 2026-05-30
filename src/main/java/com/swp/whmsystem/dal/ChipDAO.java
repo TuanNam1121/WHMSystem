@@ -52,13 +52,6 @@ public class ChipDAO {
     public List<Chip> getChipsByFilter(String status) {
         List<Chip> list = new ArrayList<>();
 
-        if (status != null) {
-            status = status.trim();
-            if (status.isEmpty()) {
-                status = null;
-            }
-        }
-
         StringBuilder sql = new StringBuilder("SELECT * FROM chips");
         boolean hasWhere = false;
 

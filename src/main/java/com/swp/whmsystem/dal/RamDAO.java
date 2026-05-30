@@ -65,13 +65,6 @@ public class RamDAO {
     public List<Ram> getRamsByFilter(String status) {
         List<Ram> list = new ArrayList<>();
 
-        if (status != null) {
-            status = status.trim();
-            if (status.isEmpty()) {
-                status = null;
-            }
-        }
-
         StringBuilder sql = new StringBuilder("SELECT id, size, isactive FROM rams");
         boolean hasWhere = false;
 

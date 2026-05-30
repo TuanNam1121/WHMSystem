@@ -44,13 +44,6 @@ public class UnitDAO {
     public List<Unit> getUnitsByFilter(String status) {
         List<Unit> list = new ArrayList<>();
 
-        if (status != null) {
-            status = status.trim();
-            if (status.isEmpty()) {
-                status = null;
-            }
-        }
-
         StringBuilder sql = new StringBuilder("SELECT * FROM units");
         boolean hasWhere = false;
 

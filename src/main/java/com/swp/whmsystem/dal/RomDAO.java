@@ -63,13 +63,6 @@ public class RomDAO {
     public List<Rom> getRomsByFilter(String status) {
         List<Rom> list = new ArrayList<>();
 
-        if (status != null) {
-            status = status.trim();
-            if (status.isEmpty()) {
-                status = null;
-            }
-        }
-
         StringBuilder sql = new StringBuilder("SELECT id, size, isactive FROM roms");
         boolean hasWhere = false;
 

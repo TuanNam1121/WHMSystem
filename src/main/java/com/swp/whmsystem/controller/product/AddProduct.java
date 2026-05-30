@@ -77,7 +77,7 @@ public class AddProduct extends HttpServlet {
         request.setAttribute("brandList", brandList);
         request.setAttribute("unitList", unitList);
         request.setAttribute("categoryList", categoryList);
-        request.getRequestDispatcher("addproduct.jsp").forward(request, response);
+        request.getRequestDispatcher("view/addProduct.jsp").forward(request, response);
     }
 
     /**
@@ -128,7 +128,7 @@ public class AddProduct extends HttpServlet {
         if(productDao.addProduct(product)){
             response.sendRedirect("productlist");
         }
-        else request.getRequestDispatcher("addproduct.jsp").forward(request, response);
+        else request.getRequestDispatcher("view/addProduct.jsp").forward(request, response);
     }
 
     /**

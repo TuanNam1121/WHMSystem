@@ -21,7 +21,7 @@ public class UpdateCategory extends HttpServlet {
         CategoryDAO categoryDAO = new CategoryDAO();
         Category c = categoryDAO.getCategoryById(id);
         request.setAttribute("category", c);
-        request.getRequestDispatcher("updatecategory.jsp").forward(request, response);
+        request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
     }
 
     @Override

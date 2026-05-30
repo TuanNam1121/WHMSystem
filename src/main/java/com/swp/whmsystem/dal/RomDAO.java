@@ -48,44 +48,29 @@ public class RomDAO {
         return null;
     }
 
-    public List<Rom> getRomsByFilter(String keyword, String status) {
+    public boolean insertRom(String size, Boolean active) {
+        String sql = "Insert into roms (size, isactive) VALUES (?, ?)";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, size);
+            ps.setBoolean(2, active);
+            return ps.executeUpdate() != 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public List<Rom> getRomsByFilter(String status) {
         List<Rom> list = new ArrayList<>();
-
-        String keywordTrimmed = keyword == null ? null : keyword.trim();
-        if (keywordTrimmed != null && keywordTrimmed.isEmpty()) {
-            keywordTrimmed = null;
-        }
-
-        String statusTrimmed = status == null ? null : status.trim();
-        if (statusTrimmed != null && statusTrimmed.isEmpty()) {
-            statusTrimmed = null;
-        }
-
-        Integer keywordId = null;
-        if (keywordTrimmed != null) {
-            try {
-                keywordId = Integer.valueOf(keywordTrimmed);
-            } catch (NumberFormatException ignored) {
-            }
-        }
 
         StringBuilder sql = new StringBuilder("SELECT id, size, isactive FROM roms");
         boolean hasWhere = false;
 
-        if (keywordTrimmed != null) {
-            if (keywordId != null) {
-                sql.append(" WHERE (id = ? OR size LIKE ?)");
-            } else {
-                sql.append(" WHERE size LIKE ?");
-            }
-            hasWhere = true;
-        }
-
-        if ("active".equalsIgnoreCase(statusTrimmed)) {
+        if ("active".equalsIgnoreCase(status)) {
             sql.append(hasWhere ? " AND" : " WHERE");
             sql.append(" isactive = 1");
             hasWhere = true;
-        } else if ("inactive".equalsIgnoreCase(statusTrimmed)) {
+        } else if ("inactive".equalsIgnoreCase(status)) {
             sql.append(hasWhere ? " AND" : " WHERE");
             sql.append(" isactive = 0");
             hasWhere = true;
@@ -93,15 +78,6 @@ public class RomDAO {
         sql.append(" ORDER BY id");
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-            int paramIndex = 1;
-            if (keywordTrimmed != null) {
-                if (keywordId != null) {
-                    ps.setInt(paramIndex++, keywordId);
-                    ps.setString(paramIndex++, "%" + keywordTrimmed + "%");
-                } else {
-                    ps.setString(paramIndex++, "%" + keywordTrimmed + "%");
-                }
-            }
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {

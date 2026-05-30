@@ -54,7 +54,11 @@
                                     <span><img src="assets/img/icons/closes.svg" alt="img"></span>
                                 </a>
                             </div>
+                            <div class="search-input">
+                                <a class="btn btn-searchset"><img src="assets/img/icons/search-whites.svg" alt="img"></a>
+                            </div>
                         </div>
+
                     </div>
 
                     <form id="filterForm" action="ViewChipList" method="GET">
@@ -63,11 +67,6 @@
                                 <div class="row">
                                     <div class="col-lg-12 col-sm-12">
                                         <div class="row">
-                                            <div class="col-lg col-sm-6 col-12">
-                                                <div class="form-group">
-                                                    <input type="text" name="keyword" placeholder="Search id, name" value="${param.keyword}">
-                                                </div>
-                                            </div>
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <select class="select" name="status">

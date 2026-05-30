@@ -120,6 +120,8 @@ public class ChipDAO {
         return list;
     }
 
+
+
     public int count() {
         String sql = "SELECT COUNT(*) FROM chips";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {

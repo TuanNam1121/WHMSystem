@@ -1,6 +1,7 @@
 package com.swp.whmsystem.dal;
 
 import com.swp.whmsystem.model.Brand;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

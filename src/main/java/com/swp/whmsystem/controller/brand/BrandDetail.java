@@ -6,18 +6,26 @@ package com.swp.whmsystem.controller.brand;
 
 import com.swp.whmsystem.dal.BrandDAO;
 import com.swp.whmsystem.model.Brand;
+import com.swp.whmsystem.utils.FileUtils;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import java.sql.Timestamp;
 
 /**
  *
  * @author LENOVO
  */
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024,
+    maxFileSize = 1024 * 1024 * 10,
+    maxRequestSize = 1024 * 1024 * 50
+)
 public class BrandDetail extends HttpServlet {
 
     /**
@@ -66,11 +74,11 @@ public class BrandDetail extends HttpServlet {
 
             request.setAttribute("act", "update");
             request.setAttribute("brand", b);
-            request.getRequestDispatcher("addBrand.jsp").forward(request, response);
+            request.getRequestDispatcher("view/view/addBrand.jsp").forward(request, response);
             return;
         } else {
             request.setAttribute("act", "new");
-            request.getRequestDispatcher("addBrand.jsp").forward(request, response);
+            request.getRequestDispatcher("view/view/addBrand.jsp").forward(request, response);
             return;
         }
     }
@@ -90,25 +98,67 @@ public class BrandDetail extends HttpServlet {
         String description = request.getParameter("description");
 
         String act = request.getParameter("act");
+        BrandDAO bd = new BrandDAO();
+
+        if (name == null || name.trim().equals("")) {
+            if (act == null || !act.equals("new")) {
+                String id = request.getParameter("id");
+                request.setAttribute("act", "update");
+                Brand brandById = bd.getBrandById(Integer.parseInt(id));
+                request.setAttribute("brand", brandById);
+            } else {
+                request.setAttribute("act", "new");
+            }
+            request.setAttribute("message", "name required");
+            request.getRequestDispatcher("view/view/addBrand.jsp").forward(request, response);
+            return;
+
+        }
+
+        Brand check = bd.getBrandByName(name);
+
+        if (check != null) {
+
+            if (act == null || !act.equals("new")) {
+                String id = request.getParameter("id");
+                request.setAttribute("act", "update");
+                Brand brandById = bd.getBrandById(Integer.parseInt(id));
+                request.setAttribute("brand", brandById);
+                if (brandById.getId() != check.getId()) {
+                    request.setAttribute("message", "name exist");
+                    request.getRequestDispatcher("view/view/addBrand.jsp").forward(request, response);
+                    return;
+                }
+            } else {
+                request.setAttribute("act", "new");
+                request.setAttribute("message", "name exist");
+                request.getRequestDispatcher("view/view/addBrand.jsp").forward(request, response);
+                return;
+            }
+        }
+
         if (act == null || !act.equals("new")) {
             String id = request.getParameter("id");
-            Timestamp createdAt = Timestamp.valueOf(request.getParameter("createdAt"));
+            Brand oldBrand = bd.getBrandById(Integer.parseInt(id));
             Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
+            Part part = request.getPart("image");
+            if (part != null && part.getSize() > 0) {
+                String imgUrl = FileUtils.saveFileBrand(part, request);
+                oldBrand.setImg(imgUrl);
+            }
 
-            Brand b = new Brand(Integer.parseInt(id), name, description, createdAt, updatedAt);
+            oldBrand.setName(name);
+            oldBrand.setDescription(description);
+            oldBrand.setUpdatedAt(updatedAt);
 
-            BrandDAO bd = new BrandDAO();
-
-            bd.updateBrand(b);
+            bd.updateBrand(oldBrand);
             response.sendRedirect("ViewBrandList");
             return;
-        }else{
+        } else {
             Timestamp createdAt = new Timestamp(System.currentTimeMillis());
             Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
-            Brand b = new Brand(0, name, description, createdAt, updatedAt);
+            Brand b = new Brand(0, name, null, description, createdAt, updatedAt);
 
-            BrandDAO bd = new BrandDAO();
-            
             bd.insertBrand(b);
             response.sendRedirect("ViewBrandList");
             return;

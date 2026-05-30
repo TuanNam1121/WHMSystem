@@ -25,8 +25,8 @@ public class BrandDAO {
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             List<Brand> result = new ArrayList<>();
             while (rs.next()) {
-                Brand p = mapResultSetToBrand(rs);
-                result.add(p);
+                Brand b = mapResultSetToBrand(rs);
+                result.add(b);
             }
             return result;
         } catch (SQLException ex) {
@@ -46,9 +46,9 @@ public class BrandDAO {
             rs = st.executeQuery(); //only select
             if (rs.next()) {
 
-                Brand p = mapResultSetToBrand(rs);
+                Brand b = mapResultSetToBrand(rs);
 
-                return p;
+                return b;
             } else {
                 return null;
             }
@@ -68,9 +68,9 @@ public class BrandDAO {
             st.setString(1, brand_name);
             rs = st.executeQuery(); //only select
             if (rs.next()) {
-                Brand p = mapResultSetToBrand(rs);
+                Brand b = mapResultSetToBrand(rs);
 
-                return p;
+                return b;
             } else {
                 return null;
             }
@@ -83,12 +83,13 @@ public class BrandDAO {
     public void insertBrand(Brand b) {
         try {
             Connection conn = DBContext.getConnection();
-            String sql = "insert into brands (name,description,createdat, updatedat) values (?,?,?,?)";
+            String sql = "insert into brands (name,img_url,description,createdat, updatedat) values (?,?,?,?,?)";
             st = conn.prepareStatement(sql);
             st.setString(1, b.getName());
-            st.setString(2, b.getDescription());
-            st.setDate(3, new Date(System.currentTimeMillis()));
+            st.setString(2, b.getImg());
+            st.setString(3, b.getDescription());
             st.setDate(4, new Date(System.currentTimeMillis()));
+            st.setDate(5, new Date(System.currentTimeMillis()));
             st.executeUpdate();
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -98,13 +99,14 @@ public class BrandDAO {
     public void updateBrand(Brand b) {
         try {
             Connection conn = DBContext.getConnection();
-            String sql = "UPDATE brands SET name = ?, description = ?, createdat = ?, updatedat = ? WHERE brandid = ?";
+            String sql = "UPDATE brands SET name = ?, img_url = ?, description = ?, createdat = ?, updatedat = ? WHERE brandid = ?";
             st = conn.prepareStatement(sql);
             st.setString(1, b.getName());
-            st.setString(2, b.getDescription());
-            st.setTimestamp(3, b.getCreatedAt());
-            st.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
-            st.setInt(5, b.getId());
+            st.setString(2, b.getImg());
+            st.setString(3, b.getDescription());
+            st.setTimestamp(4, b.getCreatedAt());
+            st.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+            st.setInt(6, b.getId());
             st.executeUpdate();
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -129,6 +131,7 @@ public class BrandDAO {
 
         b.setId(rs.getInt("brandid"));
         b.setName(rs.getString("name"));
+        b.setImg(rs.getString("img_url"));
         b.setDescription(rs.getString("description"));
         b.setCreatedAt(rs.getTimestamp("createdat"));
         b.setUpdatedAt(rs.getTimestamp("updatedat"));
@@ -154,5 +157,6 @@ public class BrandDAO {
         for (Brand i : dao.getAllBrand()) {
             System.out.println(i.getId() + " " + i.getName() + " " + i.getDescription());
         }
+        System.out.println(dao.getBrandByName("Dell").toString());
     }
 }

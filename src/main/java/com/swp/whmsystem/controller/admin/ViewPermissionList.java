@@ -77,20 +77,20 @@ public class ViewPermissionList extends HttpServlet {
                 request.setAttribute("permissions", pd.searchPermissionByName(keyword, 0));
             }
             request.setAttribute("roleid", role);
-            request.getRequestDispatcher("ViewPermissionList.jsp").forward(request, response);
+            request.getRequestDispatcher("view/viewPermissionList.jsp").forward(request, response);
             return;
         } else if (keyword == null || keyword.trim().equals("")) {
             if (role != 0) {
                 request.setAttribute("roleid", role);
                 request.setAttribute("permissions", pd.searchPermissionByName("", role));
-                request.getRequestDispatcher("ViewPermissionList.jsp").forward(request, response);
+                request.getRequestDispatcher("view/viewPermissionList.jsp").forward(request, response);
                 return;
             }
         }
 
         request.setAttribute("roleid", role);
         request.setAttribute("permissions", pd.getAllPermission());
-        request.getRequestDispatcher("ViewPermissionList.jsp").forward(request, response);
+        request.getRequestDispatcher("view/viewPermissionList.jsp").forward(request, response);
     }
 
     /**

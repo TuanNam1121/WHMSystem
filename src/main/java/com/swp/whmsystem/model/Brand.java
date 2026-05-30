@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 public class Brand {
 private int id;
 private String name;
+private String img;
 private String description;
 private Timestamp createdAt;
 private Timestamp updatedAt;
@@ -17,9 +18,10 @@ private Timestamp updatedAt;
     public Brand() {
     }
 
-    public Brand(int id, String name, String description, Timestamp createdAt, Timestamp updatedAt) {
+    public Brand(int id, String name, String img, String description, Timestamp createdAt, Timestamp updatedAt) {
         this.id = id;
         this.name = name;
+        this.img = img;
         this.description = description;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -39,6 +41,14 @@ private Timestamp updatedAt;
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 
     public String getDescription() {
@@ -63,6 +73,11 @@ private Timestamp updatedAt;
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "Brand{" + "id=" + id + ", name=" + name + ", img=" + img + ", description=" + description + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
     }
 
 

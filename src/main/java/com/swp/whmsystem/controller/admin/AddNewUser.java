@@ -38,7 +38,7 @@ public class AddNewUser extends HttpServlet {
         request.setAttribute("act", action);
         request.setAttribute("roleDao", roleDao);
         request.setAttribute("rolelist", list);
-        request.getRequestDispatcher("UserDetail.jsp").forward(request, response);
+        request.getRequestDispatcher("view/userDetail.jsp").forward(request, response);
     }
 
     /**
@@ -112,7 +112,7 @@ public class AddNewUser extends HttpServlet {
 
         if (!errors.isEmpty()) {
             request.setAttribute("error", String.join("<br/>", errors));
-            request.getRequestDispatcher("UserDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("view/userDetail.jsp").forward(request, response);
             return;
         }
 
@@ -123,7 +123,7 @@ public class AddNewUser extends HttpServlet {
         } else {
             String message = "Đã xảy ra lỗi !";
             request.setAttribute("error", message);
-            request.getRequestDispatcher("UserDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("view/userDetail.jsp").forward(request, response);
         }
     }
 

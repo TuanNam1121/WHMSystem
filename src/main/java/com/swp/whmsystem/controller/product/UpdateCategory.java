@@ -17,13 +17,11 @@ public class UpdateCategory extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String id_raw = request.getParameter("id");
-        //int id = Integer.parseInt(id_raw);
+        int id = Integer.parseInt(id_raw);
         CategoryDAO categoryDAO = new CategoryDAO();
-        Category c = categoryDAO.getCategoryById(1);
-        request.setAttribute("categoryName", c.getName());
-        request.setAttribute("description", c.getDescription());
-        request.setAttribute("isActive", c.isIsActive());
-        request.getRequestDispatcher("updatecategory.jsp").forward(request, response);
+        Category c = categoryDAO.getCategoryById(id);
+        request.setAttribute("category", c);
+        request.getRequestDispatcher("view/updatecategory.jsp").forward(request, response);
     }
 
     @Override

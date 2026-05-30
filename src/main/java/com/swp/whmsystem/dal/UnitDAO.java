@@ -41,44 +41,17 @@ public class UnitDAO {
         return null;
     }
 
-    public List<Unit> getUnitsByFilter(String keyword, String status) {
+    public List<Unit> getUnitsByFilter(String status) {
         List<Unit> list = new ArrayList<>();
-
-        String keywordTrimmed = keyword == null ? null : keyword.trim();
-        if (keywordTrimmed != null && keywordTrimmed.isEmpty()) {
-            keywordTrimmed = null;
-        }
-
-        String statusTrimmed = status == null ? null : status.trim();
-        if (statusTrimmed != null && statusTrimmed.isEmpty()) {
-            statusTrimmed = null;
-        }
-
-        Integer keywordId = null;
-        if (keywordTrimmed != null) {
-            try {
-                keywordId = Integer.valueOf(keywordTrimmed);
-            } catch (NumberFormatException ignored) {
-            }
-        }
 
         StringBuilder sql = new StringBuilder("SELECT * FROM units");
         boolean hasWhere = false;
 
-        if (keywordTrimmed != null) {
-            if (keywordId != null) {
-                sql.append(" WHERE (id = ? OR name LIKE ?)");
-            } else {
-                sql.append(" WHERE name LIKE ?");
-            }
-            hasWhere = true;
-        }
-
-        if ("active".equalsIgnoreCase(statusTrimmed)) {
+        if ("active".equalsIgnoreCase(status)) {
             sql.append(hasWhere ? " AND" : " WHERE");
             sql.append(" isactive = 1");
             hasWhere = true;
-        } else if ("inactive".equalsIgnoreCase(statusTrimmed)) {
+        } else if ("inactive".equalsIgnoreCase(status)) {
             sql.append(hasWhere ? " AND" : " WHERE");
             sql.append(" isactive = 0");
             hasWhere = true;
@@ -87,15 +60,6 @@ public class UnitDAO {
         sql.append(" ORDER BY id");
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-            int paramIndex = 1;
-            if (keywordTrimmed != null) {
-                if (keywordId != null) {
-                    ps.setInt(paramIndex++, keywordId);
-                    ps.setString(paramIndex++, "%" + keywordTrimmed + "%");
-                } else {
-                    ps.setString(paramIndex++, "%" + keywordTrimmed + "%");
-                }
-            }
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -121,11 +85,11 @@ public class UnitDAO {
         return 0;
     }
 
-    public boolean insertUnit(String name) {
+    public boolean insertUnit(String name, Boolean active) {
         String sql = "Insert into units (name, isactive) VALUES (?, ?)";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, name);
-            ps.setBoolean(2, true);
+            ps.setBoolean(2, active);
             return ps.executeUpdate() != 0;
         } catch (Exception e) {
             e.printStackTrace();

@@ -25,15 +25,16 @@ public class AddChip extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("AddChip.jsp").forward(request, response);
+        request.getRequestDispatcher("view/addChip.jsp").forward(request, response);
     }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String name = request.getParameter("name");
         String active = request.getParameter("active");
 
-        chipDao.insertChip(name,Boolean.parseBoolean(active));
+        chipDao.insertChip(name, active != null);
         response.sendRedirect("ViewChipList");
     }
 }

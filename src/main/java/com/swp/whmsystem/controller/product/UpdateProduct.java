@@ -36,7 +36,7 @@ public class UpdateProduct extends HttpServlet {
             int productId = Integer.parseInt(productIdr);
         }catch(NumberFormatException ex){
             String error = ex.getMessage();
-            request.getRequestDispatcher("addproduct.jsp").forward(request, response);
+            request.getRequestDispatcher("view/addProduct.jsp").forward(request, response);
         }
     } 
 

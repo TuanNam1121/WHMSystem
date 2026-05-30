@@ -23,11 +23,10 @@ public class ViewUnitList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String keyword = request.getParameter("keyword");
         String status = request.getParameter("status");
-        List<Unit> units = unitDao.getUnitsByFilter(keyword, status);
+        List<Unit> units = unitDao.getUnitsByFilter(status);
 
         request.setAttribute("units", units);
-        request.getRequestDispatcher("ViewUnitList.jsp").forward(request, response);
+        request.getRequestDispatcher("view/viewUnitList.jsp").forward(request, response);
     }
 }

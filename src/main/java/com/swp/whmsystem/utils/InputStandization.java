@@ -7,7 +7,7 @@ public class InputStandization {
         for (String str : m) {
             String head = str.substring(0, 1).toUpperCase();
             String tail = str.substring(1).toLowerCase();
-            String result = head + tail;
+            String result = head + tail + " ";
             name += result;
         }
         return name.trim();

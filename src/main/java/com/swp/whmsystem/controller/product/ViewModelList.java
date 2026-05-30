@@ -27,7 +27,6 @@ public class ViewModelList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String keyword = request.getParameter("keyword");
         String status = request.getParameter("status");
         Integer brandId = null;
         try {
@@ -38,12 +37,11 @@ public class ViewModelList extends HttpServlet {
         } catch (NumberFormatException ignored) {
         }
 
-        List<Model> models = modelDao.getModelsByFilter(keyword, brandId, status);
+        List<Model> models = modelDao.getModelsByFilter(brandId, status);
         List<Brand> brands = brandDao.getAllBrand();
       
         request.setAttribute("models", models);
         request.setAttribute("brands", brands);
-        request.setAttribute("keyword", keyword);
         request.setAttribute("status", status);
         request.setAttribute("selectedBrandId", brandId);
         request.getRequestDispatcher("ViewModelList.jsp").forward(request, response);

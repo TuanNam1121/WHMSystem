@@ -26,8 +26,8 @@ public class ModelDAO {
 
         return model;
     }
-    
-    public List<Model> getModelByBrandId(int brandId){
+
+    public List<Model> getModelByBrandId(int brandId) {
         List<Model> list = new ArrayList<>();
 
         String sql = "SELECT m.modelid, m.name, m.isactive, " +
@@ -47,9 +47,8 @@ public class ModelDAO {
 
         return list;
     }
-    
-    public Model getModelById(int modelId){
-        Model model = new Model();
+
+    public Model getModelById(int modelId) {
 
         String sql = "SELECT m.modelid, m.name, m.isactive, " +
                 "b.brandid, b.name AS brand_name, b.description, b.createdat, b.updatedat " +
@@ -92,75 +91,47 @@ public class ModelDAO {
         return list;
     }
 
-    public List<Model> getModelsByFilter(String keyword, Integer brandId, String status) {
+    public boolean insertModel(String name, int brandId, Boolean active) {
+        String sql = "Insert into models (name, brandid, isactive) VALUES (?, ?, ?)";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, name);
+            ps.setInt(2, brandId);
+            ps.setBoolean(3, active);
+            return ps.executeUpdate() != 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public List<Model> getModelsByFilter(Integer brandId, String status) {
         List<Model> list = new ArrayList<>();
 
-        String keywordTrimmed = keyword == null ? null : keyword.trim();
-        if (keywordTrimmed != null && keywordTrimmed.isEmpty()) {
-            keywordTrimmed = null;
-        }
-
-        Integer keywordId = null;
-        if (keywordTrimmed != null) {
-            try {
-                keywordId = Integer.valueOf(keywordTrimmed);
-            } catch (NumberFormatException ignored) {
-            }
-        }
-
-        Integer normalizedBrandId = (brandId != null && brandId > 0) ? brandId : null;
-
-        String statusTrimmed = status == null ? null : status.trim();
-        if (statusTrimmed != null && statusTrimmed.isEmpty()) {
-            statusTrimmed = null;
-        }
 
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT m.modelid, m.name, m.isactive, ")
                 .append("b.brandid, b.name AS brand_name, b.description, b.createdat, b.updatedat ")
                 .append("FROM models m JOIN brands b ON m.brandid = b.brandid");
-
         boolean hasWhere = false;
-        if (keywordTrimmed != null) {
-            if (keywordId != null) {
-                sql.append(" WHERE (m.modelid = ? OR m.name LIKE ?)");
-            } else {
-                sql.append(" WHERE m.name LIKE ?");
-            }
+
+        if (brandId != null) {
+            sql.append(" WHERE m.brandid = ?");
             hasWhere = true;
         }
 
-        if (normalizedBrandId != null) {
-            sql.append(hasWhere ? " AND" : " WHERE");
-            sql.append(" m.brandid = ?");
-            hasWhere = true;
-        }
-
-        if ("active".equalsIgnoreCase(statusTrimmed)) {
+        if ("active".equalsIgnoreCase(status)) {
             sql.append(hasWhere ? " AND" : " WHERE");
             sql.append(" m.isactive = 1");
-            hasWhere = true;
-        } else if ("inactive".equalsIgnoreCase(statusTrimmed)) {
+        } else if ("inactive".equalsIgnoreCase(status)) {
             sql.append(hasWhere ? " AND" : " WHERE");
             sql.append(" m.isactive = 0");
-            hasWhere = true;
         }
 
         sql.append(" ORDER BY m.modelid");
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-            int paramIndex = 1;
-            if (keywordTrimmed != null) {
-                if (keywordId != null) {
-                    ps.setInt(paramIndex++, keywordId);
-                    ps.setString(paramIndex++, "%" + keywordTrimmed + "%");
-                } else {
-                    ps.setString(paramIndex++, "%" + keywordTrimmed + "%");
-                }
-            }
-
-            if (normalizedBrandId != null) {
-                ps.setInt(paramIndex++, normalizedBrandId);
+            if (brandId != null) {
+                ps.setInt(1, brandId);
             }
 
             ResultSet rs = ps.executeQuery();

@@ -23,12 +23,10 @@ public class ViewRomList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String keyword = request.getParameter("keyword");
         String status = request.getParameter("status");
-        List<Rom> roms = romDao.getRomsByFilter(keyword, status);
+        List<Rom> roms = romDao.getRomsByFilter(status);
 
         request.setAttribute("roms", roms);
-        request.setAttribute("keyword", keyword);
         request.setAttribute("status", status);
         request.getRequestDispatcher("ViewRomList.jsp").forward(request, response);
     }

@@ -35,10 +35,8 @@
 
         <jsp:include page="common/header.jsp"></jsp:include>
         <jsp:include page="common/sidebar.jsp"></jsp:include>
+
         
-        <c:if test="${not empty message}">
-            <div class="alert-success">${message}</div>
-        </c:if>
 
         <div class="main-wrapper">
 
@@ -50,12 +48,14 @@
                             <h6>${act == 'new' ?'Create new Brand':'Update Brand'}</h6>
                         </div>
                     </div>
-
-                    <form action="${pageContext.request.contextPath}/BrandDetail" method="post">
+<c:if test="${not empty message}">
+            <div class="alert-success">${message}</div>
+        </c:if>
+                    <form action="${pageContext.request.contextPath}/BrandDetail" method="post" enctype="multipart/form-data">
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
-                                    <input name="id" type="text" value="${brand.id}" readonly>
+                                    <input name="id" type="hidden" value="${brand.id}" readonly>
                                     <input name="act" type="hidden" value="${act}">
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
@@ -70,18 +70,31 @@
                                         </div>
                                     </div>
                                     <c:if test="${act != 'new'}">
-                                    <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <label>created at</label>
-                                            <input class="form-control" type="date" name="createdAt" value="${brand.createdAt}" readonly>
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label>created at</label>
+                                                <input class="form-control" name="createdAt" value="${brand.createdAt}" readonly>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <label>updated at</label>
-                                            <input class="form-control" type="date" value="${brand.updatedAt}" readonly>
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label>updated at</label>
+                                                <input class="form-control" value="${brand.updatedAt}" readonly>
+                                            </div>
                                         </div>
-                                    </div>
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <label> Brand Image</label>
+                                                    <div class="image-upload">
+                                                        <input type="file" name="image" id="imageInput" accept="image/*">
+
+                                                        <div class="image-uploads">
+                                                            <img src="assets/img/icons/upload.svg" alt="img">
+                                                            <h4 id="uploadText">Drag and drop a file to upload</h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                     </c:if>
                                     <div class="col-lg-12">
                                         <input class="btn btn-submit me-2" type="submit" value="${act == 'new' ?'ADD':'UPDATE'}">

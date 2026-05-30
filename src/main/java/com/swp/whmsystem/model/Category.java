@@ -55,4 +55,14 @@ public class Category {
     public void setIsActive(boolean isActive) {
         this.isActive = isActive;
     }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "categoryId=" + categoryId +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", isActive=" + isActive +
+                '}';
+    }
 }

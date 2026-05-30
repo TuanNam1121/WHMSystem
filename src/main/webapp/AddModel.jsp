@@ -1,5 +1,5 @@
-<%@page contentType="text/html" pageEncoding="UTF-8" %>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,47 +34,48 @@
 
 <div class="main-wrapper">
 
-    <jsp:include page="common/sidebar.jsp"></jsp:include>
     <jsp:include page="common/header.jsp"></jsp:include>
+    <jsp:include page="common/sidebar.jsp"></jsp:include>
 
     <div class="page-wrapper">
         <div class="content">
             <div class="page-header">
                 <div class="page-title">
-                    <h4>Add Product Category</h4>
-                    <h6>Create new product Category</h6>
+                    <h4>Add model</h4>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-body">
-                    <c:if test="${not empty error}">
-                        <div class="alert alert-danger" role="alert">
-                                ${error}
-                        </div>
-                    </c:if>
-                    <form action="addCategory" method="post">
-                        <div class="row">
-                            <div class="col-lg-12 col-sm-12 col-12">
+                    <div class="row">
+                        <form id="filterForm" action="AddModel" method="Post">
+                            <div class="col-lg-3 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label>Category Name</label>
-                                    <input type="text" name="categoryName">
+                                    <label>Model Name</label>
+                                    <input type="text" name="name">
                                 </div>
                             </div>
-
-                            <div class="col-lg-12">
+                            <div class="col-lg-3 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label>Description</label>
-                                    <textarea class="form-control" name="description"></textarea>
+                                    <label>Brand</label>
+                                    <select class="select" name="brandId">
+                                        <c:forEach var="brand" items="${brands}">
+                                            <option value="${brand.id}">${brand.name}</option>
+                                        </c:forEach>
+                                    </select>
                                 </div>
                             </div>
-
                             <div class="col-lg-12">
-                                <input type="submit" class="btn btn-submit me-2" value="Submit">
-                                <a href="home" class="btn btn-cancel">Cancel</a>
+                                <div class="form-group">
+                                    <label>Active</label>
+                                    <input type="checkbox" name="active" value="true">
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                            <div class="col-lg-12">
+                                <button type="submit" class="btn btn-submit me-2">Submit</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
 

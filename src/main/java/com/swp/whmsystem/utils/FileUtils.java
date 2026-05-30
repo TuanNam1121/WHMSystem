@@ -51,4 +51,34 @@ public class FileUtils {
         // Return for web display (user "/")
         return "/" + FOLDER_PATH + "/" + fileName;
     }
+    
+    public static String saveFileBrand(Part filePart, HttpServletRequest request) throws IOException {
+        String fileName = System.currentTimeMillis() + "_" + filePart.getSubmittedFileName();
+
+        // Save to /target (load immediately after upload, missing after redeploy)
+        // Paths.get auto control "\" or "/" --> Ok with all OS
+        Path targetBase = Paths.get(request.getServletContext().getRealPath(""));
+        Path targetDir = targetBase.resolve("images/brands");
+
+        if (Files.notExists(targetDir)) Files.createDirectories(targetDir);
+
+        Path targetFilePath = targetDir.resolve(fileName);
+        filePart.write(targetFilePath.toString());
+
+        // Save to /src (Not load immediately after upload, keeping after redeploy)
+        try {
+            Path projectRoot = targetBase.getParent().getParent();
+            Path sourceDir = projectRoot.resolve(Paths.get("src", "main", "webapp", "images/brands"));
+
+            if (Files.notExists(sourceDir)) Files.createDirectories(sourceDir);
+
+            Path sourceFilePath = sourceDir.resolve(fileName);
+            Files.copy(targetFilePath, sourceFilePath, StandardCopyOption.REPLACE_EXISTING); // Can throw IOException
+
+        } catch (Exception e) {
+            System.err.println("Fail to save to src: " + e.getMessage());
+        }
+        // Return for web display (user "/")
+        return "/" + "images/brands" + "/" + fileName;
+    }
 }

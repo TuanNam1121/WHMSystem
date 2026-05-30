@@ -36,6 +36,11 @@
                         <h4>Please login to your account</h4>
                     </div>
                     <form action="login" method="post">
+                        <c:if test="${not empty error}">
+                            <div class="alert alert-danger" role="alert">
+                                    ${error}
+                            </div>
+                        </c:if>
 
                         <div class="form-login">
                             <label>Username</label>

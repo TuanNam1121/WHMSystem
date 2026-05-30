@@ -41,41 +41,39 @@
         <div class="content">
             <div class="page-header">
                 <div class="page-title">
-                    <h4>Add Product Category</h4>
-                    <h6>Create new product Category</h6>
+                    <h4>Edit Product Category</h4>
+                    <h6>Edit a product Category</h6>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-body">
-                    <c:if test="${not empty error}">
-                        <div class="alert alert-danger" role="alert">
-                                ${error}
-                        </div>
-                    </c:if>
-                    <form action="addCategory" method="post">
+                <c:if test="${not empty error}">
+                    <div class="alert alert-danger" role="alert">
+                            ${error}
+                    </div>
+                </c:if>
+                <form action="updateCategory" method="post">
+                    <div class="card-body">
                         <div class="row">
                             <div class="col-lg-12 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label>Category Name</label>
-                                    <input type="text" name="categoryName">
+                                    <input type="text" value=c.category.>
                                 </div>
                             </div>
-
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label>Description</label>
-                                    <textarea class="form-control" name="description"></textarea>
+                                    <textarea class="form-control"></textarea>
                                 </div>
                             </div>
-
                             <div class="col-lg-12">
-                                <input type="submit" class="btn btn-submit me-2" value="Submit">
-                                <a href="home" class="btn btn-cancel">Cancel</a>
+                                <a href="javascript:void(0);" class="btn btn-submit me-2">Submit</a>
+                                <a href="categorylist.html" class="btn btn-cancel">Cancel</a>
                             </div>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
 
         </div>

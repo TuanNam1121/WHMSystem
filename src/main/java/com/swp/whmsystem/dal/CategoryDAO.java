@@ -1,11 +1,9 @@
 package com.swp.whmsystem.dal;
 
+import com.swp.whmsystem.model.Brand;
 import com.swp.whmsystem.model.Category;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,12 +42,7 @@ public class CategoryDAO {
             ps.setInt(1, cateid);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    Category category = new Category();
-                    category.setCategoryId(rs.getInt("categoryid"));
-                    category.setName(rs.getString("name"));
-                    category.setDescription(rs.getString("description"));
-                    category.setIsActive(rs.getBoolean("isactive"));
-                    return category;
+                    Category c = mapResultSetToCategory(rs);
                 }
             }
         } catch (Exception e) {
@@ -59,18 +52,14 @@ public class CategoryDAO {
     }
     
     public Category getCategoryByName(String cate) {
-        String sql = "select * from categories where categoryname = ?";
+        String sql = "select * from categories where name = ? limit 1";
         try (
                 Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
-            ps.setString(1, "%" + cate +"%");
+            ps.setString(1, cate);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    Category category = new Category();
-                    category.setCategoryId(rs.getInt("id"));
-                    category.setName(rs.getString("name"));
-                    category.setDescription(rs.getString("description"));
-                    category.setIsActive(rs.getBoolean("isactive"));
-                    return category;
+                    Category c = mapResultSetToCategory(rs);
+                    return c;
                 }
             }
         } catch (Exception e) {
@@ -84,6 +73,7 @@ public class CategoryDAO {
         c.setCategoryId(rs.getInt("categoryid"));
         c.setName(rs.getString("name"));
         c.setDescription(rs.getString("description"));
+        c.setIsActive(rs.getBoolean("isactive"));
         return c;
     }
 
@@ -114,4 +104,12 @@ public class CategoryDAO {
         return false;
     }
 
+    public static void main(String[] args) {
+
+        CategoryDAO categoryDAO = new CategoryDAO();
+        Category category = new Category();
+
+        category = categoryDAO.getCategoryByName("Laptop Gaming");
+        System.out.println(category);
+    }
 }

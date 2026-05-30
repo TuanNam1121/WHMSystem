@@ -4,12 +4,14 @@ import com.swp.whmsystem.dal.CategoryDAO;
 import com.swp.whmsystem.model.Category;
 import com.swp.whmsystem.utils.InputStandization;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+@WebServlet(name = "UpdateCategory", urlPatterns = {"/updateCategory"})
 public class UpdateCategory extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -19,7 +21,7 @@ public class UpdateCategory extends HttpServlet {
         CategoryDAO categoryDAO = new CategoryDAO();
         Category c = categoryDAO.getCategoryById(id);
         request.setAttribute("category", c);
-        request.getRequestDispatcher("CategoryDetail.jsp").forward(request, response);
+        request.getRequestDispatcher("updatecategory.jsp").forward(request, response);
     }
 
     @Override

@@ -1,16 +1,8 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: tung
-  Date: 29/5/26
-  Time: 18:52
-  To change this template use File | Settings | File Templates.
---%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <base href="\${pageContext.request.contextPath}/">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <meta name="description" content="POS - Bootstrap Admin Template">
@@ -42,8 +34,6 @@
 
 <div class="main-wrapper">
 
-    <jsp:include page="../common/header.jsp"></jsp:include>
-    <jsp:include page="../common/sidebar.jsp"></jsp:include>
 
     <div class="page-wrapper">
         <div class="content">
@@ -120,9 +110,8 @@
                                 </div>
                                 <div class="col-lg-1 col-sm-6 col-12 ms-auto">
                                     <div class="form-group">
-                                        <a class="btn btn-filters ms-auto"><img
-                                                src="assets/img/icons/search-whites.svg"
-                                                alt="img"></a>
+                                        <a class="btn btn-filters ms-auto"><img src="assets/img/icons/search-whites.svg"
+                                                                                alt="img"></a>
                                     </div>
                                 </div>
                             </div>

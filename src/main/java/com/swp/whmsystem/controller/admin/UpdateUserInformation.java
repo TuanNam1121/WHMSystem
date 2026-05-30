@@ -52,7 +52,7 @@ public class UpdateUserInformation extends HttpServlet {
         } catch (NumberFormatException ex) {
             String message = ex.getMessage();
             request.setAttribute("error", message);
-            request.getRequestDispatcher("view/viewUserList.jsp").forward(request, response);
+            request.getRequestDispatcher("view/UserList.jsp").forward(request, response);
         }
     }
 

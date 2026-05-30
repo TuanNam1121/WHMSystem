@@ -43,6 +43,7 @@ public class CategoryDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Category c = mapResultSetToCategory(rs);
+                    return c;
                 }
             }
         } catch (Exception e) {
@@ -109,7 +110,7 @@ public class CategoryDAO {
         CategoryDAO categoryDAO = new CategoryDAO();
         Category category = new Category();
 
-        category = categoryDAO.getCategoryByName("Laptop Gaming");
+        category = categoryDAO.getCategoryById(1);
         System.out.println(category);
     }
 }

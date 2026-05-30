@@ -58,13 +58,31 @@
                             <div class="col-lg-12 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label>Category Name</label>
-                                    <input type="text" value=c.category.>
+                                    <input type="text" value="${categoryName}" name="categoryName">
                                 </div>
                             </div>
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label>Description</label>
-                                    <textarea class="form-control"></textarea>
+                                    <textarea class="form-control" placeholder="${description}"
+                                              name="description"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <div class="d-flex gap-4 align-items-center border rounded p-3 bg-light">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="isActive" value="true"
+                                                   <c:if test="${isActive}">checked</c:if>>
+                                            <label class="form-check-label">Active</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="isActive" value="false"
+                                                   <c:if test="${not isActive}">checked</c:if>>
+                                            <label class="form-check-label">DeActive</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-lg-12">

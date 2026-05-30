@@ -10,6 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RomDAO {
+
+    private Rom mapRom(ResultSet rs) throws SQLException {
+        Rom rom = new Rom();
+        rom.setId(rs.getInt("id"));
+        rom.setSize(rs.getString("size"));
+        rom.setActive(rs.getBoolean("isactive"));
+        return rom;
+    }
+
     public List<Rom> getAllRom() {
         List<Rom> list = new ArrayList<>();
 
@@ -18,11 +27,7 @@ public class RomDAO {
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Rom rom = new Rom();
-                rom.setId(rs.getInt("id"));
-                rom.setSize(rs.getString("size"));
-                rom.setActive(rs.getBoolean("isactive"));
-                list.add(rom);
+                list.add(mapRom(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -36,11 +41,7 @@ public class RomDAO {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Rom rom = new Rom();
-                rom.setId(rs.getInt("id"));
-                rom.setSize(rs.getString("size"));
-                rom.setActive(rs.getBoolean("isactive"));
-                return rom;
+                return mapRom(rs);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -58,6 +59,20 @@ public class RomDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public Rom getRomBySize(String size) {
+        String sql = "SELECT id, size, isactive FROM roms WHERE size = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, size);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapRom(rs);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 
     public List<Rom> getRomsByFilter(String status) {
@@ -81,11 +96,7 @@ public class RomDAO {
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Rom rom = new Rom();
-                rom.setId(rs.getInt("id"));
-                rom.setSize(rs.getString("size"));
-                rom.setActive(rs.getBoolean("isactive"));
-                list.add(rom);
+                list.add(mapRom(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

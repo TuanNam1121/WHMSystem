@@ -45,6 +45,10 @@
                 </div>
             </div>
 
+            <c:if test="${not empty message}">
+                <div class="alert alert-danger" role="alert">${message}</div>
+            </c:if>
+
             <div class="card">
                 <div class="card-body">
                     <div class="row">

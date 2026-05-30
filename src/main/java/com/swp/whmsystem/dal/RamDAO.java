@@ -12,6 +12,14 @@ import java.util.List;
 
 public class RamDAO {
 
+    private Ram mapRam(ResultSet rs) throws SQLException {
+        Ram ram = new Ram();
+        ram.setId(rs.getInt("id"));
+        ram.setSize(rs.getString("size"));
+        ram.setActive(rs.getBoolean("isactive"));
+        return ram;
+    }
+
     public List<Ram> getAllRam() {
         List<Ram> list = new ArrayList<>();
 
@@ -20,11 +28,7 @@ public class RamDAO {
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Ram ram = new Ram();
-                ram.setId(rs.getInt("id"));
-                ram.setSize(rs.getString("size"));
-                ram.setActive(rs.getBoolean("isactive"));
-                list.add(ram);
+                list.add(mapRam(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -38,11 +42,7 @@ public class RamDAO {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Ram ram = new Ram();
-                ram.setId(rs.getInt("id"));
-                ram.setSize(rs.getString("size"));
-                ram.setActive(rs.getBoolean("isactive"));
-                return ram;
+                return mapRam(rs);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -60,6 +60,20 @@ public class RamDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public Ram getRamBySize(String size) {
+        String sql = "SELECT id, size, isactive FROM rams WHERE size = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, size);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapRam(rs);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 
     public List<Ram> getRamsByFilter(String status) {
@@ -83,11 +97,7 @@ public class RamDAO {
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Ram ram = new Ram();
-                ram.setId(rs.getInt("id"));
-                ram.setSize(rs.getString("size"));
-                ram.setActive(rs.getBoolean("isactive"));
-                list.add(ram);
+                list.add(mapRam(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

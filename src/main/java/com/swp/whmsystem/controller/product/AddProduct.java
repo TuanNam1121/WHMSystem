@@ -126,7 +126,7 @@ public class AddProduct extends HttpServlet {
         //int productId, String name, String description, String sku, String imgUrl, int totalQuantity, boolean isActive, Ram ram, Rom rom, Unit unit, Chip chip, Model model, Category category, Brand brand
         Product product = new Product(0, productName, description, "Generator" + UUID.randomUUID().toString(), imgUrl, 0, true, ram, rom, unit, chip, model, category, brand);
         if(productDao.addProduct(product)){
-            response.sendRedirect("productlist.jsp");
+            response.sendRedirect("productlist");
         }
         else request.getRequestDispatcher("addproduct.jsp").forward(request, response);
     }

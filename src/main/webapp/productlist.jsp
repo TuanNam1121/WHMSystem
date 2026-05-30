@@ -155,10 +155,8 @@
                                 <th>SKU</th>
                                 <th>Category</th>
                                 <th>Brand</th>
-                                <th>price</th>
-                                <th>Unit</th>
+                                <%--                                <th>price</th>--%>
                                 <th>Qty</th>
-                                <th>Created By</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -174,24 +172,20 @@
                                     </td>
                                     <td class="productimgname">
                                         <a href="javascript:void(0);" class="product-img">
-                                            <img src="assets/img/product/product1.jpg" alt="product">
+                                            <img src="${p.imgUrl}" alt="product">
                                         </a>
                                         <a href="javascript:void(0);">${p.name}</a>
                                     </td>
-                                    <td>PT001</td>
+                                    <td>${p.sku}</td>
+                                    <td>${p.category.name}</td>
+                                    <td>${p.brand.name}</td>
+                                        <%--                                    <td>${p.price}</td>--%>
                                     <td>${p.totalQuantity}</td>
-                                    <td>${p.ram}</td>
-                                    <td>1500.00</td>
-                                    <td>pc</td>
-                                    <td>${p.totalQuantity}</td>
-                                    <td>Admin</td>
                                     <td>
                                         <a class="me-3" href="product-details.html">
                                             <img src="assets/img/icons/eye.svg" alt="img">
                                         </a>
-                                        <a class="me-3" href="editproduct.html">
-                                            <img src="assets/img/icons/edit.svg" alt="img">
-                                        </a>
+
                                         <a class="confirm-text" href="javascript:void(0);">
                                             <img src="assets/img/icons/delete.svg" alt="img">
                                         </a>

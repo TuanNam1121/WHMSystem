@@ -146,7 +146,7 @@
                                             <span class="checkmarks"></span>
                                         </label>
                                     </td>
-                                    <td class="productimgname">
+                                    <td>
                                         <a href="javascript:void(0);">${c.name}</a>
                                     </td>
                                     <td>${c.description}</td>

@@ -28,14 +28,12 @@ public class ProductValidation {
             String error = "Product must be have ";
             if(p.getBrand() == null) return error + "brand";
             if(p.getUnit() == null) return error + "unit";
-            if(p.getModel() == null) return error + "model";
             if(p.getRam() == null) return error + "ram";
         }
         else if(p.getCategory().getName().equals("ROM")){
             String error = "Product must be have ";
             if(p.getBrand() == null) return error + "brand";
             if(p.getUnit() == null) return error + "unit";
-            if(p.getModel() == null) return error + "model";
             if(p.getRom() == null) return error + "rom";
         }
         return "true";

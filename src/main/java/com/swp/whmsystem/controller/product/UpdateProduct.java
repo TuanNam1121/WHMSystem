@@ -25,6 +25,7 @@ import com.swp.whmsystem.utils.ProductValidation;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,6 +37,7 @@ import java.util.List;
  *
  * @author Admin
  */
+@MultipartConfig(maxFileSize = 1024 * 1024 * 5)
 @WebServlet(name = "UpdateProduct", urlPatterns = {"/UpdateProduct"})
 public class UpdateProduct extends HttpServlet {
 
@@ -73,6 +75,7 @@ public class UpdateProduct extends HttpServlet {
             if (product.getTotalQuantity() != 0) {
                 request.setAttribute("transactionExist", "v");
             }
+            request.setAttribute("mode", "update");
             request.setAttribute("product", product);
             request.setAttribute("ramList", ramList);
             request.setAttribute("romList", romList);
@@ -108,7 +111,7 @@ public class UpdateProduct extends HttpServlet {
         String ramId = request.getParameter("ram");
         String romId = request.getParameter("rom");
         String chipId = request.getParameter("chip");
-        String price = request.getParameter("price");
+        String price_raw = request.getParameter("price");
         String isActive = request.getParameter("isActive");
         String description = request.getParameter("description");
         Part part = request.getPart("image");
@@ -126,7 +129,8 @@ public class UpdateProduct extends HttpServlet {
         BrandDAO brandDao = new BrandDAO();
         UnitDAO unitDao = new UnitDAO();
         CategoryDAO categoryDao = new CategoryDAO();
-
+        
+        Integer price = ProductValidation.parseInteger(price_raw);
         Integer ramIdInt = ProductValidation.parseInteger(ramId);
         Integer romIdInt = ProductValidation.parseInteger(romId);
         Integer chipIdInt = ProductValidation.parseInteger(chipId);
@@ -160,13 +164,25 @@ public class UpdateProduct extends HttpServlet {
 
         ProductDAO productDao = new ProductDAO();
         Product product = productDao.getProductFromId(Integer.parseInt(productid));
-        Product newProduct = new Product(0, productName, description, sku.toUpperCase(), imgUrl == null ? product.getImgUrl() : imgUrl, 0, Integer.parseInt(isActive) == 1, ram, rom, unit, chip, model, category, brand);
+        if(!productName.equals(product.getName())) product.setName(productName);
+        if(!description.equals(product.getDescription())) product.setDescription(description);
+        if(!sku.equals(product.getSku())) product.setSku(sku);
+        if(imgUrl != null) product.setImgUrl(imgUrl);
+        if(price != product.getPrice()) product.setPrice(price);
+        if(ram != null) product.setRam(ram);
+        if(rom != null) product.setRom(rom);
+        if(chip != null) product.setChip(chip);
+        if(model != null) product.setModel(model);
+        if(category != null) product.setCategory(category);
+        if(unit != null) product.setUnit(unit);
+        if(brand != null) product.setBrand(brand);
+        request.setAttribute("mode", "update");
+        request.setAttribute("product", product);
         if (productDao.getProductFromSKU(sku).getProductId() != product.getProductId()) {
             String message = "SKU was existed in other product !";
-            request.setAttribute("product", newProduct);
             request.setAttribute("message", message);
             request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
-        } else if (productDao.getProductWithSpecification(newProduct).getProductId() != product.getProductId()) {
+        } else if (productDao.getProductWithSpecification(product) != null && productDao.getProductWithSpecification(product).getProductId() != product.getProductId()) {
             if (cautioned == null) {
                 String message = "This product have a same product having same specification. Do you want to add this product ?";
                 cautioned = "yes";
@@ -177,8 +193,8 @@ public class UpdateProduct extends HttpServlet {
             }
         } else {
             String error = ProductValidation.isProductValid(product);
-            if (error == "true" && productDao.updateProduct(product)) {
-                response.sendRedirect("view/productList.jsp");
+            if ("true".equals(error) && productDao.updateProduct(product)) {
+                response.sendRedirect("productlist");
             } else {
                 request.setAttribute("message", error);
                 request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);

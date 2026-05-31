@@ -63,7 +63,7 @@ public class AddProduct extends HttpServlet {
         BrandDAO brand = new BrandDAO();
         UnitDAO unit = new UnitDAO();
         CategoryDAO category = new CategoryDAO();
-        
+
         List<Ram> ramList = ram.getAllRam();
         List<Rom> romList = rom.getAllRom();
         List<Chip> chipList = chip.getAllChip();
@@ -78,6 +78,7 @@ public class AddProduct extends HttpServlet {
         request.setAttribute("brandList", brandList);
         request.setAttribute("unitList", unitList);
         request.setAttribute("categoryList", categoryList);
+        request.setAttribute("mode", "add");
         request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
     }
 
@@ -106,11 +107,12 @@ public class AddProduct extends HttpServlet {
         String description = request.getParameter("description");
         Part part = request.getPart("image");
         String imgUrl = "";
-        if(part != null) imgUrl = FileUtils.saveFile(part, request);
-        
-        
+        if (part != null) {
+            imgUrl = FileUtils.saveFile(part, request);
+        }
+
         String cautioned = request.getParameter("cautioned");
-        
+
         RamDAO ramDao = new RamDAO();
         RomDAO romDao = new RomDAO();
         ChipDAO chipDao = new ChipDAO();
@@ -118,7 +120,7 @@ public class AddProduct extends HttpServlet {
         BrandDAO brandDao = new BrandDAO();
         UnitDAO unitDao = new UnitDAO();
         CategoryDAO categoryDao = new CategoryDAO();
-        
+
         Integer ramIdInt = ProductValidation.parseInteger(ramId);
         Integer romIdInt = ProductValidation.parseInteger(romId);
         Integer chipIdInt = ProductValidation.parseInteger(chipId);
@@ -134,7 +136,7 @@ public class AddProduct extends HttpServlet {
         Category category = categoryIdInt != null ? categoryDao.getCategoryById(categoryIdInt) : null;
         Unit unit = unitIdInt != null ? unitDao.getUnitById(unitIdInt) : null;
         Brand brand = brandIdInt != null ? brandDao.getBrandById(brandIdInt) : null;
-        
+
         List<Ram> ramList = ramDao.getAllRam();
         List<Rom> romList = romDao.getAllRom();
         List<Chip> chipList = chipDao.getAllChip();
@@ -149,32 +151,34 @@ public class AddProduct extends HttpServlet {
         request.setAttribute("brandList", brandList);
         request.setAttribute("unitList", unitList);
         request.setAttribute("categoryList", categoryList);
-        
+
         ProductDAO productDao = new ProductDAO();
         Product product = new Product(0, productName, description, sku.toUpperCase(), imgUrl, 0, true, ram, rom, unit, chip, model, category, brand);
-        
-        if(productDao.getProductFromSKU(sku) != null){
+        request.setAttribute("mode", "add");
+        request.setAttribute("product", product);
+        if (productDao.getProductFromSKU(sku) != null) {
             String message = "SKU was existed !";
             request.setAttribute("product", product);
             request.setAttribute("message", message);
             request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
-        }
-        else if(productDao.getProductWithSpecification(product) != null){
-            if(cautioned == null){
+        } else if (productDao.getProductWithSpecification(product) != null) {
+            if (cautioned == null) {
                 String message = "This product have a same product having same specification. Do you want to add this product ?";
                 cautioned = "yes";
-                request.setAttribute("product", product);
                 request.setAttribute("cautioned", cautioned);
                 request.setAttribute("message", message);
                 request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
+            } else {
+                String error = ProductValidation.isProductValid(product);
+                if ("true".equals(error) && productDao.addProduct(product)) {
+                    response.sendRedirect("productlist");
+                }
             }
-        }
-        else{
+        } else {
             String error = ProductValidation.isProductValid(product);
-            if("true".equals(error) && productDao.addProduct(product)){ 
+            if ("true".equals(error) && productDao.addProduct(product)) {
                 response.sendRedirect("productlist");
-            }
-            else{
+            } else {
                 request.setAttribute("message", error);
                 request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
             }

@@ -117,10 +117,10 @@
                                     <td>
                                         <c:choose>
                                             <c:when test="${unit.active}">
-                                                <span class="badges bg-lightgreen">Active</span>
+                                                <span>Active</span>
                                             </c:when>
                                             <c:otherwise>
-                                                <span class="badges bg-lightred">Inactive</span>
+                                                <span>Inactive</span>
                                             </c:otherwise>
                                         </c:choose>
                                     </td>

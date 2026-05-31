@@ -28,4 +28,10 @@ public class Rom {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    @Override
+    public String toString() {
+        return "Rom{" + "id=" + id + ", size=" + size + ", active=" + active + '}';
+    }
+    
 }

@@ -36,13 +36,13 @@ public class AddRam extends HttpServlet {
 
         if (ramSize.isEmpty()) {
             request.setAttribute("message", "Ram size is required");
-            request.getRequestDispatcher("view/AddRam.jsp").forward(request, response);
+            request.getRequestDispatcher("view/addRam.jsp").forward(request, response);
             return;
         }
 
         if (ramDao.getRamBySize(ramSize) != null) {
             request.setAttribute("message", "Ram size already exists");
-            request.getRequestDispatcher("view/AddRam.jsp").forward(request, response);
+            request.getRequestDispatcher("view/addRam.jsp").forward(request, response);
             return;
         }
 

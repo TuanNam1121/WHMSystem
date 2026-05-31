@@ -175,4 +175,11 @@ public class ModelDAO {
         }
         return 0;
     }
+    
+    public static void main(String[] args) {
+        ModelDAO dao = new ModelDAO();
+        for(Model i : dao.getAll()){
+            System.out.println(i.toString());
+        }
+    }
 }

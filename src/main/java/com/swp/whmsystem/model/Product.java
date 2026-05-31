@@ -14,6 +14,7 @@ public class Product {
     private String description;
     private String sku;
     private String imgUrl;
+    private int price;
     private int totalQuantity;
     private boolean isActive;
     private Ram ram;
@@ -44,6 +45,40 @@ public class Product {
         this.brand = brand;
     }
 
+    public Product(int productId, String name, String description, String sku, String imgUrl, int price, int totalQuantity, boolean isActive, Ram ram, Rom rom, Unit unit, Chip chip, Model model, Category category, Brand brand) {
+        this.productId = productId;
+        this.name = name;
+        this.description = description;
+        this.sku = sku;
+        this.imgUrl = imgUrl;
+        this.price = price;
+        this.totalQuantity = totalQuantity;
+        this.isActive = isActive;
+        this.ram = ram;
+        this.rom = rom;
+        this.unit = unit;
+        this.chip = chip;
+        this.model = model;
+        this.category = category;
+        this.brand = brand;
+    }
+
+    public boolean isIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+    
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+    
     public Unit getUnit() {
         return unit;
     }
@@ -116,14 +151,6 @@ public class Product {
         this.totalQuantity = totalQuantity;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
-
     public Ram getRam() {
         return ram;
     }
@@ -154,6 +181,11 @@ public class Product {
 
     public void setModel(Model model) {
         this.model = model;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" + "productId=" + productId + ", name=" + name + ", description=" + description + ", sku=" + sku + ", imgUrl=" + imgUrl + ", totalQuantity=" + totalQuantity + ", isActive=" + isActive + ", ram=" + ram + ", rom=" + rom + ", unit=" + unit + ", chip=" + chip + ", model=" + model + ", category=" + category + ", brand=" + brand + '}';
     }
     
 }

@@ -68,7 +68,7 @@
 
                     </div>
 
-                    <form id="filterForm" action="ViewModelList" method="GET">
+                    <form id="filterForm" action="ModelList" method="GET">
                         <div class="card mb-0" id="filter_inputs">
                             <div class="card-body pb-0">
                                 <div class="row">
@@ -129,10 +129,10 @@
                                     <td>
                                         <c:choose>
                                             <c:when test="${model.active}">
-                                                <span class="badges bg-lightgreen">Active</span>
+                                                <span>Active</span>
                                             </c:when>
                                             <c:otherwise>
-                                                <span class="badges bg-lightred">Inactive</span>
+                                                <span>Inactive</span>
                                             </c:otherwise>
                                         </c:choose>
                                     </td>

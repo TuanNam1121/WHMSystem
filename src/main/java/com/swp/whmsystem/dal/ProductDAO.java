@@ -23,49 +23,86 @@ import java.util.List;
  */
 public class ProductDAO {
     public boolean addProduct(Product p) {
-        String sql = "insert into products(name, description, img_url, isactive, ramid, romid, chipid, brandid, modelid, unitid, categoryid, sku, price) values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
-            ps.setString(1, p.getName());
-            ps.setString(2, p.getDescription());
-            ps.setString(3, p.getImgUrl());
-            ps.setBoolean(4, p.isIsActive());
-            ps.setInt(5, p.getRam().getId());
-            ps.setInt(6, p.getRom().getId());
-            ps.setInt(7, p.getChip().getId());
-            ps.setInt(8, p.getBrand().getId());
-            ps.setInt(9, p.getModel().getId());
-            ps.setInt(10, p.getUnit().getId());
-            ps.setInt(11, p.getCategory().getCategoryId());
-            ps.setString(12, p.getSku());
-            ps.setInt(13, p.getPrice());
-            return ps.executeUpdate() != 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(p.getCategory().getName().contains("Laptop")){
+            String sql = "insert into products(name, description, img_url, isactive, ramid, romid, chipid, brandid, modelid, unitid, categoryid, sku, price) values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+                ps.setString(1, p.getName());
+                ps.setString(2, p.getDescription());
+                ps.setString(3, p.getImgUrl());
+                ps.setBoolean(4, p.isIsActive());
+                ps.setInt(5, p.getRam().getId());
+                ps.setInt(6, p.getRom().getId());
+                ps.setInt(7, p.getChip().getId());
+                ps.setInt(8, p.getBrand().getId());
+                ps.setInt(9, p.getModel().getId());
+                ps.setInt(10, p.getUnit().getId());
+                ps.setInt(11, p.getCategory().getCategoryId());
+                ps.setString(12, p.getSku());
+                ps.setInt(13, p.getPrice());
+                return ps.executeUpdate() != 0;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+        else if(p.getCategory().getName().equals("RAM")){
+            String sql = "insert into products(name, description, img_url, isactive, ramid, brandid, unitid, categoryid, sku, price) values (?,?,?,?,?,?,?,?,?,?)";
+            try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+                ps.setString(1, p.getName());
+                ps.setString(2, p.getDescription());
+                ps.setString(3, p.getImgUrl());
+                ps.setBoolean(4, p.isIsActive());
+                ps.setInt(5, p.getRam().getId());
+                ps.setInt(6, p.getBrand().getId());
+                ps.setInt(7, p.getUnit().getId());
+                ps.setInt(8, p.getCategory().getCategoryId());
+                ps.setString(9, p.getSku());
+                ps.setInt(10, p.getPrice());
+                return ps.executeUpdate() != 0;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else if(p.getCategory().getName().equals("ROM")){
+            String sql = "insert into products(name, description, img_url, isactive, romid, brandid, unitid, categoryid, sku, price) values (?,?,?,?,?,?,?,?,?,?)";
+            try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+                ps.setString(1, p.getName());
+                ps.setString(2, p.getDescription());
+                ps.setString(3, p.getImgUrl());
+                ps.setBoolean(4, p.isIsActive());
+                ps.setInt(5, p.getRom().getId());
+                ps.setInt(6, p.getBrand().getId());
+                ps.setInt(7, p.getUnit().getId());
+                ps.setInt(8, p.getCategory().getCategoryId());
+                ps.setString(9, p.getSku());
+                ps.setInt(10, p.getPrice());
+                return ps.executeUpdate() != 0;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
         return false;
     }
-    
-    public Product getProductWithSpecification(Product p){
+
+    public Product getProductWithSpecification(Product p) {
         String sql = "select * from products where 1 = 1 and ";
-        if(p.getCategory().getName().contains("Laptop")){
+        if (p.getCategory().getName().contains("Laptop")) {
             sql += "brandid = " + p.getBrand().getId() + " and ";
             sql += "modelid = " + p.getModel().getId() + " and ";
             sql += "chipid = " + p.getChip().getId() + " and ";
             sql += "ramid = " + p.getRam().getId() + " and ";
-            sql += "romid = " + p.getRom().getId();
-            
+            sql += "romid = " + p.getRom().getId(); 
         }
         else if(p.getCategory().getName().equals("RAM")){
+            sql += "name like '" + p.getName() + "' and ";
             sql += "brandid = " + p.getBrand().getId() + " and ";
-            sql += "modelid = " + p.getModel().getId() + " and ";
             sql += "ramid = " + p.getRam().getId();
-            
+
         }
         else if(p.getCategory().getName().equals("ROM")){
+            sql += "name like '" + p.getName() + "' and ";
             sql += "brandid = " + p.getBrand().getId() + " and ";
-            sql += "modelid = " + p.getModel().getId() + " and ";
             sql += "romid = " + p.getRom().getId();
-            
         }
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ResultSet rs = ps.executeQuery();
@@ -75,7 +112,7 @@ public class ProductDAO {
         }
         return null;
     }
-    
+
 
     public Product getProductFromId(int productid) {
         String sql = "select * from products where productid = ?";
@@ -115,8 +152,8 @@ public class ProductDAO {
         }
         return null;
     }
-    
-    public boolean changeProductStatus(Product p){
+
+    public boolean changeProductStatus(Product p) {
         String sql = "UPDATE products SET isactive = ? WHERE productid = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setBoolean(1, p.isIsActive());
@@ -128,23 +165,65 @@ public class ProductDAO {
     }
 
     public boolean updateProduct(Product p) {
-        String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, ramid = ?, romid = ?, chipid = ?, unitid = , categoryid = , brandid = , modelid = ?  WHERE productid = ?";
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
-            ps.setString(1, p.getName());
-            ps.setString(2, p.getDescription());
-            ps.setString(3, p.getImgUrl());
-            ps.setBoolean(4, p.isIsActive());
-            ps.setInt(5, p.getRam().getId());
-            ps.setInt(6, p.getRom().getId());
-            ps.setInt(7, p.getChip().getId());
-            ps.setInt(8, p.getUnit().getId());
-            ps.setInt(8, p.getCategory().getCategoryId());
-            ps.setInt(9, p.getBrand().getId());
-            ps.setInt(10, p.getModel().getId());
-            ps.setInt(11, p.getProductId());
-            return ps.executeUpdate() != 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(p.getCategory().getName().contains("Laptop")){
+            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, ramid = ?, romid = ?, chipid = ?, unitid = ? , categoryid = ? , brandid = ?, modelid = ?, price = ? WHERE productid = ?";
+            try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+                ps.setString(1, p.getName());
+                ps.setString(2, p.getDescription());
+                ps.setString(3, p.getImgUrl());
+                ps.setBoolean(4, p.isIsActive());
+                ps.setInt(5, p.getRam().getId());
+                ps.setInt(6, p.getRom().getId());
+                ps.setInt(7, p.getChip().getId());
+                ps.setInt(8, p.getUnit().getId());
+                ps.setInt(9, p.getCategory().getCategoryId());
+                ps.setInt(10, p.getBrand().getId());
+                ps.setInt(11, p.getModel().getId());
+                ps.setInt(12, p.getPrice());
+                ps.setInt(13, p.getProductId());
+                System.out.println(sql);
+                return ps.executeUpdate() != 0;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else if(p.getCategory().equals("RAM")){
+            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, ramid = ?, unitid = ? , categoryid = ? , brandid = ?, price = ? WHERE productid = ?";
+            try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+                ps.setString(1, p.getName());
+                ps.setString(2, p.getDescription());
+                ps.setString(3, p.getImgUrl());
+                ps.setBoolean(4, p.isIsActive());
+                ps.setInt(5, p.getRam().getId());
+                ps.setInt(6, p.getUnit().getId());
+                ps.setInt(7, p.getCategory().getCategoryId());
+                ps.setInt(8, p.getBrand().getId());
+                ps.setInt(9, p.getPrice());
+                ps.setInt(10, p.getProductId());
+                System.out.println(sql);
+                return ps.executeUpdate() != 0;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else if(p.getCategory().getName().equals("ROM")){
+            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, romid = ?, unitid = ? , categoryid = ? , brandid = ?, price = ? WHERE productid = ?";
+            try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+                ps.setString(1, p.getName());
+                ps.setString(2, p.getDescription());
+                ps.setString(3, p.getImgUrl());
+                ps.setBoolean(4, p.isIsActive());
+                ps.setInt(5, p.getRam().getId());
+                ps.setInt(6, p.getUnit().getId());
+                ps.setInt(7, p.getCategory().getCategoryId());
+                ps.setInt(8, p.getBrand().getId());
+                ps.setInt(9, p.getPrice());
+                ps.setInt(10, p.getProductId());
+                System.out.println(sql);
+                return ps.executeUpdate() != 0;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }
@@ -182,7 +261,13 @@ public class ProductDAO {
         for (Product i : dao.getProductList()) {
             System.out.println(i.getImgUrl());
         }
-        System.out.println(dao.getProductFromId(2));
-        System.out.println(dao.getProductFromSKU("D15-23"));
+        Product p = dao.getProductFromId(15);
+        Product spec = dao.getProductWithSpecification(p);
+        Product a = dao.getProductFromId(4);
+        a.setProductId(15);
+        a.setName("SSD Samsung 123");
+        a.setSku("KVR32S22S6/4");
+        dao.addProduct(a);
+        System.out.println(spec);
     }
 }

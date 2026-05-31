@@ -34,22 +34,23 @@
         <div class="main-wrapper">
             <jsp:include page="../common/header.jsp"></jsp:include>
             <jsp:include page="../common/sidebar.jsp"></jsp:include>
-
                 <div class="page-wrapper">
                     <div class="content">
                         <div class="page-header">
                             <div class="page-title">
                                 <h4>Product Detail</h4>
-                                <h6>${p != null ? 'Update Product' : 'Add Product'}</h6>
+                                <h6>${mode == 'update' ? 'Update Product' : 'Add Product'}</h6>
                         </div>
                     </div>
 
                     <c:if test="${not empty message}">
                         <div class="alert alert-danger" role="alert">${message}</div>
                     </c:if>
-                    <form action="AddProduct" method="post" enctype="multipart/form-data">
-                        <input type="text" hidden name="productId" value="${product.productId}">
-                        <input type="text" hidden name="caution" value="${cautioned}">
+                    <form action="${mode == 'update' ? 'UpdateProduct' : 'AddProduct'}"
+                          method="post"
+                          enctype="multipart/form-data">
+                        <input type="hidden" name="productId" value="${product.productId}">
+                        <input type="hidden" name="cautioned" value="${cautioned}">
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
@@ -190,79 +191,100 @@
                     </form>
                 </div>
             </div>
+
+
         </div>
+    </div>
 
 
-        <script src="assets/js/jquery-3.6.0.min.js"></script>
-        <script src="assets/js/feather.min.js"></script>
-        <script src="assets/js/jquery.slimscroll.min.js"></script>
-        <script src="assets/js/jquery.dataTables.min.js"></script>
-        <script src="assets/js/dataTables.bootstrap4.min.js"></script>
-        <script src="assets/js/bootstrap.bundle.min.js"></script>
-        <script src="assets/plugins/select2/js/select2.min.js"></script>
-        <script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
-        <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
+    <script src="assets/js/jquery-3.6.0.min.js"></script>
+    <script src="assets/js/feather.min.js"></script>
+    <script src="assets/js/jquery.slimscroll.min.js"></script>
+    <script src="assets/js/jquery.dataTables.min.js"></script>
+    <script src="assets/js/dataTables.bootstrap4.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/plugins/select2/js/select2.min.js"></script>
+    <script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+    <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
-        <script src="assets/js/script.js"></script>
-        <script>
-            const input = document.getElementById("imageInput");
-            const text = document.getElementById("uploadText");
+    <script src="assets/js/script.js"></script>
+    <script>
+        const input = document.getElementById("imageInput");
+        const text = document.getElementById("uploadText");
 
-            input.addEventListener("change", function () {
-                if (input.files.length > 0) {
-                    text.textContent = input.files[0].name;
-                }
-            });
+        input.addEventListener("change", function () {
+            if (input.files.length > 0) {
+                text.textContent = input.files[0].name;
+            }
+        });
 
-            $(function () {
-                const $brandSelect = $("#brandSelect");
-                const $modelSelect = $("#modelSelect");
-                const modelSelect = $modelSelect[0];
+        $(function () {
+            const $brandSelect = $("#brandSelect");
+            const $modelSelect = $("#modelSelect");
 
-                const allModelOptions = $modelSelect.find("option[data-brand]").map(function () {
-                    return {
-                        value: this.value,
-                        text: $(this).text(),
-                        brandId: $(this).attr("data-brand")
-                    };
-                }).get();
+            const selectedModelId = "${product != null ? product.model.id : ''}";
 
-                const select2Options = {minimumResultsForSearch: -1, width: "100%"};
+            const allModelOptions = $modelSelect.find("option[data-brand]").map(function () {
+                return {
+                    value: this.value,
+                    text: $(this).text(),
+                    brandId: $(this).attr("data-brand")
+                };
+            }).get();
 
-                function rebuildModelSelect(selectedBrandId) {
-                    if ($modelSelect.hasClass("select2-hidden-accessible")) {
-                        $modelSelect.select2("destroy");
-                    }
+            const select2Options = {
+                minimumResultsForSearch: -1,
+                width: "100%"
+            };
 
-                    $modelSelect.empty().append(
-                            $("<option>", {value: "", text: "Choose Model"})
-                            );
+            function rebuildModelSelect(selectedBrandId) {
 
-                    if (selectedBrandId) {
-                        allModelOptions.forEach(function (opt) {
-                            if (opt.brandId === selectedBrandId) {
-                                $modelSelect.append(
-                                        $("<option>", {
-                                            selected : ${product != null && product.model.getId() == i.id ? 'selected' : ''},
-                                            value: opt.value,
-                                            text: opt.text,
-                                            "data-brand": opt.brandId
-                                        })
-                                        );
-                            }
-                        });
-                    }
-
-                    $modelSelect.select2(select2Options);
+                if ($modelSelect.hasClass("select2-hidden-accessible")) {
+                    $modelSelect.select2("destroy");
                 }
 
-                function onBrandChange() {
-                    rebuildModelSelect($brandSelect.val() || "");
+                $modelSelect.empty();
+
+                $modelSelect.append(
+                        $("<option>", {
+                            value: "",
+                            text: "Choose Model"
+                        })
+                        );
+
+                if (selectedBrandId) {
+
+                    allModelOptions.forEach(function (opt) {
+
+                        if (opt.brandId === selectedBrandId) {
+
+                            $modelSelect.append(
+                                    $("<option>", {
+                                        value: opt.value,
+                                        text: opt.text,
+                                        "data-brand": opt.brandId,
+                                        selected: opt.value === selectedModelId
+                                    })
+                                    );
+
+                        }
+
+                    });
+
                 }
 
-                $brandSelect.on("change", onBrandChange);
-                onBrandChange();
-            });
-        </script>
-    </body>
+                $modelSelect.select2(select2Options);
+            }
+
+            function onBrandChange() {
+                rebuildModelSelect($brandSelect.val() || "");
+            }
+
+            $brandSelect.on("change", onBrandChange);
+
+            onBrandChange();
+        });
+
+    </script>
+</body>
 </html>

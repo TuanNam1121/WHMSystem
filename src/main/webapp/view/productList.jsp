@@ -151,7 +151,7 @@
                                         <span class="checkmarks"></span>
                                     </label>
                                 </th>
-                                <th>Product Name</th>
+                                <th>Product</th>
                                 <th>SKU</th>
                                 <th>Category</th>
                                 <th>Brand</th>
@@ -171,9 +171,9 @@
                                     </td>
                                     <td class="productimgname">
                                         <a href="javascript:void(0);" class="product-img">
-                                            <img src="${p.imgUrl}" alt="product">
+                                            <img src="assets/img/product/noimage.png" alt="product">
                                         </a>
-                                        <a href="javascript:void(0);">${p.name}</a>
+                                        <p>${p.name}</p>
                                     </td>
                                     <td>${p.sku}</td>
                                     <td>${p.category.name}</td>

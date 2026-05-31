@@ -4,16 +4,17 @@
  */
 
 package com.swp.whmsystem.model;
+
 import java.sql.Timestamp;
 
 
 public class Brand {
-private int id;
-private String name;
-private String img;
-private String description;
-private Timestamp createdAt;
-private Timestamp updatedAt;
+    private int id;
+    private String name;
+    private String img;
+    private String description;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     public Brand() {
     }
@@ -79,7 +80,6 @@ private Timestamp updatedAt;
     public String toString() {
         return "Brand{" + "id=" + id + ", name=" + name + ", img=" + img + ", description=" + description + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
     }
-
 
 
 }

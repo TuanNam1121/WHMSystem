@@ -97,6 +97,20 @@ public class UnitDAO {
         return false;
     }
 
+    public Unit getUnitByName(String name) {
+        String sql = "SELECT * FROM units WHERE name = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapUnit(rs);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
     private Unit mapUnit(ResultSet rs) throws SQLException {
         Unit unit = new Unit();
         unit.setId(rs.getInt("id"));

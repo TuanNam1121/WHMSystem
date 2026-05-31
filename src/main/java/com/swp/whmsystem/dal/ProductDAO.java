@@ -89,7 +89,7 @@ public class ProductDAO {
 
     public List<Product> getProductList() {
         List<Product> productList = new ArrayList<>();
-        String sql = "select * from products";
+        String sql = "select * from products order by name";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {

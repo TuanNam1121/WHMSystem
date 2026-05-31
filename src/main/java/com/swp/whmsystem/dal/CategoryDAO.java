@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CategoryDAO {
     public List<Category> getAllCategory() {
-        String sql = "select * from categories";
+        String sql = "select * from categories order by isActive desc";
         List<Category> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -25,10 +25,21 @@ public class CategoryDAO {
     }
     
     public boolean deactiveCategory(int cateid){
-        String sql = "update categories set isactive = 0 where categoryid = ?";
+        String sql = "update products set isactive = 0 where categoryid = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setInt(1, cateid);
-            return ps.execute();
+            return ps.executeUpdate() >= 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean reactiveCategory(int cateid){
+        String sql = "update products set isactive = 1 where categoryid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+            ps.setInt(1, cateid);
+            return ps.executeUpdate() >= 1;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -92,18 +103,32 @@ public class CategoryDAO {
     }
 
     public boolean updateCategory(Category category) {
-        String sql = "update Categories set name = ?, description = ? where categoryid = ?";
+        String sql = "update Categories set name = ?, description = ?, isActive = ? where categoryid = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, category.getName());
             ps.setString(2, category.getDescription());
-            ps.setInt(3, category.getCategoryId()); // giả sử Category có trường categoryId
+            ps.setBoolean(3, category.isIsActive());
+            ps.setInt(4, category.getCategoryId());
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return false;
     }
+
+    public boolean deleteCategoryById(int categoryId) {
+        String sql = "delete from Categories where categoryid = ?";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, categoryId);
+            return ps.executeUpdate() == 1;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
 
     public static void main(String[] args) {
 

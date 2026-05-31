@@ -16,12 +16,18 @@ public class UpdateCategory extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String id_raw = request.getParameter("id");
+        String id_raw = request.getParameter("cateid");
+        String type = request.getParameter("type");
         int id = Integer.parseInt(id_raw);
         CategoryDAO categoryDAO = new CategoryDAO();
         Category c = categoryDAO.getCategoryById(id);
+        if (type != null && type.equalsIgnoreCase("delete")) {
+            categoryDAO.deleteCategoryById(c.getCategoryId());
+            request.getRequestDispatcher("categoryList").forward(request, response);
+            return;
+        }
         request.setAttribute("category", c);
-        request.getRequestDispatcher("view/updatecategory.jsp").forward(request, response);
+        request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
     }
 
     @Override
@@ -32,35 +38,50 @@ public class UpdateCategory extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("categoryid"));
         String isActive = request.getParameter("isActive");
 
-        CategoryDAO categoryDAO = new CategoryDAO();
-        if (categoryDAO.getCategoryByName(categoryName) != null) {
-            String error = "Category name has already exsisted! Please input another one!";
-            request.getRequestDispatcher("CategoryDetail.jsp").forward(request, response);
-        }
-
         Category category = new Category();
         category.setCategoryId(id);
         category.setName(categoryName);
         category.setDescription(description);
-        if (isActive.equals("true"))
-            category.setIsActive(true);
-        else if (isActive.equals("false"))
-            category.setIsActive(false);
+        category.setIsActive(isActive.equals("true"));
 
-        if (category.isIsActive() == false) {
+        CategoryDAO categoryDAO = new CategoryDAO();
+        Category existingCategory = categoryDAO.getCategoryByName(categoryName);
+        if (existingCategory != null && existingCategory.getCategoryId() != id) {
+            String error = "Category name has already exsisted! Please input another one!";
+            request.setAttribute("error", error);
+            request.setAttribute("category", category);
+            request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
+            return;
+        }
+
+        if (!category.isIsActive()) {
             if (!categoryDAO.deactiveCategory(category.getCategoryId())) {
                 String message = "Đã xảy ra lỗi khi deactive danh mục này!";
                 request.setAttribute("error", message);
-                request.getRequestDispatcher("CategoryDetail.jsp").forward(request, response);
+                request.setAttribute("category", category);
+                request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
+                return;
+            }
+        }
+
+        if (category.isIsActive()) {
+            if (!categoryDAO.reactiveCategory(category.getCategoryId())) {
+                String message = "Đã xảy ra lỗi khi reactive danh mục này!";
+                request.setAttribute("error", message);
+                request.setAttribute("category", category);
+                request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
+                return;
             }
         }
 
         if (categoryDAO.updateCategory(category)) {
-            response.sendRedirect("ViewCategoryList");
+            response.sendRedirect("categoryList");
+            return;
         } else {
             String message = "Đã xảy ra lỗi!";
             request.setAttribute("error", message);
-            request.getRequestDispatcher("CategoryDetail.jsp").forward(request, response);
+            request.setAttribute("category", category);
+            request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
         }
     }
 

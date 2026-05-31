@@ -1,3 +1,4 @@
+<%@ page import="com.swp.whmsystem.model.Category" %>
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -52,20 +53,25 @@
                             ${error}
                     </div>
                 </c:if>
+
+                <%
+                    Category category = (Category) request.getAttribute("category");
+                %>
+
                 <form action="updateCategory" method="post">
+                    <input type="hidden" name="categoryid" value="${category.categoryId}">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-lg-12 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label>Category Name</label>
-                                    <input type="text" value="${categoryName}" name="categoryName">
+                                    <input type="text" value="${category.name}" name="categoryName">
                                 </div>
                             </div>
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label>Description</label>
-                                    <textarea class="form-control" placeholder="${description}"
-                                              name="description"></textarea>
+                                    <textarea class="form-control" name="description">${category.description}</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-12">
@@ -74,20 +80,21 @@
                                     <div class="d-flex gap-4 align-items-center border rounded p-3 bg-light">
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="isActive" value="true"
-                                                   <c:if test="${isActive}">checked</c:if>>
+                                                   <c:if test="${category.isActive}">checked</c:if>>
                                             <label class="form-check-label">Active</label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="isActive" value="false"
-                                                   <c:if test="${not isActive}">checked</c:if>>
+                                                   <c:if test="${not category.isActive}">checked</c:if>>
                                             <label class="form-check-label">DeActive</label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-lg-12">
-                                <a href="javascript:void(0);" class="btn btn-submit me-2">Submit</a>
-                                <a href="categorylist.html" class="btn btn-cancel">Cancel</a>
+                                <input type="submit" class="btn btn-submit me-2" value="Submit">
+                                <!--<a href="javascript:void(0);" >Submit</a>-->
+                                <a href="categoryList" class="btn btn-cancel">Cancel</a>
                             </div>
                         </div>
                     </div>

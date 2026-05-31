@@ -62,13 +62,13 @@ public class UpdateCategory extends HttpServlet {
         }
 
         if (category.isIsActive() && category.isIsActive() != oldCategory.isIsActive()) {
-            if (!categoryDAO.reactiveCategory(category.getCategoryId())) {
-                message = "Đã xảy ra lỗi khi reactive danh mục này!";
-                request.setAttribute("error", message);
-                request.setAttribute("category", category);
-                request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
-                return;
-            }
+//            if (!categoryDAO.reactiveCategory(category.getCategoryId())) {
+//                message = "Đã xảy ra lỗi khi reactive danh mục này!";
+//                request.setAttribute("error", message);
+//                request.setAttribute("category", category);
+//                request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
+//                return;
+//            }
             message = "Đã reactive danh mục " + categoryName + " ! Hãy kiểm tra lại các sản phẩm liên quan danh mục này!";
         }
 

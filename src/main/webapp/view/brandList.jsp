@@ -45,7 +45,7 @@
                     <h6>Manage your Brand</h6>
                 </div>
                 <div class="page-btn">
-                    <a href="addbrand.jsp" class="btn btn-added"><img src="assets/img/icons/plus.svg" class="me-2"
+                    <a href="${pageContext.request.contextPath}/AddBrand" class="btn btn-added"><img src="assets/img/icons/plus.svg" class="me-2"
                                                                       alt="img">Add Brand</a>
                 </div>
             </div>
@@ -138,7 +138,7 @@
                                     <td>${b.name}</td>
                                     <td>${b.description}</td>
                                     <td>
-                                        <a class="me-3" href="editbrand.html">
+                                        <a class="me-3" href="${pageContext.request.contextPath}/BrandDetail?id=${b.id}">
                                             <img src="assets/img/icons/edit.svg" alt="img">
                                         </a>
                                         <a class="me-3 confirm-text" href="javascript:void(0);">

@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <c:set var="activeMenu" value="permissions" scope="request" />
-<c:set var="pageTitle" value="${act == 'new'  ? 'Add New Brand' : 'Update Brand'}" scope="request" />
+<c:set var="pageTitle" value="Add New Brand" scope="request" />
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -44,60 +44,34 @@
                 <div class="content">
                     <div class="page-header">
                         <div class="page-title">
-                            <h4>${act == 'new' ?'Brand ADD':'Brand Information'}</h4>
-                            <h6>${act == 'new' ?'Create new Brand':'Update Brand'}</h6>
+                            <h4>Brand ADD</h4>
+                            <h6>Create new Brand</h6>
                         </div>
                     </div>
 <c:if test="${not empty message}">
             <div class="alert-success">${message}</div>
         </c:if>
-                    <form action="${pageContext.request.contextPath}/BrandDetail" method="post" enctype="multipart/form-data">
+                    <form action="${pageContext.request.contextPath}/AddBrand" method="post">
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
-                                    <input name="id" type="hidden" value="${brand.id}" readonly>
-                                    <input name="act" type="hidden" value="${act}">
+                                    <input name="id" type="hidden"  readonly>
+                                    <input name="act" type="hidden">
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Brand Name</label>
-                                            <input type="text" name="name" value="${brand.name}">
+                                            <input type="text" name="name">
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label>Description</label>
-                                            <input class="form-control" type="text" name="description" value="${brand.description}">
+                                            <input class="form-control" type="text" name="description" >
                                         </div>
                                     </div>
-                                    <c:if test="${act != 'new'}">
-                                        <div class="col-lg-12">
-                                            <div class="form-group">
-                                                <label>created at</label>
-                                                <input class="form-control" name="createdAt" value="${brand.createdAt}" readonly>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-12">
-                                            <div class="form-group">
-                                                <label>updated at</label>
-                                                <input class="form-control" value="${brand.updatedAt}" readonly>
-                                            </div>
-                                        </div>
-                                            <div class="col-lg-12">
-                                                <div class="form-group">
-                                                    <label> Brand Image</label>
-                                                    <div class="image-upload">
-                                                        <input type="file" name="image" id="imageInput" accept="image/*">
-
-                                                        <div class="image-uploads">
-                                                            <img src="assets/img/icons/upload.svg" alt="img">
-                                                            <h4 id="uploadText">Drag and drop a file to upload</h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                    </c:if>
+                                    
                                     <div class="col-lg-12">
-                                        <input class="btn btn-submit me-2" type="submit" value="${act == 'new' ?'ADD':'UPDATE'}">
+                                        <input class="btn btn-submit me-2" type="submit" value="ADD">
                                         <a href="${pageContext.request.contextPath}/brandlist.html" class="btn btn-cancel">Cancel</a>
                                     </div>
                                 </div>

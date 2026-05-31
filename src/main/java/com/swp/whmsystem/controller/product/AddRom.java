@@ -36,17 +36,17 @@ public class AddRom extends HttpServlet {
 
         if (romSize.isEmpty()) {
             request.setAttribute("message", "Rom size is required");
-            request.getRequestDispatcher("view/AddRom.jsp").forward(request, response);
+            request.getRequestDispatcher("view/addRom.jsp").forward(request, response);
             return;
         }
 
         if (romDao.getRomBySize(romSize) != null) {
             request.setAttribute("message", "Rom size already exists");
-            request.getRequestDispatcher("view/AddRom.jsp").forward(request, response);
+            request.getRequestDispatcher("view/addRom.jsp").forward(request, response);
             return;
         }
 
         romDao.insertRom(romSize, active != null);
-        response.sendRedirect("ViewRomList");
+        response.sendRedirect("RomList");
     }
 }

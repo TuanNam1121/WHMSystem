@@ -6,29 +6,21 @@ package com.swp.whmsystem.controller.brand;
 
 import com.swp.whmsystem.dal.BrandDAO;
 import com.swp.whmsystem.model.Brand;
-import com.swp.whmsystem.utils.FileUtils;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
 import java.sql.Timestamp;
 
 /**
  *
  * @author LENOVO
  */
-@MultipartConfig(
-    fileSizeThreshold = 1024 * 1024,
-    maxFileSize = 1024 * 1024 * 10,
-    maxRequestSize = 1024 * 1024 * 50
-)
-@WebServlet(name="BrandDetail", urlPatterns={"/BrandDetail"})
-public class BrandDetail extends HttpServlet {
+@WebServlet(name = "AddBrand", urlPatterns = {"/AddBrand"})
+public class AddBrand extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -47,10 +39,10 @@ public class BrandDetail extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ViewBrandList</title>");
+            out.println("<title>Servlet AddBrand</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ViewBrandList at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AddBrand at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -68,14 +60,9 @@ public class BrandDetail extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            int id = Integer.parseInt(request.getParameter("id"));
-            BrandDAO bd = new BrandDAO();
-            Brand b = bd.getBrandById(id);
-
-            request.setAttribute("act", "update");
-            request.setAttribute("brand", b);
-            request.getRequestDispatcher("view/brandDetail.jsp").forward(request, response);
-            return;
+        request.setAttribute("act", "new");
+        request.getRequestDispatcher("view/addBrand.jsp").forward(request, response);
+        return;
     }
 
     /**
@@ -91,55 +78,32 @@ public class BrandDetail extends HttpServlet {
             throws ServletException, IOException {
         String name = request.getParameter("name");
         String description = request.getParameter("description");
-
-        BrandDAO bd = new BrandDAO();
-
-        if (name == null || name.trim().equals("")) {
-                String id = request.getParameter("id");
-                request.setAttribute("act", "update");
-                Brand brandById = bd.getBrandById(Integer.parseInt(id));
-                request.setAttribute("brand", brandById);
-            
-            request.setAttribute("message", "name required");
-            request.getRequestDispatcher("view/brandDetail.jsp").forward(request, response);
-
-            return;
-
-        }
-
-        Brand check = bd.getBrandByName(name);
-
-        if (check != null) {
-
-                String id = request.getParameter("id");
-                request.setAttribute("act", "update");
-                Brand brandById = bd.getBrandById(Integer.parseInt(id));
-                request.setAttribute("brand", brandById);
-                if (brandById.getId() != check.getId()) {
-                    request.setAttribute("message", "name exist");
-                    request.getRequestDispatcher("view/brandDetail.jsp").forward(request, response);
-                    return;
-                }
-             
-        }
-
-            String id = request.getParameter("id");
-            Brand oldBrand = bd.getBrandById(Integer.parseInt(id));
-            Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
-            Part part = request.getPart("image");
-            if (part != null && part.getSize() > 0) {
-                String imgUrl = FileUtils.saveFileBrand(part, request);
-                oldBrand.setImg(imgUrl);
-            }
-
-            oldBrand.setName(name);
-            oldBrand.setDescription(description);
-            oldBrand.setUpdatedAt(updatedAt);
-
-            bd.updateBrand(oldBrand);
-            response.sendRedirect("brandList");
-            return;
         
+        BrandDAO bd = new BrandDAO();
+        
+        if(name == null || name.trim().isEmpty()){
+            request.setAttribute("message", "name required");
+            request.getRequestDispatcher("view/addBrand.jsp").forward(request, response);
+            return;
+        }
+        
+         Brand check = bd.getBrandByName(name);
+         
+         if(check != null){
+             request.setAttribute("message", "Brand exist");
+            request.getRequestDispatcher("view/addBrand.jsp").forward(request, response);
+            return;
+         }
+         
+         Brand b = new Brand();
+         b.setId(0);
+         b.setName(name);
+         b.setDescription(description);
+         b.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+         b.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+         bd.insertBrand(b);
+         response.sendRedirect("brandList");
+            return;
     }
 
     /**

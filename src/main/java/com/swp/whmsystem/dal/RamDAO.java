@@ -120,15 +120,14 @@ public class RamDAO {
         return 0;
     }
 
-    public boolean insertRam(String size) {
-        String sql = "Insert into rams (size, isactive) VALUES (?, ?)";
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
-            ps.setString(1, size);
-            ps.setBoolean(2, true);
-            return ps.executeUpdate() != 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+    public boolean updateRamStatus(int id, boolean active) {
+        String sql = "UPDATE rams SET isactive = ? WHERE id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, active);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return false;
     }
 }

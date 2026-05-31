@@ -11,8 +11,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "ViewRomList", urlPatterns = {"/ViewRomList"})
-public class ViewRomList extends HttpServlet {
+@WebServlet(name = "RomList", urlPatterns = {"/RomList"})
+public class RomList extends HttpServlet {
     private RomDAO romDao;
 
     @Override
@@ -28,6 +28,6 @@ public class ViewRomList extends HttpServlet {
 
         request.setAttribute("roms", roms);
         request.setAttribute("status", status);
-        request.getRequestDispatcher("view/RomList.jsp").forward(request, response);
+        request.getRequestDispatcher("view/romList.jsp").forward(request, response);
     }
 }

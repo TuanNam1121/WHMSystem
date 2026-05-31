@@ -10,7 +10,7 @@
           content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Ram List</title>
+    <title>Rom List</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
 
@@ -43,11 +43,11 @@
         <div class="content">
             <div class="page-header">
                 <div class="page-title">
-                    <h4>Ram List</h4>
+                    <h4>Rom List</h4>
                 </div>
                 <div class="page-btn">
-                    <a href="AddRam" class="btn btn-added"><img src="assets/img/icons/plus.svg"
-                                                                 alt="img" class="me-2">Add New Ram</a>
+                    <a href="AddRom" class="btn btn-added"><img src="assets/img/icons/plus.svg"
+                                                                 alt="img" class="me-2">Add New Rom</a>
                 </div>
             </div>
 
@@ -68,7 +68,7 @@
 
                     </div>
 
-                    <form id="filterForm" action="ViewRamList" method="GET">
+                    <form id="filterForm" action="ViewRomList" method="GET">
                         <div class="card mb-0" id="filter_inputs">
                             <div class="card-body pb-0">
                                 <div class="row">
@@ -97,6 +97,7 @@
                         </div>
                     </form>
 
+
                     <div class="table-responsive">
                         <table class="table datanew">
                             <thead>
@@ -104,23 +105,35 @@
                                 <th>ID</th>
                                 <th>Size</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
 
                             <tbody>
-                            <c:forEach var="ram" items="${rams}">
+                            <c:forEach var="rom" items="${roms}">
                                 <tr>
-                                    <td>${ram.id}</td>
-                                    <td>${ram.size}</td>
+                                    <td>${rom.id}</td>
+                                    <td>${rom.size}</td>
                                     <td>
                                         <c:choose>
-                                            <c:when test="${ram.active}">
+                                            <c:when test="${rom.active}">
                                                 <span class="badges bg-lightgreen">Active</span>
                                             </c:when>
                                             <c:otherwise>
                                                 <span class="badges bg-lightred">Inactive</span>
                                             </c:otherwise>
                                         </c:choose>
+                                    </td>
+                                    <td>
+                                        <form action="UpdateRomStatus" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="${rom.id}">
+                                            <input type="hidden" name="active" value="${not rom.active}">
+                                            <input type="hidden" name="status" value="${param.status}">
+                                            <button type="submit"
+                                                    class="btn btn-sm ${rom.active ? 'btn-outline-danger' : 'btn-outline-success'}">
+                                                ${rom.active ? 'Deactive' : 'Active'}
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             </c:forEach>

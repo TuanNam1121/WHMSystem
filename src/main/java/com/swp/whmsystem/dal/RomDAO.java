@@ -118,16 +118,15 @@ public class RomDAO {
         return 0;
     }
 
-    public boolean insertRom(String size) {
-        String sql = "Insert into roms (size, isactive) VALUES (?, ?)";
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
-            ps.setString(1, size);
-            ps.setBoolean(2, true);
-            return ps.executeUpdate() != 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+    public boolean updateRomStatus(int id, boolean active) {
+        String sql = "UPDATE roms SET isactive = ? WHERE id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, active);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return false;
     }
     public static void main(String[] args) {
     }

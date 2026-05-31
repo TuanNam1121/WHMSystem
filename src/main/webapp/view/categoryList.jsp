@@ -133,6 +133,7 @@
                                 </th>
                                 <th>Category name</th>
                                 <th>Description</th>
+                                <th>Active</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -150,6 +151,7 @@
                                         <a href="javascript:void(0);">${c.name}</a>
                                     </td>
                                     <td>${c.description}</td>
+                                    <td>${c.isActive ? 'Active' : 'Deactive'}</td>
                                     <td>
                                         <a class="me-3" href="updateCategory?cateid=${c.categoryId}">
                                             <img src="assets/img/icons/edit.svg" alt="img">

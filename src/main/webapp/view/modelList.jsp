@@ -10,7 +10,7 @@
           content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Rom List</title>
+    <title>Model List</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
 
@@ -43,11 +43,11 @@
         <div class="content">
             <div class="page-header">
                 <div class="page-title">
-                    <h4>Rom List</h4>
+                    <h4>Model List</h4>
                 </div>
                 <div class="page-btn">
-                    <a href="AddRom" class="btn btn-added"><img src="assets/img/icons/plus.svg"
-                                                                 alt="img" class="me-2">Add New Rom</a>
+                    <a href="AddModel" class="btn btn-added"><img src="assets/img/icons/plus.svg"
+                                                                  alt="img" class="me-2">Add New Model</a>
                 </div>
             </div>
 
@@ -68,12 +68,24 @@
 
                     </div>
 
-                    <form id="filterForm" action="ViewRomList" method="GET">
+                    <form id="filterForm" action="ViewModelList" method="GET">
                         <div class="card mb-0" id="filter_inputs">
                             <div class="card-body pb-0">
                                 <div class="row">
                                     <div class="col-lg-12 col-sm-12">
                                         <div class="row">
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <select class="select" name="brandId">
+                                                        <option value="">All Brands</option>
+                                                        <c:forEach var="brand" items="${brands}">
+                                                            <option value="${brand.id}" <c:if test="${selectedBrandId != null && selectedBrandId == brand.id}">selected</c:if>>
+                                                                ${brand.name}
+                                                            </option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>
+                                            </div>
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <select class="select" name="status">
@@ -97,31 +109,44 @@
                         </div>
                     </form>
 
-
                     <div class="table-responsive">
                         <table class="table datanew">
                             <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Size</th>
+                                <th>Model Name</th>
+                                <th>Brand Name</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
-
                             <tbody>
-                            <c:forEach var="rom" items="${roms}">
+                            <c:forEach var="model" items="${models}">
                                 <tr>
-                                    <td>${rom.id}</td>
-                                    <td>${rom.size}</td>
+                                    <td>${model.id}</td>
+                                    <td>${model.name}</td>
+                                    <td>${model.brand.name}</td>
                                     <td>
                                         <c:choose>
-                                            <c:when test="${rom.active}">
+                                            <c:when test="${model.active}">
                                                 <span class="badges bg-lightgreen">Active</span>
                                             </c:when>
                                             <c:otherwise>
                                                 <span class="badges bg-lightred">Inactive</span>
                                             </c:otherwise>
                                         </c:choose>
+                                    </td>
+                                    <td>
+                                        <form action="UpdateModelStatus" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="${model.id}">
+                                            <input type="hidden" name="active" value="${not model.active}">
+                                            <input type="hidden" name="status" value="${param.status}">
+                                            <input type="hidden" name="brandId" value="${param.brandId}">
+                                            <button type="submit"
+                                                    class="btn btn-sm ${model.active ? 'btn-outline-danger' : 'btn-outline-success'}">
+                                                ${model.active ? 'Deactive' : 'Active'}
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -134,6 +159,7 @@
         </div>
     </div>
 </div>
+
 
 <script src="assets/js/jquery-3.6.0.min.js"></script>
 

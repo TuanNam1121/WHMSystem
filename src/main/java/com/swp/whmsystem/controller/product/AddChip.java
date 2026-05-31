@@ -37,17 +37,17 @@ public class AddChip extends HttpServlet {
 
         if (chipName.isEmpty()) {
             request.setAttribute("message", "Chip name is required");
-            request.getRequestDispatcher("view/AddChip.jsp").forward(request, response);
+            request.getRequestDispatcher("view/addChip.jsp").forward(request, response);
             return;
         }
 
         if (chipDao.getChipByName(chipName) != null) {
             request.setAttribute("message", "Chip name already exists");
-            request.getRequestDispatcher("view/AddChip.jsp").forward(request, response);
+            request.getRequestDispatcher("view/addChip.jsp").forward(request, response);
             return;
         }
 
         chipDao.insertChip(chipName, active != null);
-        response.sendRedirect("ViewChipList");
+        response.sendRedirect("ChipList");
     }
 }

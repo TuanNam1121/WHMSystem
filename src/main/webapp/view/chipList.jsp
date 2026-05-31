@@ -10,23 +10,16 @@
           content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Model List</title>
+    <title>Chip List</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
-
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-
-    <link rel="stylesheet" href="assets/css/bootstrap-datetimepicker.min.css">
-
     <link rel="stylesheet" href="assets/css/animate.css">
 
     <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
-
     <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
-
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
-
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -43,11 +36,11 @@
         <div class="content">
             <div class="page-header">
                 <div class="page-title">
-                    <h4>Model List</h4>
+                    <h4>Chip List</h4>
                 </div>
                 <div class="page-btn">
-                    <a href="AddModel" class="btn btn-added"><img src="assets/img/icons/plus.svg"
-                                                                  alt="img" class="me-2">Add New Model</a>
+                    <a href="AddChip" class="btn btn-added"><img src="assets/img/icons/plus.svg"
+                                                                 alt="img" class="me-2">Add New Chip</a>
                 </div>
             </div>
 
@@ -68,24 +61,12 @@
 
                     </div>
 
-                    <form id="filterForm" action="ViewModelList" method="GET">
+                    <form id="filterForm" action="ViewChipList" method="GET">
                         <div class="card mb-0" id="filter_inputs">
                             <div class="card-body pb-0">
                                 <div class="row">
                                     <div class="col-lg-12 col-sm-12">
                                         <div class="row">
-                                            <div class="col-lg col-sm-6 col-12">
-                                                <div class="form-group">
-                                                    <select class="select" name="brandId">
-                                                        <option value="">All Brands</option>
-                                                        <c:forEach var="brand" items="${brands}">
-                                                            <option value="${brand.id}" <c:if test="${selectedBrandId != null && selectedBrandId == brand.id}">selected</c:if>>
-                                                                ${brand.name}
-                                                            </option>
-                                                        </c:forEach>
-                                                    </select>
-                                                </div>
-                                            </div>
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <select class="select" name="status">
@@ -114,26 +95,36 @@
                             <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Model Name</th>
-                                <th>Brand Name</th>
+                                <th>Name</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <c:forEach var="model" items="${models}">
+                            <c:forEach var="chip" items="${chips}">
                                 <tr>
-                                    <td>${model.id}</td>
-                                    <td>${model.name}</td>
-                                    <td>${model.brand.name}</td>
+                                    <td>${chip.id}</td>
+                                    <td>${chip.name}</td>
                                     <td>
                                         <c:choose>
-                                            <c:when test="${model.active}">
+                                            <c:when test="${chip.active}">
                                                 <span class="badges bg-lightgreen">Active</span>
                                             </c:when>
                                             <c:otherwise>
                                                 <span class="badges bg-lightred">Inactive</span>
                                             </c:otherwise>
                                         </c:choose>
+                                    </td>
+                                    <td>
+                                        <form action="UpdateChipStatus" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="${chip.id}">
+                                            <input type="hidden" name="active" value="${not chip.active}">
+                                            <input type="hidden" name="status" value="${param.status}">
+                                            <button type="submit"
+                                                    class="btn btn-sm ${chip.active ? 'btn-outline-danger' : 'btn-outline-success'}">
+                                                ${chip.active ? 'Deactive' : 'Active'}
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             </c:forEach>

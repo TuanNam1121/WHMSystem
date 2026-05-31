@@ -10,16 +10,23 @@
           content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Chip List</title>
+    <title>Ram List</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
+
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="assets/css/bootstrap-datetimepicker.min.css">
+
     <link rel="stylesheet" href="assets/css/animate.css">
 
     <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
+
     <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
+
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
+
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -36,11 +43,11 @@
         <div class="content">
             <div class="page-header">
                 <div class="page-title">
-                    <h4>Chip List</h4>
+                    <h4>Ram List</h4>
                 </div>
                 <div class="page-btn">
-                    <a href="AddChip" class="btn btn-added"><img src="assets/img/icons/plus.svg"
-                                                                 alt="img" class="me-2">Add New Chip</a>
+                    <a href="AddRam" class="btn btn-added"><img src="assets/img/icons/plus.svg"
+                                                                 alt="img" class="me-2">Add New Ram</a>
                 </div>
             </div>
 
@@ -61,7 +68,7 @@
 
                     </div>
 
-                    <form id="filterForm" action="ViewChipList" method="GET">
+                    <form id="filterForm" action="ViewRamList" method="GET">
                         <div class="card mb-0" id="filter_inputs">
                             <div class="card-body pb-0">
                                 <div class="row">
@@ -95,24 +102,37 @@
                             <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Name</th>
+                                <th>Size</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
+
                             <tbody>
-                            <c:forEach var="chip" items="${chips}">
+                            <c:forEach var="ram" items="${rams}">
                                 <tr>
-                                    <td>${chip.id}</td>
-                                    <td>${chip.name}</td>
+                                    <td>${ram.id}</td>
+                                    <td>${ram.size}</td>
                                     <td>
                                         <c:choose>
-                                            <c:when test="${chip.active}">
+                                            <c:when test="${ram.active}">
                                                 <span class="badges bg-lightgreen">Active</span>
                                             </c:when>
                                             <c:otherwise>
                                                 <span class="badges bg-lightred">Inactive</span>
                                             </c:otherwise>
                                         </c:choose>
+                                    </td>
+                                    <td>
+                                        <form action="UpdateRamStatus" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="${ram.id}">
+                                            <input type="hidden" name="active" value="${not ram.active}">
+                                            <input type="hidden" name="status" value="${param.status}">
+                                            <button type="submit"
+                                                    class="btn btn-sm ${ram.active ? 'btn-outline-danger' : 'btn-outline-success'}">
+                                                ${ram.active ? 'Deactive' : 'Active'}
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -125,7 +145,6 @@
         </div>
     </div>
 </div>
-
 
 <script src="assets/js/jquery-3.6.0.min.js"></script>
 

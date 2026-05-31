@@ -47,6 +47,6 @@ public class AddRam extends HttpServlet {
         }
 
         ramDao.insertRam(ramSize, active != null);
-        response.sendRedirect("ViewRamList");
+        response.sendRedirect("RamList");
     }
 }

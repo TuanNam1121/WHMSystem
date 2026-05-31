@@ -15,8 +15,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "ViewChipList", urlPatterns = {"/ViewChipList"})
-public class ViewChipList extends HttpServlet {
+@WebServlet(name = "ChipList", urlPatterns = {"/ChipList"})
+public class ChipList extends HttpServlet {
     private ChipDAO chipDao;
 
     @Override
@@ -32,6 +32,6 @@ public class ViewChipList extends HttpServlet {
 
         request.setAttribute("chips", chips);
         request.setAttribute("status", status);
-        request.getRequestDispatcher("view/ChipList.jsp").forward(request, response);
+        request.getRequestDispatcher("view/chipList.jsp").forward(request, response);
     }
 }

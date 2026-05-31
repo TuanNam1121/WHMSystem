@@ -182,8 +182,9 @@ public class ProductDAO {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if (p.getCategory().equals("RAM")) {
-            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, ramid = ?, unitid = ? , categoryId = ? , brandid = ?, price = ? WHERE productid = ?";
+        }
+        else if(p.getCategory().getName().equals("RAM")){
+            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, ramid = ?, unitid = ? , categoryid = ? , brandid = ?, price = ? WHERE productid = ?";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
                 ps.setString(2, p.getDescription());
@@ -312,5 +313,14 @@ public class ProductDAO {
         for (Product t : test) {
             System.out.println(t);
         }
+        RomDAO rom = new RomDAO();
+        for (Product i : dao.getProductList()) {
+            System.out.println(i.getImgUrl());
+        }
+        Product p = dao.getProductFromId(18);
+        p.setDescription("con mèo kêu");
+        p.setRom(rom.getRomById(2));
+        dao.updateProduct(p);
+        
     }
 }

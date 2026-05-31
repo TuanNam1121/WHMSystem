@@ -47,6 +47,6 @@ public class AddUnit extends HttpServlet {
         }
 
         unitDao.insertUnit(unitName, active != null);
-        response.sendRedirect("ViewUnitList");
+        response.sendRedirect("UnitList");
     }
 }

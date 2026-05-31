@@ -54,6 +54,6 @@ public class AddModel extends HttpServlet {
         }
 
         modelDao.insertModel(modelName, Integer.parseInt(brandId), active != null);
-        response.sendRedirect("ViewModelList");
+        response.sendRedirect("ModelList");
     }
 }

@@ -1,76 +1,129 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<c:set var="activeMenu" value="permissions" scope="request"/>
-<c:set var="pageTitle" value="${act.equals('new') ? 'Add New Brand' : 'Edit Brand'}" scope="request"/>
+<c:set var="activeMenu" value="permissions" scope="request" />
+<c:set var="pageTitle" value="Update Brand" scope="request" />
 <!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${act.equals("new") ? "Add New Brand" : "Edit Brand"}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assests/css/wms-theme.css" rel="stylesheet">
-</head>
-<body>
-<div class="wrapper">
-    <jsp:include page="../common/adminSidebar.jsp"/>
-    <main class="main-content">
-        <jsp:include page="../common/userTopbar.jsp"/>
-        <c:if test="${not empty message}">
-            <div class="alert-success">${message}</div>
-        </c:if>
-        <section class="form-container">
-            <h2>${act.equals("new") ? "Add New Permission" : "Edit Permission"}</h2>
-            <c:if test="${error != null}">
-                <div class="alert-error">${error}</div>
-            </c:if>
-            <form action="${act.equals('new') ? 'AddNewPermission' : 'EditPermission'}" method="post">
-                <input type="hidden" name="id" value="${p != null ? p.permissionId : ''}">
-                <div class="form-grid">
-                    <div class="form-left">
-                        <label>Permission name</label>
-                        <input type="text" name="permissionName" required
-                               value="${p != null ? p.permissionName : permissionName}">
-                        <label>Description</label>
-                        <input type="text" name="permissionDescription" required
-                               value="${p != null ? p.description : ''}">
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+        <meta name="description" content="POS - Bootstrap Admin Template">
+        <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
+        <meta name="author" content="Dreamguys - Bootstrap Admin Template">
+        <meta name="robots" content="noindex, nofollow">
+        <title>Dreams Pos admin template</title>
+
+        <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
+
+        <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+
+        <link rel="stylesheet" href="assets/css/animate.css">
+
+        <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
+
+        <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
+
+        <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
+        <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
+
+        <link rel="stylesheet" href="assets/css/style.css">
+    </head>
+    <body>
+        <div id="global-loader">
+            <div class="whirly-loader"> </div>
+        </div>
+
+        <jsp:include page="../common/header.jsp"></jsp:include>
+        <jsp:include page="../common/sidebar.jsp"></jsp:include>
+
+
+
+            <div class="main-wrapper">
+
+                <div class="page-wrapper">
+                    <div class="content">
+                        <div class="page-header">
+                            <div class="page-title">
+                                <h4>Brand Information</h4>
+                            <h6>Update Brand</h6>
+                        </div>
                     </div>
-                    <div class="form-right">
-                        <label>Assign to roles</label>
-                        <table>
-                            <thead>
-                            <tr>
-                                <th>Role</th>
-                                <th>Assign</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <c:forEach items="${rolelist}" var="r">
-                                <c:set var="checked" value="false"/>
-                                <c:forEach items="${roles}" var="rr">
-                                    <c:if test="${rr.roleId == r.roleId}">
-                                        <c:set var="checked" value="true"/>
-                                    </c:if>
-                                </c:forEach>
-                                <tr>
-                                    <td>${r.roleName}</td>
-                                    <td><input type="checkbox" name="role"
-                                               value="${r.roleId}" ${checked ? 'checked' : ''}></td>
-                                </tr>
-                            </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
+                    <c:if test="${not empty message}">
+                        <div class="alert-success">${message}</div>
+                    </c:if>
+                    <form action="${pageContext.request.contextPath}/BrandDetail" method="post" enctype="multipart/form-data">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <input name="id" type="hidden" value="${brand.id}" readonly>
+                                    <input name="act" type="hidden" value="${act}">
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label>Brand Name</label>
+                                            <input type="text" name="name" value="${brand.name}">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label>Description</label>
+                                            <input class="form-control" type="text" name="description" value="${brand.description}">
+                                        </div>
+                                    </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label>created at</label>
+                                                <input class="form-control" name="createdAt" value="${brand.createdAt}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label>updated at</label>
+                                                <input class="form-control" value="${brand.updatedAt}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label> Brand Image</label>
+                                                <div class="image-upload">
+                                                    <input type="file" name="image" id="imageInput" accept="image/*">
+
+                                                    <div class="image-uploads">
+                                                        <img src="assets/img/icons/upload.svg" alt="img">
+                                                        <h4 id="uploadText">Drag and drop a file to upload</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <div class="col-lg-12">
+                                        <input class="btn btn-submit me-2" type="submit" value="UPDATE">
+                                        <a href="${pageContext.request.contextPath}/brandlist.html" class="btn btn-cancel">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
                 </div>
-                <div class="button-area">
-                    <button type="submit">${act.equals("new") ? "CREATE" : "UPDATE"}</button>
-                    <a href="ViewPermissionList" class="btn-secondary"
-                       style="display:inline-flex;align-items:center;padding:8px 20px;">Cancel</a>
-                </div>
-            </form>
-        </section>
-    </main>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</div>
-</body>
+            </div>
+        </div>
+
+
+        <script src="assets/js/jquery-3.6.0.min.js"></script>
+
+        <script src="assets/js/feather.min.js"></script>
+
+        <script src="assets/js/jquery.slimscroll.min.js"></script>
+
+        <script src="assets/js/jquery.dataTables.min.js"></script>
+        <script src="assets/js/dataTables.bootstrap4.min.js"></script>
+
+        <script src="assets/js/bootstrap.bundle.min.js"></script>
+
+        <script src="assets/plugins/select2/js/select2.min.js"></script>
+
+        <script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+        <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
+
+        <script src="assets/js/script.js"></script>
+    </body>
 </html>

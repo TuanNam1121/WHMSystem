@@ -147,19 +147,17 @@
                                             <span class="checkmarks"></span>
                                         </label>
                                     </td>
-                                    <td class="productimgname">
-                                        <a href="javascript:void(0);" class="product-img">
-                                            <img src="assets/img/product/noimage.png" alt="product">
-                                        </a>
+                                    <td>
                                         <a href="javascript:void(0);">${c.name}</a>
                                     </td>
                                     <td>${c.description}</td>
                                     <td>${c.isActive ? 'Active' : 'Deactive'}</td>
                                     <td>
-                                        <a class="me-3" href="editcategory.html">
+                                        <a class="me-3" href="updateCategory?cateid=${c.categoryId}">
                                             <img src="assets/img/icons/edit.svg" alt="img">
                                         </a>
-                                        <a class="me-3 confirm-text" href="javascript:void(0);">
+                                        <a class="me-3 confirm-text" href="updateCategory?cateid=${c.categoryId}&type=delete">
+                                            <!--href="javascript:void(0);"-->
                                             <img src="assets/img/icons/delete.svg" alt="img">
                                         </a>
                                     </td>

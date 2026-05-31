@@ -68,7 +68,7 @@
 
                     </div>
 
-                    <form id="filterForm" action="ViewModelList" method="GET">
+                    <form id="filterForm" action="ModelList" method="GET">
                         <div class="card mb-0" id="filter_inputs">
                             <div class="card-body pb-0">
                                 <div class="row">
@@ -117,6 +117,7 @@
                                 <th>Model Name</th>
                                 <th>Brand Name</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -134,6 +135,18 @@
                                                 <span class="badges bg-lightred">Inactive</span>
                                             </c:otherwise>
                                         </c:choose>
+                                    </td>
+                                    <td>
+                                        <form action="UpdateModelStatus" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="${model.id}">
+                                            <input type="hidden" name="active" value="${not model.active}">
+                                            <input type="hidden" name="status" value="${param.status}">
+                                            <input type="hidden" name="brandId" value="${param.brandId}">
+                                            <button type="submit"
+                                                    class="btn btn-sm ${model.active ? 'btn-outline-danger' : 'btn-outline-success'}">
+                                                ${model.active ? 'Deactive' : 'Active'}
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             </c:forEach>

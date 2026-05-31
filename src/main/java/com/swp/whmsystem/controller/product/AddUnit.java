@@ -36,13 +36,13 @@ public class AddUnit extends HttpServlet {
 
         if (unitName.isEmpty()) {
             request.setAttribute("message", "Unit name is required");
-            request.getRequestDispatcher("view/AddUnit.jsp").forward(request, response);
+            request.getRequestDispatcher("view/addUnit.jsp").forward(request, response);
             return;
         }
 
         if (unitDao.getUnitByName(unitName) != null) {
             request.setAttribute("message", "Unit name already exists");
-            request.getRequestDispatcher("view/AddUnit.jsp").forward(request, response);
+            request.getRequestDispatcher("view/addUnit.jsp").forward(request, response);
             return;
         }
 

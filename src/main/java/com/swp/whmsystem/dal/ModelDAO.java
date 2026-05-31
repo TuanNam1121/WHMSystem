@@ -175,7 +175,18 @@ public class ModelDAO {
         }
         return 0;
     }
-    
+
+    public boolean updateModelStatus(int modelId, boolean active) {
+        String sql = "UPDATE models SET isactive = ? WHERE modelid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, active);
+            ps.setInt(2, modelId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void main(String[] args) {
         ModelDAO dao = new ModelDAO();
         for(Model i : dao.getAll()){

@@ -48,6 +48,6 @@ public class AddChip extends HttpServlet {
         }
 
         chipDao.insertChip(chipName, active != null);
-        response.sendRedirect("ViewChipList");
+        response.sendRedirect("ChipList");
     }
 }

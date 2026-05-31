@@ -47,6 +47,6 @@ public class AddRom extends HttpServlet {
         }
 
         romDao.insertRom(romSize, active != null);
-        response.sendRedirect("ViewRomList");
+        response.sendRedirect("RomList");
     }
 }

@@ -1,7 +1,7 @@
 package com.swp.whmsystem.controller.product;
 
-import com.swp.whmsystem.dal.UnitDAO;
-import com.swp.whmsystem.model.Unit;
+import com.swp.whmsystem.dal.RamDAO;
+import com.swp.whmsystem.model.Ram;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,22 +11,23 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "ViewUnitList", urlPatterns = {"/ViewUnitList"})
-public class ViewUnitList extends HttpServlet {
-    private UnitDAO unitDao;
+@WebServlet(name = "RamList", urlPatterns = {"/RamList"})
+public class RamList extends HttpServlet {
+    private RamDAO ramDao;
 
     @Override
     public void init() {
-        unitDao = new UnitDAO();
+        ramDao = new RamDAO();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String status = request.getParameter("status");
-        List<Unit> units = unitDao.getUnitsByFilter(status);
+        List<Ram> rams = ramDao.getRamsByFilter(status);
 
-        request.setAttribute("units", units);
-        request.getRequestDispatcher("view/UnitList.jsp").forward(request, response);
+        request.setAttribute("rams", rams);
+        request.setAttribute("status", status);
+        request.getRequestDispatcher("view/ramList.jsp").forward(request, response);
     }
 }

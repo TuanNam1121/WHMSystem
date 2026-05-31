@@ -1,4 +1,4 @@
-package com.swp.whmsystem.controller.product;
+package com.swp.whmsystem.controller.category;
 
 import com.swp.whmsystem.dal.CategoryDAO;
 import com.swp.whmsystem.model.Category;

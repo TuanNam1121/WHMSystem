@@ -13,8 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "ViewModelList", urlPatterns = {"/ViewModelList"})
-public class ViewModelList extends HttpServlet {
+@WebServlet(name = "ModelList", urlPatterns = {"/ModelList"})
+public class ModelList extends HttpServlet {
     private ModelDAO modelDao;
     private BrandDAO brandDao;
 
@@ -39,11 +39,11 @@ public class ViewModelList extends HttpServlet {
 
         List<Model> models = modelDao.getModelsByFilter(brandId, status);
         List<Brand> brands = brandDao.getAllBrand();
-      
+
         request.setAttribute("models", models);
         request.setAttribute("brands", brands);
         request.setAttribute("status", status);
         request.setAttribute("selectedBrandId", brandId);
-        request.getRequestDispatcher("view/ModelList.jsp").forward(request, response);
+        request.getRequestDispatcher("view/modelList.jsp").forward(request, response);
     }
 }

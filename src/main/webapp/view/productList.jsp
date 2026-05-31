@@ -182,7 +182,7 @@
                                         <%--                                    <td>${p.price}</td>--%>
                                     <td>${p.totalQuantity}</td>
                                     <td>
-                                        <a class="me-3" href="product-details.html">
+                                        <a class="me-3" href="UpdateProduct?productid=${p.productId}">
                                             <img src="assets/img/icons/eye.svg" alt="img">
                                         </a>
 

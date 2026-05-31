@@ -42,7 +42,7 @@ public class CategoryDAO {
             ps.setInt(1, cateid);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    Category c = mapResultSetToCategory(rs);
+                    return mapResultSetToCategory(rs);
                 }
             }
         } catch (Exception e) {
@@ -107,9 +107,9 @@ public class CategoryDAO {
     public static void main(String[] args) {
 
         CategoryDAO categoryDAO = new CategoryDAO();
-        Category category = new Category();
-
-        category = categoryDAO.getCategoryByName("Laptop Gaming");
-        System.out.println(category);
+        List<Category> a = categoryDAO.getAllCategory();
+        for(Category i : a){
+            System.out.println(i.toString());
+        }
     }
 }

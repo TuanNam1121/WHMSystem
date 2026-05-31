@@ -104,6 +104,7 @@
                                 <th>ID</th>
                                 <th>Size</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
 
@@ -121,6 +122,17 @@
                                                 <span class="badges bg-lightred">Inactive</span>
                                             </c:otherwise>
                                         </c:choose>
+                                    </td>
+                                    <td>
+                                        <form action="UpdateRamStatus" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="${ram.id}">
+                                            <input type="hidden" name="active" value="${not ram.active}">
+                                            <input type="hidden" name="status" value="${param.status}">
+                                            <button type="submit"
+                                                    class="btn btn-sm ${ram.active ? 'btn-outline-danger' : 'btn-outline-success'}">
+                                                ${ram.active ? 'Deactive' : 'Active'}
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             </c:forEach>

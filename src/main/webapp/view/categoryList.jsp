@@ -157,9 +157,10 @@
                                             <img src="assets/img/icons/edit.svg" alt="img">
                                         </a>
 
-                                        <a class="me-3" href="updateCategory?cateid=${c.categoryId}&type=delete" onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
+                                        <a class="me-3 confirm-text" href="updateCategory?cateid=${c.categoryId}&type=delete">
                                             <img src="assets/img/icons/delete.svg" alt="img">
                                         </a>
+
                                     </td>
                                 </tr>
                             </c:forEach>

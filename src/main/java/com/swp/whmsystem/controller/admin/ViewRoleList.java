@@ -26,7 +26,7 @@ public class ViewRoleList extends HttpServlet {
         String sortBy=request.getParameter("sortBy");
         List<Role> roleList = roleDAO.findRoleByFilter(keyword,sortBy);
         request.setAttribute("rolelist", roleList);
-        request.getRequestDispatcher("view/viewRoleList.jsp").forward(request, response);
+        request.getRequestDispatcher("view/RoleList.jsp").forward(request, response);
     }
 
     @Override

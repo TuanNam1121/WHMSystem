@@ -155,7 +155,6 @@
                                 <th>SKU</th>
                                 <th>Category</th>
                                 <th>Brand</th>
-                                <%--                                <th>price</th>--%>
                                 <th>Qty</th>
                                 <th>Action</th>
                             </tr>
@@ -179,7 +178,6 @@
                                     <td>${p.sku}</td>
                                     <td>${p.category.name}</td>
                                     <td>${p.brand.name}</td>
-                                        <%--                                    <td>${p.price}</td>--%>
                                     <td>${p.totalQuantity}</td>
                                     <td>
                                         <a class="me-3" href="product-details.html">

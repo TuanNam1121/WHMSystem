@@ -27,6 +27,6 @@ public class ViewUnitList extends HttpServlet {
         List<Unit> units = unitDao.getUnitsByFilter(status);
 
         request.setAttribute("units", units);
-        request.getRequestDispatcher("view/viewUnitList.jsp").forward(request, response);
+        request.getRequestDispatcher("view/UnitList.jsp").forward(request, response);
     }
 }

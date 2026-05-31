@@ -61,7 +61,7 @@
 
                     </div>
 
-                    <form id="filterForm" action="ViewChipList" method="GET">
+                    <form id="filterForm" action="ChipList" method="GET">
                         <div class="card mb-0" id="filter_inputs">
                             <div class="card-body pb-0">
                                 <div class="row">

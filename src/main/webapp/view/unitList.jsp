@@ -70,7 +70,7 @@
                         </div>
 
                     </div>
-                    <form id="filterForm" action="ViewUnitList" method="GET">
+                    <form id="filterForm" action="UnitList" method="GET">
                         <div class="card mb-0" id="filter_inputs">
                             <div class="card-body pb-0">
                                 <div class="row">

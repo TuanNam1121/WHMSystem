@@ -68,7 +68,7 @@
 
                     </div>
 
-                    <form id="filterForm" action="ViewRamList" method="GET">
+                    <form id="filterForm" action="RamList" method="GET">
                         <div class="card mb-0" id="filter_inputs">
                             <div class="card-body pb-0">
                                 <div class="row">

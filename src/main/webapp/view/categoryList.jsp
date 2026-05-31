@@ -44,7 +44,7 @@
                     <h6>View/Search product Category</h6>
                 </div>
                 <div class="page-btn">
-                    <a href="addcategory.html" class="btn btn-added">
+                    <a href="addCategory" class="btn btn-added">
                         <img src="assets/img/icons/plus.svg" class="me-1" alt="img">Add Category
                     </a>
                 </div>
@@ -81,6 +81,14 @@
                             </ul>
                         </div>
                     </div>
+
+                    <c:if test="${not empty sessionScope.error}">
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <strong>${sessionScope.error}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        <% session.removeAttribute("error"); %>
+                    </c:if>
 
                     <div class="card" id="filter_inputs">
                         <div class="card-body pb-0">
@@ -151,16 +159,11 @@
                                         <a href="javascript:void(0);">${c.name}</a>
                                     </td>
                                     <td>${c.description}</td>
-                                    <td>${c.isActive ? 'Active' : 'Deactive'}</td>
+                                    <td>${c.isActive ? 'Active' : 'Inactive'}</td>
                                     <td>
                                         <a class="me-3" href="updateCategory?cateid=${c.categoryId}">
                                             <img src="assets/img/icons/edit.svg" alt="img">
                                         </a>
-
-                                        <a class="me-3 confirm-text" href="updateCategory?cateid=${c.categoryId}&type=delete">
-                                            <img src="assets/img/icons/delete.svg" alt="img">
-                                        </a>
-
                                     </td>
                                 </tr>
                             </c:forEach>

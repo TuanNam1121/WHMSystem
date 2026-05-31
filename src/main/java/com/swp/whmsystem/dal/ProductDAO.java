@@ -44,28 +44,26 @@ public class ProductDAO {
         }
         return false;
     }
-    
-    public Product getProductWithSpecification(Product p){
+
+    public Product getProductWithSpecification(Product p) {
         String sql = "select * from products where 1 = 1 and ";
-        if(p.getCategory().getName().contains("Laptop")){
+        if (p.getCategory().getName().contains("Laptop")) {
             sql += "brandid = " + p.getBrand().getId() + " and ";
             sql += "modelid = " + p.getModel().getId() + " and ";
             sql += "chipid = " + p.getChip().getId() + " and ";
             sql += "ramid = " + p.getRam().getId() + " and ";
             sql += "romid = " + p.getRom().getId();
-            
-        }
-        else if(p.getCategory().getName().equals("RAM")){
+
+        } else if (p.getCategory().getName().equals("RAM")) {
             sql += "brandid = " + p.getBrand().getId() + " and ";
             sql += "modelid = " + p.getModel().getId() + " and ";
             sql += "ramid = " + p.getRam().getId();
-            
-        }
-        else if(p.getCategory().getName().equals("ROM")){
+
+        } else if (p.getCategory().getName().equals("ROM")) {
             sql += "brandid = " + p.getBrand().getId() + " and ";
             sql += "modelid = " + p.getModel().getId() + " and ";
             sql += "romid = " + p.getRom().getId();
-            
+
         }
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ResultSet rs = ps.executeQuery();
@@ -75,7 +73,7 @@ public class ProductDAO {
         }
         return null;
     }
-    
+
 
     public Product getProductFromId(int productid) {
         String sql = "select * from products where productid = ?";
@@ -115,8 +113,8 @@ public class ProductDAO {
         }
         return null;
     }
-    
-    public boolean changeProductStatus(Product p){
+
+    public boolean changeProductStatus(Product p) {
         String sql = "UPDATE products SET isactive = ? WHERE productid = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setBoolean(1, p.isIsActive());

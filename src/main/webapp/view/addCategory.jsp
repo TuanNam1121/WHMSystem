@@ -58,14 +58,14 @@
                             <div class="col-lg-12 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label>Category Name</label>
-                                    <input type="text" name="categoryName">
+                                    <input type="text" name="categoryName" required>
                                 </div>
                             </div>
 
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label>Description</label>
-                                    <textarea class="form-control" name="description"></textarea>
+                                    <textarea class="form-control" name="description" required></textarea>
                                 </div>
                             </div>
 

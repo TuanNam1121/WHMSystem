@@ -20,7 +20,7 @@ public class BrandDAO {
     }
 
     public List<Brand> getAllBrand() {
-        String sql = "select * from brands";
+        String sql = "select * from brands order by name";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             List<Brand> result = new ArrayList<>();

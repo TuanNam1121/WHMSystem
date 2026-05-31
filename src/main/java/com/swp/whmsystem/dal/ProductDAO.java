@@ -4,11 +4,7 @@
  */
 package com.swp.whmsystem.dal;
 
-import com.swp.whmsystem.model.Chip;
-import com.swp.whmsystem.model.Model;
 import com.swp.whmsystem.model.Product;
-import com.swp.whmsystem.model.Ram;
-import com.swp.whmsystem.model.Rom;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -182,8 +178,7 @@ public class ProductDAO {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        else if(p.getCategory().getName().equals("RAM")){
+        } else if (p.getCategory().getName().equals("RAM")) {
             String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, ramid = ?, unitid = ? , categoryid = ? , brandid = ?, price = ? WHERE productid = ?";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
@@ -317,10 +312,10 @@ public class ProductDAO {
         for (Product i : dao.getProductList()) {
             System.out.println(i.getImgUrl());
         }
-        Product p = dao.getProductFromId(18);
-        p.setDescription("con mèo kêu");
-        p.setRom(rom.getRomById(2));
-        dao.updateProduct(p);
-        
+        Product p1 = dao.getProductFromId(18);
+        p1.setDescription("con mèo kêu");
+        p1.setRom(rom.getRomById(2));
+        dao.updateProduct(p1);
+
     }
 }

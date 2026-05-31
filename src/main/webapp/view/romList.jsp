@@ -105,6 +105,7 @@
                                 <th>ID</th>
                                 <th>Size</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
 
@@ -122,6 +123,17 @@
                                                 <span class="badges bg-lightred">Inactive</span>
                                             </c:otherwise>
                                         </c:choose>
+                                    </td>
+                                    <td>
+                                        <form action="UpdateRomStatus" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="${rom.id}">
+                                            <input type="hidden" name="active" value="${not rom.active}">
+                                            <input type="hidden" name="status" value="${param.status}">
+                                            <button type="submit"
+                                                    class="btn btn-sm ${rom.active ? 'btn-outline-danger' : 'btn-outline-success'}">
+                                                ${rom.active ? 'Deactive' : 'Active'}
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             </c:forEach>

@@ -42,14 +42,14 @@ public class AddModel extends HttpServlet {
         if (modelName.isEmpty()) {
             request.setAttribute("message", "Model name is required");
             request.setAttribute("brands", brandDao.getAllBrand());
-            request.getRequestDispatcher("view/AddModel.jsp").forward(request, response);
+            request.getRequestDispatcher("view/addModel.jsp").forward(request, response);
             return;
         }
 
         if (modelDao.getModelByName(modelName) != null) {
             request.setAttribute("message", "Model name already exists");
             request.setAttribute("brands", brandDao.getAllBrand());
-            request.getRequestDispatcher("view/AddModel.jsp").forward(request, response);
+            request.getRequestDispatcher("view/addModel.jsp").forward(request, response);
             return;
         }
 

@@ -108,6 +108,17 @@ public class ChipDAO {
         return false;
     }
 
+    public boolean updateChipStatus(int id, boolean active) {
+        String sql = "UPDATE chips SET isactive = ? WHERE id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, active);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public Chip getChipByName(String name) {
         String sql = "SELECT * FROM chips WHERE name = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {

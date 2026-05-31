@@ -111,6 +111,17 @@ public class UnitDAO {
         return null;
     }
 
+    public boolean updateUnitStatus(int id, boolean active) {
+        String sql = "UPDATE units SET isactive = ? WHERE id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, active);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private Unit mapUnit(ResultSet rs) throws SQLException {
         Unit unit = new Unit();
         unit.setId(rs.getInt("id"));

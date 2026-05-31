@@ -33,8 +33,21 @@ public class AddChip extends HttpServlet {
             throws ServletException, IOException {
         String name = request.getParameter("name");
         String active = request.getParameter("active");
+        String chipName = name == null ? "" : name.trim();
 
-        chipDao.insertChip(name, active != null);
+        if (chipName.isEmpty()) {
+            request.setAttribute("message", "Chip name is required");
+            request.getRequestDispatcher("view/AddChip.jsp").forward(request, response);
+            return;
+        }
+
+        if (chipDao.getChipByName(chipName) != null) {
+            request.setAttribute("message", "Chip name already exists");
+            request.getRequestDispatcher("view/AddChip.jsp").forward(request, response);
+            return;
+        }
+
+        chipDao.insertChip(chipName, active != null);
         response.sendRedirect("ViewChipList");
     }
 }

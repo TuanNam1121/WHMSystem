@@ -138,7 +138,7 @@ public class ProductDAO {
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
         for (Product i : dao.getProductList()) {
-            System.out.println(i.toString());
+            System.out.println(i.getImgUrl());
         }
         System.out.println(dao.getProductFromId(2));
     }

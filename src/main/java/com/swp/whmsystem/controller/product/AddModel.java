@@ -37,8 +37,23 @@ public class AddModel extends HttpServlet {
         String name = request.getParameter("name");
         String brandId = request.getParameter("brandId");
         String active = request.getParameter("active");
+        String modelName = name == null ? "" : name.trim();
 
-        modelDao.insertModel(name, Integer.parseInt(brandId), active != null);
+        if (modelName.isEmpty()) {
+            request.setAttribute("message", "Model name is required");
+            request.setAttribute("brands", brandDao.getAllBrand());
+            request.getRequestDispatcher("view/AddModel.jsp").forward(request, response);
+            return;
+        }
+
+        if (modelDao.getModelByName(modelName) != null) {
+            request.setAttribute("message", "Model name already exists");
+            request.setAttribute("brands", brandDao.getAllBrand());
+            request.getRequestDispatcher("view/AddModel.jsp").forward(request, response);
+            return;
+        }
+
+        modelDao.insertModel(modelName, Integer.parseInt(brandId), active != null);
         response.sendRedirect("ViewModelList");
     }
 }

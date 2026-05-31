@@ -22,6 +22,7 @@ import com.swp.whmsystem.model.Ram;
 import com.swp.whmsystem.model.Rom;
 import com.swp.whmsystem.model.Unit;
 import com.swp.whmsystem.utils.FileUtils;
+import com.swp.whmsystem.utils.ProductValidation;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -77,7 +78,7 @@ public class AddProduct extends HttpServlet {
         request.setAttribute("brandList", brandList);
         request.setAttribute("unitList", unitList);
         request.setAttribute("categoryList", categoryList);
-        request.getRequestDispatcher("view/addProduct.jsp").forward(request, response);
+        request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
     }
 
     /**
@@ -91,6 +92,7 @@ public class AddProduct extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String sku = request.getParameter("sku");
         String productName = request.getParameter("productName");
         String categoryId = request.getParameter("category");
         String brandId = request.getParameter("brand");
@@ -102,33 +104,81 @@ public class AddProduct extends HttpServlet {
         String price = request.getParameter("price");
         String isActive = request.getParameter("isActive");
         String description = request.getParameter("description");
-        // category
-        // unit
         Part part = request.getPart("image");
-        String uploadPath = getServletContext().getRealPath("/uploadImages");
-        String imgUrl = FileUtils.saveFile(part, request);
-        Ram ram = new Ram();
-        ram.setId(Integer.parseInt(ramId));
-        Rom rom = new Rom();
-        rom.setId(Integer.parseInt(romId));
-        Chip chip = new Chip();
-        chip.setId(Integer.parseInt(chipId));
-        Model model = new Model();
-        model.setId(Integer.parseInt(modelId));
-        Category category = new Category();
-        category.setCategoryId(Integer.parseInt(categoryId));
-        Unit unit = new Unit();
-        unit.setId(Integer.parseInt(unitr));
-        model.setId(Integer.parseInt(modelId));
-        Brand brand = new Brand();
-        brand.setId(Integer.parseInt(brandId));
+        String imgUrl = "";
+        if(part != null) imgUrl = FileUtils.saveFile(part, request);
+        
+        
+        String cautioned = request.getParameter("cautioned");
+        
+        RamDAO ramDao = new RamDAO();
+        RomDAO romDao = new RomDAO();
+        ChipDAO chipDao = new ChipDAO();
+        ModelDAO modelDao = new ModelDAO();
+        BrandDAO brandDao = new BrandDAO();
+        UnitDAO unitDao = new UnitDAO();
+        CategoryDAO categoryDao = new CategoryDAO();
+        
+        Integer ramIdInt = ProductValidation.parseInteger(ramId);
+        Integer romIdInt = ProductValidation.parseInteger(romId);
+        Integer chipIdInt = ProductValidation.parseInteger(chipId);
+        Integer modelIdInt = ProductValidation.parseInteger(modelId);
+        Integer categoryIdInt = ProductValidation.parseInteger(categoryId);
+        Integer unitIdInt = ProductValidation.parseInteger(unitr);
+        Integer brandIdInt = ProductValidation.parseInteger(brandId);
+
+        Ram ram = ramIdInt != null ? ramDao.getRamById(ramIdInt) : null;
+        Rom rom = romIdInt != null ? romDao.getRomById(romIdInt) : null;
+        Chip chip = chipIdInt != null ? chipDao.getChipById(chipIdInt) : null;
+        Model model = modelIdInt != null ? modelDao.getModelById(modelIdInt) : null;
+        Category category = categoryIdInt != null ? categoryDao.getCategoryById(categoryIdInt) : null;
+        Unit unit = unitIdInt != null ? unitDao.getUnitById(unitIdInt) : null;
+        Brand brand = brandIdInt != null ? brandDao.getBrandById(brandIdInt) : null;
+        
+        List<Ram> ramList = ramDao.getAllRam();
+        List<Rom> romList = romDao.getAllRom();
+        List<Chip> chipList = chipDao.getAllChip();
+        List<Model> modelList = modelDao.getAll();
+        List<Brand> brandList = brandDao.getAllBrand();
+        List<Unit> unitList = unitDao.getAllUnit();
+        List<Category> categoryList = categoryDao.getAllCategory();
+        request.setAttribute("ramList", ramList);
+        request.setAttribute("romList", romList);
+        request.setAttribute("chipList", chipList);
+        request.setAttribute("modelList", modelList);
+        request.setAttribute("brandList", brandList);
+        request.setAttribute("unitList", unitList);
+        request.setAttribute("categoryList", categoryList);
+        
         ProductDAO productDao = new ProductDAO();
-        //int productId, String name, String description, String sku, String imgUrl, int totalQuantity, boolean isActive, Ram ram, Rom rom, Unit unit, Chip chip, Model model, Category category, Brand brand
-        Product product = new Product(0, productName, description, "Generator" + UUID.randomUUID().toString(), imgUrl, 0, true, ram, rom, unit, chip, model, category, brand);
-        if(productDao.addProduct(product)){
-            response.sendRedirect("productlist");
+        Product product = new Product(0, productName, description, sku.toUpperCase(), imgUrl, 0, true, ram, rom, unit, chip, model, category, brand);
+        
+        if(productDao.getProductFromSKU(sku) != null){
+            String message = "SKU was existed !";
+            request.setAttribute("product", product);
+            request.setAttribute("message", message);
+            request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
         }
-        else request.getRequestDispatcher("view/addProduct.jsp").forward(request, response);
+        else if(productDao.getProductWithSpecification(product) != null){
+            if(cautioned == null){
+                String message = "This product have a same product having same specification. Do you want to add this product ?";
+                cautioned = "yes";
+                request.setAttribute("product", product);
+                request.setAttribute("cautioned", cautioned);
+                request.setAttribute("message", message);
+                request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
+            }
+        }
+        else{
+            String error = ProductValidation.isProductValid(product);
+            if("true".equals(error) && productDao.addProduct(product)){ 
+                response.sendRedirect("productlist");
+            }
+            else{
+                request.setAttribute("message", error);
+                request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
+            }
+        }
     }
 
     /**

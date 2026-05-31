@@ -20,7 +20,7 @@
             <div class="login-card">
                 <h1 class="signin-title">Reset your password</h1>
                 <p class="register-text">If the account exists, we will email you a code to reset the password.</p>
-                <form action="forgetpassword" method="POST">
+                <form action="forgetPassword" method="POST">
                     <div class="form-group">
                         <label>Username</label>
                         <input type="text" name="username" class="input-field" required/>

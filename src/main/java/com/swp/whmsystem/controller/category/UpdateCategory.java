@@ -54,25 +54,25 @@ public class UpdateCategory extends HttpServlet {
             return;
         }
 
-        if (!category.isIsActive()) {
-            if (!categoryDAO.deactiveCategory(category.getCategoryId())) {
-                String message = "Đã xảy ra lỗi khi deactive danh mục này!";
-                request.setAttribute("error", message);
-                request.setAttribute("category", category);
-                request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
-                return;
-            }
-        }
-
-        if (category.isIsActive()) {
-            if (!categoryDAO.reactiveCategory(category.getCategoryId())) {
-                String message = "Đã xảy ra lỗi khi reactive danh mục này!";
-                request.setAttribute("error", message);
-                request.setAttribute("category", category);
-                request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
-                return;
-            }
-        }
+//        if (!category.isIsActive()) {
+//            if (!categoryDAO.deactiveCategory(category.getCategoryId())) {
+//                String message = "Đã xảy ra lỗi khi deactive danh mục này!";
+//                request.setAttribute("error", message);
+//                request.setAttribute("category", category);
+//                request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
+//                return;
+//            }
+//        }
+//
+//        if (category.isIsActive()) {
+//            if (!categoryDAO.reactiveCategory(category.getCategoryId())) {
+//                String message = "Đã xảy ra lỗi khi reactive danh mục này!";
+//                request.setAttribute("error", message);
+//                request.setAttribute("category", category);
+//                request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
+//                return;
+//            }
+//        }
 
         if (categoryDAO.updateCategory(category)) {
             response.sendRedirect("categoryList");

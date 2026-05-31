@@ -156,8 +156,8 @@
                                         <a class="me-3" href="updateCategory?cateid=${c.categoryId}">
                                             <img src="assets/img/icons/edit.svg" alt="img">
                                         </a>
-                                        <a class="me-3 confirm-text" href="updateCategory?cateid=${c.categoryId}&type=delete">
-                                            <!--href="javascript:void(0);"-->
+
+                                        <a class="me-3" href="updateCategory?cateid=${c.categoryId}&type=delete" onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
                                             <img src="assets/img/icons/delete.svg" alt="img">
                                         </a>
                                     </td>

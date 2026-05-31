@@ -111,6 +111,7 @@ public class BrandDetail extends HttpServlet {
             }
             request.setAttribute("message", "name required");
             request.getRequestDispatcher("view/addBrand.jsp").forward(request, response);
+
             return;
 
         }
@@ -133,6 +134,7 @@ public class BrandDetail extends HttpServlet {
                 request.setAttribute("act", "new");
                 request.setAttribute("message", "name exist");
                 request.getRequestDispatcher("view/addBrand.jsp").forward(request, response);
+
                 return;
             }
         }

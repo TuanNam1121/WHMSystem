@@ -28,6 +28,6 @@ public class ViewRomList extends HttpServlet {
 
         request.setAttribute("roms", roms);
         request.setAttribute("status", status);
-        request.getRequestDispatcher("view/viewRomList.jsp").forward(request, response);
+        request.getRequestDispatcher("view/RomList.jsp").forward(request, response);
     }
 }

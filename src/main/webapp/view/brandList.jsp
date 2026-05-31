@@ -1,5 +1,5 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,20 +33,20 @@
 </div>
 
 <div class="main-wrapper">
-    <jsp:include page="../common/header.jsp"></jsp:include>
-    <jsp:include page="../common/sidebar.jsp"></jsp:include>
+
+    <jsp:include page="/common/header.jsp"></jsp:include>
+    <jsp:include page="/common/sidebar.jsp"></jsp:include>
 
     <div class="page-wrapper">
         <div class="content">
             <div class="page-header">
                 <div class="page-title">
-                    <h4>Product Category list</h4>
-                    <h6>View/Search product Category</h6>
+                    <h4>Brand List</h4>
+                    <h6>Manage your Brand</h6>
                 </div>
                 <div class="page-btn">
-                    <a href="addcategory.html" class="btn btn-added">
-                        <img src="assets/img/icons/plus.svg" class="me-1" alt="img">Add Category
-                    </a>
+                    <a href="addbrand.jsp" class="btn btn-added"><img src="assets/img/icons/plus.svg" class="me-2"
+                                                                      alt="img">Add Brand</a>
                 </div>
             </div>
 
@@ -85,30 +85,14 @@
                     <div class="card" id="filter_inputs">
                         <div class="card-body pb-0">
                             <div class="row">
-
-
-                                <div class="col-lg-2 col-sm-6 col-12">
+                                <div class="col-lg-3 col-sm-6 col-12">
                                     <div class="form-group">
-                                        <select class="select">
-                                            <option>Choose Category</option>
-                                            <option>Computers</option>
-                                        </select>
+                                        <input type="text" placeholder="Enter Brand Name">
                                     </div>
                                 </div>
-                                <div class="col-lg-2 col-sm-6 col-12">
+                                <div class="col-lg-3 col-sm-6 col-12">
                                     <div class="form-group">
-                                        <select class="select">
-                                            <option>Choose Sub Category</option>
-                                            <option>Fruits</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-2 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <select class="select">
-                                            <option>Choose Sub Brand</option>
-                                            <option>Iphone</option>
-                                        </select>
+                                        <input type="text" placeholder="Enter Brand Description">
                                     </div>
                                 </div>
                                 <div class="col-lg-1 col-sm-6 col-12 ms-auto">
@@ -122,7 +106,7 @@
                     </div>
 
                     <div class="table-responsive">
-                        <table class="table  datanew">
+                        <table class="table datanew">
                             <thead>
                             <tr>
                                 <th>
@@ -131,14 +115,14 @@
                                         <span class="checkmarks"></span>
                                     </label>
                                 </th>
-                                <th>Category name</th>
-                                <th>Description</th>
+                                <th>Image</th>
+                                <th>Brand Name</th>
+                                <th>Brand Description</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
-
-                            <c:forEach items="${sessionScope.categoryList}" var="c">
+                            <c:forEach items="${sessionScope.brandList}" var="b">
                                 <tr>
                                     <td>
                                         <label class="checkboxs">
@@ -146,15 +130,15 @@
                                             <span class="checkmarks"></span>
                                         </label>
                                     </td>
-                                    <td class="productimgname">
-                                        <a href="javascript:void(0);" class="product-img">
-                                            <img src="assets/img/product/noimage.png" alt="product">
-                                        </a>
-                                        <a href="javascript:void(0);">${c.name}</a>
-                                    </td>
-                                    <td>${c.description}</td>
                                     <td>
-                                        <a class="me-3" href="editcategory.html">
+                                        <a class="product-img">
+                                            <img src="assets/img/brand/adidas.png" alt="product">
+                                        </a>
+                                    </td>
+                                    <td>${b.name}</td>
+                                    <td>${b.description}</td>
+                                    <td>
+                                        <a class="me-3" href="editbrand.html">
                                             <img src="assets/img/icons/edit.svg" alt="img">
                                         </a>
                                         <a class="me-3 confirm-text" href="javascript:void(0);">
@@ -163,6 +147,77 @@
                                     </td>
                                 </tr>
                             </c:forEach>
+
+
+                            <tr>
+                                <td>
+                                    <label class="checkboxs">
+                                        <input type="checkbox">
+                                        <span class="checkmarks"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <a class="product-img">
+                                        <img src="assets/img/brand/adidas.png" alt="product">
+                                    </a>
+                                </td>
+                                <td>Adidas</td>
+                                <td>Shoes, sportswear</td>
+                                <td>
+                                    <a class="me-3" href="editbrand.html">
+                                        <img src="assets/img/icons/edit.svg" alt="img">
+                                    </a>
+                                    <a class="me-3 confirm-text" href="javascript:void(0);">
+                                        <img src="assets/img/icons/delete.svg" alt="img">
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="checkboxs">
+                                        <input type="checkbox">
+                                        <span class="checkmarks"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <a class="product-img">
+                                        <img src="assets/img/brand/colgate.png" alt="product">
+                                    </a>
+                                </td>
+                                <td>Colgate</td>
+                                <td>Oral hygiene. Toothbrushes</td>
+                                <td>
+                                    <a class="me-3" href="editbrand.html">
+                                        <img src="assets/img/icons/edit.svg" alt="img">
+                                    </a>
+                                    <a class="me-3 confirm-text" href="javascript:void(0);">
+                                        <img src="assets/img/icons/delete.svg" alt="img">
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="checkboxs">
+                                        <input type="checkbox">
+                                        <span class="checkmarks"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <a class="product-img">
+                                        <img src="assets/img/brand/samsung.png" alt="product">
+                                    </a>
+                                </td>
+                                <td>samsung</td>
+                                <td>Electronics</td>
+                                <td>
+                                    <a class="me-3" href="editbrand.html">
+                                        <img src="assets/img/icons/edit.svg" alt="img">
+                                    </a>
+                                    <a class="me-3 confirm-text" href="javascript:void(0);">
+                                        <img src="assets/img/icons/delete.svg" alt="img">
+                                    </a>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>

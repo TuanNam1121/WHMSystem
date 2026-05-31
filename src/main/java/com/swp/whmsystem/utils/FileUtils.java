@@ -49,9 +49,9 @@ public class FileUtils {
             System.err.println("Fail to save to src: " + e.getMessage());
         }
         // Return for web display (user "/")
-        return "/" + FOLDER_PATH + "/" + fileName;
+        return FOLDER_PATH + "/" + fileName;
     }
-    
+
     public static String saveFileBrand(Part filePart, HttpServletRequest request) throws IOException {
         String fileName = System.currentTimeMillis() + "_" + filePart.getSubmittedFileName();
 
@@ -79,6 +79,6 @@ public class FileUtils {
             System.err.println("Fail to save to src: " + e.getMessage());
         }
         // Return for web display (user "/")
-        return "/" + "images/brands" + "/" + fileName;
+        return "assets/img/brand" + "/" + fileName;
     }
 }

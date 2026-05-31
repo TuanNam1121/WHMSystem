@@ -112,11 +112,11 @@ public class UpdateProduct extends HttpServlet {
         String romId = request.getParameter("rom");
         String chipId = request.getParameter("chip");
         String price_raw = request.getParameter("price");
-        String isActive = request.getParameter("isActive");
+        String isActiveraw = request.getParameter("isActive");
         String description = request.getParameter("description");
         Part part = request.getPart("image");
         String imgUrl = "";
-        if (part != null) {
+        if (part != null && part.getSize() > 0) {
             imgUrl = FileUtils.saveFile(part, request);
         }
 
@@ -138,6 +138,7 @@ public class UpdateProduct extends HttpServlet {
         Integer categoryIdInt = ProductValidation.parseInteger(categoryId);
         Integer unitIdInt = ProductValidation.parseInteger(unitr);
         Integer brandIdInt = ProductValidation.parseInteger(brandId);
+        boolean isActive = ProductValidation.parseInteger(isActiveraw) == 1;
 
         Ram ram = ramIdInt != null ? ramDao.getRamById(ramIdInt) : null;
         Rom rom = romIdInt != null ? romDao.getRomById(romIdInt) : null;
@@ -167,8 +168,9 @@ public class UpdateProduct extends HttpServlet {
         if(!productName.equals(product.getName())) product.setName(productName);
         if(!description.equals(product.getDescription())) product.setDescription(description);
         if(!sku.equals(product.getSku())) product.setSku(sku);
-        if(imgUrl != null) product.setImgUrl(imgUrl);
-        if(price != product.getPrice()) product.setPrice(price);
+        if(product.isIsActive() != isActive) product.setIsActive(isActive);
+        if(!imgUrl.equals("")) product.setImgUrl(imgUrl);
+        if(price != null && price != product.getPrice()) product.setPrice(price);
         if(ram != null) product.setRam(ram);
         if(rom != null) product.setRom(rom);
         if(chip != null) product.setChip(chip);
@@ -176,13 +178,17 @@ public class UpdateProduct extends HttpServlet {
         if(category != null) product.setCategory(category);
         if(unit != null) product.setUnit(unit);
         if(brand != null) product.setBrand(brand);
+        
         request.setAttribute("mode", "update");
         request.setAttribute("product", product);
-        if (productDao.getProductFromSKU(sku).getProductId() != product.getProductId()) {
+        
+        Product SKUexistedProduct = productDao.getProductFromSKU(sku);
+        Product sameSpecProduct = productDao.getProductWithSpecification(product);
+        if (SKUexistedProduct != null && SKUexistedProduct.getProductId() != product.getProductId()) {
             String message = "SKU was existed in other product !";
             request.setAttribute("message", message);
             request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
-        } else if (productDao.getProductWithSpecification(product) != null && productDao.getProductWithSpecification(product).getProductId() != product.getProductId()) {
+        } else if (sameSpecProduct != null && sameSpecProduct.getProductId() != product.getProductId()) {
             if (cautioned == null) {
                 String message = "This product have a same product having same specification. Do you want to add this product ?";
                 cautioned = "yes";
@@ -190,6 +196,11 @@ public class UpdateProduct extends HttpServlet {
                 request.setAttribute("cautioned", cautioned);
                 request.setAttribute("message", message);
                 request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
+            }else {
+                String error = ProductValidation.isProductValid(product);
+                if ("true".equals(error) && productDao.updateProduct(product)) {
+                    response.sendRedirect("productlist");
+                }
             }
         } else {
             String error = ProductValidation.isProductValid(product);

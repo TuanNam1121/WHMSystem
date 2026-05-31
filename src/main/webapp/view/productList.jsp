@@ -171,7 +171,7 @@
                                     </td>
                                     <td class="productimgname">
                                         <a href="javascript:void(0);" class="product-img">
-                                            <img src="assets/img/product/noimage.png" alt="product">
+                                            <img src="${p.imgUrl}" alt="product">
                                         </a>
                                         <p>${p.name}</p>
                                     </td>

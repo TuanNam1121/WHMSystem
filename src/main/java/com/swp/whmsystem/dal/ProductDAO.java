@@ -187,7 +187,7 @@ public class ProductDAO {
                 e.printStackTrace();
             }
         }
-        else if(p.getCategory().equals("RAM")){
+        else if(p.getCategory().getName().equals("RAM")){
             String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, ramid = ?, unitid = ? , categoryid = ? , brandid = ?, price = ? WHERE productid = ?";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
@@ -258,16 +258,14 @@ public class ProductDAO {
 
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
+        RomDAO rom = new RomDAO();
         for (Product i : dao.getProductList()) {
             System.out.println(i.getImgUrl());
         }
-        Product p = dao.getProductFromId(15);
-        Product spec = dao.getProductWithSpecification(p);
-        Product a = dao.getProductFromId(4);
-        a.setProductId(15);
-        a.setName("SSD Samsung 123");
-        a.setSku("KVR32S22S6/4");
-        dao.addProduct(a);
-        System.out.println(spec);
+        Product p = dao.getProductFromId(18);
+        p.setDescription("con mèo kêu");
+        p.setRom(rom.getRomById(2));
+        dao.updateProduct(p);
+        
     }
 }

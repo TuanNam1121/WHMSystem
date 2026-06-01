@@ -154,6 +154,7 @@
                                 <th>Category</th>
                                 <th>Brand</th>
                                 <th>Qty</th>
+                                <th>Active</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -177,6 +178,7 @@
                                     <td>${p.category.name}</td>
                                     <td>${p.brand.name}</td>
                                     <td>${p.totalQuantity}</td>
+                                    <td>${p.isActive ? "Active" : "Deactive"}</td>
                                     <td>
                                         <a class="me-3" href="UpdateProduct?productid=${p.productId}">
                                             <img src="assets/img/icons/eye.svg" alt="img">

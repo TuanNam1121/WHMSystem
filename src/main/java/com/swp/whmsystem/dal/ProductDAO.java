@@ -268,6 +268,51 @@ public class ProductDAO {
         return product;
     }
 
+    public List<Product> searchProduct(String name, String sku, int categoryId, int brandId) {
+        List<Product> productList = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("select * from products where ");
+        List<String> parameter = new ArrayList<>();
+        if (name != null && !name.trim().isEmpty()) {
+            sql.append("name like ? and ");
+            parameter.add("%" + name + "%");
+        }
+
+        if (sku != null && !sku.trim().isEmpty()) {
+            sql.append("sku like ? and ");
+            parameter.add("%" + sku + "%");
+
+        }
+
+        if (categoryId != -1) {
+            sql.append("categoryid = ? and ");
+            parameter.add(String.valueOf(categoryId));
+
+        }
+
+        if (brandId != -1) {
+            sql.append("brandid = ? and ");
+            parameter.add(String.valueOf(brandId));
+
+        }
+
+        sql.setLength(sql.length() - 5);
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString());) {
+            for (int i = 0; i < parameter.size(); i++) {
+                ps.setObject(i + 1, parameter.get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                productList.add(mapFromResultSetToProduct(rs));
+            }
+            return productList;
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return productList;
+    }
+
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
         RomDAO rom = new RomDAO();

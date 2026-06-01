@@ -7,12 +7,15 @@ package com.swp.whmsystem.controller.admin;
 import com.swp.whmsystem.dal.*;
 import com.swp.whmsystem.model.*;
 import com.swp.whmsystem.utils.*;
+
 import java.io.IOException;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,14 +26,6 @@ import java.util.List;
 @WebServlet(name = "addNewUser", urlPatterns = {"/addNewUser"})
 public class AddNewUser extends HttpServlet {
 
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -43,14 +38,6 @@ public class AddNewUser extends HttpServlet {
         request.getRequestDispatcher("view/userDetail.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -69,6 +56,8 @@ public class AddNewUser extends HttpServlet {
         String phone = UserFormValidation.trimToNull(request.getParameter("phone"));
         String email = UserFormValidation.trimToNull(request.getParameter("email"));
         String gender = UserFormValidation.trimToNull(request.getParameter("gender"));
+        String firstname = userDao.getFirstnameFromFullname(fullname);
+        String lastname = userDao.getLastnameFromFullname(fullname);
 
         List<String> errors = new ArrayList<>();
         if (!UserFormValidation.isValidUsername(userName)) {
@@ -110,6 +99,8 @@ public class AddNewUser extends HttpServlet {
         user.setEmail(email);
         user.setGender(gender);
         user.setIsActive(true);
+        user.setFirstname(firstname);
+        user.setLastname(lastname);
         request.setAttribute("u", user);
 
         if (!errors.isEmpty()) {

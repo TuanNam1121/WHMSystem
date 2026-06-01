@@ -5,7 +5,11 @@ package com.swp.whmsystem.controller.product;
 import java.io.IOException;
 import java.util.*;
 
+import com.swp.whmsystem.dal.BrandDAO;
+import com.swp.whmsystem.dal.CategoryDAO;
 import com.swp.whmsystem.dal.ProductDAO;
+import com.swp.whmsystem.model.Brand;
+import com.swp.whmsystem.model.Category;
 import com.swp.whmsystem.model.Product;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -24,10 +28,50 @@ public class ProductList extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         ProductDAO productDAO = new ProductDAO();
-        List<Product> productList = productDAO.getProductList();
+        BrandDAO brandDAO = new BrandDAO();
+        CategoryDAO categoryDAO = new CategoryDAO();
+        List<Product> productList = new ArrayList<>();
+        String productName = request.getParameter("productName");
+        String productSku = request.getParameter("productSku");
+        String categoryIdRaw = request.getParameter("categoryId");
+        String brandIdRaw = request.getParameter("brandId");
+
+        if (productName == null
+                && productSku == null
+                && categoryIdRaw == null
+                && brandIdRaw == null) {
+            productList = productDAO.getProductList();
+
+        } else {
+            int categoryId = -1;
+            int brandId = -1;
+
+            if (categoryIdRaw != null && !categoryIdRaw.trim().isEmpty()) {
+                try {
+                    categoryId = Integer.parseInt(categoryIdRaw.trim());
+                } catch (NumberFormatException e) {
+                    categoryId = -1;
+                }
+            }
+
+            if (brandIdRaw != null && !brandIdRaw.trim().isEmpty()) {
+                try {
+                    brandId = Integer.parseInt(brandIdRaw.trim());
+                } catch (NumberFormatException e) {
+                    brandId = -1;
+                }
+            }
+            productList = productDAO.searchProduct(productName, productSku, categoryId, brandId);
+
+        }
+        List<Category> categoryList = categoryDAO.getAllCategory();
+        List<Brand> brandList = brandDAO.getAllBrand();
 
         session.setAttribute("productList", productList);
+        session.setAttribute("categoryList", categoryList);
+        session.setAttribute("brandList", brandList);
         request.getRequestDispatcher("view/productList.jsp").forward(request, response);
+
     }
 
     @Override

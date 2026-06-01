@@ -93,7 +93,7 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <input type="text" name="productName" placeholder="Product Name">
+                                                    <input type="text" name="productName" placeholder="Search...">
                                                 </div>
                                             </div>
 
@@ -121,6 +121,22 @@
                                                         <c:forEach items="${sessionScope.brandList}" var="b">
                                                             <option value="${b.id}">${b.name}</option>
                                                         </c:forEach>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <select class="select" name="sortBy">
+                                                        <option value="">Sort By</option>
+                                                        <option value="nameAZ">Name A-Z</option>
+                                                        <option value="nameZA">Name Z-A</option>
+                                                        <option value="skuAZ">SKU A-Z</option>
+                                                        <option value="skuZA">SKU Z-A</option>
+                                                        <option value="cateAZ">Category A-Z</option>
+                                                        <option value="cateZA">Category Z-A</option>
+                                                        <option value="brandAZ">Brand A-Z</option>
+                                                        <option value="brandZA">Brand Z-A</option>
                                                     </select>
                                                 </div>
                                             </div>

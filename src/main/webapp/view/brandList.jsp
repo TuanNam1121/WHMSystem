@@ -91,9 +91,22 @@
                                             <input type="text" name="brandName" placeholder="Enter Brand Name">
                                         </div>
                                     </div>
+
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <input type="text" name="brandDes" placeholder="Enter Brand Description">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <select class="select" name="sortBy">
+                                                <option value="">Sort By</option>
+                                                <option value="nameAZ">Brand A-Z</option>
+                                                <option value="nameZA">Brand Z-A</option>
+                                                <option value="desAZ">Description A-Z</option>
+                                                <option value="desZA">Description Z-A</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-1 col-sm-6 col-12 ms-auto">
@@ -152,75 +165,6 @@
                             </c:forEach>
 
 
-                            <tr>
-                                <td>
-                                    <label class="checkboxs">
-                                        <input type="checkbox">
-                                        <span class="checkmarks"></span>
-                                    </label>
-                                </td>
-                                <td>
-                                    <a class="product-img">
-                                        <img src="assets/img/brand/adidas.png" alt="product">
-                                    </a>
-                                </td>
-                                <td>Adidas</td>
-                                <td>Shoes, sportswear</td>
-                                <td>
-                                    <a class="me-3" href="editbrand.html">
-                                        <img src="assets/img/icons/edit.svg" alt="img">
-                                    </a>
-                                    <a class="me-3 confirm-text" href="javascript:void(0);">
-                                        <img src="assets/img/icons/delete.svg" alt="img">
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkboxs">
-                                        <input type="checkbox">
-                                        <span class="checkmarks"></span>
-                                    </label>
-                                </td>
-                                <td>
-                                    <a class="product-img">
-                                        <img src="assets/img/brand/colgate.png" alt="product">
-                                    </a>
-                                </td>
-                                <td>Colgate</td>
-                                <td>Oral hygiene. Toothbrushes</td>
-                                <td>
-                                    <a class="me-3" href="editbrand.html">
-                                        <img src="assets/img/icons/edit.svg" alt="img">
-                                    </a>
-                                    <a class="me-3 confirm-text" href="javascript:void(0);">
-                                        <img src="assets/img/icons/delete.svg" alt="img">
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label class="checkboxs">
-                                        <input type="checkbox">
-                                        <span class="checkmarks"></span>
-                                    </label>
-                                </td>
-                                <td>
-                                    <a class="product-img">
-                                        <img src="assets/img/brand/samsung.png" alt="product">
-                                    </a>
-                                </td>
-                                <td>samsung</td>
-                                <td>Electronics</td>
-                                <td>
-                                    <a class="me-3" href="editbrand.html">
-                                        <img src="assets/img/icons/edit.svg" alt="img">
-                                    </a>
-                                    <a class="me-3 confirm-text" href="javascript:void(0);">
-                                        <img src="assets/img/icons/delete.svg" alt="img">
-                                    </a>
-                                </td>
-                            </tr>
                             </tbody>
                         </table>
                     </div>

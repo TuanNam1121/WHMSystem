@@ -113,6 +113,18 @@
                                         </div>
                                     </div>
 
+                                    <div class="col-lg-2 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <select class="select" name="sortBy">
+                                                <option value="">Sort By</option>
+                                                <option value="nameAZ">Category A-Z</option>
+                                                <option value="nameZA">Category Z-A</option>
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Inactive</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
                                     <div class="col-lg-1 col-sm-6 col-12 ms-auto">
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-filters ms-auto">

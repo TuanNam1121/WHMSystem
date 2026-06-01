@@ -71,7 +71,8 @@
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label>Description</label>
-                                    <textarea class="form-control" name="description">${category.description}</textarea>
+                                    <textarea class="form-control" name="description"
+                                              placeholder="${category.description}"></textarea>
                                 </div>
                             </div>
                             <div class="col-lg-12">
@@ -79,14 +80,16 @@
                                     <label>Status</label>
                                     <div class="d-flex gap-4 align-items-center border rounded p-3 bg-white">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="isActive" value="true"
+                                            <input id="active-btn" class="form-check-input" type="radio" name="isActive"
+                                                   value="true"
                                                    <c:if test="${category.isActive}">checked</c:if>>
-                                            <label class="form-check-label">Active</label>
+                                            <label for="active-btn" class="form-check-label">Active</label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="isActive" value="false"
+                                            <input id="deactive-btn" class="form-check-input" type="radio"
+                                                   name="isActive" value="false"
                                                    <c:if test="${not category.isActive}">checked</c:if>>
-                                            <label class="form-check-label">Inactive</label>
+                                            <label for="deactive-btn" class="form-check-label">Inactive</label>
                                         </div>
                                     </div>
                                 </div>

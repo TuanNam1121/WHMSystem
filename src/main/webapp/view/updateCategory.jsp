@@ -71,23 +71,26 @@
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label>Description</label>
-                                    <textarea class="form-control" name="description">${category.description}</textarea>
+                                    <textarea class="form-control" name="description" placeholder="Enter category description...">${category.description}</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label>Status</label>
-                                    <div class="d-flex gap-4 align-items-center border rounded p-3 bg-white">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="isActive" value="true"
-                                                   <c:if test="${category.isActive}">checked</c:if>>
-                                            <label class="form-check-label">Active</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="isActive" value="false"
-                                                   <c:if test="${not category.isActive}">checked</c:if>>
-                                            <label class="form-check-label">Inactive</label>
-                                        </div>
+                                    <div class="d-flex align-items-center" style="gap: 8px;">
+                                        <input type="hidden" name="isActive" id="isActiveInput" value="${category.isActive}">
+                                        <button type="button" id="btnActive"
+                                            onclick="setStatus(true)"
+                                            class="btn <c:choose><c:when test="${category.isActive}">btn-success</c:when><c:otherwise>btn-outline-success</c:otherwise></c:choose>"
+                                            style="min-width: 100px; font-weight: 600;">
+                                            Active
+                                        </button>
+                                        <button type="button" id="btnInactive"
+                                            onclick="setStatus(false)"
+                                            class="btn <c:choose><c:when test="${not category.isActive}">btn-danger</c:when><c:otherwise>btn-outline-danger</c:otherwise></c:choose>"
+                                            style="min-width: 100px; font-weight: 600;">
+                                            Inactive
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -123,5 +126,19 @@
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
 <script src="assets/js/script.js"></script>
+<script>
+    function setStatus(isActive) {
+        document.getElementById('isActiveInput').value = isActive;
+        var btnActive   = document.getElementById('btnActive');
+        var btnInactive = document.getElementById('btnInactive');
+        if (isActive) {
+            btnActive.className   = 'btn btn-success';
+            btnInactive.className = 'btn btn-outline-danger';
+        } else {
+            btnActive.className   = 'btn btn-outline-success';
+            btnInactive.className = 'btn btn-danger';
+        }
+    }
+</script>
 </body>
 </html>

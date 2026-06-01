@@ -145,6 +145,62 @@ public class CategoryDAO {
         return false;
     }
 
+    public List<Category> searchCategory(int categoryId, int active, String sortBy) {
+        List<Category> categoryList = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+                "select * from categories c " +
+                        "where 1=1"
+        );
+        List<String> parameter = new ArrayList<>();
+
+
+        if (categoryId != -1) {
+            sql.append(" and categoryid = ?");
+            parameter.add(String.valueOf(categoryId));
+
+        }
+
+        if (active != -1) {
+            sql.append(" and isactive = ?");
+            parameter.add(String.valueOf(active));
+        }
+
+        if (sortBy != null && !sortBy.trim().isEmpty()) {
+            switch (sortBy) {
+                case "nameAZ":
+                    sql.append(" order by name asc");
+                    break;
+                case "nameZA":
+                    sql.append(" order by name desc");
+                    break;
+                case "active":
+                    sql.append(" order by isactive desc");
+                    break;
+                case "inactive":
+                    sql.append(" order by isactive asc");
+
+                    break;
+            }
+        }
+
+
+        try (Connection conn = DBContext.getConnection()
+        ) {
+            System.out.println(sql.toString());
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            for (int i = 0; i < parameter.size(); i++) {
+                ps.setObject(i + 1, parameter.get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                categoryList.add(mapResultSetToCategory(rs));
+            }
+            return categoryList;
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return null;
+    }
 
     public static void main(String[] args) {
 

@@ -19,12 +19,11 @@
             <div class="alert-success">${message}</div>
         </c:if>
         <section class="content-box">
-            <h2>Request From Staff</h2>
+            <h2>Reset Password Request From Staff</h2>
             <table>
                 <thead>
                 <tr>
                     <th>User Id</th>
-                    <th>Request Type</th>
                     <th>Created At</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -34,7 +33,6 @@
                 <c:forEach items="${requestlist}" var="r">
                     <tr>
                         <td>${r.userId}</td>
-                        <td>${r.message}</td>
                         <td>${r.createdAt}</td>
                         <td>${r.status}</td>
                         <td>

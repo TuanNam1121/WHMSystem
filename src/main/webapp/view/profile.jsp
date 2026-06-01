@@ -57,7 +57,7 @@
                                         </div>
                                     </div>
                                     <div class="profile-contentname">
-                                        <h2>${sessionScope.user.fullName}</h2>
+                                        <h2>${sessionScope.user.firstname} ${sessionScope.user.lastname}</h2>
                                         <h4>${sessionScope.roleName}</h4>
                                     </div>
                                 </div>

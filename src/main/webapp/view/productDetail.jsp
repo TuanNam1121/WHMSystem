@@ -64,7 +64,7 @@
                                         <div class="col-lg-3 col-sm-6 col-12">
                                             <div class="form-group">
                                                 <label>Product Name</label>
-                                                <input type="text" name="productName" placeholder="VD: ZenBook 14 UX3405CA"  value="${product.name}">
+                                                <input type="text" required name="productName" placeholder="VD: ZenBook 14 UX3405CA"  value="${product.name}">
                                             </div>
                                         </div>
 
@@ -182,10 +182,9 @@
                                         </div>
                                         <div class="col-lg-12">
                                             <button type="submit" class="btn btn-submit me-2">Submit</button>
-                                            <a href="productlist.html" class="btn btn-cancel">Cancel</a>
+                                            <a href="home" class="btn btn-cancel">Cancel</a>
                                         </div>
                                     </div>
-                                    ${filePath}
                                 </div>
                             </div>
                     </form>

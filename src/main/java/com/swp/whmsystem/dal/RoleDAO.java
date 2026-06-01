@@ -37,7 +37,7 @@ public class RoleDAO {
     }
 
     public List<Role> getAllRoleToAssign() {
-        String sql = "select * from roles where rolename != 'Admin' or isactive = 1";
+        String sql = "select * from roles where rolename != 'Admin' and isactive = 1";
 
         try (Connection conn = DBContext.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql);

@@ -165,6 +165,7 @@ public class UpdateProduct extends HttpServlet {
 
         ProductDAO productDao = new ProductDAO();
         Product product = productDao.getProductFromId(Integer.parseInt(productid));
+        
         if(!productName.equals(product.getName())) product.setName(productName);
         if(!description.equals(product.getDescription())) product.setDescription(description);
         if(!sku.equals(product.getSku())) product.setSku(sku);

@@ -34,6 +34,22 @@ public class RomDAO {
         }
         return list;
     }
+    
+    public List<Rom> getAllRomToAssign() {
+        List<Rom> list = new ArrayList<>();
+
+        String sql = "SELECT id, size, isactive FROM roms where isactive = 1 ORDER BY id";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(mapRom(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
 
     public Rom getRomById(int id) {
         String sql = "SELECT id, size, isactive FROM roms WHERE id = ?";

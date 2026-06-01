@@ -35,6 +35,22 @@ public class RamDAO {
         }
         return list;
     }
+    
+    public List<Ram> getAllRamToAssign() {
+        List<Ram> list = new ArrayList<>();
+
+        String sql = "SELECT id, size, isactive FROM rams where isactive = 1 ORDER BY id";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(mapRam(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
 
     public Ram getRamById(int id) {
         String sql = "SELECT id, size, isactive FROM rams WHERE id = ?";

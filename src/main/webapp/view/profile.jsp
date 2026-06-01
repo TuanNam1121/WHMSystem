@@ -102,14 +102,7 @@
 
                             <div class="col-12">
                                 <button type="submit" class="btn btn-submit d-inline-block me-2">Submit</button>
-                                <a href="javascript:void(0);" class="btn btn-cancel">Cancel</a>
-                            </div>
-
-
-                            <div style="padding-bottom: 20px">
-                                <form action="changePassword" method="post" id="changePasswordForm">
-
-                                </form>
+                                <a href="viewprofile" class="btn btn-cancel">Cancel</a>
                             </div>
                         </div>
                     </div>

@@ -156,32 +156,41 @@ public class AddProduct extends HttpServlet {
         Product product = new Product(0, productName, description, sku.toUpperCase(), imgUrl, 0, true, ram, rom, unit, chip, model, category, brand);
         request.setAttribute("mode", "add");
         request.setAttribute("product", product);
-        if (productDao.getProductFromSKU(sku) != null) {
-            String message = "SKU was existed !";
-            request.setAttribute("product", product);
-            request.setAttribute("message", message);
+
+        String error = ProductValidation.isProductValid(product);
+        if (!"true".equals(error)) {
+            request.setAttribute("message", error);
             request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
-        } else if (productDao.getProductWithSpecification(product) != null) {
+            return;
+        }
+
+        if (productDao.getProductFromSKU(sku) != null) {
+            request.setAttribute("product", product);
+            request.setAttribute("message", "SKU was existed !");
+            request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
+            return;
+        }
+
+        if (ProductValidation.isCategoryCheckRequired(product) && productDao.getProductWithSpecification(product) != null) {
             if (cautioned == null) {
-                String message = "This product have a same product having same specification. Do you want to add this product ?";
-                cautioned = "yes";
-                request.setAttribute("cautioned", cautioned);
-                request.setAttribute("message", message);
+                request.setAttribute("cautioned", "yes");
+                request.setAttribute("message", "This product have a same product having same specification. Do you want to add this product ?");
                 request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
             } else {
-                String error = ProductValidation.isProductValid(product);
-                if ("true".equals(error) && productDao.addProduct(product)) {
+                if (productDao.addProduct(product)) {
                     response.sendRedirect("productlist");
                 }
             }
-        } else {
-            String error = ProductValidation.isProductValid(product);
-            if ("true".equals(error) && productDao.addProduct(product)) {
-                response.sendRedirect("productlist");
-            } else {
-                request.setAttribute("message", error);
-                request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
-            }
+            return;
+        }
+
+        if (productDao.addProduct(product)) {
+            response.sendRedirect("productlist");
+        }
+        else{
+            request.setAttribute("product", product);
+            request.setAttribute("message", "Error in Transaction");
+            request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
         }
     }
 

@@ -13,10 +13,9 @@ import java.sql.SQLException;
  * @author Admin
  */
 public class DBContext {
-
     private static String url = "jdbc:mysql://localhost:3306/wms?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true";
     private static String user = "root";
-    private static String pass = "123";
+    private static String pass = "admin";
 
     public static Connection getConnection() throws SQLException {
         try {

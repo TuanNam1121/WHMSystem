@@ -57,7 +57,7 @@
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>SKU</label>
-                                            <input type="text" name="sku" placeholder="VD: ST628W" value="${product.sku}" ${transactionExist != null ? 'readonly' : ''}>
+                                            <input type="text" required name="sku" placeholder="VD: ST628W" value="${product.sku}" ${transactionExist != null ? 'readonly' : ''}>
                                         </div>
                                     </div>
                                     <div class="row">

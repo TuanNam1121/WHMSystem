@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CategoryDAO {
     public List<Category> getAllCategory() {
-        String sql = "select * from categories order by isActive desc, name asc";
+        String sql = "select * from categories order by isActive desc";
         List<Category> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -24,7 +24,23 @@ public class CategoryDAO {
         }
     }
 
-    public boolean deactiveCategory(int cateid) {
+    public List<Category> getAllCategoryToAssign() {
+        String sql = "select * from categories where isactive = 1 order by isActive desc";
+        List<Category> list = new ArrayList<>();
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Category c = mapResultSetToCategory(resultSet);
+                list.add(c);
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean deactiveCategory(int cateid){
         String sql = "update products set isactive = 0 where categoryid = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setInt(1, cateid);
@@ -35,7 +51,7 @@ public class CategoryDAO {
         return false;
     }
 
-    public boolean reactiveCategory(int cateid) {
+    public boolean reactiveCategory(int cateid){
         String sql = "update products set isactive = 1 where categoryid = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setInt(1, cateid);
@@ -62,7 +78,7 @@ public class CategoryDAO {
         }
         return null;
     }
-
+    
     public Category getCategoryByName(String cate) {
         String sql = "select * from categories where name = ? limit 1";
         try (
@@ -79,7 +95,7 @@ public class CategoryDAO {
         }
         return null;
     }
-
+    
     public Category mapResultSetToCategory(ResultSet rs) throws SQLException {
         Category c = new Category();
         c.setCategoryId(rs.getInt("categoryid"));
@@ -93,8 +109,8 @@ public class CategoryDAO {
         String sql = "insert into Categories(name, description) values (?, ?)";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, category.getName());
-            ps.setString(2, category.getDescription());
+            ps.setString(1 ,category.getName());
+            ps.setString(2 ,category.getDescription());
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             System.out.println(e.getMessage());

@@ -70,7 +70,7 @@ public class AddProduct extends HttpServlet {
         List<Model> modelList = model.getAll();
         List<Brand> brandList = brand.getAllBrand();
         List<Unit> unitList = unit.getAllUnit();
-        List<Category> categoryList = category.getAllCategory();
+        List<Category> categoryList = category.getAllCategoryToAssign();
         request.setAttribute("ramList", ramList);
         request.setAttribute("romList", romList);
         request.setAttribute("chipList", chipList);

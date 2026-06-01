@@ -9,6 +9,7 @@ import com.swp.whmsystem.model.*;
 import com.swp.whmsystem.utils.*;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,6 +20,7 @@ import java.util.List;
  *
  * @author Admin
  */
+@WebServlet(name = "addNewUser", urlPatterns = {"/addNewUser"})
 public class AddNewUser extends HttpServlet {
 
     /**

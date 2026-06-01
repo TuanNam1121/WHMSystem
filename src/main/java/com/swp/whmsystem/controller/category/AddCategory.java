@@ -29,7 +29,7 @@ public class AddCategory extends HttpServlet {
         if (categoryDAO.getCategoryByName(categoryName) != null) {
             String error = "Category name has already exsisted! Please input another one!";
             request.setAttribute("error", error);
-            request.getRequestDispatcher("view//addCategory.jsp").forward(request, response);
+            request.getRequestDispatcher("view/addCategory.jsp").forward(request, response);
             return;
         }
 

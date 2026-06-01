@@ -40,16 +40,16 @@ public class CategoryDAO {
         }
     }
 
-    public boolean deactiveCategory(int cateid){
-        String sql = "update products set isactive = 0 where categoryid = ?";
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
-            ps.setInt(1, cateid);
-            return ps.executeUpdate() >= 1;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+//    public boolean deactiveCategory(int cateid){
+//        String sql = "update products set isactive = 0 where categoryid = ?";
+//        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+//            ps.setInt(1, cateid);
+//            return ps.executeUpdate() >= 1;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
 
     public boolean reactiveCategory(int cateid){
         String sql = "update products set isactive = 1 where categoryid = ?";

@@ -40,7 +40,7 @@ public class CategoryDAO {
         }
     }
 
-    public boolean deactiveCategory(int cateid){
+    public boolean deactiveCategory(int cateid) {
         String sql = "update products set isactive = 0 where categoryid = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setInt(1, cateid);
@@ -51,7 +51,7 @@ public class CategoryDAO {
         return false;
     }
 
-    public boolean reactiveCategory(int cateid){
+    public boolean reactiveCategory(int cateid) {
         String sql = "update products set isactive = 1 where categoryid = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setInt(1, cateid);
@@ -78,7 +78,7 @@ public class CategoryDAO {
         }
         return null;
     }
-    
+
     public Category getCategoryByName(String cate) {
         String sql = "select * from categories where name = ? limit 1";
         try (
@@ -95,7 +95,7 @@ public class CategoryDAO {
         }
         return null;
     }
-    
+
     public Category mapResultSetToCategory(ResultSet rs) throws SQLException {
         Category c = new Category();
         c.setCategoryId(rs.getInt("categoryid"));
@@ -109,8 +109,8 @@ public class CategoryDAO {
         String sql = "insert into Categories(name, description) values (?, ?)";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1 ,category.getName());
-            ps.setString(2 ,category.getDescription());
+            ps.setString(1, category.getName());
+            ps.setString(2, category.getDescription());
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -145,6 +145,44 @@ public class CategoryDAO {
         return false;
     }
 
+    public List<Category> searchCategory(int categoryId, int active) {
+        List<Category> categoryList = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+                "select * from categories c " +
+                        "where 1=1"
+        );
+        List<String> parameter = new ArrayList<>();
+
+
+        if (categoryId != -1) {
+            sql.append(" and categoryid = ?");
+            parameter.add(String.valueOf(categoryId));
+
+        }
+
+        if (active != -1) {
+            sql.append(" and isactive = ?");
+            parameter.add(String.valueOf(active));
+
+        }
+
+
+        try (Connection conn = DBContext.getConnection()
+        ) {
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            for (int i = 0; i < parameter.size(); i++) {
+                ps.setObject(i + 1, parameter.get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                categoryList.add(mapResultSetToCategory(rs));
+            }
+            return categoryList;
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return null;
+    }
 
     public static void main(String[] args) {
 

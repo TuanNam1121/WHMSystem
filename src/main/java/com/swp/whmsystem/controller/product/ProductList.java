@@ -41,7 +41,6 @@ public class ProductList extends HttpServlet {
                 && categoryIdRaw == null
                 && brandIdRaw == null) {
             productList = productDAO.getProductList();
-
         } else {
             int categoryId = -1;
             int brandId = -1;

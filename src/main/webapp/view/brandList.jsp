@@ -45,8 +45,9 @@
                     <h6>Manage your Brand</h6>
                 </div>
                 <div class="page-btn">
-                    <a href="${pageContext.request.contextPath}/AddBrand" class="btn btn-added"><img src="assets/img/icons/plus.svg" class="me-2"
-                                                                      alt="img">Add Brand</a>
+                    <a href="${pageContext.request.contextPath}/AddBrand" class="btn btn-added"><img
+                            src="assets/img/icons/plus.svg" class="me-2"
+                            alt="img">Add Brand</a>
                 </div>
             </div>
 
@@ -81,30 +82,31 @@
                             </ul>
                         </div>
                     </div>
-
-                    <div class="card" id="filter_inputs">
-                        <div class="card-body pb-0">
-                            <div class="row">
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <input type="text" placeholder="Enter Brand Name">
+                    <form action="brandList" method="get">
+                        <div class="card" id="filter_inputs">
+                            <div class="card-body pb-0">
+                                <div class="row">
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <input type="text" name="brandName" placeholder="Enter Brand Name">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <input type="text" placeholder="Enter Brand Description">
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <input type="text" name="brandDes" placeholder="Enter Brand Description">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-1 col-sm-6 col-12 ms-auto">
-                                    <div class="form-group">
-                                        <a class="btn btn-filters ms-auto"><img src="assets/img/icons/search-whites.svg"
-                                                                                alt="img"></a>
+                                    <div class="col-lg-1 col-sm-6 col-12 ms-auto">
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-filters ms-auto"><img
+                                                    src="assets/img/icons/search-whites.svg"
+                                                    alt="img"></button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
+                    </form>
                     <div class="table-responsive">
                         <table class="table datanew">
                             <thead>
@@ -138,7 +140,8 @@
                                     <td>${b.name}</td>
                                     <td>${b.description}</td>
                                     <td>
-                                        <a class="me-3" href="${pageContext.request.contextPath}/BrandDetail?id=${b.id}">
+                                        <a class="me-3"
+                                           href="${pageContext.request.contextPath}/BrandDetail?id=${b.id}">
                                             <img src="assets/img/icons/edit.svg" alt="img">
                                         </a>
                                         <a class="me-3 confirm-text" href="javascript:void(0);">

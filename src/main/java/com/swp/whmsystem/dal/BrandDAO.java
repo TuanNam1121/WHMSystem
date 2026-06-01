@@ -139,12 +139,46 @@ public class BrandDAO {
         return b;
     }
 
+    public List<Brand> searchBrand(String name, String des) {
+        List<Brand> brandList = new ArrayList<>();
+        List<String> parameter = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+                "select * from brands " +
+                        "where 1=1");
+        if (name != null && !name.trim().isEmpty()) {
+            sql.append(" and name like ?");
+            parameter.add("%" + name.trim() + "%");
+        }
+        if (des != null && !des.trim().isEmpty()) {
+            sql.append(" and description like ?");
+            parameter.add("%" + des.trim() + "%");
+        }
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            // for debug
+//            System.out.println("====== sql thuc te: " + sql.toString());
+//            System.out.println("====== params: " + parameter.toString());
+            for (int i = 0; i < parameter.size(); i++) {
+                ps.setObject(i + 1, parameter.get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                brandList.add(mapResultSetToBrand(rs));
+            }
+            return brandList;
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        return brandList;
+    }
+
     public static void main(String[] args) {
 
         BrandDAO dao = new BrandDAO();
 
         List<Brand> list = dao.getAllBrand();
-
+        List<Brand> search = dao.searchBrand(null, null);
         Brand b = new Brand();
 
         b.setId(1);
@@ -158,5 +192,9 @@ public class BrandDAO {
             System.out.println(i.getId() + " " + i.getName() + " " + i.getDescription());
         }
         System.out.println(dao.getBrandByName("Dell").toString());
+        System.out.println("====================");
+        for (Brand asd : search) {
+            System.out.println(asd);
+        }
     }
 }

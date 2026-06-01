@@ -106,7 +106,7 @@
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <select class="select" name="categoryId">
-                                                        <option>Choose Category</option>
+                                                        <option value="">Choose Category</option>
                                                         <c:forEach items="${sessionScope.categoryList}" var="c">
                                                             <option value="${c.categoryId}">${c.name}</option>
                                                         </c:forEach>
@@ -117,7 +117,7 @@
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <select class="select" name="brandId">
-                                                        <option>Choose Brand</option>
+                                                        <option value="">Choose Brand</option>
                                                         <c:forEach items="${sessionScope.brandList}" var="b">
                                                             <option value="${b.id}">${b.name}</option>
                                                         </c:forEach>
@@ -178,7 +178,7 @@
                                     <td>${p.category.name}</td>
                                     <td>${p.brand.name}</td>
                                     <td>${p.totalQuantity}</td>
-                                    <td>${p.isActive ? "Active" : "Deactive"}</td>
+                                    <td>${p.isActive ? "Active" : "Inactive"}</td>
                                     <td>
                                         <a class="me-3" href="UpdateProduct?productid=${p.productId}">
                                             <img src="assets/img/icons/eye.svg" alt="img">

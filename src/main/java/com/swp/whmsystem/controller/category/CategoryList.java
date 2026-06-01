@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import com.swp.whmsystem.dal.*;
 import com.swp.whmsystem.model.*;
-import com.swp.whmsystem.utils.*;
 
 import java.util.*;
 
@@ -23,9 +22,41 @@ public class CategoryList extends HttpServlet {
 
         HttpSession session = request.getSession(false);
         CategoryDAO categoryDAO = new CategoryDAO();
-        List<Category> categoryList = categoryDAO.getAllCategory();
+        List<Category> searchedCategoryList = new ArrayList<>();
+        List<Category> allCategoryList = categoryDAO.getAllCategory();
 
-        session.setAttribute("categoryList", categoryList);
+        String categoryIdRaw = request.getParameter("categoryId");
+        String activeRaw = request.getParameter("active");
+
+        if (categoryIdRaw == null && activeRaw == null) {
+            searchedCategoryList = categoryDAO.getAllCategory();
+        } else {
+            int categoryId = -1;
+            int brandId = -1;
+
+            if (categoryIdRaw != null && !categoryIdRaw.trim().isEmpty()) {
+                try {
+                    categoryId = Integer.parseInt(categoryIdRaw.trim());
+                } catch (NumberFormatException e) {
+                    categoryId = -1;
+                }
+            }
+
+            if (activeRaw != null && !activeRaw.trim().isEmpty()) {
+                try {
+                    brandId = Integer.parseInt(activeRaw.trim());
+                } catch (NumberFormatException e) {
+                    brandId = -1;
+                }
+            }
+            searchedCategoryList = categoryDAO.searchCategory(categoryId, brandId);
+
+        }
+
+
+        session.setAttribute("searchedCategoryList", searchedCategoryList);
+        session.setAttribute("allCategoryList", allCategoryList);
+
         request.getRequestDispatcher("view/categoryList.jsp").forward(request, response);
     }
 

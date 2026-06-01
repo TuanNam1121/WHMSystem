@@ -1,6 +1,7 @@
 package com.swp.whmsystem.controller.category;
 
 import com.swp.whmsystem.dal.CategoryDAO;
+import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.model.Category;
 import com.swp.whmsystem.utils.InputStandization;
 import jakarta.servlet.ServletException;
@@ -40,6 +41,8 @@ public class UpdateCategory extends HttpServlet {
         category.setIsActive(isActive.equals("true"));
 
         CategoryDAO categoryDAO = new CategoryDAO();
+        ProductDAO productDAO = new ProductDAO();
+
         Category oldCategory = categoryDAO.getCategoryById(id);
         Category existingCategory = categoryDAO.getCategoryByName(categoryName);
         if (existingCategory != null && existingCategory.getCategoryId() != id) {
@@ -51,14 +54,18 @@ public class UpdateCategory extends HttpServlet {
         }
 
         if (!category.isIsActive() && category.isIsActive() != oldCategory.isIsActive()) {
-            if (!categoryDAO.deactiveCategory(category.getCategoryId())) {
-                message = "Đã xảy ra lỗi khi deactive danh mục này!";
-                request.setAttribute("error", message);
-                request.setAttribute("category", category);
-                request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
-                return;
+            if (productDAO.getProductFromCategoryId(category.getCategoryId()) != null) {
+                if (!categoryDAO.deactiveCategory(category.getCategoryId())) {
+                    message = "Đã xảy ra lỗi khi deactive danh mục này!";
+                    request.setAttribute("error", message);
+                    request.setAttribute("category", category);
+                    request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
+                    return;
+                }
+                message = "Đã deactive danh mục " + categoryName + " ! Các sản phẩm thuộc danh mục này đã inactive!";
+            } else {
+                message = "Đã deactive danh mục " + categoryName + " !";
             }
-            message = "Đã deactive danh mục " + categoryName + " ! Các sản phẩm thuộc danh mục này đã inactive!";
         }
 
         if (category.isIsActive() && category.isIsActive() != oldCategory.isIsActive()) {

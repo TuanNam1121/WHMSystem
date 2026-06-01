@@ -71,7 +71,7 @@
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label>Description</label>
-                                    <textarea class="form-control" name="description" placeholder="Enter category description...">${category.description}</textarea>
+                                    <textarea class="form-control" name="description" placeholder="${category.description}"></textarea>
                                 </div>
                             </div>
                             <div class="col-lg-12">
@@ -81,13 +81,15 @@
                                         <input type="hidden" name="isActive" id="isActiveInput" value="${category.isActive}">
                                         <button type="button" id="btnActive"
                                             onclick="setStatus(true)"
-                                            class="btn <c:choose><c:when test="${category.isActive}">btn-success</c:when><c:otherwise>btn-outline-success</c:otherwise></c:choose>"
+                                            class="btn <c:choose><c:when test="${category.isActive}">btn-success</c:when>
+                                            <c:otherwise>btn-outline-success</c:otherwise></c:choose>"
                                             style="min-width: 100px; font-weight: 600;">
                                             Active
                                         </button>
                                         <button type="button" id="btnInactive"
                                             onclick="setStatus(false)"
-                                            class="btn <c:choose><c:when test="${not category.isActive}">btn-danger</c:when><c:otherwise>btn-outline-danger</c:otherwise></c:choose>"
+                                            class="btn <c:choose><c:when test="${not category.isActive}">btn-danger</c:when>
+                                            <c:otherwise>btn-outline-danger</c:otherwise></c:choose>"
                                             style="min-width: 100px; font-weight: 600;">
                                             Inactive
                                         </button>

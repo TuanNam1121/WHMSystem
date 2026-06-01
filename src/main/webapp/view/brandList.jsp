@@ -138,7 +138,7 @@
                                         </a>
                                     </td>
                                     <td>${b.name}</td>
-                                    <td>${b.description}</td>
+                                    <td style="max-width: 400px; overflow: hidden">${b.description}</td>
                                     <td>
                                         <a class="me-3"
                                            href="${pageContext.request.contextPath}/BrandDetail?id=${b.id}">

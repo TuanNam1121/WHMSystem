@@ -96,7 +96,7 @@
                                         </div>
                                     <div class="col-lg-12">
                                         <input class="btn btn-submit me-2" type="submit" value="UPDATE">
-                                        <a href="${pageContext.request.contextPath}/brandlist.html" class="btn btn-cancel">Cancel</a>
+                                        <a href="${pageContext.request.contextPath}/brandList" class="btn btn-cancel">Cancel</a>
                                     </div>
                                 </div>
                             </div>

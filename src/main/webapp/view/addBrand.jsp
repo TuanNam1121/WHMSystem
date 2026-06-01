@@ -36,21 +36,21 @@
         <jsp:include page="../common/header.jsp"></jsp:include>
         <jsp:include page="../common/sidebar.jsp"></jsp:include>
 
-        
 
-        <div class="main-wrapper">
 
-            <div class="page-wrapper">
-                <div class="content">
-                    <div class="page-header">
-                        <div class="page-title">
-                            <h4>Brand ADD</h4>
-                            <h6>Create new Brand</h6>
+            <div class="main-wrapper">
+
+                <div class="page-wrapper">
+                    <div class="content">
+                        <div class="page-header">
+                            <div class="page-title">
+                                <h4>Brand ADD</h4>
+                                <h6>Create new Brand</h6>
+                            </div>
                         </div>
-                    </div>
-<c:if test="${not empty message}">
-            <div class="alert-success">${message}</div>
-        </c:if>
+                    <c:if test="${not empty message}">
+                        <div class="alert alert-danger" role="alert">${message}</div>
+                    </c:if>
                     <form action="${pageContext.request.contextPath}/AddBrand" method="post">
                         <div class="card">
                             <div class="card-body">
@@ -69,10 +69,10 @@
                                             <input class="form-control" type="text" name="description" >
                                         </div>
                                     </div>
-                                    
+
                                     <div class="col-lg-12">
                                         <input class="btn btn-submit me-2" type="submit" value="ADD">
-                                        <a href="${pageContext.request.contextPath}/brandlist.html" class="btn btn-cancel">Cancel</a>
+                                        <a href="${pageContext.request.contextPath}/brandList" class="btn btn-cancel">Cancel</a>
                                     </div>
                                 </div>
                             </div>

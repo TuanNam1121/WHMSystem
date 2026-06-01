@@ -35,13 +35,13 @@ public class ProductList extends HttpServlet {
         String productSku = request.getParameter("productSku");
         String categoryIdRaw = request.getParameter("categoryId");
         String brandIdRaw = request.getParameter("brandId");
-
+        String sortBy = request.getParameter("sortBy");
         if (productName == null
                 && productSku == null
                 && categoryIdRaw == null
-                && brandIdRaw == null) {
+                && brandIdRaw == null
+                && sortBy == null) {
             productList = productDAO.getProductList();
-
         } else {
             int categoryId = -1;
             int brandId = -1;
@@ -61,7 +61,7 @@ public class ProductList extends HttpServlet {
                     brandId = -1;
                 }
             }
-            productList = productDAO.searchProduct(productName, productSku, categoryId, brandId);
+            productList = productDAO.searchProduct(productName, productSku, categoryId, brandId, sortBy);
 
         }
         List<Category> categoryList = categoryDAO.getAllCategory();

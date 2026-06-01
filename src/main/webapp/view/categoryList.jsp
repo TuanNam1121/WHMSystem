@@ -89,46 +89,54 @@
                         </div>
                         <% session.removeAttribute("error"); %>
                     </c:if>
-
-                    <div class="card" id="filter_inputs">
-                        <div class="card-body pb-0">
-                            <div class="row">
-
-
-                                <div class="col-lg-2 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <select class="select">
-                                            <option>Choose Category</option>
-                                            <option>Computers</option>
-                                        </select>
+                    <form action="categoryList" method="get">
+                        <div class="card" id="filter_inputs">
+                            <div class="card-body pb-0">
+                                <div class="row">
+                                    <div class="col-lg-2 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <select class="select" name="categoryId">
+                                                <option>Choose Category</option>
+                                                <c:forEach items="${sessionScope.allCategoryList}" var="c">
+                                                    <option value="${c.categoryId}">${c.name}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-2 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <select class="select">
-                                            <option>Choose Sub Category</option>
-                                            <option>Fruits</option>
-                                        </select>
+                                    <div class="col-lg-2 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <select class="select" name="active">
+                                                <option value="">Choose Status</option>
+                                                <option value="1">Active</option>
+                                                <option value="0">Inactive</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-2 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <select class="select">
-                                            <option>Choose Sub Brand</option>
-                                            <option>Iphone</option>
-                                        </select>
+
+                                    <div class="col-lg-2 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <select class="select" name="sortBy">
+                                                <option value="">Sort By</option>
+                                                <option value="nameAZ">Category A-Z</option>
+                                                <option value="nameZA">Category Z-A</option>
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Inactive</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-1 col-sm-6 col-12 ms-auto">
-                                    <div class="form-group">
-                                        <a class="btn btn-filters ms-auto"><img src="assets/img/icons/search-whites.svg"
-                                                                                alt="img"></a>
+
+                                    <div class="col-lg-1 col-sm-6 col-12 ms-auto">
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-filters ms-auto">
+                                                <img src="assets/img/icons/search-whites.svg" alt="img">
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
+                    </form>
                     <div class="table-responsive">
                         <table class="table  datanew">
                             <thead>
@@ -147,7 +155,7 @@
                             </thead>
                             <tbody>
 
-                            <c:forEach items="${sessionScope.categoryList}" var="c">
+                            <c:forEach items="${sessionScope.searchedCategoryList}" var="c">
                                 <tr>
                                     <td>
                                         <label class="checkboxs">

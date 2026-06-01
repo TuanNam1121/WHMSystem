@@ -64,12 +64,12 @@ public class AddProduct extends HttpServlet {
         UnitDAO unit = new UnitDAO();
         CategoryDAO category = new CategoryDAO();
 
-        List<Ram> ramList = ram.getAllRam();
-        List<Rom> romList = rom.getAllRom();
-        List<Chip> chipList = chip.getAllChip();
-        List<Model> modelList = model.getAll();
+        List<Ram> ramList = ram.getAllRamToAssign();
+        List<Rom> romList = rom.getAllRomToAssign();
+        List<Chip> chipList = chip.getAllChipToAssign();
+        List<Model> modelList = model.getAllModelToAssign();
         List<Brand> brandList = brand.getAllBrand();
-        List<Unit> unitList = unit.getAllUnit();
+        List<Unit> unitList = unit.getAllUnitToAssign();
         List<Category> categoryList = category.getAllCategoryToAssign();
         request.setAttribute("ramList", ramList);
         request.setAttribute("romList", romList);
@@ -137,13 +137,13 @@ public class AddProduct extends HttpServlet {
         Unit unit = unitIdInt != null ? unitDao.getUnitById(unitIdInt) : null;
         Brand brand = brandIdInt != null ? brandDao.getBrandById(brandIdInt) : null;
 
-        List<Ram> ramList = ramDao.getAllRam();
-        List<Rom> romList = romDao.getAllRom();
-        List<Chip> chipList = chipDao.getAllChip();
-        List<Model> modelList = modelDao.getAll();
+        List<Ram> ramList = ramDao.getAllRamToAssign();
+        List<Rom> romList = romDao.getAllRomToAssign();
+        List<Chip> chipList = chipDao.getAllChipToAssign();
+        List<Model> modelList = modelDao.getAllModelToAssign();
         List<Brand> brandList = brandDao.getAllBrand();
-        List<Unit> unitList = unitDao.getAllUnit();
-        List<Category> categoryList = categoryDao.getAllCategory();
+        List<Unit> unitList = unitDao.getAllUnitToAssign();
+        List<Category> categoryList = categoryDao.getAllCategoryToAssign();
         request.setAttribute("ramList", ramList);
         request.setAttribute("romList", romList);
         request.setAttribute("chipList", chipList);

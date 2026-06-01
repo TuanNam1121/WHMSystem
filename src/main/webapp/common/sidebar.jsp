@@ -17,7 +17,6 @@
                         <li><a href="addCategory">Add Category</a></li>
                         <li><a href="subcategorylist.html">Sub Category List</a></li>
                         <li><a href="subaddcategory.html">Add Sub Category</a></li>
-                        <li><a href="BrandDetail?act=new">Add Brand</a></li>
                         <li><a href="brandList">Brand List</a></li>
                         <li><a href="ChipList">Chip List</a></li>
                         <li><a href="RamList">Ram List</a></li>

@@ -80,7 +80,7 @@ public class ChangePassword extends HttpServlet {
             request.getRequestDispatcher("view/changePassword.jsp").forward(request, response);
             return;
         }
-            
+
         String hashedNewPass = BCrypt.hashpw(newPass, BCrypt.gensalt(12));
 
         boolean isUpdated = uDao.updateUserPassword(user.getId(),

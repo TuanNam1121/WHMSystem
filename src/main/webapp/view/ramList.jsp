@@ -47,7 +47,7 @@
                 </div>
                 <div class="page-btn">
                     <a href="AddRam" class="btn btn-added"><img src="assets/img/icons/plus.svg"
-                                                                 alt="img" class="me-2">Add New Ram</a>
+                                                                alt="img" class="me-2">Add New Ram</a>
                 </div>
             </div>
 
@@ -62,7 +62,8 @@
                                 </a>
                             </div>
                             <div class="search-input">
-                                <a class="btn btn-searchset"><img src="assets/img/icons/search-whites.svg" alt="img"></a>
+                                <a class="btn btn-searchset"><img src="assets/img/icons/search-whites.svg"
+                                                                  alt="img"></a>
                             </div>
                         </div>
 
@@ -78,8 +79,14 @@
                                                 <div class="form-group">
                                                     <select class="select" name="status">
                                                         <option value="">Choose Status</option>
-                                                        <option value="active" <c:if test="${param.status == 'active'}">selected</c:if>>Active</option>
-                                                        <option value="inactive" <c:if test="${param.status == 'inactive'}">selected</c:if>>Inactive</option>
+                                                        <option value="active"
+                                                                <c:if test="${param.status == 'active'}">selected</c:if>>
+                                                            Active
+                                                        </option>
+                                                        <option value="inactive"
+                                                                <c:if test="${param.status == 'inactive'}">selected</c:if>>
+                                                            Inactive
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -130,7 +137,7 @@
                                             <input type="hidden" name="status" value="${param.status}">
                                             <button type="submit"
                                                     class="btn btn-sm ${ram.active ? 'btn-outline-danger' : 'btn-outline-success'}">
-                                                ${ram.active ? 'Deactive' : 'Active'}
+                                                    ${ram.active ? 'Deactive' : 'Active'}
                                             </button>
                                         </form>
                                     </td>

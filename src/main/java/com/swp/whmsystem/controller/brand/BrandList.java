@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "BrandList", urlPatterns = {"/brandList"})
@@ -20,7 +21,20 @@ public class BrandList extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         BrandDAO brandDAO = new BrandDAO();
-        List<Brand> brandList = brandDAO.getAllBrand();
+        List<Brand> brandList = new ArrayList<>();
+
+        String brandName = request.getParameter("brandName");
+        String brandDes = request.getParameter("brandDes");
+        String sortBy = request.getParameter("sortBy");
+
+        if (brandName == null
+                && brandDes == null
+                && sortBy == null) {
+            brandList = brandDAO.getAllBrand();
+        } else {
+            brandList = brandDAO.searchBrand(brandName, brandDes, sortBy);
+        }
+
         session.setAttribute("brandList", brandList);
         request.getRequestDispatcher("view/brandList.jsp").forward(request, response);
     }

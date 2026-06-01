@@ -25,11 +25,14 @@ public class BrandList extends HttpServlet {
 
         String brandName = request.getParameter("brandName");
         String brandDes = request.getParameter("brandDes");
+        String sortBy = request.getParameter("sortBy");
 
-        if (brandName == null && brandDes == null) {
+        if (brandName == null
+                && brandDes == null
+                && sortBy == null) {
             brandList = brandDAO.getAllBrand();
         } else {
-            brandList = brandDAO.searchBrand(brandName, brandDes);
+            brandList = brandDAO.searchBrand(brandName, brandDes, sortBy);
         }
 
         session.setAttribute("brandList", brandList);

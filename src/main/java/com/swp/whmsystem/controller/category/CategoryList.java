@@ -27,8 +27,10 @@ public class CategoryList extends HttpServlet {
 
         String categoryIdRaw = request.getParameter("categoryId");
         String activeRaw = request.getParameter("active");
-
-        if (categoryIdRaw == null && activeRaw == null) {
+        String sortBy = request.getParameter("sortBy");
+        if (categoryIdRaw == null
+                && activeRaw == null
+                && sortBy == null) {
             searchedCategoryList = categoryDAO.getAllCategory();
         } else {
             int categoryId = -1;
@@ -49,7 +51,7 @@ public class CategoryList extends HttpServlet {
                     brandId = -1;
                 }
             }
-            searchedCategoryList = categoryDAO.searchCategory(categoryId, brandId);
+            searchedCategoryList = categoryDAO.searchCategory(categoryId, brandId, sortBy);
 
         }
 

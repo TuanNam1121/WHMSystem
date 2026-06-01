@@ -258,7 +258,7 @@ public class ProductDAO {
         return product;
     }
 
-    public List<Product> searchProduct(String name, String sku, int categoryId, int brandId) {
+    public List<Product> searchProduct(String name, String sku, int categoryId, int brandId, String sortBy) {
         List<Product> productList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "select p.* from products p " +
@@ -268,7 +268,8 @@ public class ProductDAO {
         );
         List<String> parameter = new ArrayList<>();
         if (name != null && !name.trim().isEmpty()) {
-            sql.append(" and (p.name like ? or c.name like ? or b.name like ?)");
+            sql.append(" and (p.name like ? or c.name like ? or b.name like ? or p.sku like ?)");
+            parameter.add("%" + name.trim() + "%");
             parameter.add("%" + name.trim() + "%");
             parameter.add("%" + name.trim() + "%");
             parameter.add("%" + name.trim() + "%");
@@ -285,13 +286,42 @@ public class ProductDAO {
         }
 
         if (brandId != -1) {
-            sql.append(" and p.brandid = ? ");
+            sql.append(" and p.brandid = ?");
             parameter.add(String.valueOf(brandId));
+        }
+
+        if (sortBy != null && !sortBy.trim().isEmpty()) {
+            switch (sortBy) {
+                case "nameAZ":
+                    sql.append(" order by p.name asc");
+                    break;
+                case "nameZA":
+                    sql.append(" order by p.name desc");
+                    break;
+                case "skuAZ":
+                    sql.append(" order by p.sku asc");
+                    break;
+                case "skuZA":
+                    sql.append(" order by p.sku desc");
+                    break;
+                case "cateAZ":
+                    sql.append(" order by c.name asc");
+                    break;
+                case "cateZA":
+                    sql.append(" order by c.name desc");
+                    break;
+                case "brandAZ":
+                    sql.append(" order by b.name asc");
+                    break;
+                case "brandZA":
+                    sql.append(" order by b.name desc");
+                    break;
+            }
         }
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString());) {
-
+            System.out.println(sql.toString());
             for (int i = 0; i < parameter.size(); i++) {
                 ps.setObject(i + 1, parameter.get(i));
             }
@@ -316,6 +346,9 @@ public class ProductDAO {
         p1.setDescription("con mèo kêu");
         p1.setRom(rom.getRomById(2));
         dao.updateProduct(p1);
-
+        List<Product> testSort = dao.searchProduct(null, null, -1, -1, "brandAZ");
+        for (Product p2 : testSort) {
+            System.out.println(p2);
+        }
     }
 }

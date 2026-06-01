@@ -128,8 +128,8 @@ public class UserDAO {
     }
 
     public boolean addNewUser(User user) {
-        String sql = "Insert into users(username, passwordhash, roleid, phone, email, gender, fullname, isactive)"
-                + "values (?,?,?,?,?,?,?,?)";
+        String sql = "Insert into users(username, passwordhash, roleid, phone, email, gender, fullname, isactive, firstname, lastname)"
+                + "values (?,?,?,?,?,?,?,?,?,?)";
         try (Connection conn = DBContext.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, user.getUserName());
@@ -140,6 +140,9 @@ public class UserDAO {
             ps.setString(6, user.getGender());
             ps.setString(7, user.getFullName());
             ps.setBoolean(8, true);
+            ps.setString(9, user.getFirstname());
+            ps.setString(10, user.getLastname());
+
             return ps.executeUpdate() == 1;
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
@@ -354,6 +357,24 @@ public class UserDAO {
         }
 
         return false;
+    }
+
+    public String getFirstnameFromFullname(String fullname) {
+        if (fullname == null || fullname.trim().isEmpty()) {
+            return "";
+        }
+        String[] words = fullname.trim().split("\\s+");
+        return words[words.length - 1];
+    }
+
+    public String getLastnameFromFullname(String fullname) {
+        if (fullname == null || fullname.trim().isEmpty()) {
+            return "";
+        }
+
+        String[] words = fullname.trim().split("\\s+");
+
+        return words[0];
     }
 
     public static void main(String[] args) {

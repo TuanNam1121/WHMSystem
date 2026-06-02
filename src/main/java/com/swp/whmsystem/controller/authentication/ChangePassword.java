@@ -33,6 +33,7 @@ public class ChangePassword extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
             response.sendRedirect("view/login.jsp");
@@ -45,32 +46,22 @@ public class ChangePassword extends HttpServlet {
         String currPass = request.getParameter("currentPass");
         String newPass = request.getParameter("newPass");
         String cfNewPass = request.getParameter("cfNewPass");
+
         String currentHashedInDB = uDao.getPasswordById(user.getId());
+        if (currentHashedInDB == null) {
+            request.setAttribute("error", "System error, user not found!");
+            request.getRequestDispatcher("view/changePassword.jsp").forward(request, response);
+            return;
+        }
 
-        if (!InputValidationUtil.isValidPassword(currPass)
-                || !InputValidationUtil.isValidPassword(newPass)
-                || !InputValidationUtil.isValidPassword(cfNewPass)) {
-
-            request.setAttribute("error", "Passwords invalid ! \n Password must contain at least 1 uppercase, 1 digit and at least 6 characters!");
+        if (!InputValidationUtil.isValidPassword(newPass)) {
+            request.setAttribute("error", "New password must contain at least 1 uppercase, 1 digit and at least 6 characters!");
             request.getRequestDispatcher("view/changePassword.jsp").forward(request, response);
             return;
         }
 
         if (!BCrypt.checkpw(currPass, currentHashedInDB)) {
-            request.setAttribute("error", "Incorrect current password !");
-            request.getRequestDispatcher("view/changePassword.jsp").forward(request, response);
-            return;
-        }
-
-
-        if (!cfNewPass.equals(newPass)) {
-            request.setAttribute("error", "Confirm password does not match");
-            request.getRequestDispatcher("view/changePassword.jsp").forward(request, response);
-            return;
-        }
-
-        if (currentHashedInDB == null) {
-            request.setAttribute("error", "System error, please try again!");
+            request.setAttribute("error", "Incorrect current password!");
             request.getRequestDispatcher("view/changePassword.jsp").forward(request, response);
             return;
         }
@@ -81,17 +72,22 @@ public class ChangePassword extends HttpServlet {
             return;
         }
 
-        String hashedNewPass = BCrypt.hashpw(newPass, BCrypt.gensalt(12));
+        if (!newPass.equals(cfNewPass)) {
+            request.setAttribute("error", "Confirm password does not match!");
+            request.getRequestDispatcher("view/changePassword.jsp").forward(request, response);
+            return;
+        }
 
-        boolean isUpdated = uDao.updateUserPassword(user.getId(),
-                hashedNewPass);
+        String hashedNewPass = BCrypt.hashpw(newPass, BCrypt.gensalt(12));
+        boolean isUpdated = uDao.updateUserPassword(user.getId(), hashedNewPass);
 
         if (isUpdated) {
             user.setPassword(hashedNewPass);
-            request.setAttribute("message", "Change password successfully !");
+            request.setAttribute("message", "Change password successfully!");
         } else {
-            request.setAttribute("error", "Error ! Please try again !");
+            request.setAttribute("error", "Database error! Please try again!");
         }
+
         request.getRequestDispatcher("view/changePassword.jsp").forward(request, response);
     }
 

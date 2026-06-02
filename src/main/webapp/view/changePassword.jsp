@@ -40,9 +40,26 @@
 
     <div class="page-wrapper">
         <div class="content">
-            <form action="viewprofile" method="post">
+            <form action="changePassword" method="post">
                 <div class="card">
                     <div class="card-body">
+
+                        <c:if test="${not empty requestScope.error}">
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>${requestScope.error}</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                            </div>
+                            <% request.removeAttribute("error"); %>
+                        </c:if>
+                        <c:if test="${not empty requestScope.message}">
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <strong>${requestScope.message}</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                            </div>
+                            <% request.removeAttribute("message"); %>
+                        </c:if>
                         <div class="profile-set">
                             <div class="profile-head">
                             </div>
@@ -68,21 +85,21 @@
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Current Password</label>
-                                    <input type="password" name="currentPass">
+                                    <input type="password" name="currentPass" required>
                                 </div>
                             </div>
 
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>New Password</label>
-                                    <input type="password" name="newPass">
+                                    <input type="password" name="newPass" required>
                                 </div>
                             </div>
 
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Confirm New Password</label>
-                                    <input type="password" name="cfNewPass">
+                                    <input type="password" name="cfNewPass" required>
                                 </div>
                             </div>
 

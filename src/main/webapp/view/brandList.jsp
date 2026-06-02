@@ -147,7 +147,7 @@
                                     </td>
                                     <td>
                                         <a class="product-img">
-                                            <img src="assets/img/brand/adidas.png" alt="product">
+                                            <img src="${b.img}" alt="product">
                                         </a>
                                     </td>
                                     <td>${b.name}</td>

@@ -187,64 +187,58 @@ public class UpdateProduct extends HttpServlet {
             product.setPrice(price);
         }
 
-        if (!productName.equals(product.getName())) {
-            product.setName(productName);
-        }
-        if (description != null && !description.equals(product.getDescription())) {
-            product.setDescription(description);
-        }
-        if (!sku.equals(product.getSku())) {
-            product.setSku(sku);
-        }
-        if (product.isIsActive() != isActive) {
-            product.setIsActive(isActive);
-        }
-        if (!imgUrl.equals("")) {
-            product.setImgUrl(imgUrl);
-        }
-        if (price != null && price != product.getPrice()) {
-            product.setPrice(price);
-        }
-        if (unit != null) {
-            product.setUnit(unit);
-        }
-        if (brand != null) {
-            product.setBrand(brand);
-        }
-        if(category != null){
-            product.setCategory(category);
-        }
+        // Chỉ cho phép sửa các field này khi chưa có transaction
+        if (product.getTotalQuantity() == 0) {
+            if (unit != null) {
+                product.setUnit(unit);
+            }
+            if (brand != null) {
+                product.setBrand(brand);
+            }
+            if (category != null) {
+                product.setCategory(category);
+            } else {
+                category = product.getCategory();
+            }
 
-        String newCate = category.getName();
-        if (!newCate.equals(oldCate)) {
-            product.setRam(null);
-            product.setRom(null);
-            product.setChip(null);
-            product.setModel(null);
-        }
-        
-        if (newCate.contains("Laptop")) {
-            product.setRam(ram);
-            product.setRom(rom);
-            product.setChip(chip);
-            product.setModel(model);
-        } else if (newCate.equals("RAM")) {
-            product.setRam(ram);
-        } else if (newCate.equals("ROM")) {
-            product.setRom(rom);
-        } else {
-            // Category khác: chỉ update field nào user có gửi
-            if (ram != null) {
+            String newCate = category.getName();
+
+            if (newCate.equals(oldCate)) {
+                // Category không đổi: set thẳng tất cả
                 product.setRam(ram);
-            }
-            if (rom != null) {
                 product.setRom(rom);
-            }
-            if (chip != null) {
                 product.setChip(chip);
-            }
-            if (model != null) {
                 product.setModel(model);
+            } else {
+                // Category thay đổi: reset trước, rồi set theo category mới
+                product.setRam(null);
+                product.setRom(null);
+                product.setChip(null);
+                product.setModel(null);
+
+                if (newCate.contains("Laptop")) {
+                    product.setRam(ram);
+                    product.setRom(rom);
+                    product.setChip(chip);
+                    product.setModel(model);
+                } else if (newCate.equals("RAM")) {
+                    product.setRam(ram);
+                } else if (newCate.equals("ROM")) {
+                    product.setRom(rom);
+                } else {
+                    if (ram != null) {
+                        product.setRam(ram);
+                    }
+                    if (rom != null) {
+                        product.setRom(rom);
+                    }
+                    if (chip != null) {
+                        product.setChip(chip);
+                    }
+                    if (model != null) {
+                        product.setModel(model);
+                    }
+                }
             }
         }
 

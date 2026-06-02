@@ -58,7 +58,7 @@ public class FileUtils {
         // Save to /target (load immediately after upload, missing after redeploy)
         // Paths.get auto control "\" or "/" --> Ok with all OS
         Path targetBase = Paths.get(request.getServletContext().getRealPath(""));
-        Path targetDir = targetBase.resolve("images/brands");
+        Path targetDir = targetBase.resolve("assets/img/brands");
 
         if (Files.notExists(targetDir)) Files.createDirectories(targetDir);
 
@@ -68,7 +68,7 @@ public class FileUtils {
         // Save to /src (Not load immediately after upload, keeping after redeploy)
         try {
             Path projectRoot = targetBase.getParent().getParent();
-            Path sourceDir = projectRoot.resolve(Paths.get("src", "main", "webapp", "images/brands"));
+            Path sourceDir = projectRoot.resolve(Paths.get("src", "main", "webapp", "assets/img/brands"));
 
             if (Files.notExists(sourceDir)) Files.createDirectories(sourceDir);
 
@@ -79,6 +79,6 @@ public class FileUtils {
             System.err.println("Fail to save to src: " + e.getMessage());
         }
         // Return for web display (user "/")
-        return "assets/img/brand" + "/" + fileName;
+        return "assets/img/brands" + "/" + fileName;
     }
 }

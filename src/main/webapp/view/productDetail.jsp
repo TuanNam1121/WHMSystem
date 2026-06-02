@@ -12,15 +12,10 @@
         <title>Dreams Pos admin template</title>
 
         <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
-
         <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-
         <link rel="stylesheet" href="assets/css/animate.css">
-
         <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
-
         <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
-
         <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
         <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
 
@@ -57,14 +52,14 @@
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>SKU</label>
-                                            <input type="text" name="sku" placeholder="VD: ST628W" value="${product.sku}" ${transactionExist != null ? 'readonly' : ''}>
+                                            <input type="text" required name="sku" placeholder="VD: ST628W" value="${product.sku}" ${transactionExist != null ? 'readonly' : ''}>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-3 col-sm-6 col-12">
                                             <div class="form-group">
                                                 <label>Product Name</label>
-                                                <input type="text" name="productName" placeholder="VD: ZenBook 14 UX3405CA"  value="${product.name}">
+                                                <input type="text" required name="productName" placeholder="VD: ZenBook 14 UX3405CA"  value="${product.name}">
                                             </div>
                                         </div>
 
@@ -182,10 +177,9 @@
                                         </div>
                                         <div class="col-lg-12">
                                             <button type="submit" class="btn btn-submit me-2">Submit</button>
-                                            <a href="productlist.html" class="btn btn-cancel">Cancel</a>
+                                            <a href="productlist" class="btn btn-cancel">Cancel</a>
                                         </div>
                                     </div>
-                                    ${filePath}
                                 </div>
                             </div>
                     </form>

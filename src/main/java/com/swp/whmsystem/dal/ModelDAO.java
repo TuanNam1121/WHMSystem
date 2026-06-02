@@ -40,7 +40,6 @@ public class ModelDAO {
             while (rs.next()) {
                 list.add(mapModel(rs));
             }
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -74,6 +73,29 @@ public class ModelDAO {
         String sql = "SELECT m.modelid, m.name, m.isactive, " +
                 "b.brandid, b.name AS brand_name, b.description, b.createdat, b.updatedat " +
                 "FROM models m JOIN brands b ON m.brandid = b.brandid " +
+                "ORDER BY m.modelid";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                list.add(mapModel(rs));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return list;
+    }
+    
+    public List<Model> getAllModelToAssign() {
+        List<Model> list = new ArrayList<>();
+
+        String sql = "SELECT m.modelid, m.name, m.isactive, " +
+                "b.brandid, b.name AS brand_name, b.description, b.createdat, b.updatedat " +
+                "FROM models m JOIN brands b ON m.brandid = b.brandid where isactive = 1 " +
                 "ORDER BY m.modelid";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {

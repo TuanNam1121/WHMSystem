@@ -34,6 +34,22 @@ public class ChipDAO {
         }
         return list;
     }
+    
+    public List<Chip> getAllChipToAssign() {
+        List<Chip> list = new ArrayList<>();
+
+        String sql = "SELECT * FROM chips where isactive = 1 ORDER BY id ";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(mapChip(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
 
     public Chip getChipById(int id) {
         String sql = "SELECT * FROM chips WHERE id = ?";

@@ -22,11 +22,11 @@
                 <section class="content-box">
                     <div class="table-header">
                         <h2>Permission List</h2>
-                        <form class="search-form" action="${pageContext.request.contextPath}/ViewPermissionList" method="get">
+                        <form style="display: flex" class="search-form" action="${pageContext.request.contextPath}/ViewPermissionList" method="get">
                             <input class="form-control" type="search" name="keyword" value="${param.keyword}" placeholder="Search...">
 
                             <select name="roleid" class="filter-select" id="roleId">
-                                <option value="0" ${roleid==0?'selected':''}>ALL</option>
+                                <option value="0" ${roleid==0?'selected':''}>Role</option>
                                 <c:forEach items="${roles}" var="r">
                                     <option value="${r.roleId}" ${roleid==r.roleId?'selected':''}>${r.roleName}</option>
                                 </c:forEach>

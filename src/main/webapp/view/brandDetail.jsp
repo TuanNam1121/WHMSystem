@@ -49,13 +49,13 @@
                         </div>
                     </div>
                     <c:if test="${not empty message}">
-                        <div class="alert-success">${message}</div>
+                        <div class="alert alert-danger" role="alert">${message}</div>
                     </c:if>
                     <form action="${pageContext.request.contextPath}/BrandDetail" method="post" enctype="multipart/form-data">
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
-                                    <input name="id" type="hidden" value="${brand.id}" readonly>
+                                    <input name="id" type="hidden" value="${brand.id}" >
                                     <input name="act" type="hidden" value="${act}">
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
@@ -96,7 +96,7 @@
                                         </div>
                                     <div class="col-lg-12">
                                         <input class="btn btn-submit me-2" type="submit" value="UPDATE">
-                                        <a href="${pageContext.request.contextPath}/brandlist.html" class="btn btn-cancel">Cancel</a>
+                                        <a href="${pageContext.request.contextPath}/brandList" class="btn btn-cancel">Cancel</a>
                                     </div>
                                 </div>
                             </div>

@@ -15,17 +15,12 @@
                         <li><a href="AddProduct">Add Product</a></li>
                         <li><a href="categoryList">Category List</a></li>
                         <li><a href="addCategory">Add Category</a></li>
-                        <li><a href="subcategorylist.html">Sub Category List</a></li>
-                        <li><a href="subaddcategory.html">Add Sub Category</a></li>
-                        <li><a href="BrandDetail?act=new">Add Brand</a></li>
                         <li><a href="brandList">Brand List</a></li>
                         <li><a href="ChipList">Chip List</a></li>
                         <li><a href="RamList">Ram List</a></li>
                         <li><a href="RomList">Rom List</a></li>
                         <li><a href="ModelList">Model List</a></li>
                         <li><a href="UnitList">Unit List</a></li>
-                        <li><a href="importproduct.html">Import Products</a></li>
-                        <li><a href="barcode.jsp">Print Barcode</a></li>
                     </ul>
                 </li>
                 <li class="submenu">

@@ -139,7 +139,7 @@ public class BrandDAO {
         return b;
     }
 
-    public List<Brand> searchBrand(String name, String des) {
+    public List<Brand> searchBrand(String name, String des, String sortBy) {
         List<Brand> brandList = new ArrayList<>();
         List<String> parameter = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
@@ -152,6 +152,23 @@ public class BrandDAO {
         if (des != null && !des.trim().isEmpty()) {
             sql.append(" and description like ?");
             parameter.add("%" + des.trim() + "%");
+        }
+
+        if (sortBy != null && !sortBy.trim().isEmpty()) {
+            switch (sortBy) {
+                case "nameAZ":
+                    sql.append(" order by name asc");
+                    break;
+                case "nameZA":
+                    sql.append(" order by name desc");
+                    break;
+                case "desAZ":
+                    sql.append(" order by description asc");
+                    break;
+                case "desZA":
+                    sql.append(" order by description desc");
+                    break;
+            }
         }
 
         try (Connection conn = DBContext.getConnection();
@@ -178,7 +195,7 @@ public class BrandDAO {
         BrandDAO dao = new BrandDAO();
 
         List<Brand> list = dao.getAllBrand();
-        List<Brand> search = dao.searchBrand(null, null);
+        List<Brand> search = dao.searchBrand(null, null, null);
         Brand b = new Brand();
 
         b.setId(1);

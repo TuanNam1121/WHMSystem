@@ -26,6 +26,22 @@ public class UnitDAO {
         }
         return list;
     }
+    
+    public List<Unit> getAllUnitToAssign() {
+        List<Unit> list = new ArrayList<>();
+
+        String sql = "SELECT * FROM units where isactive = 1 ORDER BY id";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(mapUnit(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
 
     public Unit getUnitById(int id) {
         String sql = "SELECT * FROM units WHERE id = ?";
@@ -128,5 +144,12 @@ public class UnitDAO {
         unit.setName(rs.getString("name"));
         unit.setActive(rs.getBoolean("isactive"));
         return unit;
+    }
+    
+    public static void main(String[] args) {
+        UnitDAO dao = new UnitDAO();
+        for(Unit i : dao.getAllUnitToAssign()){
+            System.out.println(i.toString());
+        }
     }
 }

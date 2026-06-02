@@ -41,8 +41,19 @@
     <div class="page-wrapper">
         <div class="content">
             <form action="viewprofile" method="post">
+
+
                 <div class="card">
                     <div class="card-body">
+                        <c:if test="${not empty sessionScope.error}">
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>${sessionScope.error}</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                            </div>
+                            <% session.removeAttribute("error"); %>
+                        </c:if>
+
                         <div class="profile-set">
                             <div class="profile-head">
                             </div>
@@ -102,14 +113,7 @@
 
                             <div class="col-12">
                                 <button type="submit" class="btn btn-submit d-inline-block me-2">Submit</button>
-                                <a href="javascript:void(0);" class="btn btn-cancel">Cancel</a>
-                            </div>
-
-
-                            <div style="padding-bottom: 20px">
-                                <form action="changePassword" method="post" id="changePasswordForm">
-
-                                </form>
+                                <a href="viewprofile" class="btn btn-cancel">Cancel</a>
                             </div>
                         </div>
                     </div>

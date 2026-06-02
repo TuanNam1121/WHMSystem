@@ -100,7 +100,7 @@
                         <td>${u.email}</td>
                         <td><input type="checkbox" ${u.isActive ? 'checked' : ''} disabled></td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/UpdateUserInformation?id=${u.id}">Update</a>
+                            <a href="${pageContext.request.contextPath}/UpdateUserInformation?id=${u.id}">Details</a>
                         </td>
                     </tr>
                 </c:forEach>

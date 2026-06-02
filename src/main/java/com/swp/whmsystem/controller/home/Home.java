@@ -1,6 +1,7 @@
 package com.swp.whmsystem.controller.home;
 
 import java.io.IOException;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -21,16 +22,15 @@ public class Home extends HttpServlet {
         HttpSession session = request.getSession(false);
         RoleDAO role = new RoleDAO();
         if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect("view/login.jsp");
+            request.getRequestDispatcher("login").forward(request, response);
             return;
         }
 
         User user = (User) session.getAttribute("user");
         request.setAttribute("user", user);
-        if(role.getRoleNamFromRoleID(user.getRoleId()).equals("ADMIN")){
+        if (role.getRoleNamFromRoleID(user.getRoleId()).equals("ADMIN")) {
             response.sendRedirect("AdminDashBoard");
-        }
-        else request.getRequestDispatcher("view/home.jsp").forward(request, response);
+        } else request.getRequestDispatcher("view/home.jsp").forward(request, response);
     }
 
     @Override

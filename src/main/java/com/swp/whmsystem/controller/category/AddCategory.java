@@ -22,8 +22,24 @@ public class AddCategory extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String categoryName = InputStandization.validateName(request.getParameter("categoryName"));
+        String categoryName = request.getParameter("categoryName");
         String description = request.getParameter("description");
+
+        if (InputStandization.validateInput(categoryName)) {
+            categoryName = InputStandization.validateName(categoryName);
+        } else {
+            String error = "Please do not input space!";
+            request.setAttribute("error", error);
+            request.getRequestDispatcher("view/addCategory.jsp").forward(request, response);
+            return;
+        }
+
+        if (!InputStandization.validateInput(description)) {
+            String error = "Please do not input space!";
+            request.setAttribute("error", error);
+            request.getRequestDispatcher("view/addCategory.jsp").forward(request, response);
+            return;
+        }
 
         CategoryDAO categoryDAO = new CategoryDAO();
         if (categoryDAO.getCategoryByName(categoryName) != null) {

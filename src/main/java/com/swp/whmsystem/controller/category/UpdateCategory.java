@@ -28,8 +28,9 @@ public class UpdateCategory extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String categoryName = InputStandization.validateName(request.getParameter("categoryName"));
+        String categoryName = request.getParameter("categoryName");
         String description = request.getParameter("description");
+
         int id = Integer.parseInt(request.getParameter("categoryid"));
         String isActive = request.getParameter("isActive");
         String message = "";
@@ -42,6 +43,24 @@ public class UpdateCategory extends HttpServlet {
 
         CategoryDAO categoryDAO = new CategoryDAO();
         ProductDAO productDAO = new ProductDAO();
+
+        if (InputStandization.validateInput(categoryName)) {
+            categoryName = InputStandization.validateName(categoryName);
+        } else {
+            String error = "Please do not input space!";
+            request.setAttribute("error", error);
+            request.setAttribute("category", category);
+            request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
+            return;
+        }
+
+        if (!InputStandization.validateInput(description)) {
+            String error = "Please do not input space!";
+            request.setAttribute("error", error);
+            request.setAttribute("category", category);
+            request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
+            return;
+        }
 
         Category oldCategory = categoryDAO.getCategoryById(id);
         Category existingCategory = categoryDAO.getCategoryByName(categoryName);

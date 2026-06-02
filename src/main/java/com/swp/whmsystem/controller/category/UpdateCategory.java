@@ -66,7 +66,7 @@ public class UpdateCategory extends HttpServlet {
 //            } else {
 //                message = "Đã deactive danh mục " + categoryName + " !";
 //            }
-            message = "Đã deactive danh mục " + categoryName + " !";
+            message = "Category deactivated: " + categoryName + " !";
         }
 
         if (category.isIsActive() && category.isIsActive() != oldCategory.isIsActive()) {
@@ -77,7 +77,7 @@ public class UpdateCategory extends HttpServlet {
 //                request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
 //                return;
 //            }
-            message = "Đã reactive danh mục " + categoryName + " ! Hãy kiểm tra lại các sản phẩm liên quan danh mục này!";
+            message = "Reactived category " + categoryName + " ! Please double-check the related products in this category!";
         }
 
         if (categoryDAO.updateCategory(category)) {

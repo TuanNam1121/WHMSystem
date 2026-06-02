@@ -12,4 +12,11 @@ public class InputStandization {
         }
         return name.trim();
     }
+
+    public static boolean validateInput(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            return false;
+        }
+        return true;
+    }
 }

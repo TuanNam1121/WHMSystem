@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author LENOVO
  */
-@WebServlet(name = "updateRole", urlPatterns = {"/updateRole"})
+@WebServlet(name = "UpdateRole", urlPatterns = {"/UpdateRole"})
 public class UpdateRole extends HttpServlet {
 
     /**

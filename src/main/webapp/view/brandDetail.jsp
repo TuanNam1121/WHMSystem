@@ -49,7 +49,7 @@
                         </div>
                     </div>
                     <c:if test="${not empty message}">
-                        <div class="alert-danger">${message}</div>
+                        <div class="alert alert-danger" role="alert">${message}</div>
                     </c:if>
                     <form action="${pageContext.request.contextPath}/BrandDetail" method="post" enctype="multipart/form-data">
                         <div class="card">

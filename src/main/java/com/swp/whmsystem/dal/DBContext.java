@@ -13,18 +13,17 @@ import java.sql.SQLException;
  * @author Admin
  */
 public class DBContext {
-
-    private static String url = "jdbc:mysql://localhost:3306/wms?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true";
-    private static String user = "root";
-    private static String pass = "123";
-
     public static Connection getConnection() throws SQLException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            return DriverManager.getConnection(url, user, pass);
+            return DriverManager.getConnection(
+                    System.getenv("DB_URL"),
+                    System.getenv("DB_USER"),
+                    System.getenv("DB_PASSWORD")
+            );
         } catch (ClassNotFoundException e) {
             throw new SQLException(e);
-        }
+        } 
     }
 
     public static void main(String[] args) {

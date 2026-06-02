@@ -54,18 +54,19 @@ public class UpdateCategory extends HttpServlet {
         }
 
         if (!category.isIsActive() && category.isIsActive() != oldCategory.isIsActive()) {
-            if (productDAO.getProductFromCategoryId(category.getCategoryId()) != null) {
-                if (!categoryDAO.deactiveCategory(category.getCategoryId())) {
-                    message = "Đã xảy ra lỗi khi deactive danh mục này!";
-                    request.setAttribute("error", message);
-                    request.setAttribute("category", category);
-                    request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
-                    return;
-                }
-                message = "Đã deactive danh mục " + categoryName + " ! Các sản phẩm thuộc danh mục này đã inactive!";
-            } else {
-                message = "Đã deactive danh mục " + categoryName + " !";
-            }
+//            if (productDAO.getProductFromCategoryId(category.getCategoryId()) != null) {
+//                if (!categoryDAO.deactiveCategory(category.getCategoryId())) {
+//                    message = "Đã xảy ra lỗi khi deactive danh mục này!";
+//                    request.setAttribute("error", message);
+//                    request.setAttribute("category", category);
+//                    request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
+//                    return;
+//                }
+//                message = "Đã deactive danh mục " + categoryName + " ! Các sản phẩm thuộc danh mục này đã inactive!";
+//            } else {
+//                message = "Đã deactive danh mục " + categoryName + " !";
+//            }
+            message = "Đã deactive danh mục " + categoryName + " !";
         }
 
         if (category.isIsActive() && category.isIsActive() != oldCategory.isIsActive()) {

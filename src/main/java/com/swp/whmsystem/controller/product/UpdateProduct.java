@@ -166,6 +166,7 @@ public class UpdateProduct extends HttpServlet {
 
         ProductDAO productDao = new ProductDAO();
         Product product = productDao.getProductFromId(Integer.parseInt(productid));
+        String oldCate = product.getCategory().getName();
 
         if (!productName.equals(product.getName())) {
             product.setName(productName);
@@ -185,26 +186,66 @@ public class UpdateProduct extends HttpServlet {
         if (price != null && price != product.getPrice()) {
             product.setPrice(price);
         }
-        if (ram != null) {
-            product.setRam(ram);
+
+        if (!productName.equals(product.getName())) {
+            product.setName(productName);
         }
-        if (rom != null) {
-            product.setRom(rom);
+        if (description != null && !description.equals(product.getDescription())) {
+            product.setDescription(description);
         }
-        if (chip != null) {
-            product.setChip(chip);
+        if (!sku.equals(product.getSku())) {
+            product.setSku(sku);
         }
-        if (model != null) {
-            product.setModel(model);
+        if (product.isIsActive() != isActive) {
+            product.setIsActive(isActive);
         }
-        if (category != null) {
-            product.setCategory(category);
+        if (!imgUrl.equals("")) {
+            product.setImgUrl(imgUrl);
+        }
+        if (price != null && price != product.getPrice()) {
+            product.setPrice(price);
         }
         if (unit != null) {
             product.setUnit(unit);
         }
         if (brand != null) {
             product.setBrand(brand);
+        }
+        if(category != null){
+            product.setCategory(category);
+        }
+
+        String newCate = category.getName();
+        if (!newCate.equals(oldCate)) {
+            product.setRam(null);
+            product.setRom(null);
+            product.setChip(null);
+            product.setModel(null);
+        }
+        
+        if (newCate.contains("Laptop")) {
+            product.setRam(ram);
+            product.setRom(rom);
+            product.setChip(chip);
+            product.setModel(model);
+        } else if (newCate.equals("RAM")) {
+            product.setRam(ram);
+        } else if (newCate.equals("ROM")) {
+            product.setRom(rom);
+        } else {
+            // Category khác: chỉ update field nào user có gửi
+            if (ram != null) {
+                product.setRam(ram);
+            }
+            if (rom != null) {
+                product.setRom(rom);
+            }
+            if (chip != null) {
+                product.setChip(chip);
+            }
+            if (model != null) {
+                product.setModel(model);
+            }
         }
 
         request.setAttribute("mode", "update");
@@ -213,16 +254,16 @@ public class UpdateProduct extends HttpServlet {
             request.setAttribute("transactionExist", "v");
         }
 
-        String error = ProductValidation.isProductValid(product);
-        if (!"true".equals(error)) {
-            request.setAttribute("message", error);
+        Product skuExistedProduct = productDao.getProductFromSKU(sku);
+        if (skuExistedProduct != null && skuExistedProduct.getProductId() != product.getProductId()) {
+            request.setAttribute("message", "SKU was existed in other product !");
             request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
             return;
         }
 
-        Product skuExistedProduct = productDao.getProductFromSKU(sku);
-        if (skuExistedProduct != null && skuExistedProduct.getProductId() != product.getProductId()) {
-            request.setAttribute("message", "SKU was existed in other product !");
+        String error = ProductValidation.isProductValid(product);
+        if (!"true".equals(error)) {
+            request.setAttribute("message", error);
             request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
             return;
         }

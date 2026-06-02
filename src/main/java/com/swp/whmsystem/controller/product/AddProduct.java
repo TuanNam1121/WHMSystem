@@ -156,17 +156,17 @@ public class AddProduct extends HttpServlet {
         Product product = new Product(0, productName, description, sku.toUpperCase(), imgUrl, 0, true, ram, rom, unit, chip, model, category, brand);
         request.setAttribute("mode", "add");
         request.setAttribute("product", product);
-
-        String error = ProductValidation.isProductValid(product);
-        if (!"true".equals(error)) {
-            request.setAttribute("message", error);
-            request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
-            return;
-        }
-
+        
         if (productDao.getProductFromSKU(sku) != null) {
             request.setAttribute("product", product);
             request.setAttribute("message", "SKU was existed !");
+            request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
+            return;
+        }
+        
+        String error = ProductValidation.isProductValid(product);
+        if (!"true".equals(error)) {
+            request.setAttribute("message", error);
             request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
             return;
         }

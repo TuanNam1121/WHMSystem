@@ -237,7 +237,7 @@ public class ProductDAO {
                 e.printStackTrace();
             }
         } else if (p.getCategory().getName().equals("RAM")) {
-            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, ramid = ?, unitid = ? , categoryid = ? , brandid = ?, price = ?, sku = ? WHERE productid = ?";
+            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, ramid = ?, unitid = ? , categoryid = ? , brandid = ?, price = ?, sku = ?,romid = ?, chipid = ?, modelid = ?  WHERE productid = ?";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
                 ps.setString(2, p.getDescription());
@@ -249,26 +249,32 @@ public class ProductDAO {
                 ps.setInt(8, p.getBrand().getId());
                 ps.setInt(9, p.getPrice());
                 ps.setString(10, p.getSku());
-                ps.setInt(11, p.getProductId());
+                ps.setNull(11, java.sql.Types.INTEGER);
+                ps.setNull(12, java.sql.Types.INTEGER);
+                ps.setNull(13, java.sql.Types.INTEGER);
+                ps.setInt(14, p.getProductId());
                 System.out.println(sql);
                 return ps.executeUpdate() != 0;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else if (p.getCategory().getName().equals("ROM")) {
-            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, romid = ?, unitid = ? , categoryid = ? , brandid = ?, price = ?, sku = ? WHERE productid = ?";
+            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, romid = ?, unitid = ? , categoryid = ? , brandid = ?, price = ?, sku = ?, ramid = ?, chipid = ?, modelid = ?  WHERE productid = ?";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
                 ps.setString(2, p.getDescription());
                 ps.setString(3, p.getImgUrl());
                 ps.setBoolean(4, p.isIsActive());
-                ps.setInt(5, p.getRam().getId());
+                ps.setInt(5, p.getRom().getId());
                 ps.setInt(6, p.getUnit().getId());
                 ps.setInt(7, p.getCategory().getCategoryId());
                 ps.setInt(8, p.getBrand().getId());
                 ps.setInt(9, p.getPrice());
                 ps.setString(10, p.getSku());
-                ps.setInt(11, p.getProductId());
+                ps.setNull(11, java.sql.Types.INTEGER);
+                ps.setNull(12, java.sql.Types.INTEGER);
+                ps.setNull(13, java.sql.Types.INTEGER);
+                ps.setInt(14, p.getProductId());
                 System.out.println(sql);
                 return ps.executeUpdate() != 0;
             } catch (Exception e) {

@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "AddRom", urlPatterns = {"/AddRom"})
+@WebServlet(name = "AddStorage", urlPatterns = {"/AddStorage"})
 public class AddRom extends HttpServlet {
     private RomDAO romDao;
 
@@ -35,18 +35,18 @@ public class AddRom extends HttpServlet {
         String romSize = size == null ? "" : size.trim();
 
         if (romSize.isEmpty()) {
-            request.setAttribute("message", "Rom size is required");
+            request.setAttribute("message", "Storage size is required");
             request.getRequestDispatcher("view/addRom.jsp").forward(request, response);
             return;
         }
 
         if (romDao.getRomBySize(romSize) != null) {
-            request.setAttribute("message", "Rom size already exists");
+            request.setAttribute("message", "Storage size already exists");
             request.getRequestDispatcher("view/addRom.jsp").forward(request, response);
             return;
         }
 
         romDao.insertRom(romSize, active != null);
-        response.sendRedirect("RomList");
+        response.sendRedirect("StorageList");
     }
 }

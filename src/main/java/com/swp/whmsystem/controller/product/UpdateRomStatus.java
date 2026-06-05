@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-@WebServlet(name = "UpdateRomStatus", urlPatterns = {"/UpdateRomStatus"})
+@WebServlet(name = "UpdateStorageStatus", urlPatterns = {"/UpdateStorageStatus"})
 public class UpdateRomStatus extends HttpServlet {
     private RomDAO romDao;
 
@@ -29,7 +29,7 @@ public class UpdateRomStatus extends HttpServlet {
 
         romDao.updateRomStatus(id, active);
 
-        String target = request.getContextPath() + "/RomList";
+        String target = request.getContextPath() + "/StorageList";
         if (status != null && !status.isEmpty()) {
             target += "?status=" + URLEncoder.encode(status, StandardCharsets.UTF_8);
         }

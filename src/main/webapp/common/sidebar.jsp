@@ -18,7 +18,7 @@
                         <li><a href="brandList">Brand List</a></li>
                         <li><a href="ChipList">Chip List</a></li>
                         <li><a href="RamList">Ram List</a></li>
-                        <li><a href="RomList">Rom List</a></li>
+                        <li><a href="StorageList">Storage List</a></li>
                         <li><a href="ModelList">Model List</a></li>
                         <li><a href="UnitList">Unit List</a></li>
                     </ul>

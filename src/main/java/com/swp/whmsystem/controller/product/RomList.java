@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "RomList", urlPatterns = {"/RomList"})
+@WebServlet(name = "StorageList", urlPatterns = {"/StorageList"})
 public class RomList extends HttpServlet {
     private RomDAO romDao;
 

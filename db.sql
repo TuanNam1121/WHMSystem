@@ -110,7 +110,7 @@ CREATE TABLE `good_receipts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `purchaserequestid` int(11) NOT NULL,
   `processedby` int(11) NOT NULL,
-  `status` enum('NEW','DOING','COMPLETED') DEFAULT 'NEW',
+  `status` enum('DRAFT','CANCELLED','SUBMITTED','COMPLETED','PENDING','REJECTED') DEFAULT 'DRAFT',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `purchaserequestid` (`purchaserequestid`),
@@ -170,7 +170,7 @@ DROP TABLE IF EXISTS `inventory_audit`;
 CREATE TABLE `inventory_audit` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `createdby` int(11) NOT NULL,
-  `status` enum('NEW','DOING','COMPLETED') DEFAULT 'NEW',
+  `status` enum('DRAFT','CANCELLED','SUBMITTED','COMPLETED','PENDING') DEFAULT 'DRAFT',
   `createdat` datetime DEFAULT CURRENT_TIMESTAMP,
   `updatedat` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -251,6 +251,31 @@ INSERT INTO `models` VALUES (1,'Inspiron 15',1,1),(2,'TUF A15',2,1),(3,'Thinkpad
 UNLOCK TABLES;
 
 --
+-- Table structure for table `customers`
+--
+
+DROP TABLE IF EXISTS `customers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `customers` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(150) NOT NULL,
+  `phone` varchar(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `customers`
+--
+
+LOCK TABLES `customers` WRITE;
+/*!40000 ALTER TABLE `customers` DISABLE KEYS */;
+INSERT INTO `customers` VALUES (1,'Nguyen Van A','0988888888'),(2,'Tran Thi B','0977777777'),(3,'Le Van C','0966666666'),(4,'Pham Thi D','0955555555'),(5,'Hoang Van E','0944444444');
+/*!40000 ALTER TABLE `customers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `order_items`
 --
 
@@ -263,12 +288,14 @@ CREATE TABLE `order_items` (
   `productid` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
   `price` decimal(15,2) DEFAULT NULL,
-  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `customer_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `orderid` (`orderid`),
   KEY `productid` (`productid`),
+  KEY `customer_id` (`customer_id`),
   CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`orderid`) REFERENCES `orders` (`id`),
-  CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`productid`) REFERENCES `products` (`productid`)
+  CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`productid`) REFERENCES `products` (`productid`),
+  CONSTRAINT `order_items_ibfk_3` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -278,7 +305,7 @@ CREATE TABLE `order_items` (
 
 LOCK TABLES `order_items` WRITE;
 /*!40000 ALTER TABLE `order_items` DISABLE KEYS */;
-INSERT INTO `order_items` VALUES (1,1,1,1,13500000.00,'2026-05-27 11:27:22');
+INSERT INTO `order_items` VALUES (1,1,1,1,13500000.00,1);
 /*!40000 ALTER TABLE `order_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -750,25 +777,24 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'admin','System Administrator','admin123hash',1,'0900000001','admin@gmail.com','MALE',1,'System','Administrator'),(2,'manager01','Nguyen Thi Manager 1','manager123hash',2,'0900000002','manager@gmail.com','MALE',1,'Nguyen Thi','Manager'),(3,'staff01','Tran Van Staff','staff123hash',3,'0900000003','staff@gmail.com','MALE',1,'Tran Van','Staff'),(4,'customer01','Le Customer','customer123hash',4,'0900000004','customer@gmail.com','OTHER',0,'Le','Customer'),(5,'nam1','Nguyễn Tuấn Nam','$2a$12$ijZe3yxmOyjx19zGgdRnZ.3h13ud0QYDho4YaDgEAjljFvDjlltsG',5,'0982699381','emnam2k5@gmail.com','MALE',1,'Nguyễn Tuấn','Nam'),(6,'admin0','System Admin','$2a$05$ViJOaXoxE8h3Y1XxHZ5O0efAw9flQgH4pkX82AGi3aR3TOGJEiK8.',1,'0982699382','stdsddaff1@gmail.com','MALE',1,'System','Admin'),(7,'linh','Tran Phuong Linh','$2a$05$SSR/XL0QK7SXrPLdL8ki1uWs3IlfkYVuAaK8qDREBxelF7aM4hjoG',2,'0900000005','1243@gmail.com','MALE',0,'Tran Phuong','Linh'),(8,'meomeo123','Quang Hung MasterD','$2a$05$Ghax46XQdit.TPqhSoB.Ee9gYoBWZjvI.VRGEp0HxsNbObXgEUFa2',3,'0900000006','staff1@gmail.com','FEMALE',1,'Quang Hung','MasterD'),(9,'NamNT123','Nguyễn Thành Nam','$2a$12$HVFkUoHr/R2lUW9BHIWacOVC8vHh3AT.rpqU69ObsBHR2avbZKhWW',3,'0900000007','nam2k5@gmail.com','MALE',1,'Nguyễn Thành','Nam'),(11,'nam12','Quang Hung MasterD','$2a$12$nQfTxq2ybyDLlzkqwICpguBnuEKlk.ZQZ1Y4GPI4qoGihW6jB9U/a',3,'0912345678','staff12@gmail.com','MALE',1,'Test','Nguyen'),(12,'po122','Tran Duc Duy','$2a$12$UPOyr4qmHE.MDxfEGyq.aOAHWAUYpBeCa1UCl612dF.KIGa.hrF0y',4,'0900000089','admin12@gmail.com','MALE',1,'Duy','Tran Duc');
+INSERT INTO `users` VALUES(2,'manager01','Nguyen Thi Manager 1','manager123hash',2,'0900000002','manager@gmail.com','MALE',1,'Nguyen Thi','Manager'),(3,'staff01','Tran Van Staff','staff123hash',3,'0900000003','staff@gmail.com','MALE',1,'Tran Van','Staff'),(4,'customer01','Le Customer','customer123hash',4,'0900000004','customer@gmail.com','OTHER',0,'Le','Customer'),(5,'nam1','Nguyễn Tuấn Nam','$2a$12$ijZe3yxmOyjx19zGgdRnZ.3h13ud0QYDho4YaDgEAjljFvDjlltsG',5,'0982699381','emnam2k5@gmail.com','MALE',1,'Nguyễn Tuấn','Nam'),(6,'admin0','System Admin','$2a$05$ViJOaXoxE8h3Y1XxHZ5O0efAw9flQgH4pkX82AGi3aR3TOGJEiK8.',1,'0982699382','stdsddaff1@gmail.com','MALE',1,'System','Admin'),(7,'linh','Tran Phuong Linh','$2a$05$SSR/XL0QK7SXrPLdL8ki1uWs3IlfkYVuAaK8qDREBxelF7aM4hjoG',2,'0900000005','1243@gmail.com','MALE',0,'Tran Phuong','Linh'),(8,'meomeo123','Quang Hung MasterD','$2a$05$Ghax46XQdit.TPqhSoB.Ee9gYoBWZjvI.VRGEp0HxsNbObXgEUFa2',3,'0900000006','staff1@gmail.com','FEMALE',1,'Quang Hung','MasterD'),(9,'NamNT123','Nguyễn Thành Nam','$2a$12$HVFkUoHr/R2lUW9BHIWacOVC8vHh3AT.rpqU69ObsBHR2avbZKhWW',3,'0900000007','nam2k5@gmail.com','MALE',1,'Nguyễn Thành','Nam'),(11,'nam12','Quang Hung MasterD','$2a$12$nQfTxq2ybyDLlzkqwICpguBnuEKlk.ZQZ1Y4GPI4qoGihW6jB9U/a',3,'0912345678','staff12@gmail.com','MALE',1,'Test','Nguyen'),(12,'po122','Tran Duc Duy','$2a$12$UPOyr4qmHE.MDxfEGyq.aOAHWAUYpBeCa1UCl612dF.KIGa.hrF0y',4,'0900000089','admin12@gmail.com','MALE',1,'Duy','Tran Duc');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Dumping events for database 'wms'
---
+INSERT INTO `users` (`userid`, `username`, `fullname`, `passwordhash`, `roleid`, `phone`, `email`, `gender`, `isactive`, `firstname`, `lastname`) VALUES
+(13, 'admin', 'Admin', '$2a$12$ijZe3yxmOyjx19zGgdRnZ.3h13ud0QYDho4YaDgEAjljFvDjlltsG', 1, '0900000010', 'audit_admin@gmail.com', 'MALE', 1, 'Audit', 'Admin'),
+(14, 'manager', 'Manager', '$2a$12$ijZe3yxmOyjx19zGgdRnZ.3h13ud0QYDho4YaDgEAjljFvDjlltsG', 2, '0900000011', 'audit_manager@gmail.com', 'MALE', 1, 'Audit', 'Manager'),
+(15, 'warehouse', 'Warehouse Staff', '$2a$12$ijZe3yxmOyjx19zGgdRnZ.3h13ud0QYDho4YaDgEAjljFvDjlltsG', 3, '0900000012', 'audit_staff@gmail.com', 'MALE', 1, 'Audit', 'Staff'),
+(16, 'saleman', 'Saleman Staff', '$2a$12$ijZe3yxmOyjx19zGgdRnZ.3h13ud0QYDho4YaDgEAjljFvDjlltsG', 4, '0900000212', 'audsi_staff@gmail.com', 'MALE', 1, 'Audist', 'Staff');
+-- Add 4 audit permissions
+INSERT INTO `permissions` (`permissionid`, `permissionname`, `description`) VALUES
+(15, 'VIEW_INVENTORY_AUDIT', 'Can view inventory audits'),
+(16, 'CREATE_INVENTORY_AUDIT', 'Can create inventory audits'),
+(17, 'PERFORM_INVENTORY_AUDIT', 'Can perform inventory audits'),
+(19, 'APPROVE_INVENTORY_AUDIT', 'Can approve or decline inventory audits');
 
---
--- Dumping routines for database 'wms'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+INSERT INTO `role_permission` (`roleid`, `permissionid`) VALUES
+(2, 15), (2, 16), (2, 19);
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2026-06-02 13:21:42
+INSERT INTO `role_permission` (`roleid`, `permissionid`) VALUES
+(3, 15), (3, 17);

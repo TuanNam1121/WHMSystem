@@ -26,7 +26,6 @@ public class FileUtils {
         String fileName = System.currentTimeMillis() + "_" + filePart.getSubmittedFileName();
 
         // Save to /target (load immediately after upload, missing after redeploy)
-        // Paths.get auto control "\" or "/" --> Ok with all OS
         Path targetBase = Paths.get(request.getServletContext().getRealPath(""));
         Path targetDir = targetBase.resolve(FOLDER_PATH);
 
@@ -43,7 +42,7 @@ public class FileUtils {
             if (Files.notExists(sourceDir)) Files.createDirectories(sourceDir);
 
             Path sourceFilePath = sourceDir.resolve(fileName);
-            Files.copy(targetFilePath, sourceFilePath, StandardCopyOption.REPLACE_EXISTING); // Can throw IOException
+            Files.copy(targetFilePath, sourceFilePath, StandardCopyOption.REPLACE_EXISTING);
 
         } catch (Exception e) {
             System.err.println("Fail to save to src: " + e.getMessage());

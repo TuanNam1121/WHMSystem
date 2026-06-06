@@ -9,7 +9,7 @@
           content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Dreams Pos admin template</title>
+    <title>LWMS</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
 
@@ -198,10 +198,6 @@
                                     <td>
                                         <a class="me-3" href="UpdateProduct?productid=${p.productId}">
                                             <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-
-                                        <a class="confirm-text" href="javascript:void(0);">
-                                            <img src="assets/img/icons/delete.svg" alt="img">
                                         </a>
                                     </td>
                                 </tr>

@@ -111,7 +111,6 @@ public class UpdateProduct extends HttpServlet {
         String ramId = request.getParameter("ram");
         String romId = request.getParameter("rom");
         String chipId = request.getParameter("chip");
-        String price_raw = request.getParameter("price");
         String isActiveraw = request.getParameter("isActive");
         String description = request.getParameter("description");
         Part part = request.getPart("image");
@@ -130,7 +129,6 @@ public class UpdateProduct extends HttpServlet {
         UnitDAO unitDao = new UnitDAO();
         CategoryDAO categoryDao = new CategoryDAO();
 
-        Integer price = ProductValidation.parseInteger(price_raw);
         Integer ramIdInt = ProductValidation.parseInteger(ramId);
         Integer romIdInt = ProductValidation.parseInteger(romId);
         Integer chipIdInt = ProductValidation.parseInteger(chipId);
@@ -182,9 +180,6 @@ public class UpdateProduct extends HttpServlet {
         }
         if (!imgUrl.equals("")) {
             product.setImgUrl(imgUrl);
-        }
-        if (price != null && price != product.getPrice()) {
-            product.setPrice(price);
         }
 
         // Chỉ cho phép sửa các field này khi chưa có transaction

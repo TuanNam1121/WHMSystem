@@ -21,7 +21,7 @@ public class ProductDAO {
 
     public boolean addProduct(Product p) {
         if (p.getCategory().getName().contains("Laptop")) {
-            String sql = "insert into products(name, description, img_url, isactive, ramid, romid, chipid, brandid, modelid, unitid, categoryid, sku, price) values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            String sql = "insert into products(name, description, img_url, isactive, ramid, romid, chipid, brandid, modelid, unitid, categoryid, sku) values (?,?,?,?,?,?,?,?,?,?,?,?)";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
                 ps.setString(2, p.getDescription());
@@ -35,13 +35,12 @@ public class ProductDAO {
                 ps.setInt(10, p.getUnit().getId());
                 ps.setInt(11, p.getCategory().getCategoryId());
                 ps.setString(12, p.getSku());
-                ps.setInt(13, p.getPrice());
                 return ps.executeUpdate() != 0;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else if (p.getCategory().getName().equals("RAM")) {
-            String sql = "insert into products(name, description, img_url, isactive, ramid, brandid, unitid, categoryid, sku, price) values (?,?,?,?,?,?,?,?,?,?)";
+            String sql = "insert into products(name, description, img_url, isactive, ramid, brandid, unitid, categoryid, sku) values (?,?,?,?,?,?,?,?,?)";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
                 ps.setString(2, p.getDescription());
@@ -52,13 +51,12 @@ public class ProductDAO {
                 ps.setInt(7, p.getUnit().getId());
                 ps.setInt(8, p.getCategory().getCategoryId());
                 ps.setString(9, p.getSku());
-                ps.setInt(10, p.getPrice());
                 return ps.executeUpdate() != 0;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else if (p.getCategory().getName().equals("ROM")) {
-            String sql = "insert into products(name, description, img_url, isactive, romid, brandid, unitid, categoryid, sku, price) values (?,?,?,?,?,?,?,?,?,?)";
+            String sql = "insert into products(name, description, img_url, isactive, romid, brandid, unitid, categoryid, sku, price) values (?,?,?,?,?,?,?,?,?)";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
                 ps.setString(2, p.getDescription());
@@ -69,15 +67,14 @@ public class ProductDAO {
                 ps.setInt(7, p.getUnit().getId());
                 ps.setInt(8, p.getCategory().getCategoryId());
                 ps.setString(9, p.getSku());
-                ps.setInt(10, p.getPrice());
                 return ps.executeUpdate() != 0;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             // chỉ insert những cột có giá trị, null cho phần còn lại
-            String sql = "insert into products(name, description, img_url, isactive, ramid, romid, chipid, brandid, modelid, unitid, categoryid, sku, price) "
-                    + "values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            String sql = "insert into products(name, description, img_url, isactive, ramid, romid, chipid, brandid, modelid, unitid, categoryid, sku) "
+                    + "values (?,?,?,?,?,?,?,?,?,?,?,?)";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, p.getName());
                 ps.setString(2, p.getDescription());
@@ -120,7 +117,6 @@ public class ProductDAO {
                     ps.setNull(11, java.sql.Types.INTEGER);
                 }
                 ps.setString(12, p.getSku());
-                ps.setInt(13, p.getPrice());
                 return ps.executeUpdate() != 0;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -215,7 +211,7 @@ public class ProductDAO {
 
     public boolean updateProduct(Product p) {
         if (p.getCategory().getName().contains("Laptop")) {
-            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, ramid = ?, romid = ?, chipid = ?, unitid = ? , categoryid = ? , brandid = ?, modelid = ?, price = ?, sku = ? WHERE productid = ?";
+            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, ramid = ?, romid = ?, chipid = ?, unitid = ? , categoryid = ? , brandid = ?, modelid = ?, sku = ? WHERE productid = ?";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
                 ps.setString(2, p.getDescription());
@@ -228,16 +224,15 @@ public class ProductDAO {
                 ps.setInt(9, p.getCategory().getCategoryId());
                 ps.setInt(10, p.getBrand().getId());
                 ps.setInt(11, p.getModel().getId());
-                ps.setInt(12, p.getPrice());
-                ps.setString(13, p.getSku());
-                ps.setInt(14, p.getProductId());
+                ps.setString(12, p.getSku());
+                ps.setInt(13, p.getProductId());
                 System.out.println(sql);
                 return ps.executeUpdate() != 0;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else if (p.getCategory().getName().equals("RAM")) {
-            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, ramid = ?, unitid = ? , categoryid = ? , brandid = ?, price = ?, sku = ?,romid = ?, chipid = ?, modelid = ?  WHERE productid = ?";
+            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, ramid = ?, unitid = ? , categoryid = ? , brandid = ?, sku = ?,romid = ?, chipid = ?, modelid = ?  WHERE productid = ?";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
                 ps.setString(2, p.getDescription());
@@ -247,19 +242,18 @@ public class ProductDAO {
                 ps.setInt(6, p.getUnit().getId());
                 ps.setInt(7, p.getCategory().getCategoryId());
                 ps.setInt(8, p.getBrand().getId());
-                ps.setInt(9, p.getPrice());
-                ps.setString(10, p.getSku());
+                ps.setString(9, p.getSku());
+                ps.setNull(10, java.sql.Types.INTEGER);
                 ps.setNull(11, java.sql.Types.INTEGER);
                 ps.setNull(12, java.sql.Types.INTEGER);
-                ps.setNull(13, java.sql.Types.INTEGER);
-                ps.setInt(14, p.getProductId());
+                ps.setInt(13, p.getProductId());
                 System.out.println(sql);
                 return ps.executeUpdate() != 0;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else if (p.getCategory().getName().equals("ROM")) {
-            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, romid = ?, unitid = ? , categoryid = ? , brandid = ?, price = ?, sku = ?, ramid = ?, chipid = ?, modelid = ?  WHERE productid = ?";
+            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, romid = ?, unitid = ? , categoryid = ? , brandid = ?, sku = ?, ramid = ?, chipid = ?, modelid = ?  WHERE productid = ?";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
                 ps.setString(2, p.getDescription());
@@ -269,12 +263,11 @@ public class ProductDAO {
                 ps.setInt(6, p.getUnit().getId());
                 ps.setInt(7, p.getCategory().getCategoryId());
                 ps.setInt(8, p.getBrand().getId());
-                ps.setInt(9, p.getPrice());
-                ps.setString(10, p.getSku());
+                ps.setString(9, p.getSku());
+                ps.setNull(10, java.sql.Types.INTEGER);
                 ps.setNull(11, java.sql.Types.INTEGER);
                 ps.setNull(12, java.sql.Types.INTEGER);
-                ps.setNull(13, java.sql.Types.INTEGER);
-                ps.setInt(14, p.getProductId());
+                ps.setInt(13, p.getProductId());
                 System.out.println(sql);
                 return ps.executeUpdate() != 0;
             } catch (Exception e) {
@@ -282,7 +275,7 @@ public class ProductDAO {
             }
         } else {
             String sql = "UPDATE products SET name=?, description=?, img_url=?, isactive=?, "
-                    + "ramid=?, romid=?, chipid=?, brandid=?, modelid=?, unitid=?, categoryid=?, price=? "
+                    + "ramid=?, romid=?, chipid=?, brandid=?, modelid=?, unitid=?, categoryid=?"
                     + "WHERE productid=?";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, p.getName());
@@ -324,8 +317,7 @@ public class ProductDAO {
                 } else {
                     ps.setNull(11, java.sql.Types.INTEGER);
                 }
-                ps.setInt(12, p.getPrice());
-                ps.setInt(13, p.getProductId());
+                ps.setInt(12, p.getProductId());
                 return ps.executeUpdate() != 0;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -361,7 +353,6 @@ public class ProductDAO {
         product.setName(rs.getString("name"));
         product.setProductId(rs.getInt("productid"));
         product.setDescription(rs.getString("description"));
-        product.setPrice(rs.getInt("price"));
         product.setImgUrl(rs.getString("img_url"));
         product.setSku(rs.getString("sku"));
         product.setTotalQuantity(rs.getInt("total_quantity"));

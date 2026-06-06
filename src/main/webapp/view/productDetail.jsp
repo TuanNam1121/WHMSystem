@@ -149,12 +149,6 @@
                                         </div>
                                         <div class="col-lg-3 col-sm-6 col-12">
                                             <div class="form-group">
-                                                <label>Price</label>
-                                                <input type="text" name="price" placeholder="VD: 100.000" value="${product.price}">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-sm-6 col-12">
-                                            <div class="form-group">
                                                 <label>Status</label>
                                                 <select class="select" name="isActive">
                                                     <option value="1" ${product != null && product.isActive == true ? 'selected' : ''}>Active</option>
@@ -165,9 +159,11 @@
                                         <div class="col-lg-12">
                                             <div class="form-group">
                                                 <label> Product Image</label>
+                                                <c:if test="${product != null && product.imgUrl != null}">
+                                                    <img style="width: 350px; height: 350px" src="${product.imgUrl}" alt="img">
+                                                </c:if>
                                                 <div class="image-upload">
                                                     <input type="file" name="image" id="imageInput" accept="image/*">
-
                                                     <div class="image-uploads">
                                                         <img src="assets/img/icons/upload.svg" alt="img">
                                                         <h4 id="uploadText">Drag and drop a file to upload</h4>

@@ -3,7 +3,7 @@ package com.swp.whmsystem.utils;
 public class InputValidationUtil {
     private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
 
-    private static final String PHONE_REGEX = "^(03|05|07|08|09)+([0-9]{8})$";
+    private static final String PHONE_REGEX = "^(0)+([0-9]{9})$";
 
     private static final String NAME_REGEX = "^[\\p{L}\\s]+$";
 

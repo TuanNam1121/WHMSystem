@@ -102,7 +102,6 @@ public class AddProduct extends HttpServlet {
         String ramId = request.getParameter("ram");
         String romId = request.getParameter("rom");
         String chipId = request.getParameter("chip");
-        String price = request.getParameter("price");
         String isActive = request.getParameter("isActive");
         String description = request.getParameter("description");
         Part part = request.getPart("image");

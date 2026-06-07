@@ -43,23 +43,20 @@
             </div>
             <div class="card">
                 <div class="card-body">
-                    <!-- Hidden Salesman ID -->
-                    <input type="hidden" id="salesman-id" name="salesmanId" value="SM-1001">
+                    <input type="hidden" id="salesman-id" name="salesmanId" value="${sessionScope.user.id}">
 
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Salesman</label>
-                                <input type="text" value="John Doe (SM-1001)" disabled class="form-control"
+                                <input type="text" value="${sessionScope.user.userName}" disabled class="form-control"
                                        id="salesman-display">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Two Column Layout -->
                     <div class="row align-items-stretch">
-                        <!-- Left side: Product List -->
-                        <div class="col-lg-7 col-md-12 d-flex mb-4">
+                        <div class="col-lg-12 col-md-12 d-flex mb-4">
                             <div class="card bg-light w-100 d-flex flex-column mb-0">
                                 <div class="card-body p-3 d-flex flex-column">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -80,28 +77,29 @@
                                             <tr>
                                                 <th>Name</th>
                                                 <th>SKU</th>
-                                                <th>Qty</th>
+                                                <th>Category</th>
+                                                <th>Quantity</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
                                             </thead>
                                             <tbody id="product-list-body">
-                                            <c:forEach items="${productList}" var="p">
-                                                    <tr class="product-item">
-                                                        <td class="product-name">${p.name}</td>
-                                                        <td class="product-sku">${p.sku}</td>
-                                                        <td><% out.print(((com.swp.whmsystem.model.Product)pageContext.getAttribute("p")).getTotalQuantity()); %></td>
-                                                        <td>
-                                                            <% if (((com.swp.whmsystem.model.Product)pageContext.getAttribute("p")).isIsActive()) { %>
-                                                                <span class="badges bg-lightgreen">Active</span>
-                                                            <% } else { %>
-                                                                <span class="badges bg-lightred">Inactive</span>
-                                                            <% } %>
-                                                        </td>
+                                            <c:forEach items="${requestScope.productListForPurchase}" var="p">
+                                                <tr class="product-item">
+                                                    <td class="product-name">${p.name}</td>
+                                                    <td class="product-sku">${p.sku}</td>
+                                                    <td class="product-category">${p.category.name}</td>
+                                                    <td class="product-quantity">${p.totalQuantity}</td>
+                                                    <td><span class="badges ${p.isActive ? 'bg-lightgreen' : 'bg-lightred'}">
+                                                            ${p.isActive ? 'Active' : 'Inactive'}</span>
+                                                    </td>
                                                     <td>
                                                         <a class="btn btn-sm btn-outline-primary add-product-btn"
                                                            data-id="${p.productId}"
                                                            data-name="${p.name}"
+                                                           data-sku="${p.sku}"
+                                                           data-category="${p.category.name}"
+                                                           data-stock="${p.totalQuantity}"
                                                            href="javascript:void(0);">
                                                             <i class="fas fa-plus"></i> Add
                                                         </a>
@@ -115,8 +113,7 @@
                             </div>
                         </div>
 
-                        <!-- Right side: Selected Products -->
-                        <div class="col-lg-5 col-md-12 d-flex mb-4">
+                        <div class="col-lg-12 col-md-12 d-flex mb-4">
                             <div class="card bg-light w-100 d-flex flex-column mb-0">
                                 <div class="card-body p-3 d-flex flex-column">
                                     <h5 class="mb-3" style="font-weight: 600;">Selected Items</h5>
@@ -127,12 +124,14 @@
                                                     style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
                                             <tr>
                                                 <th>Name</th>
-                                                <th style="width: 100px;">Req Qty</th>
+                                                <th>SKU</th>
+                                                <th>Category</th>
+                                                <th>In Stock</th>
+                                                <th style="width: 150px;">Required Quantity</th>
                                                 <th>Action</th>
                                             </tr>
                                             </thead>
                                             <tbody id="selected-product-list">
-                                            <!-- Populated via JS -->
                                             </tbody>
                                         </table>
                                     </div>
@@ -188,17 +187,20 @@
         function renderSelectedItems() {
             let html = '';
             if (selectedItems.length === 0) {
-                html = '<tr><td colspan="3" class="text-center text-muted">No products selected</td></tr>';
+                html = '<tr><td colspan="6" class="text-center text-muted">No products selected</td></tr>';
             } else {
                 selectedItems.forEach(item => {
                     html += `
                         <tr>
-                            <td>${item.name}</td>
+                            <td>\${item.name}</td>
+                            <td>\${item.sku}</td>
+                            <td>\${item.category}</td>
+                            <td>\${item.stock}</td>
                             <td>
-                                <input type="number" class="form-control form-control-sm qty-input" data-id="${item.id}" value="${item.reqQty}" min="1">
+                                <input type="number" class="form-control form-control-sm qty-input" data-id="\${item.id}" value="\${item.reqQty}" min="1" style="width: 100px;">
                             </td>
                             <td>
-                                <a class="delete-set remove-item-btn" href="javascript:void(0);" data-id="${item.id}">
+                                <a class="delete-set remove-item-btn" href="javascript:void(0);" data-id="\${item.id}">
                                     <img src="${pageContext.request.contextPath}/assets/img/icons/delete.svg" alt="Remove">
                                 </a>
                             </td>
@@ -230,6 +232,9 @@
         $(document).on('click', '.add-product-btn', function () {
             const id = $(this).data('id');
             const name = $(this).data('name');
+            const sku = $(this).data('sku');
+            const category = $(this).data('category');
+            const stock = $(this).data('stock');
 
             const existingItem = selectedItems.find(item => item.id === id);
             if (existingItem) {
@@ -238,6 +243,9 @@
                 selectedItems.push({
                     id: id,
                     name: name,
+                    sku: sku,
+                    category: category,
+                    stock: stock,
                     reqQty: 1
                 });
             }

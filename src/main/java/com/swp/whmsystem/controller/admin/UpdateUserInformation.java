@@ -48,7 +48,7 @@ public class UpdateUserInformation extends HttpServlet {
             request.setAttribute("u", user);
             request.setAttribute("roleDao", roleDao);
             request.setAttribute("rolelist", list);
-            request.getRequestDispatcher("WEB-INF/view/user/userDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/admin/userDetail.jsp").forward(request, response);
         } catch (NumberFormatException ex) {
             String message = ex.getMessage();
             request.setAttribute("error", message);

@@ -1,18 +1,12 @@
 package com.swp.whmsystem.controller.purchaseRequest;
 
-import com.swp.whmsystem.dal.CategoryDAO;
 import com.swp.whmsystem.dal.ProductDAO;
-import com.swp.whmsystem.model.Category;
 import com.swp.whmsystem.model.Product;
-import com.swp.whmsystem.model.User;
-import com.swp.whmsystem.utils.InputStandization;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
 import java.io.IOException;
 import java.util.List;
 

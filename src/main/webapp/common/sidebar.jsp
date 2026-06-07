@@ -12,9 +12,7 @@
                             class="menu-arrow"></span></a>
                     <ul>
                         <li><a href="productlist">Product List</a></li>
-                        <li><a href="AddProduct">Add Product</a></li>
                         <li><a href="categoryList">Category List</a></li>
-                        <li><a href="addCategory">Add Category</a></li>
                         <li><a href="brandList">Brand List</a></li>
                         <li><a href="ChipList">Chip List</a></li>
                         <li><a href="RamList">Ram List</a></li>

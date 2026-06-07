@@ -70,7 +70,7 @@ public class ProductList extends HttpServlet {
         session.setAttribute("productList", productList);
         session.setAttribute("categoryList", categoryList);
         session.setAttribute("brandList", brandList);
-        request.getRequestDispatcher("view/productList.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/product/productList.jsp").forward(request, response);
 
     }
 
@@ -85,3 +85,4 @@ public class ProductList extends HttpServlet {
     }
 
 }
+

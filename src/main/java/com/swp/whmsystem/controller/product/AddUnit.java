@@ -25,7 +25,7 @@ public class AddUnit extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("view/addUnit.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/product/addUnit.jsp").forward(request, response);
     }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -36,13 +36,13 @@ public class AddUnit extends HttpServlet {
 
         if (unitName.isEmpty()) {
             request.setAttribute("message", "Unit name is required");
-            request.getRequestDispatcher("view/addUnit.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/product/addUnit.jsp").forward(request, response);
             return;
         }
 
         if (unitDao.getUnitByName(unitName) != null) {
             request.setAttribute("message", "Unit name already exists");
-            request.getRequestDispatcher("view/addUnit.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/product/addUnit.jsp").forward(request, response);
             return;
         }
 

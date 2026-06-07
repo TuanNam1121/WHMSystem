@@ -59,7 +59,7 @@ public class CategoryList extends HttpServlet {
         session.setAttribute("searchedCategoryList", searchedCategoryList);
         session.setAttribute("allCategoryList", allCategoryList);
 
-        request.getRequestDispatcher("view/categoryList.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/category/categoryList.jsp").forward(request, response);
     }
 
     @Override
@@ -73,4 +73,5 @@ public class CategoryList extends HttpServlet {
     }
 
 }
+
 

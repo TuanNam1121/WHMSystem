@@ -126,7 +126,7 @@ public class CategoryDAO {
             ps.setString(2, category.getDescription());
             ps.setBoolean(3, category.isIsActive());
             ps.setInt(4, category.getCategoryId());
-            return ps.executeUpdate() == 1;
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

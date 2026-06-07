@@ -25,7 +25,7 @@ public class AddRam extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("view/addRam.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/product/addRam.jsp").forward(request, response);
     }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -36,13 +36,13 @@ public class AddRam extends HttpServlet {
 
         if (ramSize.isEmpty()) {
             request.setAttribute("message", "Ram size is required");
-            request.getRequestDispatcher("view/addRam.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/product/addRam.jsp").forward(request, response);
             return;
         }
 
         if (ramDao.getRamBySize(ramSize) != null) {
             request.setAttribute("message", "Ram size already exists");
-            request.getRequestDispatcher("view/addRam.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/product/addRam.jsp").forward(request, response);
             return;
         }
 

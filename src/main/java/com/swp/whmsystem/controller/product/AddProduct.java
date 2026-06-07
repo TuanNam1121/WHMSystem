@@ -79,7 +79,7 @@ public class AddProduct extends HttpServlet {
         request.setAttribute("unitList", unitList);
         request.setAttribute("categoryList", categoryList);
         request.setAttribute("mode", "add");
-        request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/product/productDetail.jsp").forward(request, response);
     }
 
     /**
@@ -159,14 +159,14 @@ public class AddProduct extends HttpServlet {
         if (productDao.getProductFromSKU(sku) != null) {
             request.setAttribute("product", product);
             request.setAttribute("message", "SKU was existed !");
-            request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/product/productDetail.jsp").forward(request, response);
             return;
         }
         
         String error = ProductValidation.isProductValid(product);
         if (!"true".equals(error)) {
             request.setAttribute("message", error);
-            request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/product/productDetail.jsp").forward(request, response);
             return;
         }
 
@@ -174,7 +174,7 @@ public class AddProduct extends HttpServlet {
             if (cautioned == null) {
                 request.setAttribute("cautioned", "yes");
                 request.setAttribute("message", "This product have a same product having same specification. Do you want to add this product ?");
-                request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
+                request.getRequestDispatcher("WEB-INF/view/product/productDetail.jsp").forward(request, response);
             } else {
                 if (productDao.addProduct(product)) {
                     response.sendRedirect("productlist");
@@ -189,7 +189,7 @@ public class AddProduct extends HttpServlet {
         else{
             request.setAttribute("product", product);
             request.setAttribute("message", "Error in Transaction");
-            request.getRequestDispatcher("view/productDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/product/productDetail.jsp").forward(request, response);
         }
     }
 
@@ -204,3 +204,4 @@ public class AddProduct extends HttpServlet {
     }// </editor-fold>
 
 }
+

@@ -36,7 +36,7 @@ public class BrandList extends HttpServlet {
         }
 
         session.setAttribute("brandList", brandList);
-        request.getRequestDispatcher("view/brandList.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/brand/brandList.jsp").forward(request, response);
     }
 
     @Override
@@ -49,3 +49,4 @@ public class BrandList extends HttpServlet {
         return "Short description";
     }
 }
+

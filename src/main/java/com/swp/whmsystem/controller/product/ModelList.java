@@ -44,6 +44,6 @@ public class ModelList extends HttpServlet {
         request.setAttribute("brands", brands);
         request.setAttribute("status", status);
         request.setAttribute("selectedBrandId", brandId);
-        request.getRequestDispatcher("view/modelList.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/product/modelList.jsp").forward(request, response);
     }
 }

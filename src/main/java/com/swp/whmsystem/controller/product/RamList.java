@@ -28,6 +28,6 @@ public class RamList extends HttpServlet {
 
         request.setAttribute("rams", rams);
         request.setAttribute("status", status);
-        request.getRequestDispatcher("view/ramList.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/product/ramList.jsp").forward(request, response);
     }
 }

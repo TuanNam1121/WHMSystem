@@ -40,7 +40,7 @@ public class ViewUserList extends HttpServlet {
         request.setAttribute("roleList", roleList);
         request.setAttribute("roleDao", role);
         request.setAttribute("userlist", userList);
-        request.getRequestDispatcher("view/viewUserList.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/admin/viewUserList.jsp").forward(request, response);
     }
 
     @Override
@@ -50,3 +50,4 @@ public class ViewUserList extends HttpServlet {
     }
 
 }
+

@@ -45,7 +45,7 @@ public class SolveRequest extends HttpServlet {
             throws ServletException, IOException {
         String userId = request.getParameter("userid");
         request.setAttribute("userId", userId);
-        request.getRequestDispatcher("view/changePassByAdmin.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/admin/changePassByAdmin.jsp").forward(request, response);
     }
 
     @Override
@@ -60,3 +60,4 @@ public class SolveRequest extends HttpServlet {
     }
 
 }
+

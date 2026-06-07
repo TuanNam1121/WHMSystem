@@ -30,7 +30,7 @@ public class Home extends HttpServlet {
         request.setAttribute("user", user);
         if (role.getRoleNamFromRoleID(user.getRoleId()).equals("ADMIN")) {
             response.sendRedirect("AdminDashBoard");
-        } else request.getRequestDispatcher("view/home.jsp").forward(request, response);
+        } else request.getRequestDispatcher("WEB-INF/view/home/home.jsp").forward(request, response);
     }
 
     @Override
@@ -44,3 +44,4 @@ public class Home extends HttpServlet {
     }
 
 }
+

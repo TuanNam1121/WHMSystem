@@ -61,7 +61,7 @@ public class AddBrand extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setAttribute("act", "new");
-        request.getRequestDispatcher("view/addBrand.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/brand/addBrand.jsp").forward(request, response);
         return;
     }
 
@@ -83,7 +83,7 @@ public class AddBrand extends HttpServlet {
         
         if(name == null || name.trim().isEmpty()){
             request.setAttribute("message", "name required");
-            request.getRequestDispatcher("view/addBrand.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/brand/addBrand.jsp").forward(request, response);
             return;
         }
         
@@ -91,7 +91,7 @@ public class AddBrand extends HttpServlet {
          
          if(check != null){
              request.setAttribute("message", "Brand exist");
-            request.getRequestDispatcher("view/addBrand.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/brand/addBrand.jsp").forward(request, response);
             return;
          }
          
@@ -117,3 +117,4 @@ public class AddBrand extends HttpServlet {
     }// </editor-fold>
 
 }
+

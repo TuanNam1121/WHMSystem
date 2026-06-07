@@ -32,6 +32,7 @@ public class ChipList extends HttpServlet {
 
         request.setAttribute("chips", chips);
         request.setAttribute("status", status);
-        request.getRequestDispatcher("view/chipList.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/product/chipList.jsp").forward(request, response);
     }
 }
+

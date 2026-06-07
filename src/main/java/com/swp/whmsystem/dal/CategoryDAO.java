@@ -130,6 +130,7 @@ public class CategoryDAO {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return false;
     }
 
 //    public boolean deleteCategoryById(int categoryId) {

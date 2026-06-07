@@ -21,7 +21,7 @@ public class CreatePurchaseRequest extends HttpServlet {
         
         request.setAttribute("productList", productList);
         
-        request.getRequestDispatcher("view/createPurchaseRequest.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/product/createPurchaseRequest.jsp").forward(request, response);
     }
 
     @Override
@@ -35,3 +35,4 @@ public class CreatePurchaseRequest extends HttpServlet {
         return "Short description";
     }
 }
+

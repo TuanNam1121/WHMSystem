@@ -21,7 +21,7 @@ public class ViewProfile extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("view/profile.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/user/profile.jsp").forward(request, response);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ViewProfile extends HttpServlet {
             firstname = user.getFirstname();
         } else if (!InputValidationUtil.isName(firstname)) { // Nếu có nhập thì mới check format
             session.setAttribute("error", "Firstname is not valid");
-            request.getRequestDispatcher("/view/profile.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
             return;
         }
 
@@ -53,7 +53,7 @@ public class ViewProfile extends HttpServlet {
             lastname = user.getLastname();
         } else if (!InputValidationUtil.isName(lastname)) {
             session.setAttribute("error", "Lastname is not valid");
-            request.getRequestDispatcher("/view/profile.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
             return;
         }
 
@@ -62,7 +62,7 @@ public class ViewProfile extends HttpServlet {
             email = user.getEmail();
         } else if (!InputValidationUtil.isEmail(email)) {
             session.setAttribute("error", "Email is not valid");
-            request.getRequestDispatcher("/view/profile.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
             return;
         }
 
@@ -71,7 +71,7 @@ public class ViewProfile extends HttpServlet {
             phone = user.getPhone();
         } else if (!InputValidationUtil.isPhone(phone)) {
             session.setAttribute("error", "Phone is not valid");
-            request.getRequestDispatcher("/view/profile.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
             return;
         }
 
@@ -102,3 +102,4 @@ public class ViewProfile extends HttpServlet {
     }
 
 }
+

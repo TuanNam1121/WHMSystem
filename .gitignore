@@ -73,7 +73,3 @@ $RECYCLE.BIN/
 *.jar
 config/properties/local.properties
 
-# ====================================================================
-# 6. LOCAL OVERRIDES (Chặn file cấu hình database của mỗi người)
-# ====================================================================
-src/main/java/com/swp/whmsystem/dal/DBContext.java

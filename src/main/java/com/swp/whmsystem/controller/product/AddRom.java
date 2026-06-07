@@ -25,7 +25,7 @@ public class AddRom extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("view/addRom.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/product/addRom.jsp").forward(request, response);
     }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -36,13 +36,13 @@ public class AddRom extends HttpServlet {
 
         if (romSize.isEmpty()) {
             request.setAttribute("message", "Storage size is required");
-            request.getRequestDispatcher("view/addRom.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/product/addRom.jsp").forward(request, response);
             return;
         }
 
         if (romDao.getRomBySize(romSize) != null) {
             request.setAttribute("message", "Storage size already exists");
-            request.getRequestDispatcher("view/addRom.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/product/addRom.jsp").forward(request, response);
             return;
         }
 

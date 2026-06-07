@@ -75,7 +75,7 @@ public class PermissionDetail extends HttpServlet {
             request.setAttribute("p", p);
         }
 
-        request.getRequestDispatcher("view/permissionDetail.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/admin/permissionDetail.jsp").forward(request, response);
     }
 
     /**
@@ -103,3 +103,4 @@ public class PermissionDetail extends HttpServlet {
     }// </editor-fold>
 
 }
+

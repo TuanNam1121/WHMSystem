@@ -22,7 +22,7 @@ public class UpdateCategory extends HttpServlet {
         CategoryDAO categoryDAO = new CategoryDAO();
         Category c = categoryDAO.getCategoryById(id);
         request.setAttribute("category", c);
-        request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/category/updateCategory.jsp").forward(request, response);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class UpdateCategory extends HttpServlet {
             String error = "Please do not input space!";
             request.setAttribute("error", error);
             request.setAttribute("category", category);
-            request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/category/updateCategory.jsp").forward(request, response);
             return;
         }
 
@@ -58,7 +58,7 @@ public class UpdateCategory extends HttpServlet {
             String error = "Please do not input space!";
             request.setAttribute("error", error);
             request.setAttribute("category", category);
-            request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/category/updateCategory.jsp").forward(request, response);
             return;
         }
 
@@ -68,7 +68,7 @@ public class UpdateCategory extends HttpServlet {
             String error = "Category name has already exsisted! Please input another one!";
             request.setAttribute("error", error);
             request.setAttribute("category", category);
-            request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/category/updateCategory.jsp").forward(request, response);
             return;
         }
 
@@ -78,7 +78,7 @@ public class UpdateCategory extends HttpServlet {
 //                    message = "Đã xảy ra lỗi khi deactive danh mục này!";
 //                    request.setAttribute("error", message);
 //                    request.setAttribute("category", category);
-//                    request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
+//                    request.getRequestDispatcher("WEB-INF/view/category/updateCategory.jsp").forward(request, response);
 //                    return;
 //                }
 //                message = "Đã deactive danh mục " + categoryName + " ! Các sản phẩm thuộc danh mục này đã inactive!";
@@ -93,7 +93,7 @@ public class UpdateCategory extends HttpServlet {
 //                message = "Đã xảy ra lỗi khi reactive danh mục này!";
 //                request.setAttribute("error", message);
 //                request.setAttribute("category", category);
-//                request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
+//                request.getRequestDispatcher("WEB-INF/view/category/updateCategory.jsp").forward(request, response);
 //                return;
 //            }
             message = "Reactived category " + categoryName + " ! Please double-check the related products in this category!";
@@ -107,7 +107,7 @@ public class UpdateCategory extends HttpServlet {
             message = "Đã xảy ra lỗi!";
             request.setAttribute("error", message);
             request.setAttribute("category", category);
-            request.getRequestDispatcher("view/updateCategory.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/category/updateCategory.jsp").forward(request, response);
         }
     }
 
@@ -116,3 +116,4 @@ public class UpdateCategory extends HttpServlet {
         return "Short description";
     }
 }
+

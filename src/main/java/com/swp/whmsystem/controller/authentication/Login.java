@@ -23,7 +23,7 @@ public class Login extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("view/login.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/authentication/login.jsp").forward(request, response);
     }
 
     @Override
@@ -46,10 +46,11 @@ public class Login extends HttpServlet {
             response.sendRedirect("home");
         } else if (account != null && !userDAO.isActiveUser(account)) {
             request.setAttribute("error", "Your account is deactive!");
-            request.getRequestDispatcher("view/login.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/authentication/login.jsp").forward(request, response);
         } else {
             request.setAttribute("error", "Username or Password is not correct!");
-            request.getRequestDispatcher("view/login.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/authentication/login.jsp").forward(request, response);
         }
     }
 }
+

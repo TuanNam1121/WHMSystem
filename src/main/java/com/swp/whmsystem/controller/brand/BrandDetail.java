@@ -74,7 +74,7 @@ public class BrandDetail extends HttpServlet {
 
             request.setAttribute("act", "update");
             request.setAttribute("brand", b);
-            request.getRequestDispatcher("view/brandDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/brand/brandDetail.jsp").forward(request, response);
             return;
     }
 
@@ -101,7 +101,7 @@ public class BrandDetail extends HttpServlet {
                 request.setAttribute("brand", brandById);
             
             request.setAttribute("message", "name required");
-            request.getRequestDispatcher("view/brandDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/brand/brandDetail.jsp").forward(request, response);
 
             return;
 
@@ -117,7 +117,7 @@ public class BrandDetail extends HttpServlet {
                 request.setAttribute("brand", brandById);
                 if (brandById.getId() != check.getId()) {
                     request.setAttribute("message", "name exist");
-                    request.getRequestDispatcher("view/brandDetail.jsp").forward(request, response);
+                    request.getRequestDispatcher("WEB-INF/view/brand/brandDetail.jsp").forward(request, response);
                     return;
                 }
              
@@ -153,3 +153,4 @@ public class BrandDetail extends HttpServlet {
     }// </editor-fold>
 
 }
+

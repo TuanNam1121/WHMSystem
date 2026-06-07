@@ -89,7 +89,7 @@ public class EditPermission extends HttpServlet {
             request.setAttribute("p", p);
             request.setAttribute("error", "Permission Name is required");
             request.setAttribute("rolelist", rd.getAllRole());
-            request.getRequestDispatcher("view/permissionDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/admin/permissionDetail.jsp").forward(request, response);
             return;
         }else if(description.equals(null) || description.trim().equals("")){
             PermissionDAO pd = new PermissionDAO();
@@ -99,7 +99,7 @@ public class EditPermission extends HttpServlet {
             request.setAttribute("p", p);
             request.setAttribute("error", "Permission description is required");
             request.setAttribute("rolelist", rd.getAllRole());
-            request.getRequestDispatcher("view/permissionDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/admin/permissionDetail.jsp").forward(request, response);
             return;
         }
 
@@ -138,3 +138,4 @@ public class EditPermission extends HttpServlet {
     }// </editor-fold>
 
 }
+

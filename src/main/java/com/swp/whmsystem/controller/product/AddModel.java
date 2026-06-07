@@ -29,7 +29,7 @@ public class AddModel extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setAttribute("brands", brandDao.getAllBrand());
-        request.getRequestDispatcher("view/addModel.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/product/addModel.jsp").forward(request, response);
     }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -42,14 +42,14 @@ public class AddModel extends HttpServlet {
         if (modelName.isEmpty()) {
             request.setAttribute("message", "Model name is required");
             request.setAttribute("brands", brandDao.getAllBrand());
-            request.getRequestDispatcher("view/addModel.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/product/addModel.jsp").forward(request, response);
             return;
         }
 
         if (modelDao.getModelByName(modelName) != null) {
             request.setAttribute("message", "Model name already exists");
             request.setAttribute("brands", brandDao.getAllBrand());
-            request.getRequestDispatcher("view/addModel.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/product/addModel.jsp").forward(request, response);
             return;
         }
 

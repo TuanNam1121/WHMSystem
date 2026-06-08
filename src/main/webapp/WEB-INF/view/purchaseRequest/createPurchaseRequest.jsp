@@ -163,21 +163,14 @@
 
 
 <script src="${pageContext.request.contextPath}/assets/js/jquery-3.6.0.min.js"></script>
-
 <script src="${pageContext.request.contextPath}/assets/js/feather.min.js"></script>
-
 <script src="${pageContext.request.contextPath}/assets/js/jquery.slimscroll.min.js"></script>
-
 <script src="${pageContext.request.contextPath}/assets/js/bootstrap.bundle.min.js"></script>
-
 <script src="${pageContext.request.contextPath}/assets/plugins/select2/js/select2.min.js"></script>
-
 <script src="${pageContext.request.contextPath}/assets/js/moment.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/bootstrap-datetimepicker.min.js"></script>
-
 <script src="${pageContext.request.contextPath}/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/plugins/sweetalert/sweetalerts.min.js"></script>
-
 <script src="${pageContext.request.contextPath}/assets/js/script.js"></script>
 
 <script>
@@ -292,13 +285,29 @@
                 confirmButtonText: 'Yes, Send it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Request Sent!',
-                        text: 'Your purchase request has been sent to the Manager.',
-                        confirmButtonColor: '#FF9F43'
-                    }).then(() => {
-                        window.location.href = 'purchase-request-list.html';
+                    $.ajax({
+                        url: '${pageContext.request.contextPath}/createPurchaseRequest',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(selectedItems),
+                        success: function (response) {
+                            if (response.status === 'success') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Request Sent!',
+                                    text: 'Your purchase request has been sent to the Manager.',
+                                    confirmButtonColor: '#FF9F43'
+                                }).then(() => {
+                                    // Change this to the actual URL of your list page
+                                    window.location.href = '${pageContext.request.contextPath}/purchaseRequestList';
+                                });
+                            } else {
+                                Swal.fire('Error', response.message || 'Failed to send request', 'error');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.fire('Error', 'Something went wrong! Please try again.', 'error');
+                        }
                     });
                 }
             });

@@ -27,8 +27,8 @@
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-<jsp:include page="/common/header.jsp"></jsp:include>
-<jsp:include page="/common/sidebar.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/common/header.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/common/sidebar.jsp"></jsp:include>
 
 <div id="global-loader">
     <div class="whirly-loader"></div>

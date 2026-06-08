@@ -30,8 +30,8 @@
 
 <div class="main-wrapper">
 
-    <jsp:include page="/common/header.jsp"></jsp:include>
-    <jsp:include page="/common/sidebar.jsp"></jsp:include>
+    <jsp:include page="/WEB-INF/common/header.jsp"></jsp:include>
+    <jsp:include page="/WEB-INF/common/sidebar.jsp"></jsp:include>
 
 
     <div class="page-wrapper">

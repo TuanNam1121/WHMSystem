@@ -12,9 +12,9 @@
 </head>
 <body>
 <div class="wrapper">
-    <jsp:include page="/common/adminSidebar.jsp"/>
+    <jsp:include page="/WEB-INF/common/adminSidebar.jsp"/>
     <main class="main-content">
-        <jsp:include page="/common/adminTopbar.jsp"/>
+        <jsp:include page="/WEB-INF/common/adminTopbar.jsp"/>
         <section class="content-box">
             <h2>Change Password</h2>
 

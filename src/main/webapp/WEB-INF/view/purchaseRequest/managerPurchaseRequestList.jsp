@@ -6,28 +6,22 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <meta name="description" content="POS - Purchase Request List for Salesman">
+    <meta name="description" content="POS - Manager Purchase Request List">
     <meta name="keywords"
           content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Purchase Request List - Dreams Pos</title>
+    <title>Manager - Purchase Request List - Dreams Pos</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
 
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-
     <link rel="stylesheet" href="assets/css/bootstrap-datetimepicker.min.css">
-
     <link rel="stylesheet" href="assets/css/animate.css">
-
     <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
-
     <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
-
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
-
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -45,12 +39,7 @@
             <div class="page-header">
                 <div class="page-title">
                     <h4>PURCHASE REQUEST LIST</h4>
-                    <h6>Manage your purchase requests</h6>
-                </div>
-                <div class="page-btn">
-                    <a href="createPurchaseRequest" class="btn btn-added" id="btn-create-request">
-                        <img src="assets/img/icons/plus.svg" alt="img">Create Request
-                    </a>
+                    <h6>View and manage all purchase requests from Salesmen</h6>
                 </div>
             </div>
 
@@ -138,7 +127,7 @@
                     </div>
 
                     <div class="table-responsive">
-                        <table class="table datanew" id="purchase-request-table">
+                        <table class="table datanew" id="manager-purchase-request-table">
                             <thead>
                             <tr>
                                 <th>
@@ -148,6 +137,7 @@
                                     </label>
                                 </th>
                                 <th>Request Code</th>
+                                <th>Created By</th>
                                 <th>Note</th>
                                 <th>Status</th>
                                 <th>Created At</th>
@@ -164,6 +154,7 @@
                                         </label>
                                     </td>
                                     <td class="text-bolds"><fmt:formatNumber value="${pr.id}" pattern="000"/></td>
+                                    <td>${pr.createdBy}</td>
                                     <td>${pr.note}</td>
                                     <td>
                                         <c:choose>
@@ -189,22 +180,10 @@
                                     </td>
                                     <td><fmt:formatDate value="${pr.createdAt}" pattern="dd MMM yyyy"/></td>
                                     <td>
-                                        <c:choose>
-                                            <c:when test="${pr.status == 'New' || pr.status == 'NEW'}">
-                                                <a class="me-3" href="updatePurchaseRequest?id=${pr.id}" id="btn-update-pr${pr.id}">
-                                                    <img src="assets/img/icons/edit.svg" alt="img">
-                                                </a>
-                                                <a class="me-3 confirm-text" href="javascript:void(0);" id="btn-delete-pr${pr.id}">
-                                                    <img src="assets/img/icons/delete.svg" alt="img">
-                                                </a>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <a class="me-3" href="javascript:void(0);" style="opacity:0.4;cursor:not-allowed;"
-                                                   title="Cannot edit - ${pr.status}" id="btn-update-pr${pr.id}">
-                                                    <img src="assets/img/icons/edit.svg" alt="img">
-                                                </a>
-                                            </c:otherwise>
-                                        </c:choose>
+                                        <a class="btn btn-sm btn-outline-primary"
+                                           href="managerPurchaseRequestDetail?id=${pr.id}" id="btn-view-pr${pr.id}">
+                                            <i class="fas fa-eye me-1"></i> View Detail
+                                        </a>
                                     </td>
                                 </tr>
                             </c:forEach>

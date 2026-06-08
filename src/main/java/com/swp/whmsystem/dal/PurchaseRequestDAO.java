@@ -82,8 +82,7 @@ public class PurchaseRequestDAO {
         c.setStatus(rs.getString("status"));
         c.setNote(rs.getString("note"));
         Timestamp ts = rs.getTimestamp("createdat");
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        String formattedDate = sdf.format(ts);
+        c.setCreatedAt(ts);
         return c;
     }
 

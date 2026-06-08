@@ -40,8 +40,8 @@
                                                        alt="img"><span> Purchase</span>
                         <span class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="purchaseRequestList">Purchase List</a></li>
-                        <li><a href="importpurchase.html">Import Purchase</a></li>
+                        <li><a href="purchaseRequestList">Purchase List for salesman</a></li>
+                        <li><a href="managerPurchaseRequestList">Purchase List for manager</a></li>
                     </ul>
                 </li>
                 <li class="submenu">

@@ -46,12 +46,11 @@
                 </li>
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="assets/img/icons/expense1.svg"
-                                                       alt="img"><span> Expense</span> <span
+                                                       alt="img"><span> Import</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="expenselist.html">Expense List</a></li>
-                        <li><a href="createexpense.html">Add Expense</a></li>
-                        <li><a href="expensecategory.html">Expense Category</a></li>
+                        <li><a href="expenselist.html">Import Request List</a></li>
+                        <li><a href="createexpense.html">Import History</a></li>
                     </ul>
                 </li>
                 <li class="submenu">

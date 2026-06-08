@@ -40,8 +40,7 @@
                                                        alt="img"><span> Purchase</span>
                         <span class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="purchaselist.html">Purchase List</a></li>
-                        <li><a href="addpurchase.jsp">Add Purchase</a></li>
+                        <li><a href="purchaseRequestList">Purchase List</a></li>
                         <li><a href="importpurchase.html">Import Purchase</a></li>
                     </ul>
                 </li>

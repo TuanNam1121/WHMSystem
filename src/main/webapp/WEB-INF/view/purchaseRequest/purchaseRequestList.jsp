@@ -54,6 +54,19 @@
                 </div>
             </div>
 
+            <c:if test="${not empty message}">
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>${message}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </c:if>
+            <c:if test="${not empty error}">
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>${error}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </c:if>
+
             <div class="card">
                 <div class="card-body">
                     <div class="table-top">

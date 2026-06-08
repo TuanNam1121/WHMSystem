@@ -61,13 +61,13 @@ public class CreatePurchaseRequest extends HttpServlet {
                 purchaseItemDAO.insertPurchaseItem(purchaseItem);
             } catch (NumberFormatException e) {
                 request.setAttribute("error", "Quantity error!");
-                request.getRequestDispatcher("createPurchaseRequest.jsp").forward(request, response);
+                request.getRequestDispatcher("createPurchaseRequest").forward(request, response);
                 return;
             }
             i++;
         }
-        request.setAttribute("message", "Create a purchase request successfully! Wait for the confirmation by manager!");
-        request.getRequestDispatcher("purchaseRequestList.jsp").forward(request, response);
+        request.getSession().setAttribute("message", "Create a purchase request successfully! Wait for the confirmation by manager!");
+        response.sendRedirect("purchaseRequestList");
     }
 
     @Override

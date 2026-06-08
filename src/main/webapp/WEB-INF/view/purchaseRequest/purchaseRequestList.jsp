@@ -54,17 +54,19 @@
                 </div>
             </div>
 
-            <c:if test="${not empty message}">
+            <c:if test="${not empty sessionScope.message}">
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <strong>${message}</strong>
+                    <strong>${sessionScope.message}</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+                <% session.removeAttribute("message"); %>
             </c:if>
-            <c:if test="${not empty error}">
+            <c:if test="${not empty sessionScope.error}">
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <strong>${error}</strong>
+                    <strong>${sessionScope.error}</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+                <% session.removeAttribute("error"); %>
             </c:if>
 
             <div class="card">

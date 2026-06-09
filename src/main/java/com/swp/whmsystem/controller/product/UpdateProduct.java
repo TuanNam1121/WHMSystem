@@ -87,7 +87,7 @@ public class UpdateProduct extends HttpServlet {
         } catch (NumberFormatException ex) {
             String error = ex.getMessage();
         }
-        request.getRequestDispatcher("WEB-INF/view/product/productDetail.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);
     }
 
     /**
@@ -246,14 +246,14 @@ public class UpdateProduct extends HttpServlet {
         Product skuExistedProduct = productDao.getProductFromSKU(sku);
         if (skuExistedProduct != null && skuExistedProduct.getProductId() != product.getProductId()) {
             request.setAttribute("message", "SKU was existed in other product !");
-            request.getRequestDispatcher("WEB-INF/view/product/productDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);
             return;
         }
 
         String error = ProductValidation.isProductValid(product);
         if (!"true".equals(error)) {
             request.setAttribute("message", error);
-            request.getRequestDispatcher("WEB-INF/view/product/productDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);
             return;
         }
 
@@ -265,7 +265,7 @@ public class UpdateProduct extends HttpServlet {
                 request.setAttribute("product", product);
                 request.setAttribute("cautioned", "yes");
                 request.setAttribute("message", "This product have a same product having same specification. Do you want to update this product ?");
-                request.getRequestDispatcher("WEB-INF/view/product/productDetail.jsp").forward(request, response);
+                request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);
             } else {
                 if (productDao.updateProduct(product)) {
                     response.sendRedirect("productlist");

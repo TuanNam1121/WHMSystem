@@ -40,6 +40,7 @@
                             <div class="page-title">
                                 <h4>Import Request List</h4>
                                 <h6>View All Import Request</h6>
+                                ${message}
                             </div>
                         </div>
 
@@ -133,42 +134,33 @@
                                         </div>
                                     </div>
                                 </form>
+                                <!-- GoodReceiptID | PurchaseRequestID | CreatedBy | Created At | Total Item | Action -->
                                 <div class="table-responsive">
                                     <table class="table  datanew">
                                         <thead>
                                             <tr>
                                                 <th>Receipt ID</th>
                                                 <th>Purchase Request ID</th>
-                                                <th>Supplier</th>
-                                                <th>Import By</th>
-                                                <th>Items</th>
-                                                <th>Total</th>
+                                                <th>Created By</th>
+                                                <th>Created At</th>
+                                                <th>Total Items</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
 
-                                        <c:forEach items="${sessionScope.productList}" var="p">
+                                        <c:forEach items="${list}" var="p">
                                             <tr>
-                                                <td>
-                                                    <label class="checkboxs">
-                                                        <input type="checkbox">
-                                                        <span class="checkmarks"></span>
-                                                    </label>
-                                                </td>
-                                                <td class="productimgname">
-                                                    <a href="javascript:void(0);" class="product-img">
-                                                        <img src="${p.imgUrl}" alt="product">
-                                                    </a>
-                                                    <p>${p.name}</p>
-                                                </td>
-                                                <td>${p.sku}</td>
-                                                <td>${p.category.name}</td>
-                                                <td>${p.brand.name}</td>
-                                                <td>${p.totalQuantity}</td>
-                                                <td>${p.isActive ? "Active" : "Inactive"}</td>
+                                                <td>GR-${p.goodReceiptId}</td>
+                                                <td>PR-${p.purchaseRequestId.name}</td>
+                                                <td>${p.createdBy}</td>
+                                                <td>${p.createdAt}</td>
+                                                <td>${p.totalItem}</td>
                                                 <td>
                                                     <a class="me-3" href="UpdateProduct?productid=${p.productId}">
+                                                        <img src="assets/img/icons/eye.svg" alt="img">
+                                                    </a>
+                                                    <a class="me-3" href="ImportProduct?goodReceipt=${p.goodReceiptId}">
                                                         <img src="assets/img/icons/eye.svg" alt="img">
                                                     </a>
                                                 </td>

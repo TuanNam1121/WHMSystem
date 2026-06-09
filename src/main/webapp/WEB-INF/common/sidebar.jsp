@@ -65,9 +65,7 @@
                                                        alt="img"><span> Transfer</span>
                         <span class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="transferlist.html">Transfer List</a></li>
-                        <li><a href="addtransfer.jsp">Add Transfer </a></li>
-                        <li><a href="importtransfer.html">Import Transfer </a></li>
+                        <li><a href="exportProduct">Export Product</a></li>
                     </ul>
                 </li>
                 <li class="submenu">

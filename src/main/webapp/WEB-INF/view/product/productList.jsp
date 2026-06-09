@@ -159,12 +159,6 @@
                         <table class="table  datanew">
                             <thead>
                             <tr>
-                                <th>
-                                    <label class="checkboxs">
-                                        <input type="checkbox" id="select-all">
-                                        <span class="checkmarks"></span>
-                                    </label>
-                                </th>
                                 <th>Product</th>
                                 <th>SKU</th>
                                 <th>Category</th>
@@ -178,12 +172,6 @@
 
                             <c:forEach items="${sessionScope.productList}" var="p">
                                 <tr>
-                                    <td>
-                                        <label class="checkboxs">
-                                            <input type="checkbox">
-                                            <span class="checkmarks"></span>
-                                        </label>
-                                    </td>
                                     <td class="productimgname">
                                         <a href="javascript:void(0);" class="product-img">
                                             <img src="${p.imgUrl}" alt="product">
@@ -196,8 +184,12 @@
                                     <td>${p.totalQuantity}</td>
                                     <td>${p.isActive ? "Active" : "Inactive"}</td>
                                     <td>
-                                        <a class="me-3" href="UpdateProduct?productid=${p.productId}">
+
+                                        <a class="me-3" href="productDetails?productId=${p.productId}">
                                             <img src="assets/img/icons/eye.svg" alt="img">
+                                        </a>
+                                        <a class="me-3" href="UpdateProduct?productid=${p.productId}">
+                                            <img src="assets/img/icons/edit.svg" alt="img">
                                         </a>
                                     </td>
                                 </tr>

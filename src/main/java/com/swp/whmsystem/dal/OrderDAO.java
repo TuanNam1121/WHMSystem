@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package com.swp.whmsystem.dal;
 
 import com.swp.whmsystem.model.Order;
@@ -14,7 +13,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class OrderDAO {
 
@@ -28,6 +26,25 @@ public class OrderDAO {
         String sql = "select * from orders";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            List<Order> result = new ArrayList<>();
+            while (rs.next()) {
+                Order o = mapResultSetToOrder(rs);
+                result.add(o);
+            }
+            return result;
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return null;
+    }
+
+    public List<Order> getOrderByCustomer(String name) {
+
+        try (Connection conn = DBContext.getConnection()) {
+            String sql = "select o.* from orders o join customers c on o.customer_id = c.id where c.name LIKE ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, "%" + name + "%");
+            ResultSet rs = ps.executeQuery();
             List<Order> result = new ArrayList<>();
             while (rs.next()) {
                 Order o = mapResultSetToOrder(rs);
@@ -78,7 +95,7 @@ public class OrderDAO {
             st.setInt(6, o.getCreatedBy());
             st.setInt(7, o.getCustomerId());
             st.executeUpdate();
-            
+
             sql = "select * from orders order by id desc limit 1";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -99,7 +116,7 @@ public class OrderDAO {
             st = conn.prepareStatement(sql);
             st.setString(1, o.getStatus());
             st.setDouble(2, o.getTotalPrice());
-            st.setString(3,o.getNote());
+            st.setString(3, o.getNote());
             st.setTimestamp(4, o.getUpdatedAt());
             st.setInt(5, o.getId());
             st.executeUpdate();
@@ -126,7 +143,6 @@ public class OrderDAO {
         return o;
     }
 
-
 //    public static void main(String[] args) {
 //
 //        BrandDAO dao = new BrandDAO();
@@ -151,6 +167,4 @@ public class OrderDAO {
 //            System.out.println(asd);
 //        }
 //    }
-
-
 }

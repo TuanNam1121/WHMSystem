@@ -1,3 +1,6 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -266,92 +269,37 @@
 <th>Action</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td>
-<label class="checkboxs"><input type="checkbox"><span class="checkmarks"></span></label>
-</td>
-<td class="text-bolds">IR-001</td>
-<td>Import Apple products - approved from PR-001 by Manager</td>
-<td><span class="badges bg-lightyellow">New</span></td>
-<td>06 Jun 2026</td>
-<td>
-<a class="btn btn-sm btn-outline-primary" href="warehouse-import-request-detail.html" id="btn-view-ir001">
-<i class="fas fa-eye me-1"></i> View Detail
-</a>
-</td>
-</tr>
-<tr>
-<td>
-<label class="checkboxs"><input type="checkbox"><span class="checkmarks"></span></label>
-</td>
-<td class="text-bolds">IR-002</td>
-<td>Import Samsung accessories - approved from PR-002 by Manager</td>
-<td><span class="badges bg-lightpurple">Doing</span></td>
-<td>05 Jun 2026</td>
-<td>
-<a class="btn btn-sm btn-outline-info" href="warehouse-import-request-detail.html?status=doing" id="btn-view-ir002">
-<i class="fas fa-eye me-1"></i> View Detail
-</a>
-</td>
-</tr>
-<tr>
-<td>
-<label class="checkboxs"><input type="checkbox"><span class="checkmarks"></span></label>
-</td>
-<td class="text-bolds">IR-003</td>
-<td>Import laptop peripherals and cables - approved from PR-003</td>
-<td><span class="badges bg-lightgreen">Completed</span></td>
-<td>03 Jun 2026</td>
-<td>
-<a class="btn btn-sm btn-outline-secondary" href="warehouse-import-request-detail.html?status=completed" id="btn-view-ir003">
-<i class="fas fa-eye me-1"></i> View Detail
-</a>
-</td>
-</tr>
-<tr>
-<td>
-<label class="checkboxs"><input type="checkbox"><span class="checkmarks"></span></label>
-</td>
-<td class="text-bolds">IR-004</td>
-<td>Import printer ink cartridges HP & Canon - approved from PR-005</td>
-<td><span class="badges bg-lightyellow">New</span></td>
-<td>28 May 2026</td>
-<td>
-<a class="btn btn-sm btn-outline-primary" href="warehouse-import-request-detail.html" id="btn-view-ir004">
-<i class="fas fa-eye me-1"></i> View Detail
-</a>
-</td>
-</tr>
-<tr>
-<td>
-<label class="checkboxs"><input type="checkbox"><span class="checkmarks"></span></label>
-</td>
-<td class="text-bolds">IR-005</td>
-<td>Import USB-C hubs and docking stations - approved from PR-007</td>
-<td><span class="badges bg-lightpurple">Doing</span></td>
-<td>25 May 2026</td>
-<td>
-<a class="btn btn-sm btn-outline-info" href="warehouse-import-request-detail.html?status=doing" id="btn-view-ir005">
-<i class="fas fa-eye me-1"></i> View Detail
-</a>
-</td>
-</tr>
-<tr>
-<td>
-<label class="checkboxs"><input type="checkbox"><span class="checkmarks"></span></label>
-</td>
-<td class="text-bolds">IR-006</td>
-<td>Import iPhone cases and screen protectors - approved from PR-008</td>
-<td><span class="badges bg-lightgreen">Completed</span></td>
-<td>20 May 2026</td>
-<td>
-<a class="btn btn-sm btn-outline-secondary" href="warehouse-import-request-detail.html?status=completed" id="btn-view-ir006">
-<i class="fas fa-eye me-1"></i> View Detail
-</a>
-</td>
-</tr>
-</tbody>
+                            <c:forEach items="${importRequests}" var="req">
+                                <tr>
+                                    <td>
+                                        <label class="checkboxs"><input type="checkbox"><span class="checkmarks"></span></label>
+                                    </td>
+                                    <td class="text-bolds">PR-<fmt:formatNumber value="${req.purchaseRequestId}" pattern="000"/></td>
+                                    <td>${req.note}</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${req.status == 'NEW' || req.status == 'New'}">
+                                                <span class="badges bg-lightyellow">New</span>
+                                            </c:when>
+                                            <c:when test="${req.status == 'DOING' || req.status == 'Doing'}">
+                                                <span class="badges bg-lightpurple">Doing</span>
+                                            </c:when>
+                                            <c:when test="${req.status == 'COMPLETED' || req.status == 'Completed'}">
+                                                <span class="badges bg-lightgreen">Completed</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="badges bg-lightyellow">${req.status}</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td><fmt:formatDate value="${req.createdAt}" pattern="dd MMM yyyy HH:mm" /></td>
+                                    <td>
+                                        <a class="btn btn-sm btn-outline-primary" href="warehouseImportRequestDetail?id=${req.id}">
+                                            <i class="fas fa-eye me-1"></i> View Detail
+                                        </a>
+                                    </td>
+                                </tr>
+                            </c:forEach>
 </table>
 </div>
 </div>

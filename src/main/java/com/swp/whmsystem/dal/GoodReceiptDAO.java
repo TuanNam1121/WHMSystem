@@ -68,16 +68,18 @@ public class GoodReceiptDAO {
         c.setProcessedBy(rs.getInt("processedby"));
         c.setStatus(rs.getString("status"));
         c.setCreatedAt(rs.getTimestamp("created_at"));
+        c.setNote(rs.getString("note"));
         return c;
     }
 
     public boolean insertGoodReceipt(GoodReceipt receipt) {
-        String sql = "insert into good_receipts (purchaserequestid, processedby, status) values (?, ?, ?)";
+        String sql = "insert into good_receipts (purchaserequestid, processedby, status, note) values (?, ?, ?, ?)";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, receipt.getPurchaseRequestId());
             preparedStatement.setInt(2, receipt.getProcessedBy());
             preparedStatement.setString(3, receipt.getStatus() != null ? receipt.getStatus() : "DRAFT");
+            preparedStatement.setString(4, receipt.getNote());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -85,13 +87,14 @@ public class GoodReceiptDAO {
     }
 
     public boolean updateGoodReceipt(GoodReceipt receipt) {
-        String sql = "update good_receipts set purchaserequestid = ?, processedby = ?, status = ? where id = ?";
+        String sql = "update good_receipts set purchaserequestid = ?, processedby = ?, status = ?, note = ? where id = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, receipt.getPurchaseRequestId());
             preparedStatement.setInt(2, receipt.getProcessedBy());
             preparedStatement.setString(3, receipt.getStatus() != null ? receipt.getStatus() : "DRAFT");
-            preparedStatement.setInt(4, receipt.getId());
+            preparedStatement.setString(4, receipt.getNote());
+            preparedStatement.setInt(5, receipt.getId());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);

@@ -55,9 +55,8 @@
                                         <div class="col-lg-3 col-sm-6 col-12">
                                             <div class="form-group">
                                                 <label>Request Code</label>
-                                                <input type="text" value="<fmt:formatNumber value="
-                                                    ${purchaseRequest.id}" pattern="000" />" disabled
-                                                class="form-control" id="detail-request-code">
+                                                <input type="text" value="PR-<fmt:formatNumber value='${purchaseRequest.id}' pattern='000' />" disabled
+                                                    class="form-control" id="detail-request-code">
                                             </div>
                                         </div>
                                         <div class="col-lg-3 col-sm-6 col-12">

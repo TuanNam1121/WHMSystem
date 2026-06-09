@@ -14,7 +14,7 @@ public class ImportRequestList extends HttpServlet {
             throws ServletException, IOException {
         String message = "oke";
         request.setAttribute("message", message);
-        request.getRequestDispatcher("WEB-INF/view/import/ImportList.jsp").forward(request,response);
+        request.getRequestDispatcher("WEB-INF/view/import/importRequestList.jsp").forward(request,response);
     }
 
     @Override

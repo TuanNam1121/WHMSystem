@@ -4,10 +4,8 @@ import com.swp.whmsystem.dal.PurchaseRequestDAO;
 import com.swp.whmsystem.dal.PurchaseItemDAO;
 import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.dal.UserDAO;
-import com.swp.whmsystem.model.PurchaseRequest;
-import com.swp.whmsystem.model.PurchaseItem;
-import com.swp.whmsystem.model.Product;
-import com.swp.whmsystem.model.User;
+import com.swp.whmsystem.dal.GoodReceiptDAO;
+import com.swp.whmsystem.model.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -53,8 +51,16 @@ public class ManagerPurchaseRequestDetail extends HttpServlet {
             }
         }
         
-        // Fetch all warehouse staffs. Assuming Role 5 is WAREHOUSE_PROCESSOR as per RoleDAO
-        List<User> warehouseStaffs = userDao.searchUser(null, "5", null);
+        List<User> warehouseStaffs = userDao.searchUser(null, "3", null);
+        
+        if (!"NEW".equalsIgnoreCase(pr.getStatus())) {
+            GoodReceiptDAO grDao = new GoodReceiptDAO();
+            GoodReceipt gr = grDao.getGoodReceiptByPurchaseRequestId(id);
+            if (gr != null) {
+                User assignedStaff = userDao.getUserFromId(gr.getProcessedBy());
+                request.setAttribute("assignedStaff", assignedStaff);
+            }
+        }
         
         request.setAttribute("purchaseRequest", pr);
         request.setAttribute("salesman", salesman);
@@ -68,6 +74,34 @@ public class ManagerPurchaseRequestDetail extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response);
+        String button = request.getParameter("buttonSubmit");
+        int purReqId = Integer.parseInt(request.getParameter("purchaseRequestId"));
+        PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
+        PurchaseRequest purchaseRequest = purchaseRequestDAO.getPurchaseRequestById(purReqId);
+
+        if (button.equalsIgnoreCase("Reject")) {
+            purchaseRequest.setStatus("REJECTED");
+            purchaseRequestDAO.updatePurchaseRequest(purchaseRequest);
+            response.sendRedirect("managerPurchaseRequestList");
+        } else {
+            purchaseRequest.setStatus("APPROVED");
+            purchaseRequestDAO.updatePurchaseRequest(purchaseRequest);
+
+            String note = request.getParameter("note");
+            String warehouseStaffIdStr = request.getParameter("staffId");
+            int warehouseStaffId = Integer.parseInt(warehouseStaffIdStr);
+
+            GoodReceipt g = new GoodReceipt();
+            g.setPurchaseRequestId(purchaseRequest.getId());
+            g.setProcessedBy(warehouseStaffId);
+            g.setStatus("NEW");
+            if (note != null)
+                g.setNote(note);
+
+            GoodReceiptDAO grDao = new GoodReceiptDAO();
+            grDao.insertGoodReceipt(g);
+
+            response.sendRedirect("managerPurchaseRequestList");
+        }
     }
 }

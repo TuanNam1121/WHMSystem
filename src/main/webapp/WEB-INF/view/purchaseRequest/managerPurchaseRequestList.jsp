@@ -154,7 +154,7 @@
                                         </label>
                                     </td>
                                     <td class="text-bolds"><fmt:formatNumber value="${pr.id}" pattern="000"/></td>
-                                    <td>${pr.createdBy}</td>
+                                    <td>${pr.createdByUsername}</td>
                                     <td>${pr.note}</td>
                                     <td>
                                         <c:choose>

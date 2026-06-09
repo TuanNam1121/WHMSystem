@@ -170,7 +170,7 @@ DROP TABLE IF EXISTS `inventory_audit`;
 CREATE TABLE `inventory_audit` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `createdby` int(11) NOT NULL,
-  `status` enum('DRAFT','CANCELLED','SUBMITTED','COMPLETED','PENDING') DEFAULT 'DRAFT',
+  `status` enum('DRAFT','CANCELLED','SUBMITTED','COMPLETED','PENDING','REJECTED') DEFAULT 'DRAFT',
   `createdat` datetime DEFAULT CURRENT_TIMESTAMP,
   `updatedat` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -288,14 +288,11 @@ CREATE TABLE `order_items` (
   `productid` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
   `price` decimal(15,2) DEFAULT NULL,
-  `customer_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `orderid` (`orderid`),
   KEY `productid` (`productid`),
-  KEY `customer_id` (`customer_id`),
   CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`orderid`) REFERENCES `orders` (`id`),
-  CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`productid`) REFERENCES `products` (`productid`),
-  CONSTRAINT `order_items_ibfk_3` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`)
+  CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`productid`) REFERENCES `products` (`productid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -305,7 +302,7 @@ CREATE TABLE `order_items` (
 
 LOCK TABLES `order_items` WRITE;
 /*!40000 ALTER TABLE `order_items` DISABLE KEYS */;
-INSERT INTO `order_items` VALUES (1,1,1,1,13500000.00,1);
+INSERT INTO `order_items` VALUES (1,1,1,1,13500000.00);
 /*!40000 ALTER TABLE `order_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -358,11 +355,15 @@ CREATE TABLE `orders` (
   `completedat` datetime DEFAULT NULL,
   `createdby` int(11) NOT NULL,
   `processedby` int(11) DEFAULT NULL,
+  `customer_id` int(11) DEFAULT NULL,
+
   PRIMARY KEY (`id`),
   KEY `createdby` (`createdby`),
   KEY `processedby` (`processedby`),
+  KEY `customer_id` (`customer_id`),
   CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`createdby`) REFERENCES `users` (`userid`),
-  CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`processedby`) REFERENCES `users` (`userid`)
+  CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`processedby`) REFERENCES `users` (`userid`),
+  CONSTRAINT `orders_ibfk_3` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -372,7 +373,7 @@ CREATE TABLE `orders` (
 
 LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
-INSERT INTO `orders` VALUES (1,'Nguyen Van A','0988888888','COMPLETED',13500000.00,'Laptop Dell','2026-05-27 11:27:22','2026-05-27 11:27:22','2026-05-27 11:27:22','2026-05-27 11:27:22',5,3);
+INSERT INTO `orders` VALUES (1,'Nguyen Van A','0988888888','COMPLETED',13500000.00,'Laptop Dell','2026-05-27 11:27:22','2026-05-27 11:27:22','2026-05-27 11:27:22','2026-05-27 11:27:22',5,3,1);
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 

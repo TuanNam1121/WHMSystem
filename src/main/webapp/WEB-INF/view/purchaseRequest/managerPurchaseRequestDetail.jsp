@@ -326,77 +326,21 @@
                             var assignedStaff = $('#assign-warehouse-staff').val();
 
                             if (!assignedStaff || assignedStaff === '') {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Warehouse Staff Required',
-                                    text: 'Please assign a Warehouse Staff before approving the request. The assigned staff will handle the product import.',
-                                    confirmButtonColor: '#FF9F43'
-                                });
+                                alert('Please assign a Warehouse Staff before approving the request.');
+                                $('#assign-warehouse-staff').focus();
                                 return;
                             }
 
-                            var staffName = $('#assign-warehouse-staff option:selected').text();
-
-                            Swal.fire({
-                                title: 'Approve Purchase Request?',
-                                html: `
-                        <div style="text-align:left; line-height: 1.8;">
-                            <p>You are about to <strong style="color:#28C76F;">approve</strong> this request.</p>
-                            <p><strong>Request:</strong> PR-<fmt:formatNumber value="${purchaseRequest.id}" pattern="000"/></p>
-                            <p><strong>Assigned Staff:</strong> ` + staffName + `</p>
-                            <hr>
-                            <p class="text-muted">An <strong>Import Request</strong> will be sent to the assigned Warehouse Staff.</p>
-                        </div>
-                    `,
-                                icon: 'question',
-                                showCancelButton: true,
-                                confirmButtonColor: '#28C76F',
-                                cancelButtonColor: '#6c757d',
-                                confirmButtonText: '<i class="fas fa-check me-1"></i> Yes, Approve!',
-                                cancelButtonText: 'Cancel'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    $('#hiddenWarehouseStaffId').val(assignedStaff);
-                                    $('#actionType').val('Accept');
-                                    $('#action-form').submit();
-                                }
-                            });
+                            $('#hiddenWarehouseStaffId').val(assignedStaff);
+                            $('#actionType').val('Accept');
+                            $('#action-form').submit();
                         });
 
                         // === REJECT REQUEST ===
                         $('#btn-reject-request').on('click', function (e) {
                             e.preventDefault();
-                            Swal.fire({
-                                title: 'Reject Purchase Request?',
-                                html: `
-                        <div style="text-align:left; line-height: 1.8;">
-                            <p>You are about to <strong style="color:#EA5455;">reject</strong> this request.</p>
-                            <p><strong>Request:</strong> PR-<fmt:formatNumber value="${purchaseRequest.id}" pattern="000"/></p>
-                            <p><strong>Salesman:</strong> ${salesman.fullName}</p>
-                        </div>
-                    `,
-                                input: 'textarea',
-                                inputLabel: 'Rejection Reason (optional)',
-                                inputPlaceholder: 'Enter reason for rejection...',
-                                inputAttributes: {
-                                    'aria-label': 'Rejection reason'
-                                },
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonColor: '#EA5455',
-                                cancelButtonColor: '#6c757d',
-                                confirmButtonText: '<i class="fas fa-ban me-1"></i> Yes, Reject!',
-                                cancelButtonText: 'Cancel'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    var rejectionReason = result.value;
-                                    if (rejectionReason) {
-                                        $('#manager-note').val(rejectionReason);
-                                    }
-                                    $('#actionType').val('Reject');
-                                    $('#action-form').submit();
-                                }
-                            });
+                            $('#actionType').val('Reject');
+                            $('#action-form').submit();
                         });
                     });
                 </script>

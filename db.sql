@@ -110,8 +110,10 @@ CREATE TABLE `good_receipts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `purchaserequestid` int(11) NOT NULL,
   `processedby` int(11) NOT NULL,
+  `supplier_name` varchar(100) NOT NULL,
   `status` enum('DRAFT','CANCELLED','SUBMITTED','COMPLETED','PENDING','REJECTED') DEFAULT 'DRAFT',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `purchaserequestid` (`purchaserequestid`),
   KEY `processedby` (`processedby`),
@@ -126,7 +128,9 @@ CREATE TABLE `good_receipts` (
 
 LOCK TABLES `good_receipts` WRITE;
 /*!40000 ALTER TABLE `good_receipts` DISABLE KEYS */;
-INSERT INTO `good_receipts` VALUES (1,1,5,'COMPLETED','2026-05-27 11:27:22'),(2,2,5,'COMPLETED','2026-05-27 11:27:22');
+INSERT INTO `good_receipts` VALUES 
+(1, 1, 5, 'ASUS', 'COMPLETED', '2026-05-27 11:27:22', '2026-05-27 11:27:22'),
+(2, 2, 5, 'INTEL', 'COMPLETED', '2026-05-27 11:27:22', '2026-05-27 11:27:22');
 /*!40000 ALTER TABLE `good_receipts` ENABLE KEYS */;
 UNLOCK TABLES;
 

@@ -30,7 +30,7 @@ public class OrderDAO {
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             List<Order> result = new ArrayList<>();
             while (rs.next()) {
-                Order o = mapResultSetToBrand(rs);
+                Order o = mapResultSetToOrder(rs);
                 result.add(o);
             }
             return result;
@@ -51,7 +51,7 @@ public class OrderDAO {
             rs = st.executeQuery(); //only select
             if (rs.next()) {
 
-                Order o = mapResultSetToBrand(rs);
+                Order o = mapResultSetToOrder(rs);
 
                 return o;
             } else {
@@ -63,62 +63,52 @@ public class OrderDAO {
         }
     }
 
-    public Brand getBrandByName(String brand_name) {
+    public Order insertOrder(Order o) {
         try {
             Connection conn = DBContext.getConnection();
-            String sql = "select * from brands where name=?";
-            PreparedStatement st;
-            ResultSet rs;
+            String sql = "insert into orders"
+                    + " (status,note,orderdate,createdat, updatedat,createdby,customer_id)"
+                    + " values (?,?,?,?,?,?,?)";
             st = conn.prepareStatement(sql);
-            st.setString(1, brand_name);
-            rs = st.executeQuery(); //only select
+            st.setString(1, o.getStatus());
+            st.setString(2, o.getNote());
+            st.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+            st.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+            st.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+            st.setInt(6, o.getCreatedBy());
+            st.setInt(7, o.getCustomerId());
+            st.executeUpdate();
+            
+            sql = "select * from orders order by id desc limit 1";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Brand b = mapResultSetToBrand(rs);
-
-                return b;
-            } else {
-                return null;
+                Order od = mapResultSetToOrder(rs);
+                return od;
             }
         } catch (Exception exception) {
             exception.printStackTrace();
-            return null;
         }
+        return null;
     }
 
-    public void insertBrand(Brand b) {
-        try {
-            Connection conn = DBContext.getConnection();
-            String sql = "insert into brands (name,img_url,description,createdat, updatedat) values (?,?,?,?,?)";
-            st = conn.prepareStatement(sql);
-            st.setString(1, b.getName());
-            st.setString(2, b.getImg());
-            st.setString(3, b.getDescription());
-            st.setDate(4, new Date(System.currentTimeMillis()));
-            st.setDate(5, new Date(System.currentTimeMillis()));
-            st.executeUpdate();
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-    }
-
-    public void updateBrand(Brand b) {
+    public void updateOrder(Order o) {
         try {
             Connection conn = DBContext.getConnection();
             String sql = "UPDATE orders SET status = ?, total_price = ?, note = ?, updatedat = ? WHERE id = ?";
             st = conn.prepareStatement(sql);
-            st.setString(1, b.getName());
-            st.setString(2, b.getImg());
-            st.setString(3, b.getDescription());
-            st.setTimestamp(4, b.getCreatedAt());
-            st.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
-            st.setInt(6, b.getId());
+            st.setString(1, o.getStatus());
+            st.setDouble(2, o.getTotalPrice());
+            st.setString(3,o.getNote());
+            st.setTimestamp(4, o.getUpdatedAt());
+            st.setInt(5, o.getId());
             st.executeUpdate();
         } catch (Exception exception) {
             exception.printStackTrace();
         }
     }
 
-    private Order mapResultSetToBrand(ResultSet rs) throws SQLException {
+    private Order mapResultSetToOrder(ResultSet rs) throws SQLException {
         Order o = new Order();
 
         o.setId(rs.getInt("id"));
@@ -130,87 +120,37 @@ public class OrderDAO {
         o.setUpdatedAt(rs.getTimestamp("updatedat"));
         o.setCompletedAt(rs.getTimestamp("completedat"));
         o.setCreatedBy(rs.getInt("createdby"));
-        o.setProcessdBy(rs.getInt("proccessedby"));
+        o.setProcessdBy(rs.getInt("processedby"));
         o.setCustomerId(rs.getInt("customer_id"));
 
         return o;
     }
 
-    public List<Brand> searchBrand(String name, String des, String sortBy) {
-        List<Brand> brandList = new ArrayList<>();
-        List<String> parameter = new ArrayList<>();
-        StringBuilder sql = new StringBuilder(
-                "select * from brands " +
-                        "where 1=1");
-        if (name != null && !name.trim().isEmpty()) {
-            sql.append(" and name like ?");
-            parameter.add("%" + name.trim() + "%");
-        }
-        if (des != null && !des.trim().isEmpty()) {
-            sql.append(" and description like ?");
-            parameter.add("%" + des.trim() + "%");
-        }
 
-        if (sortBy != null && !sortBy.trim().isEmpty()) {
-            switch (sortBy) {
-                case "nameAZ":
-                    sql.append(" order by name asc");
-                    break;
-                case "nameZA":
-                    sql.append(" order by name desc");
-                    break;
-                case "desAZ":
-                    sql.append(" order by description asc");
-                    break;
-                case "desZA":
-                    sql.append(" order by description desc");
-                    break;
-            }
-        }
-
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-            // for debug
-//            System.out.println("====== sql thuc te: " + sql.toString());
-//            System.out.println("====== params: " + parameter.toString());
-            for (int i = 0; i < parameter.size(); i++) {
-                ps.setObject(i + 1, parameter.get(i));
-            }
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                brandList.add(mapResultSetToBrand(rs));
-            }
-            return brandList;
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-        return brandList;
-    }
-
-    public static void main(String[] args) {
-
-        BrandDAO dao = new BrandDAO();
-
-        List<Brand> list = dao.getAllBrand();
-        List<Brand> search = dao.searchBrand(null, null, null);
-        Brand b = new Brand();
-
-        b.setId(1);
-        b.setName("Dell");
-        b.setDescription("Laptop brand");
-        b.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-
-        dao.updateBrand(b);
-
-        for (Brand i : dao.getAllBrand()) {
-            System.out.println(i.getId() + " " + i.getName() + " " + i.getDescription());
-        }
-        System.out.println(dao.getBrandByName("Dell").toString());
-        System.out.println("====================");
-        for (Brand asd : search) {
-            System.out.println(asd);
-        }
-    }
+//    public static void main(String[] args) {
+//
+//        BrandDAO dao = new BrandDAO();
+//
+//        List<Brand> list = dao.getAllBrand();
+//        List<Brand> search = dao.searchBrand(null, null, null);
+//        Brand b = new Brand();
+//
+//        b.setId(1);
+//        b.setName("Dell");
+//        b.setDescription("Laptop brand");
+//        b.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+//
+//        dao.updateBrand(b);
+//
+//        for (Brand i : dao.getAllBrand()) {
+//            System.out.println(i.getId() + " " + i.getName() + " " + i.getDescription());
+//        }
+//        System.out.println(dao.getBrandByName("Dell").toString());
+//        System.out.println("====================");
+//        for (Brand asd : search) {
+//            System.out.println(asd);
+//        }
+//    }
 
 
 }

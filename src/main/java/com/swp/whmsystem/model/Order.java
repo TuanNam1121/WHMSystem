@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 
 public class Order {
     private int id;
-    private enum status{NEW,COMPLETED};
+    private String status;
     private double totalPrice;
     private String note;
     private Timestamp orderDate;
@@ -22,8 +22,9 @@ public class Order {
     public Order() {
     }
 
-    public Order(int id, double totalPrice, String note, Timestamp orderDate, Timestamp createdAt, Timestamp updatedAt, Timestamp completedAt, int createdBy, int processdBy, int customerId) {
+    public Order(int id, String status, double totalPrice, String note, Timestamp orderDate, Timestamp createdAt, Timestamp updatedAt, Timestamp completedAt, int createdBy, int processdBy, int customerId) {
         this.id = id;
+        this.status = status;
         this.totalPrice = totalPrice;
         this.note = note;
         this.orderDate = orderDate;
@@ -34,6 +35,16 @@ public class Order {
         this.processdBy = processdBy;
         this.customerId = customerId;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    
 
     public int getId() {
         return id;
@@ -114,6 +125,8 @@ public class Order {
     public void setCustomerId(int customerId) {
         this.customerId = customerId;
     }
+    
+    
 
     @Override
     public String toString() {

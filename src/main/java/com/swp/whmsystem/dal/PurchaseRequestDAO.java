@@ -9,7 +9,7 @@ import java.util.List;
 
 public class PurchaseRequestDAO {
     public List<PurchaseRequest> getAllPurchaseRequest() {
-        String sql = "select * from purchase_requests order by createdat desc";
+        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid ORDER BY pr.createdat DESC";
         List<PurchaseRequest> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -25,7 +25,7 @@ public class PurchaseRequestDAO {
     }
 
     public List<PurchaseRequest> getAllPurchaseRequestForSaleman(int salemanId) {
-        String sql = "select * from purchase_requests where createdby = ? order by createdat desc";
+        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid WHERE pr.createdby = ? ORDER BY pr.createdat DESC";
         List<PurchaseRequest> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection();) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -43,7 +43,7 @@ public class PurchaseRequestDAO {
     }
 
     public PurchaseRequest getPurchaseRequestById(int id) {
-        String sql = "SELECT * FROM purchase_requests WHERE id = ?";
+        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid WHERE pr.id = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
@@ -59,7 +59,7 @@ public class PurchaseRequestDAO {
     }
 
     public PurchaseRequest getLatestPurchaseRequestBySalemanId(int salemanId) {
-        String sql = "SELECT * FROM purchase_requests WHERE createdby = ? ORDER BY createdat DESC LIMIT 1";
+        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid WHERE pr.createdby = ? ORDER BY pr.createdat DESC LIMIT 1";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, salemanId);
@@ -83,6 +83,11 @@ public class PurchaseRequestDAO {
         c.setNote(rs.getString("note"));
         Timestamp ts = rs.getTimestamp("createdat");
         c.setCreatedAt(ts);
+        try {
+            c.setCreatedByUsername(rs.getString("createdByUsername"));
+        } catch (SQLException e) {
+            // Column might not exist in some queries if not updated
+        }
         return c;
     }
 

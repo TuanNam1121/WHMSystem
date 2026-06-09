@@ -11,16 +11,16 @@ import com.swp.whmsystem.model.User;
 import com.swp.whmsystem.model.GoodReceipt;
 import com.swp.whmsystem.dal.GoodReceiptDAO;
 
-@WebServlet(name = "ImportRequestList", urlPatterns = {"/ImportRequestList"})
+@WebServlet(name = "ImportRequestList", urlPatterns = {"/importRequestList"})
 public class ImportRequestList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         User user = (User) request.getSession().getAttribute("user");
-        if (user == null || user.getRoleId() != 3) {
-            response.sendRedirect("signin");
-            return;
-        }
+//        if (user == null || user.getRoleId() != 3) {
+//            response.sendRedirect("login");
+//            return;
+//        }
 
         GoodReceiptDAO goodReceiptDAO = new GoodReceiptDAO();
         List<GoodReceipt> importRequests = goodReceiptDAO.getAllGoodReceiptForProcessor(user.getId());

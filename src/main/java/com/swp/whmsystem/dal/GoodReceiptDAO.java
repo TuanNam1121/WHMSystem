@@ -78,7 +78,7 @@ public class GoodReceiptDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, receipt.getPurchaseRequestId());
             preparedStatement.setInt(2, receipt.getProcessedBy());
-            preparedStatement.setString(3, receipt.getStatus() != null ? receipt.getStatus() : "DRAFT");
+            preparedStatement.setString(3, receipt.getStatus());
             preparedStatement.setString(4, receipt.getNote());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {

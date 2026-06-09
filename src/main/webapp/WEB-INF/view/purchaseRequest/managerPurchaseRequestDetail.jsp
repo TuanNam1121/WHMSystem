@@ -202,6 +202,7 @@
                                                 <input type="hidden" name="purchaseRequestId"
                                                     value="${purchaseRequest.id}" />
                                                 <input type="hidden" name="staffId" id="hiddenWarehouseStaffId" />
+                                                <input type="hidden" name="buttonSubmit" id="actionType" />
 
                                                 <div class="row">
                                                     <div class="col-lg-6 col-sm-6 col-12">

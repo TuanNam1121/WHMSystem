@@ -49,7 +49,7 @@
                                                        alt="img"><span> Import</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="ImportRequestList">Import Request List</a></li>
+                        <li><a href="importRequestList">Import Request List</a></li>
                         <li><a href="createexpense.html">Import History</a></li>
                     </ul>
                 </li>

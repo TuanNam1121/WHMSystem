@@ -51,4 +51,15 @@ public class GoodReceipt {
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public String toString() {
+        return "GoodReceipt{" +
+                "createdAt=" + createdAt +
+                ", id=" + id +
+                ", purchaseRequestId=" + purchaseRequestId +
+                ", processedBy=" + processedBy +
+                ", status='" + status + '\'' +
+                '}';
+    }
 }

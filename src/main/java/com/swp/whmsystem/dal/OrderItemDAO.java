@@ -59,10 +59,10 @@ public class OrderItemDAO {
         }
     }
 
-    public OrderItem insertOrderItem(OrderItem o) {
+    public void insertOrderItem(OrderItem o) {
         try {
             Connection conn = DBContext.getConnection();
-            String sql = "insert into orders"
+            String sql = "insert into order_items"
                     + " (orderid,productid,quantity,price)"
                     + " values (?,?,?,?)";
             st = conn.prepareStatement(sql);
@@ -72,23 +72,15 @@ public class OrderItemDAO {
             st.setDouble(4, o.getPrice());
             st.executeUpdate();
             
-            sql = "select * from orders order by id desc limit 1";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Order od = mapResultSetToOrder(rs);
-                return od;
-            }
         } catch (Exception exception) {
             exception.printStackTrace();
         }
-        return null;
     }
 
     public void updateOrderItem(OrderItem o) {
         try {
             Connection conn = DBContext.getConnection();
-            String sql = "UPDATE orders SET quantity = ?, price = ? WHERE id = ?";
+            String sql = "UPDATE order_items SET quantity = ?, price = ? WHERE id = ?";
             st = conn.prepareStatement(sql);
             st.setInt(1, o.getQuantity());
             st.setDouble(2, o.getPrice());

@@ -28,7 +28,7 @@ public class CustomerDAO {
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             List<Customer> result = new ArrayList<>();
             while (rs.next()) {
-                Customer c = mapResultSetToBrand(rs);
+                Customer c = mapResultSetToCustomer(rs);
                 result.add(c);
             }
             return result;
@@ -49,7 +49,7 @@ public class CustomerDAO {
             st.setString(1, phone);
             rs = st.executeQuery(); //only select
             if (rs.next()) {
-                Customer c = mapResultSetToBrand(rs);
+                Customer c = mapResultSetToCustomer(rs);
 
                 return c;
             } else {
@@ -74,7 +74,7 @@ public class CustomerDAO {
         }
     }
 
-    private Customer mapResultSetToBrand(ResultSet rs) throws SQLException {
+    private Customer mapResultSetToCustomer(ResultSet rs) throws SQLException {
         Customer c = new Customer();
 
         c.setId(rs.getInt("id"));

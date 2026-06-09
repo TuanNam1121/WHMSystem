@@ -114,6 +114,7 @@ CREATE TABLE `good_receipts` (
   `status` enum('DRAFT','CANCELLED','SUBMITTED','COMPLETED','PENDING','REJECTED') DEFAULT 'DRAFT',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `note` text,
   PRIMARY KEY (`id`),
   KEY `purchaserequestid` (`purchaserequestid`),
   KEY `processedby` (`processedby`),
@@ -129,8 +130,8 @@ CREATE TABLE `good_receipts` (
 LOCK TABLES `good_receipts` WRITE;
 /*!40000 ALTER TABLE `good_receipts` DISABLE KEYS */;
 INSERT INTO `good_receipts` VALUES 
-(1, 1, 5, 'ASUS', 'COMPLETED', '2026-05-27 11:27:22', '2026-05-27 11:27:22'),
-(2, 2, 5, 'INTEL', 'COMPLETED', '2026-05-27 11:27:22', '2026-05-27 11:27:22');
+(1, 1, 5, 'ASUS', 'COMPLETED', '2026-05-27 11:27:22', '2026-05-27 11:27:22','Good'),
+(2, 2, 5, 'INTEL', 'COMPLETED', '2026-05-27 11:27:22', '2026-05-27 11:27:22','Broke');
 /*!40000 ALTER TABLE `good_receipts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -562,7 +563,7 @@ CREATE TABLE `purchase_requests` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `createdby` int(11) NOT NULL,
   `approvedby` int(11) DEFAULT NULL,
-  `status` enum('NEW','APPROVED','REJECTED') DEFAULT 'NEW',
+  `status` enum('NEW','APPROVED','REJECTED','PROCESSING','COMPLETED') DEFAULT 'NEW',
   `note` text,
   `createdat` datetime DEFAULT CURRENT_TIMESTAMP,
   `updatedat` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

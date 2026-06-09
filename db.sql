@@ -344,8 +344,6 @@ DROP TABLE IF EXISTS `orders`;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `customer_name` varchar(150) DEFAULT NULL,
-  `customer_phone` varchar(20) DEFAULT NULL,
   `status` enum('NEW','DOING','COMPLETED') DEFAULT 'NEW',
   `total_price` decimal(15,2) DEFAULT NULL,
   `note` text,
@@ -373,7 +371,7 @@ CREATE TABLE `orders` (
 
 LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
-INSERT INTO `orders` VALUES (1,'Nguyen Van A','0988888888','COMPLETED',13500000.00,'Laptop Dell','2026-05-27 11:27:22','2026-05-27 11:27:22','2026-05-27 11:27:22','2026-05-27 11:27:22',5,3,1);
+INSERT INTO `orders` VALUES (1,'COMPLETED',13500000.00,'Laptop Dell','2026-05-27 11:27:22','2026-05-27 11:27:22','2026-05-27 11:27:22','2026-05-27 11:27:22',5,3,1);
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 

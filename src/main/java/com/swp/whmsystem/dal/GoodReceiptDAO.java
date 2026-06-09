@@ -1,6 +1,7 @@
 package com.swp.whmsystem.dal;
 
 import com.swp.whmsystem.model.GoodReceipt;
+import com.swp.whmsystem.model.GoodReceiptItem;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -89,6 +90,14 @@ public class GoodReceiptDAO {
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static void main(String[] args) {
+        GoodReceiptDAO dao = new GoodReceiptDAO();
+        List<GoodReceipt> a = dao.getAllGoodReceipt();
+        for(GoodReceipt i : a){
+            System.out.println(i);
         }
     }
 }

@@ -14,61 +14,61 @@
     </head>
     <body>
         <div class="app-shell">
-            <jsp:include page="/common/navigationBar.jsp" />
+            <jsp:include page="/WEB-INF/common/navigationBar.jsp" />
             <main class="main-content">
-                <jsp:include page="/common/userTopbar.jsp" />
+                <jsp:include page="/WEB-INF/common/userTopbar.jsp" />
                 <section class="dashboard-panel">
                     <div class="section-heading">
-                        <h1>Kết quả kinh doanh</h1>
+                        <h1>Káº¿t quáº£ kinh doanh</h1>
                         <span>Homepage</span>
                     </div>
                     <div class="metrics-grid">
                         <article class="metric-card metric-card-wide">
-                            <span class="metric-label">Doanh thu thuần</span>
+                            <span class="metric-label">Doanh thu thuáº§n</span>
                             <strong>
                                 <c:choose>
-                                    <c:when test="${not empty netRevenue}"><fmt:formatNumber value="${netRevenue}" type="number" />đ</c:when>
-                                    <c:otherwise>0đ</c:otherwise>
+                                    <c:when test="${not empty netRevenue}"><fmt:formatNumber value="${netRevenue}" type="number" />Ä‘</c:when>
+                                    <c:otherwise>0Ä‘</c:otherwise>
                                 </c:choose>
                             </strong>
                         </article>
                         <article class="metric-card">
-                            <span class="metric-label">Tổng đơn</span>
+                            <span class="metric-label">Tá»•ng Ä‘Æ¡n</span>
                             <strong>${empty totalOrders ? 0 : totalOrders}</strong>
                         </article>
                         <article class="metric-card">
-                            <span class="metric-label">Chưa thanh toán</span>
+                            <span class="metric-label">ChÆ°a thanh toÃ¡n</span>
                             <strong>${empty unpaidOrders ? 0 : unpaidOrders}</strong>
                         </article>
                         <article class="metric-card">
-                            <span class="metric-label">Giá trị trung bình đơn</span>
+                            <span class="metric-label">GiÃ¡ trá»‹ trung bÃ¬nh Ä‘Æ¡n</span>
                             <strong>
                                 <c:choose>
-                                    <c:when test="${not empty averageOrderValue}"><fmt:formatNumber value="${averageOrderValue}" type="number" />đ</c:when>
-                                    <c:otherwise>0đ</c:otherwise>
+                                    <c:when test="${not empty averageOrderValue}"><fmt:formatNumber value="${averageOrderValue}" type="number" />Ä‘</c:when>
+                                    <c:otherwise>0Ä‘</c:otherwise>
                                 </c:choose>
                             </strong>
                         </article>
                         <article class="metric-card">
-                            <span class="metric-label">Số lượng nhập kho</span>
+                            <span class="metric-label">Sá»‘ lÆ°á»£ng nháº­p kho</span>
                             <strong>${empty stockInQuantity ? 0 : stockInQuantity}</strong>
                         </article>
                         <article class="metric-card">
-                            <span class="metric-label">Chưa giao</span>
+                            <span class="metric-label">ChÆ°a giao</span>
                             <strong>${empty pendingDelivery ? 0 : pendingDelivery}</strong>
                         </article>
                         <article class="metric-card">
-                            <span class="metric-label">Đang giao</span>
+                            <span class="metric-label">Äang giao</span>
                             <strong>${empty delivering ? 0 : delivering}</strong>
                         </article>
                         <article class="metric-card">
-                            <span class="metric-label">Hủy</span>
+                            <span class="metric-label">Há»§y</span>
                             <strong>${empty canceledOrders ? 0 : canceledOrders}</strong>
                         </article>
                     </div>
                     <div class="content-grid">
                         <section class="chart-box">
-                            <div class="box-title">Biểu đồ doanh thu</div>
+                            <div class="box-title">Biá»ƒu Ä‘á»“ doanh thu</div>
                             <c:choose>
                                 <c:when test="${not empty revenueChart}">
                                     <div class="empty-chart">
@@ -78,12 +78,12 @@
                                     </div>
                                 </c:when>
                                 <c:otherwise>
-                                    <div class="empty-state chart-state">Chưa có dữ liệu biểu đồ</div>
+                                    <div class="empty-state chart-state">ChÆ°a cÃ³ dá»¯ liá»‡u biá»ƒu Ä‘á»“</div>
                                 </c:otherwise>
                             </c:choose>
                         </section>
                         <section class="best-seller-box">
-                            <div class="box-title">Sản phẩm bán chạy</div>
+                            <div class="box-title">Sáº£n pháº©m bÃ¡n cháº¡y</div>
                             <c:choose>
                                 <c:when test="${not empty bestSellingProducts}">
                                     <ul class="best-seller-list">
@@ -93,7 +93,7 @@
                                     </ul>
                                 </c:when>
                                 <c:otherwise>
-                                    <div class="empty-state">Chưa có dữ liệu</div>
+                                    <div class="empty-state">ChÆ°a cÃ³ dá»¯ liá»‡u</div>
                                 </c:otherwise>
                             </c:choose>
                         </section>

@@ -42,6 +42,38 @@ public class PurchaseRequestDAO {
         return list;
     }
 
+    public PurchaseRequest getPurchaseRequestById(int id) {
+        String sql = "SELECT * FROM purchase_requests WHERE id = ?";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapResultSetToPurchaseRequest(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public PurchaseRequest getLatestPurchaseRequestBySalemanId(int salemanId) {
+        String sql = "SELECT * FROM purchase_requests WHERE createdby = ? ORDER BY createdat DESC LIMIT 1";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, salemanId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapResultSetToPurchaseRequest(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
     public PurchaseRequest mapResultSetToPurchaseRequest(ResultSet rs) throws SQLException {
         PurchaseRequest c = new PurchaseRequest();
         c.setId(rs.getInt("id"));
@@ -50,18 +82,16 @@ public class PurchaseRequestDAO {
         c.setStatus(rs.getString("status"));
         c.setNote(rs.getString("note"));
         Timestamp ts = rs.getTimestamp("createdat");
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        String formattedDate = sdf.format(ts);
+        c.setCreatedAt(ts);
         return c;
     }
 
     public boolean insertPurchaseRequest(PurchaseRequest request) {
-        String sql = "insert into purchase_requests (createdby, status, note) values (?, ?, ?)";
+        String sql = "insert into purchase_requests (createdby, note) values (?, ?)";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, request.getCreatedBy());
-            preparedStatement.setString(2,request.getStatus());
-            preparedStatement.setString(3, request.getNote());
+            preparedStatement.setString(2, request.getNote());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);

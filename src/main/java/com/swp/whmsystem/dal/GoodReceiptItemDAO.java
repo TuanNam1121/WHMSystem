@@ -90,4 +90,12 @@ public class GoodReceiptItemDAO {
             throw new RuntimeException(e);
         }
     }
+
+    public static void main(String[] args) {
+        GoodReceiptItemDAO dao = new GoodReceiptItemDAO();
+        List<GoodReceiptItem> a = dao.getAllGoodReceiptItems();
+        for(GoodReceiptItem i : a){
+            System.out.println(i);
+        }
+    }
 }

@@ -105,7 +105,7 @@ public class AddNewUser extends HttpServlet {
 
         if (!errors.isEmpty()) {
             request.setAttribute("error", String.join("<br/>", errors));
-            request.getRequestDispatcher("WEB-INF/view/user/userDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/admin/userDetail.jsp").forward(request, response);
             return;
         }
 
@@ -116,7 +116,7 @@ public class AddNewUser extends HttpServlet {
         } else {
             String message = "Đã xảy ra lỗi !";
             request.setAttribute("error", message);
-            request.getRequestDispatcher("WEB-INF/view/user/userDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/view/admin/userDetail.jsp").forward(request, response);
         }
     }
 

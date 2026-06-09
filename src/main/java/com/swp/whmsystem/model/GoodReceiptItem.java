@@ -40,4 +40,14 @@ public class GoodReceiptItem {
     public void setActualQuantity(int actualQuantity) {
         this.actualQuantity = actualQuantity;
     }
+
+    @Override
+    public String toString() {
+        return "GoodReceiptItem{" +
+                "actualQuantity=" + actualQuantity +
+                ", id=" + id +
+                ", goodReceiptId=" + goodReceiptId +
+                ", productId=" + productId +
+                '}';
+    }
 }

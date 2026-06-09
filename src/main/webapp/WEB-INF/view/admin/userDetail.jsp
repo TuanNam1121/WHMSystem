@@ -13,9 +13,9 @@
     </head>
     <body>
         <div class="wrapper">
-            <jsp:include page="/common/adminSidebar.jsp" />
+            <jsp:include page="/WEB-INF/common/adminSidebar.jsp" />
             <main class="main-content">
-                <jsp:include page="/common/userTopbar.jsp" />
+                <jsp:include page="/WEB-INF/common/userTopbar.jsp" />
                 <c:if test="${not empty message}">
                     <div class="alert-success">${message}</div>
                 </c:if>

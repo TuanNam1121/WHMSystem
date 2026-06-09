@@ -34,8 +34,8 @@
 </div>
 
 <div class="main-wrapper">
-    <jsp:include page="/common/header.jsp"></jsp:include>
-    <jsp:include page="/common/sidebar.jsp"></jsp:include>
+    <jsp:include page="/WEB-INF/common/header.jsp"></jsp:include>
+    <jsp:include page="/WEB-INF/common/sidebar.jsp"></jsp:include>
 
 
     <div class="page-wrapper">
@@ -143,12 +143,12 @@
 
 <script src="assets/js/script.js">
     window.addEventListener('load', function () {
-        // Đợi 50 mili-giây sau khi trang load xong để Chrome điền bậy vào trước
+        // Äá»£i 50 mili-giÃ¢y sau khi trang load xong Ä‘á»ƒ Chrome Ä‘iá»n báº­y vÃ o trÆ°á»›c
         setTimeout(finalClearAutofill, 50);
     });
 
     function finalClearAutofill() {
-        // Tìm ô input username và password theo name
+        // TÃ¬m Ã´ input username vÃ  password theo name
         var usernameInput = document.querySelector('input[name="username"]');
         var passwordInput = document.querySelector('input[name="password"]');
 

@@ -38,19 +38,17 @@
                                                        alt="img"><span> Purchase</span>
                         <span class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="purchaselist.html">Purchase List</a></li>
-                        <li><a href="addpurchase.jsp">Add Purchase</a></li>
-                        <li><a href="importpurchase.html">Import Purchase</a></li>
+                        <li><a href="purchaseRequestList">Purchase List for salesman</a></li>
+                        <li><a href="managerPurchaseRequestList">Purchase List for manager</a></li>
                     </ul>
                 </li>
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="assets/img/icons/expense1.svg"
-                                                       alt="img"><span> Expense</span> <span
+                                                       alt="img"><span> Import</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="expenselist.html">Expense List</a></li>
-                        <li><a href="createexpense.html">Add Expense</a></li>
-                        <li><a href="expensecategory.html">Expense Category</a></li>
+                        <li><a href="ImportRequestList">Import Request List</a></li>
+                        <li><a href="createexpense.html">Import History</a></li>
                     </ul>
                 </li>
                 <li class="submenu">

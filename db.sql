@@ -110,7 +110,7 @@ CREATE TABLE `good_receipts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `purchaserequestid` int(11) NOT NULL,
   `processedby` int(11) NOT NULL,
-  `supplier_name` varchar(100) NOT NULL,
+  `supplier_name` varchar(100),
   `status` enum('NEW', 'DRAFT','CANCELLED','SUBMITTED','COMPLETED','PENDING','REJECTED') DEFAULT 'NEW',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,

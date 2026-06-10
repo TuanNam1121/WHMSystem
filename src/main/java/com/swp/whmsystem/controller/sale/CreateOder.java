@@ -139,9 +139,7 @@ public class CreateOder extends HttpServlet {
                 item.setQuantity(quantity);
                 item.setPrice(price);
 
-                oid.insertOrderItem(item);
-                Product p = pd.getProductFromId(productId);
-                pd.changeProductQuantity(p.getTotalQuantity() - quantity,productId);
+                
             }
         }
         response.sendRedirect("OrderList");

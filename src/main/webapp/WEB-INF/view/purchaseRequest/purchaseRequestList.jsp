@@ -182,12 +182,15 @@
                                                 <a class="me-3" href="updatePurchaseRequest?id=${pr.id}" id="btn-update-pr${pr.id}">
                                                     <img src="assets/img/icons/edit.svg" alt="img">
                                                 </a>
-                                                <a class="me-3 confirm-text" href="javascript:void(0);" id="btn-delete-pr${pr.id}">
-                                                    <img src="assets/img/icons/delete.svg" alt="img">
-                                                </a>
+                                                <form action="purchaseRequestList" method="POST" style="display:inline;">
+                                                    <input type="hidden" name="id" value="${pr.id}">
+                                                    <button type="submit" class="me-3 btn-delete-submit" style="border:none; background:none; padding:0;" id="btn-delete-pr${pr.id}">
+                                                        <img src="assets/img/icons/delete.svg" alt="img">
+                                                    </button>
+                                                </form>
                                             </c:when>
                                             <c:otherwise>
-                                                <a class="me-3" href="purchaseRequestDetail?id=${pr.id}"
+                                                <a class="me-3" href="detailPurchaseRequest?id=${pr.id}"
                                                    title="View Detail - ${pr.status}" id="btn-view-pr${pr.id}">
                                                     <img src="assets/img/icons/eye.svg" alt="img">
                                                 </a>
@@ -227,5 +230,26 @@
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
 <script src="assets/js/script.js"></script>
+<script>
+    $(document).ready(function() {
+        $(document).on('click', '.btn-delete-submit', function(e) {
+            e.preventDefault();
+            var form = $(this).closest('form');
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function(result) {
+                if (result.value) {
+                    form.submit();
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

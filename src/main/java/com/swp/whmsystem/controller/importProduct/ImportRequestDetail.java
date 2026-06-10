@@ -63,7 +63,17 @@ public class ImportRequestDetail extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int goodReId = Integer.parseInt(request.getParameter("goodReId"));
+        GoodReceiptDAO goodReceiptDAO = new GoodReceiptDAO();
+        GoodReceipt gr = goodReceiptDAO.getGoodReceiptById(goodReId);
+        gr.setStatus("PENDING");
+        goodReceiptDAO.updateGoodReceipt(gr);
 
+        PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
+        PurchaseRequest pr = purchaseRequestDAO.getPurchaseRequestById(gr.getPurchaseRequestId());
+        pr.setStatus("PROCESSING");
+        purchaseRequestDAO.updatePurchaseRequest(pr);
+        request.getSession().setAttribute("message", "Accepted the import request with Id: " + goodReId);
+        response.sendRedirect("importRequestList");
     }
 
     @Override

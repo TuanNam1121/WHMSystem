@@ -80,6 +80,16 @@ public class PurchaseItemDAO {
         }
     }
 
+    public boolean deletePurchaseItemByRequestId(int prReid) {
+        String sql = "delete from purchase_request_items where purchaserequestid = ?";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, prReid);
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public boolean deletePurchaseItem(int id) {
         String sql = "delete from purchase_request_items where id = ?";
         try (Connection connection = DBContext.getConnection()) {

@@ -41,7 +41,7 @@
                     <h6>Create a new purchase request to send to Manager</h6>
                 </div>
             </div>
-            
+
             <c:if test="${not empty error}">
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
                     <strong>${error}</strong>
@@ -58,7 +58,7 @@
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label>Salesman</label>
-                                    <input type="text" value="${sessionScope.user.userName}" disabled
+                                    <input type="text" value="${sessionScope.user.fullName}" disabled
                                            class="form-control"
                                            id="salesman-display">
                                 </div>
@@ -82,8 +82,7 @@
                                         <div class="table-responsive flex-grow-1"
                                              style="max-height: 400px; overflow-y: auto;">
                                             <table class="table table-hover table-nowrap mb-0">
-                                                <thead
-                                                        style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                                <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>SKU</th>
@@ -111,6 +110,7 @@
                                                                data-sku="${p.sku}"
                                                                data-category="${p.category.name}"
                                                                data-stock="${p.totalQuantity}"
+                                                               data-active="${p.isActive}"
                                                                href="javascript:void(0);">
                                                                 <i class="fas fa-plus"></i> Add
                                                             </a>
@@ -152,14 +152,14 @@
                                                 <label>Note</label>
                                                 <textarea class="form-control" rows="2" name="note"
                                                           placeholder="Enter note for this purchase request..."
-                                                          id="request-note"></textarea>
+                                                          id="request-note" required></textarea>
                                             </div>
 
                                             <div class="text-end">
-                                                <input type="submit" class="btn btn-submit me-2"
-                                                   id="btn-send-request" value="Send Request">
                                                 <a href="purchaseRequestList" class="btn btn-cancel"
                                                    id="btn-cancel-create">Cancel</a>
+                                                <input type="submit" class="btn btn-submit me-2"
+                                                       id="btn-send-request" value="Send Request">
                                             </div>
                                         </div>
                                     </div>
@@ -203,7 +203,7 @@
                             <td>\${item.category}</td>
                             <td>\${item.stock}</td>
                             <td>
-                                <input name="selectedQty\${index}" type="number" class="form-control form-control-sm qty-input" data-id="\${item.id}" value="\${item.reqQty}" min="1" style="width: 100px;">
+                                <input name="selectedQty\${index}" type="number" class="form-control form-control-sm qty-input" data-id="\${item.id}" value="\${item.reqQty}" min="50" style="width: 100px;">
                             </td>
                             <td>
                                 <a class="delete-set remove-item-btn" href="javascript:void(0);" data-id="\${item.id}">
@@ -236,6 +236,17 @@
 
         // Add Product
         $(document).on('click', '.add-product-btn', function () {
+            const isActive = $(this).data('active');
+            if (isActive === false || isActive === 'false') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Cannot Add Product',
+                    text: 'You cannot add an inactive product.',
+                    confirmButtonColor: '#FF9F43'
+                });
+                return;
+            }
+
             const id = $(this).data('id');
             const name = $(this).data('name');
             const sku = $(this).data('sku');
@@ -252,7 +263,7 @@
                     sku: sku,
                     category: category,
                     stock: stock,
-                    reqQty: 1
+                    reqQty: 50
                 });
             }
             renderSelectedItems();
@@ -271,37 +282,47 @@
             const newQty = parseInt($(this).val());
             const item = selectedItems.find(i => i.id === id);
             if (item) {
-                item.reqQty = newQty > 0 ? newQty : 1;
-                $(this).val(item.reqQty);
+                if (newQty < 50) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Quantity',
+                        text: 'Quantity must be at least 50.',
+                        confirmButtonColor: '#FF9F43'
+                    });
+                    item.reqQty = 50;
+                    $(this).val(50);
+                } else {
+                    item.reqQty = newQty;
+                    $(this).val(item.reqQty);
+                }
             }
         });
 
-        // Send Request
-        // $('#btn-send-request').on('click', function () {
-        //     if (selectedItems.length === 0) {
-        //         Swal.fire({
-        //             icon: 'error',
-        //             title: 'Validation Error',
-        //             text: 'Please select at least one product!',
-        //             confirmButtonColor: '#FF9F43'
-        //         });
-        //         return;
-        //     }
-        //
-        //     Swal.fire({
-        //         title: 'Send Purchase Request?',
-        //         text: 'This request will be sent to your Manager for approval.',
-        //         icon: 'question',
-        //         showCancelButton: true,
-        //         confirmButtonColor: '#FF9F43',
-        //         cancelButtonColor: '#d33',
-        //         confirmButtonText: 'Yes, Send it!'
-        //     }).then((result) => {
-        //         if (result.isConfirmed) {
-        //             window.location.href = 'purchase-request-list.html';
-        //         }
-        //     });
-        // });
+        // Send Request Validation
+        $('form').on('submit', function (e) {
+            if (selectedItems.length === 0) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'Please select at least one product!',
+                    confirmButtonColor: '#FF9F43'
+                });
+                return false;
+            }
+
+            const invalidItem = selectedItems.find(i => i.reqQty < 50);
+            if (invalidItem) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Quantity',
+                    text: 'Quantity for ' + invalidItem.name + ' must be at least 50.',
+                    confirmButtonColor: '#FF9F43'
+                });
+                return false;
+            }
+        });
     });
 </script>
 </body>

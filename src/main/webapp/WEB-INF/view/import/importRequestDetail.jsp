@@ -275,38 +275,7 @@
             setStatusCompleted();
         }
 
-        // === ACCEPT (New → Doing) ===
-        $('#btn-accept-import').on('click', function () {
-            Swal.fire({
-                title: 'Accept Import Request?',
-                html: `
-                <div style="text-align:left; line-height: 1.8;">
-                    <p>You are about to <strong>accept</strong> this import request.</p>
-                    <p><strong>Request:</strong> IR-001</p>
-                    <p><strong>Products:</strong> 3 items (45 units total)</p>
-                    <hr>
-                    <p class="text-muted">Status will change from <strong>New</strong> → <strong>Doing</strong>.</p>
-                    <p class="text-muted">You can mark it as <strong>Completed</strong> once all products are imported.</p>
-                </div>
-            `,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#FF9F43',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: '<i class="fas fa-play me-1"></i> Yes, Accept!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    setStatusDoing();
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Accepted!',
-                        html: '<p>Import Request <strong>IR-001</strong> status changed to <strong>Doing</strong>.</p><p>Start importing the products now.</p>',
-                        confirmButtonColor: '#FF9F43'
-                    });
-                }
-            });
-        });
+
 
         // === COMPLETE (Doing → Completed) ===
         $('#btn-complete-import').on('click', function () {

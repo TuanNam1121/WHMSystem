@@ -1,5 +1,6 @@
 package com.swp.whmsystem.controller.purchaseRequest;
 
+import com.swp.whmsystem.dal.PurchaseItemDAO;
 import com.swp.whmsystem.dal.PurchaseRequestDAO;
 import com.swp.whmsystem.model.PurchaseRequest;
 import com.swp.whmsystem.model.User;
@@ -29,7 +30,15 @@ public class PurchaseRequestList extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response);
+        int prId = Integer.parseInt(request.getParameter("id"));
+        PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
+        purchaseRequestDAO.deletePurchaseRequest(prId);
+
+        PurchaseItemDAO purchaseItemDAO = new PurchaseItemDAO();
+        purchaseItemDAO.deletePurchaseItemByRequestId(prId);
+        HttpSession session = request.getSession();
+        session.setAttribute("error", "Purchase Request with Id: " + prId + "has been deleted!");
+        response.sendRedirect("purchaseRequestList");
     }
 
     @Override

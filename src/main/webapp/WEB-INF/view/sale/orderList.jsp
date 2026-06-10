@@ -145,11 +145,7 @@
                                         <c:forEach items="${orders}" var="o">
                                             <tr>
                                                 <td>${o.id}</td>
-                                                <c:forEach items="${customers}" var="c">
-                                                    <c:if test="${o.customerId == c.id}">
-                                                        <td>${c.name}</td>
-                                                    </c:if>
-                                                </c:forEach>
+                                                        <td>${o.customer}</td>
                                                 <td>
                                                     <fmt:formatNumber
                                                         value="${o.totalPrice}"
@@ -157,7 +153,7 @@
                                                 </td>
                                                 <td>${o.note}</td>
                                                 <td>${o.orderDate}</td>
-                                                <td>${o.createdBy}</td>
+                                                <td>${o.creater}</td>
                                                 <td>${o.status}</td>
                                                 <td><a href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=view">View</a>
                                                     <a href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=update">Update</a></td>

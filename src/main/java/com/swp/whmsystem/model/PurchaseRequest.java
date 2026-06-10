@@ -9,6 +9,7 @@ public class PurchaseRequest {
     private String status;
     private String note;
     private Timestamp createdAt;
+    private String createdByUsername;
 
     public PurchaseRequest() {
     }
@@ -59,5 +60,13 @@ public class PurchaseRequest {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getCreatedByUsername() {
+        return createdByUsername;
+    }
+
+    public void setCreatedByUsername(String createdByUsername) {
+        this.createdByUsername = createdByUsername;
     }
 }

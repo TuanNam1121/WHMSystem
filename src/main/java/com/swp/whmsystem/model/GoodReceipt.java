@@ -8,6 +8,8 @@ public class GoodReceipt {
     private int processedBy;
     private String status;
     private Timestamp createdAt;
+    private String note;
+//    private int supplier;               anh dùng như nào tự điền nhé
 
     public GoodReceipt() {
     }
@@ -52,14 +54,11 @@ public class GoodReceipt {
         this.createdAt = createdAt;
     }
 
-    @Override
-    public String toString() {
-        return "GoodReceipt{" +
-                "createdAt=" + createdAt +
-                ", id=" + id +
-                ", purchaseRequestId=" + purchaseRequestId +
-                ", processedBy=" + processedBy +
-                ", status='" + status + '\'' +
-                '}';
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 }

@@ -141,12 +141,6 @@
                         <table class="table datanew" id="purchase-request-table">
                             <thead>
                             <tr>
-                                <th>
-                                    <label class="checkboxs">
-                                        <input type="checkbox" id="select-all">
-                                        <span class="checkmarks"></span>
-                                    </label>
-                                </th>
                                 <th>Request Code</th>
                                 <th>Note</th>
                                 <th>Status</th>
@@ -157,12 +151,6 @@
                             <tbody>
                             <c:forEach items="${purchaseList}" var="pr">
                                 <tr>
-                                    <td>
-                                        <label class="checkboxs">
-                                            <input type="checkbox">
-                                            <span class="checkmarks"></span>
-                                        </label>
-                                    </td>
                                     <td class="text-bolds"><fmt:formatNumber value="${pr.id}" pattern="000"/></td>
                                     <td>${pr.note}</td>
                                     <td>

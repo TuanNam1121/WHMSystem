@@ -5,6 +5,7 @@
 package com.swp.whmsystem.dal;
 
 import com.swp.whmsystem.model.Product;
+import com.swp.whmsystem.model.ProductItem;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -371,9 +372,9 @@ public class ProductDAO {
         List<Product> productList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "select p.* from products p "
-                + "left join categories c ON p.categoryid = c.categoryid "
-                + "left join brands b ON p.brandid = b.brandid "
-                + "where 1=1"
+                        + "left join categories c ON p.categoryid = c.categoryid "
+                        + "left join brands b ON p.brandid = b.brandid "
+                        + "where 1=1"
         );
         List<String> parameter = new ArrayList<>();
         if (name != null && !name.trim().isEmpty()) {
@@ -444,19 +445,75 @@ public class ProductDAO {
         return productList;
     }
 
+    private ProductItem mapFromResultSetToProductItem(ResultSet rs) throws SQLException {
+        ProductItem productItem = new ProductItem();
+        productItem.setId(rs.getInt("id"));
+        productItem.setSerial(rs.getString("serial"));
+        productItem.setImportAt(rs.getTimestamp("imported_at"));
+        productItem.setImportPrice(rs.getInt("imported_price"));
+        productItem.setActive((rs.getBoolean("isActive")));
+        productItem.setGoodReceiptItemId(rs.getInt("goodreceiptsitemid"));
+        productItem.setProductId(rs.getInt("product_id"));
+        productItem.setStatus(rs.getString("status"));
+        return productItem;
+    }
+
+    public List<ProductItem> getProductItems(int productId) {
+        List<ProductItem> productItemList = new ArrayList<>();
+        String sql = "select * from product_items pi " +
+                "join products p on pi.product_id = p.productid" +
+                " where p.productid = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, productId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                productItemList.add(mapFromResultSetToProductItem(rs));
+            }
+            return productItemList;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return productItemList;
+    }
+
+    public String getSKUFromId(int id) {
+        String SKU = "";
+        String sql = "select sku from products where productid = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                SKU = rs.getString("sku");
+            }
+            return SKU;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return SKU;
+    }
+
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
-        RomDAO rom = new RomDAO();
-        for (Product i : dao.getProductList()) {
-            System.out.println(i.getImgUrl());
-        }
-        Product p1 = dao.getProductFromId(18);
-        p1.setDescription("con mèo kêu");
-        p1.setRom(rom.getRomById(2));
-        dao.updateProduct(p1);
-        List<Product> testSort = dao.searchProduct(null, null, -1, -1, "brandAZ");
-        for (Product p2 : testSort) {
-            System.out.println(p2);
-        }
+//        RomDAO rom = new RomDAO();
+//        for (Product i : dao.getProductList()) {
+//            System.out.println(i.getImgUrl());
+//        }
+//        Product p1 = dao.getProductFromId(18);
+//        p1.setDescription("con mèo kêu");
+//        p1.setRom(rom.getRomById(2));
+//        dao.updateProduct(p1);
+//        List<Product> testSort = dao.searchProduct(null, null, -1, -1, "brandAZ");
+//        for (Product p2 : testSort) {
+//            System.out.println(p2);
+//        }
+//
+//        List<ProductItem> testItem = dao.getProductItems(1);
+//        for (ProductItem pi : testItem) {
+//            System.out.println(pi);
+//        }
+        String sku = dao.getSKUFromId(1);
+        System.out.println(sku);
     }
 }

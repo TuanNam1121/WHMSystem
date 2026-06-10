@@ -5,31 +5,25 @@ import java.sql.Timestamp;
 public class ProductItem {
     private int id;
     private String serial;
-    private int importPrice;
     private Timestamp importAt;
+    private int importPrice;
     private boolean isActive;
     private int goodReceiptItemId;
     private int productId;
+    private String status;
 
     public ProductItem() {
     }
 
-    public ProductItem(int goodReceiptItemId, int id, Timestamp importAt, int importPrice, boolean isActive, int productId, String serial) {
-        this.goodReceiptItemId = goodReceiptItemId;
+    public ProductItem(int id, String serial, Timestamp importAt, int importPrice, boolean isActive, int goodReceiptItemId, int productId, String status) {
         this.id = id;
+        this.serial = serial;
         this.importAt = importAt;
         this.importPrice = importPrice;
         this.isActive = isActive;
-        this.productId = productId;
-        this.serial = serial;
-    }
-
-    public int getGoodReceiptItemId() {
-        return goodReceiptItemId;
-    }
-
-    public void setGoodReceiptItemId(int goodReceiptItemId) {
         this.goodReceiptItemId = goodReceiptItemId;
+        this.productId = productId;
+        this.status = status;
     }
 
     public int getId() {
@@ -38,6 +32,14 @@ public class ProductItem {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getSerial() {
+        return serial;
+    }
+
+    public void setSerial(String serial) {
+        this.serial = serial;
     }
 
     public Timestamp getImportAt() {
@@ -64,6 +66,14 @@ public class ProductItem {
         isActive = active;
     }
 
+    public int getGoodReceiptItemId() {
+        return goodReceiptItemId;
+    }
+
+    public void setGoodReceiptItemId(int goodReceiptItemId) {
+        this.goodReceiptItemId = goodReceiptItemId;
+    }
+
     public int getProductId() {
         return productId;
     }
@@ -72,11 +82,25 @@ public class ProductItem {
         this.productId = productId;
     }
 
-    public String getSerial() {
-        return serial;
+    public String getStatus() {
+        return status;
     }
 
-    public void setSerial(String serial) {
-        this.serial = serial;
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductItem{" +
+                "id=" + id +
+                ", serial='" + serial + '\'' +
+                ", importAt=" + importAt +
+                ", importPrice=" + importPrice +
+                ", isActive=" + isActive +
+                ", goodReceiptItemId=" + goodReceiptItemId +
+                ", productId=" + productId +
+                ", status='" + status + '\'' +
+                '}';
     }
 }

@@ -187,9 +187,9 @@
                                                 </a>
                                             </c:when>
                                             <c:otherwise>
-                                                <a class="me-3" href="javascript:void(0);" style="opacity:0.4;cursor:not-allowed;"
-                                                   title="Cannot edit - ${pr.status}" id="btn-update-pr${pr.id}">
-                                                    <img src="assets/img/icons/edit.svg" alt="img">
+                                                <a class="me-3" href="purchaseRequestDetail?id=${pr.id}"
+                                                   title="View Detail - ${pr.status}" id="btn-view-pr${pr.id}">
+                                                    <img src="assets/img/icons/eye.svg" alt="img">
                                                 </a>
                                             </c:otherwise>
                                         </c:choose>

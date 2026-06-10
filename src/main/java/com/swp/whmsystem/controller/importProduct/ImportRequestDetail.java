@@ -62,6 +62,7 @@ public class ImportRequestDetail extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        int goodReId = Integer.parseInt(request.getParameter("goodReId"));
 
     }
 

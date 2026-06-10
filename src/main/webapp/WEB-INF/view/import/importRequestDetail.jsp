@@ -110,147 +110,142 @@
                     <h6>View and process import request</h6>
                 </div>
 
-            </div>
-
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Request Code</label>
-                                <input type="text"
-                                       value="<fmt:formatNumber value='${goodReceipt.id}' pattern='000'/>" disabled
-                                       class="form-control" id="detail-request-code">
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Related Purchase Request</label>
-                                <input type="text"
-                                       value="<fmt:formatNumber value='${goodReceipt.purchaseRequestId}' pattern='000'/>"
-                                       disabled class="form-control" id="detail-related-pr">
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Assigned By</label>
-                                <input type="text" value="${approvedBy}" disabled class="form-control"
-                                       id="detail-assigned-by">
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label>Created At</label>
-                                <input type="text"
-                                       value="<fmt:formatDate value='${goodReceipt.createdAt}' pattern='dd MMM yyyy'/>"
-                                       disabled class="form-control" id="detail-created-at">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Status Timeline -->
-                    <div class="status-timeline" id="status-timeline">
-                        <div class="status-step ${goodReceipt.status == 'NEW' ? 'active' : 'done'}" id="step-new">
-                            <div class="step-circle"><i class="fas fa-file-alt"></i></div>
-                            <div class="step-label">New</div>
-                        </div>
-                        <div class="status-connector ${goodReceipt.status != 'NEW' ? 'done' : ''}"
-                             id="connector-1"></div>
-                        <div class="status-step ${goodReceipt.status == 'DOING' ? 'active' : (goodReceipt.status == 'COMPLETED' ? 'done' : '')}"
-                             id="step-doing">
-                            <div class="step-circle"><i class="fas fa-cogs"></i></div>
-                            <div class="step-label">Doing</div>
-                        </div>
-                        <div class="status-connector ${goodReceipt.status == 'COMPLETED' ? 'done' : ''}"
-                             id="connector-2"></div>
-                        <div class="status-step ${goodReceipt.status == 'COMPLETED' ? 'done' : ''}" id="step-completed">
-                            <div class="step-circle"><i class="fas fa-check"></i></div>
-                            <div class="step-label">Completed</div>
-                        </div>
-                    </div>
+                <div class="page-btn">
+                    <a href="importRequestList" class="btn btn-cancel" id="btn-back-to-list">
+                        <i class="fas fa-arrow-left me-2"></i>Back to List
+                    </a>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-body">
-                    <div class="form-group mb-3">
-                        <h5 style="font-weight: 600; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-                            <i class="fas fa-box me-2"></i>Product List to Import
-                        </h5>
-                    </div>
+            <form action="importRequestDetail" method="post">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-3 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Request Code</label>
+                                    <input type="text"
+                                           value="<fmt:formatNumber value='${goodReceipt.id}' pattern='000'/>" disabled
+                                           class="form-control" id="detail-request-code">
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Related Purchase Request</label>
+                                    <input type="text"
+                                           value="<fmt:formatNumber value='${goodReceipt.purchaseRequestId}' pattern='000'/>"
+                                           disabled class="form-control" id="detail-related-pr">
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Assigned By</label>
+                                    <input type="text" value="${approvedBy}" disabled class="form-control"
+                                           id="detail-assigned-by">
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Created At</label>
+                                    <input type="text"
+                                           value="<fmt:formatDate value='${goodReceipt.createdAt}' pattern='dd MMM yyyy'/>"
+                                           disabled class="form-control" id="detail-created-at">
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="table-responsive">
-                        <table class="table" id="detail-product-table">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Product Name</th>
-                                <th>Category</th>
-                                <th class="text-center">Quantity to Import</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <c:forEach items="${purchaseItems}" var="item" varStatus="status">
+                        <!-- Status Timeline -->
+                        <div class="status-timeline" id="status-timeline">
+                            <div class="status-step ${goodReceipt.status == 'NEW' ? 'active' : 'done'}" id="step-new">
+                                <div class="step-circle"><i class="fas fa-file-alt"></i></div>
+                                <div class="step-label">New</div>
+                            </div>
+                            <div class="status-connector ${goodReceipt.status != 'NEW' ? 'done' : ''}"
+                                 id="connector-1"></div>
+                            <div class="status-step ${goodReceipt.status == 'DOING' ? 'active' : (goodReceipt.status == 'COMPLETED' ? 'done' : '')}"
+                                 id="step-doing">
+                                <div class="step-circle"><i class="fas fa-cogs"></i></div>
+                                <div class="step-label">Doing</div>
+                            </div>
+                            <div class="status-connector ${goodReceipt.status == 'COMPLETED' ? 'done' : ''}"
+                                 id="connector-2"></div>
+                            <div class="status-step ${goodReceipt.status == 'COMPLETED' ? 'done' : ''}"
+                                 id="step-completed">
+                                <div class="step-circle"><i class="fas fa-check"></i></div>
+                                <div class="step-label">Completed</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group mb-3">
+                            <h5 style="font-weight: 600; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                                <i class="fas fa-box me-2"></i>Product List to Import
+                            </h5>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table" id="detail-product-table">
+                                <thead>
                                 <tr>
-                                    <td>${status.index + 1}</td>
-                                    <td class="productimgname">
-                                        <a class="product-img">
-                                            <img src="${productMap[item.productId].imgUrl}" alt="product">
-                                        </a>
-                                        <a href="javascript:void(0);">${productMap[item.productId].name}</a>
-                                    </td>
-                                    <td>${productMap[item.productId].category.name}</td>
-                                    <td class="text-center"><strong style="font-size: 16px;">${item.requiredQuantity}</strong>
-                                    </td>
+                                    <th>#</th>
+                                    <th>Product Name</th>
+                                    <th>Category</th>
+                                    <th class="text-center">Quantity to Import</th>
                                 </tr>
-                            </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody>
+                                <c:forEach items="${purchaseItems}" var="item" varStatus="status">
+                                    <tr>
+                                        <td>${status.index + 1}</td>
+                                        <td class="productimgname">
+                                            <a class="product-img">
+                                                <img src="${productMap[item.productId].imgUrl}" alt="product">
+                                            </a>
+                                            <a href="javascript:void(0);">${productMap[item.productId].name}</a>
+                                        </td>
+                                        <td>${productMap[item.productId].category.name}</td>
+                                        <td class="text-center"><strong
+                                                style="font-size: 16px;">${item.requiredQuantity}</strong>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
 
-                    <div class="form-group mt-3">
-                        <label><strong><i class="fas fa-comment-alt me-1"></i> Note from Manager</strong></label>
-                        <div class="p-3 mt-1"
-                             style="background: #f8f9fa; border-radius: 8px; border-left: 4px solid #7367F0;">
-                            <p class="mb-0"
-                               id="detail-manager-note">${not empty goodReceipt.note ? goodReceipt.note : 'No special note from manager.'}</p>
+                        <div class="form-group mt-3">
+                            <label><strong><i class="fas fa-comment-alt me-1"></i> Note from Manager</strong></label>
+                            <div class="p-3 mt-1"
+                                 style="background: #f8f9fa; border-radius: 8px; border-left: 4px solid #7367F0;">
+                                <p class="mb-0"
+                                   id="detail-manager-note">${not empty goodReceipt.note ? goodReceipt.note : 'No special note from manager.'}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Action Buttons -->
-            <div class="card" id="action-card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-12 d-flex justify-content-between align-items-center">
-                            <a href="importRequestList" class="btn btn-cancel" id="btn-cancel-action"
-                               style="padding: 10px 30px;">
-                                <i class="fas fa-times me-2"></i>Cancel
-                            </a>
-
-                            <!-- Accept button: shown when status = New -->
-                            <a href="javascript:void(0);" class="btn btn-submit" id="btn-accept-import"
-                               style="padding: 10px 35px; background: #FF9F43;">
-                                <i class="fas fa-play me-2"></i>Accept
-                            </a>
-
-                            <!-- Complete button: shown when status = Doing (hidden by default) -->
-                            <a href="javascript:void(0);" class="btn btn-submit" id="btn-complete-import"
-                               style="padding: 10px 35px; background: #28C76F; display: none;">
-                                <i class="fas fa-check-double me-2"></i>Complete
-                            </a>
-
-                            <!-- Completed label: shown when status = Completed (hidden by default) -->
-                            <span id="label-completed"
-                                  style="display: none; padding: 10px 30px; background: #d4edda; color: #155724; border-radius: 5px; font-weight: 600; font-size: 15px;">
-<i class="fas fa-check-circle me-2"></i>This import has been completed
-</span>
+                <div class="card" id="action-card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-12 d-flex justify-content-between align-items-center">
+                                <a href="importRequestList" class="btn btn-cancel" id="btn-cancel-action"
+                                   style="padding: 10px 30px;">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </a>
+                                <input type="hidden" name="goodReId" value='${goodReceipt.id}'>
+                                <button type="submit" name="action" value="accept" class="btn btn-submit"
+                                        id="btn-accept-import"
+                                        style="padding: 10px 35px; background: #FF9F43;">
+                                    <i class="fas fa-play me-2"></i>Accept
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
+            </form>
         </div>
     </div>
 </div>

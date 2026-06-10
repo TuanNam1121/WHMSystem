@@ -77,6 +77,15 @@ public class OrderItemDAO {
         }
     }
     
+    public int totalQuantityByOrderId(int orderId){
+        List<OrderItem> list = getOrderItemByOrderId(orderId);
+        int total = 0;
+        for(OrderItem oi:list){
+            total += oi.getQuantity();
+        }
+        return total;
+    }
+    
     public void deleteOrderItem(int orderId) {
         try {
             Connection conn = DBContext.getConnection();

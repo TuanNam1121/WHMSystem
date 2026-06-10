@@ -41,10 +41,10 @@
                                 <h4>ORDER LIST</h4>
                             </div>
                             <div class="page-btn">
-                    <a href="CreateOder" class="btn btn-added" id="btn-create-request">
-                        <img src="assets/img/icons/plus.svg" alt="img">Create Order
-                    </a>
-                </div>
+                                <a href="CreateOder" class="btn btn-added" id="btn-create-request">
+                                    <img src="assets/img/icons/plus.svg" alt="img">Create Order
+                                </a>
+                            </div>
                         </div>
 
                     <c:if test="${not empty sessionScope.message}">
@@ -97,8 +97,8 @@
                             <div class="card" id="filter_inputs">
                                 <div class="card-body pb-0">
                                     <div class="row">  
-                                        
-                                        
+
+
                                         <form style="display:flex" action="${pageContext.request.contextPath}/OrderList" method="post">
                                             <div class="col-lg-3 col-sm-6 col-12">
 
@@ -145,7 +145,7 @@
                                         <c:forEach items="${orders}" var="o">
                                             <tr>
                                                 <td>${o.id}</td>
-                                                        <td>${o.customer}</td>
+                                                <td>${o.customer}</td>
                                                 <td>
                                                     <fmt:formatNumber
                                                         value="${o.totalPrice}"
@@ -155,8 +155,16 @@
                                                 <td>${o.orderDate}</td>
                                                 <td>${o.creater}</td>
                                                 <td>${o.status}</td>
-                                                <td><a href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=view">View</a>
-                                                    <a href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=update">Update</a></td>
+                                                <td>
+                                                    <a class="me-3"
+                                                       href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=view">
+                                                        <img src="assets/img/icons/eye.svg" alt="img">
+                                                    </a>
+                                                    <a class="me-3"
+                                                       href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=update">
+                                                        <img src="assets/img/icons/edit.svg" alt="img">
+                                                    </a>
+                                                </td>
                                             </tr>
                                         </c:forEach>
                                     </tbody>

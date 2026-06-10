@@ -18,6 +18,10 @@ public class Order {
     private int createdBy;
     private int processedBy;
     private int customerId;
+    private String customer;
+    private String creater;
+    private String processor;
+    
 
     public Order() {
     }
@@ -35,6 +39,32 @@ public class Order {
         this.processedBy = processdBy;
         this.customerId = customerId;
     }
+
+    public String getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(String customer) {
+        this.customer = customer;
+    }
+
+    public String getCreater() {
+        return creater;
+    }
+
+    public void setCreater(String creater) {
+        this.creater = creater;
+    }
+
+    public String getProcessor() {
+        return processor;
+    }
+
+    public void setProcessor(String processor) {
+        this.processor = processor;
+    }
+    
+    
 
     public String getStatus() {
         return status;

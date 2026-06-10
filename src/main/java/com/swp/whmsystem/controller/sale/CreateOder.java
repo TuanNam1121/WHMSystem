@@ -119,6 +119,8 @@ public class CreateOder extends HttpServlet {
         String[] productIds = request.getParameterValues("productId");
         ProductDAO pd = new ProductDAO();
 
+        double total = 0;
+
         for (String pid : productIds) {
 
             int productId = Integer.parseInt(pid);
@@ -131,17 +133,22 @@ public class CreateOder extends HttpServlet {
 
                 int quantity = Integer.parseInt(quantityStr);
                 double price = Double.parseDouble(priceStr);
+                if (quantity > 0 && price > 0) {
+                    total += (price * quantity);
+                    OrderItem item = new OrderItem();
 
-                OrderItem item = new OrderItem();
-
-                item.setOrderId(createdOrder.getId());
-                item.setProductId(productId);
-                item.setQuantity(quantity);
-                item.setPrice(price);
-
-                
+                    item.setOrderId(createdOrder.getId());
+                    item.setProductId(productId);
+                    item.setQuantity(quantity);
+                    item.setPrice(price);
+                    oid.insertOrderItem(item);
+                }
             }
         }
+        
+        
+        createdOrder.setTotalPrice(total);
+        od.updateOrderPrice(createdOrder);
         response.sendRedirect("OrderList");
     }
 

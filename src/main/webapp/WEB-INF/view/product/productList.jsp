@@ -159,6 +159,7 @@
                         <table class="table  datanew">
                             <thead>
                             <tr>
+                                <th>Id</th>
                                 <th>Product</th>
                                 <th>SKU</th>
                                 <th>Category</th>
@@ -172,6 +173,7 @@
 
                             <c:forEach items="${sessionScope.productList}" var="p">
                                 <tr>
+                                    <td>${p.productId}</td>
                                     <td class="productimgname">
                                         <a href="javascript:void(0);" class="product-img">
                                             <img src="${p.imgUrl}" alt="product">

@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -120,7 +121,117 @@
 
 
             </div>
+            <div class="card">
+                <div class="card-body">
 
+                    <div class="table-top">
+                        <div class="search-set">
+                            <div class="search-path">
+                                <a class="btn btn-filter" id="filter_search">
+                                    <img src="assets/img/icons/filter.svg" alt="img">
+                                    <span><img src="assets/img/icons/closes.svg" alt="img"></span>
+                                </a>
+                            </div>
+                            <div class="search-input">
+                                <a class="btn btn-searchset"><img src="assets/img/icons/search-white.svg" alt="img"></a>
+                            </div>
+                        </div>
+
+
+                        <div class="wordset">
+                            <ul>
+                                <li>
+                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img
+                                            src="assets/img/icons/pdf.svg" alt="img"></a>
+                                </li>
+                                <li>
+                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img
+                                            src="assets/img/icons/excel.svg" alt="img"></a>
+                                </li>
+                                <li>
+                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img
+                                            src="assets/img/icons/printer.svg" alt="img"></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <form action="productDetails" method="get">
+                        <div class="card mb-0" id="filter_inputs">
+                            <div class="card-body pb-0">
+                                <div class="row">
+                                    <div class="col-lg-12 col-sm-12">
+                                        <div class="row">
+
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <input type="text" name="productName" placeholder="Search...">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-1 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <button type="submit" class="btn btn-filters ms-auto"
+                                                            style="border: none; padding: 0;">
+                                                        <img src="assets/img/icons/search-whites.svg" alt="img">
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Serial Number</th>
+                                <th>Imported Date</th>
+                                <th>Imported Price</th>
+                                <th>Active</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <c:forEach items="${sessionScope.productItemList}" var="p" varStatus="v">
+                                <tr>
+                                    <td>${v.index+1}</td>
+                                    <td>${p.serial}</td>
+                                    <td>
+                                        <fmt:formatDate value="${p.importAt}" pattern="dd-MM-yyyy HH:mm:ss"/>
+                                    </td>
+                                    <td>
+                                        <fmt:formatNumber value="${p.importPrice}" pattern="#,###"/>
+                                    </td>
+                                    <td>${p.active ? "Active" : "Inactive"}</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${p.status == 'AVAILABLE'}">
+                                                <span class="badges bg-lightgreen">Available</span>
+                                            </c:when>
+                                            <c:when test="${p.status == 'SOLD'}">
+                                                <span class="badges bg-lightgrey">Sold</span>
+                                            </c:when>
+                                            <c:when test="${p.status == 'UNAVAILABLE'}">
+                                                <span class="badges bg-lightred">Unavailable</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="badges bg-lightgrey">${p.status}</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

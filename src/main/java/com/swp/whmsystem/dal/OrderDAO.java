@@ -29,6 +29,11 @@ public class OrderDAO {
             List<Order> result = new ArrayList<>();
             while (rs.next()) {
                 Order o = mapResultSetToOrder(rs);
+                UserDAO ud = new UserDAO();
+                CustomerDAO cd = new CustomerDAO();
+                o.setCustomer(cd.getCustomerNameById(o.getCustomerId()));
+                o.setCreater(ud.getUserNameById(o.getCreatedBy()));
+                o.setProcessor(ud.getUserNameById(o.getProcessedBy()));
                 result.add(o);
             }
             return result;
@@ -48,6 +53,11 @@ public class OrderDAO {
             List<Order> result = new ArrayList<>();
             while (rs.next()) {
                 Order o = mapResultSetToOrder(rs);
+                UserDAO ud = new UserDAO();
+                CustomerDAO cd = new CustomerDAO();
+                o.setCustomer(cd.getCustomerNameById(o.getCustomerId()));
+                o.setCreater(ud.getUserNameById(o.getCreatedBy()));
+                o.setProcessor(ud.getUserNameById(o.getProcessedBy()));
                 result.add(o);
             }
             return result;
@@ -69,6 +79,11 @@ public class OrderDAO {
             if (rs.next()) {
 
                 Order o = mapResultSetToOrder(rs);
+                UserDAO ud = new UserDAO();
+                CustomerDAO cd = new CustomerDAO();
+                o.setCustomer(cd.getCustomerNameById(o.getCustomerId()));
+                o.setCreater(ud.getUserNameById(o.getCreatedBy()));
+                o.setProcessor(ud.getUserNameById(o.getProcessedBy()));
 
                 return o;
             } else {
@@ -112,6 +127,11 @@ public class OrderDAO {
             List<Order> result = new ArrayList<>();
             while (rs.next()) {
                 Order o = mapResultSetToOrder(rs);
+                UserDAO ud = new UserDAO();
+                CustomerDAO cd = new CustomerDAO();
+                o.setCustomer(cd.getCustomerNameById(o.getCustomerId()));
+                o.setCreater(ud.getUserNameById(o.getCreatedBy()));
+                o.setProcessor(ud.getUserNameById(o.getProcessedBy()));
                 result.add(o);
             }
             return result;
@@ -151,6 +171,18 @@ public class OrderDAO {
         return null;
     }
 
+    public void updateOrderPrice(Order o) {
+        try {
+            Connection conn = DBContext.getConnection();
+            String sql = "UPDATE orders SET total_price = ? WHERE id = ?";
+            st = conn.prepareStatement(sql);
+            st.setDouble(1, o.getTotalPrice());
+            st.setInt(2, o.getId());
+            st.executeUpdate();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
     public void updateOrder(Order o) {
         try {
             Connection conn = DBContext.getConnection();

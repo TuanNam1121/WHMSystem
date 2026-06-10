@@ -63,6 +63,21 @@ public class UserDAO {
         }
         return list;
     }
+    
+    public String getUserNameById(int userId) {
+        String sql = "Select fullname from users where userid = ?";
+        try (Connection conn = DBContext.getConnection()) {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString("fullname");
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return null;
+    }
 
     public User getUserFromId(int userId) {
         String sql = "Select * from users where userid = ?";

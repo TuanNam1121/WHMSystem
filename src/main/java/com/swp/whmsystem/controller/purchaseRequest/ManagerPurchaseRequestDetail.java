@@ -6,11 +6,13 @@ import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.dal.UserDAO;
 import com.swp.whmsystem.dal.GoodReceiptDAO;
 import com.swp.whmsystem.model.*;
+import jakarta.mail.Session;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.List;
@@ -79,6 +81,8 @@ public class ManagerPurchaseRequestDetail extends HttpServlet {
         int purReqId = Integer.parseInt(request.getParameter("purchaseRequestId"));
         PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
         PurchaseRequest purchaseRequest = purchaseRequestDAO.getPurchaseRequestById(purReqId);
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
 
         if (button.equalsIgnoreCase("Reject")) {
             purchaseRequest.setStatus("REJECTED");
@@ -92,6 +96,7 @@ public class ManagerPurchaseRequestDetail extends HttpServlet {
             int warehouseStaffId = Integer.parseInt(warehouseStaffIdStr);
             String managerNote = request.getParameter("managerNote");
 
+            purchaseRequest.setApprovedBy(user.getId());
             purchaseRequest.setStatus("APPROVED");
             purchaseRequestDAO.updatePurchaseRequest(purchaseRequest);
 

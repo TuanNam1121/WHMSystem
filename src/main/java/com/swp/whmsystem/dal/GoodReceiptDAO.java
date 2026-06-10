@@ -61,6 +61,22 @@ public class GoodReceiptDAO {
         return null;
     }
 
+    public GoodReceipt getGoodReceiptById(int id) {
+        String sql = "SELECT * FROM good_receipts WHERE id = ?";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapResultSetToGoodReceipt(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
     public GoodReceipt mapResultSetToGoodReceipt(ResultSet rs) throws SQLException {
         GoodReceipt c = new GoodReceipt();
         c.setId(rs.getInt("id"));

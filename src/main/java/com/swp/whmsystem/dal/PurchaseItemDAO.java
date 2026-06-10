@@ -49,7 +49,7 @@ public class PurchaseItemDAO {
         item.setId(rs.getInt("id"));
         item.setPurchaseRequestId(rs.getInt("purchaserequestid"));
         item.setProductId(rs.getInt("product_id"));
-        item.setQuantity(rs.getInt("quantity"));
+        item.setRequiredQuantity(rs.getInt("quantity"));
         return item;
     }
 
@@ -59,7 +59,7 @@ public class PurchaseItemDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, item.getPurchaseRequestId());
             preparedStatement.setInt(2, item.getProductId());
-            preparedStatement.setInt(3, item.getQuantity());
+            preparedStatement.setInt(3, item.getRequiredQuantity());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -72,7 +72,7 @@ public class PurchaseItemDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, item.getPurchaseRequestId());
             preparedStatement.setInt(2, item.getProductId());
-            preparedStatement.setInt(3, item.getQuantity());
+            preparedStatement.setInt(3, item.getRequiredQuantity());
             preparedStatement.setInt(4, item.getId());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {

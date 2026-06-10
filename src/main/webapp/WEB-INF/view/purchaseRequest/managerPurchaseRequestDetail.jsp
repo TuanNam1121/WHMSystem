@@ -156,7 +156,7 @@
                                                             <a href="javascript:void(0);">${product.name}</a>
                                                         </td>
                                                         <td>${product.category.name}</td>
-                                                        <td class="text-center"><strong>${item.quantity}</strong></td>
+                                                        <td class="text-center"><strong>${item.requiredQuantity}</strong></td>
                                                         <td class="text-center">
                                                             <span
                                                                 class="badges ${product.totalQuantity <= 10 ? 'bg-lightred' : 'bg-lightgreen'}">${product.totalQuantity}

@@ -4,7 +4,7 @@ public class PurchaseItem {
     private int id;
     private int purchaseRequestId;
     private int productId;
-    private int quantity;
+    private int requiredQty;
 
     public PurchaseItem() {
     }
@@ -33,11 +33,11 @@ public class PurchaseItem {
         this.productId = productId;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getRequiredQuantity() {
+        return requiredQty;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setRequiredQuantity(int requiredQuantity) {
+        this.requiredQty = requiredQuantity;
     }
 }

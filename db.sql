@@ -459,13 +459,17 @@ CREATE TABLE `product_items` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+-- Chèn câu lệnh ALTER TABLE ở đây theo yêu cầu của bro
+ALTER TABLE `product_items` ADD COLUMN `status` ENUM('AVAILABLE', 'UNAVAILABLE', 'SOLD') DEFAULT 'AVAILABLE' AFTER `goodreceiptsitemid`;
+
 --
 -- Dumping data for table `product_items`
 --
 
 LOCK TABLES `product_items` WRITE;
 /*!40000 ALTER TABLE `product_items` DISABLE KEYS */;
-INSERT INTO `product_items` VALUES (1,'DL0010001',12000000.00,13500000.00,1,'2026-05-27 11:27:22',1,1),(2,'DL0010002',12000000.00,13500000.00,1,'2026-05-27 11:27:22',1,1),(3,'SSD0001',1200000.00,1500000.00,1,'2026-05-27 11:27:22',5,2),(4,'SSD0002',1200000.00,1500000.00,1,'2026-05-27 11:27:22',5,2);
+-- Đã cập nhật giá trị enum ('AVAILABLE') cho các bản ghi dump data mẫu phù hợp với câu lệnh ALTER ở trên
+INSERT INTO `product_items` VALUES (1,'DL0010001',12000000.00,13500000.00,1,'2026-05-27 11:27:22',1,1,'AVAILABLE'),(2,'DL0010002',12000000.00,13500000.00,1,'2026-05-27 11:27:22',1,1,'AVAILABLE'),(3,'SSD0001',1200000.00,1500000.00,1,'2026-05-27 11:27:22',5,2,'AVAILABLE'),(4,'SSD0002',1200000.00,1500000.00,1,'2026-05-27 11:27:22',5,2,'AVAILABLE');
 /*!40000 ALTER TABLE `product_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -474,7 +478,7 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `products`;
-/*!40101 SET @saved_cs_client      = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `products` (
   `productid` int(11) NOT NULL AUTO_INCREMENT,
@@ -537,16 +541,16 @@ INSERT INTO `products` VALUES
 (25,'Laptop ASUS Gaming Vivobook 16X K3605VC-RP431W','Laptop ASUS Vivobook 16X K3605VC-RP431W được trang bị vi xử lý Intel Core i5-13420H cho ra hiệu suất ổn định từ công việc cho đến nhu cầu giải trí. Mẫu ASUS Vivobook Gaming này có màn hình lên đến 16 inch cùng tần số quét 144Hz cung cấp hình ảnh sắc nét không bị vỡ. Card đồ hoạ NVIDIA GeForce RTX 3050 4GB GDDR6 là một điểm cộng lớn của dòng laptop này.','assets/img/product/1780333162727_text_ng_n_5__9_130.webp',0,1,'2026-06-01 23:59:22','2026-06-02 12:16:17',3,2,2,1,4,1,1,'RP431W'),
 (26,'CPU AMD Ryzen 7 7800X3D (Tray)','asa','assets/img/product/1780333276897_cpu-amd-ryzen-7-7800x3d_2__3.webp',0,1,'2026-06-02 00:01:16','2026-06-02 11:10:33',3,2,1,3,2,7,11,'7800X3D '),
 (27,'RAM Laptop Kingston 4-3200 MHz','asss','assets/img/product/1780333845552_text_ng_n_5__9_130.webp',0,1,'2026-06-02 00:10:35','2026-06-02 00:10:45',3,3,2,1,4,2,6,'R2341D'),
-(28,'Laptop Acer Gaming Nitro ProPanel ANV15-41-R7CR','Laptop Acer Gaming Nitro V 15 ProPanel ANV15-41-R7CR sở hữu cấu hình mạnh mẽ với CPU AMD Ryzen 5 7535HS và card đồ họa NVIDIA GeForce RTX 4050 6GB GDDR6. Màn hình 15.6 inch FHD IPS và tần số quét 180Hz đem lại hình ảnh sắc nét. Ổ cứng 512GB PCIe NVMe SSD và RAM 16GB DDR5, với hệ thống tản nhiệt Dual-fan đảm bảo hiệu suất tối ưu.\r\n\r\n','assets/img/product/1780334956211_sssxs_26.png',0,1,'2026-06-02 00:29:05','2026-06-02 00:45:15',2,2,2,1,1,7,11,'ANV15-41'),
+(28,'Laptop Acer Gaming Nitro ProPanel ANV15-41-R7CR','Laptop Acer Gaming Nitro V 15 ProPanel ANV15-41-R7CR sở hữu cấu hình mạnh mẽ với CPU AMD Ryzen 5 7535HS and card đồ họa NVIDIA GeForce RTX 4050 6GB GDDR6. Màn hình 15.6 inch FHD IPS and tần số quét 180Hz đem lại hình ảnh sắc nét. Ổ cứng 512GB PCIe NVMe SSD and RAM 16GB DDR5, với hệ thống tản nhiệt Dual-fan đảm bảo hiệu suất tối ưu.\r\n\r\n','assets/img/product/1780334956211_sssxs_26.png',0,1,'2026-06-02 00:29:05','2026-06-02 00:45:15',2,2,2,1,1,7,11,'ANV15-41'),
 (29,'Laptop Acer Gaming Nitro ProPanel ANV15-41-R7CR','','assets/img/product/1780336413334_t_i_xu_ng_-_2023-01-02t221507.270_2_1_1_1_1.png',0,1,'2026-06-02 00:31:32','2026-06-02 00:53:33',2,2,2,1,1,7,11,'ANV15-41-R5AS'),
 (30,'RAM Laptop Transcend DDR5 4800MHz 16GB','Ram laptop','assets/img/product/1780335486900_ram-transcend-ddr5-4800mhz-16gb_1_.webp',0,1,'2026-06-02 00:38:06','2026-06-02 00:38:06',3,NULL,NULL,1,2,5,NULL,'R.TC.04'),
 (31,'RAM Laptop Transcend DDR5 4800MHz 16GB','','assets/img/product/1780335748931_ram-transcend-ddr5-4800mhz-16gb_1_.webp',0,1,'2026-06-02 00:42:28','2026-06-02 00:42:28',NULL,2,NULL,2,3,2,NULL,'R.TC.'),
 (32,'CPU AMD Ryzen 5 5500','','assets/img/product/1780336054684_t_i_xu_ng_-_2023-01-02t221507.270_2_1_1_1_1.png',0,0,'2026-06-02 00:47:00','2026-06-02 00:47:34',3,2,3,1,6,7,11,'CPU.AM.09'),
 (33,'Laptop ASUS VivoBook 15','aa','assets/img/product/1780364201177_ssss_2_42.png',0,1,'2026-06-02 08:36:41','2026-06-02 12:16:35',2,1,3,1,1,1,1,'BQ021W'),
-(34,'Laptop Acer Aspire Lite 16 GEN 2 AL16-52P-76DU','Laptop Acer Aspire Lite 16 GEN 2 AL16-52P-76DU sở hữu màn hình 16 inch Full HD+, RAM 16GB DDR5 tốc độ 4800MHz (hỗ trợ nâng cấp tối đa 64GB). Chiếc laptop Acer Aspire được trang bị Intel Core i7-1355U, card đồ họa Intel Iris Xe, cùng loa Stereo và webcam Full HD. Thiết kế gọn nhẹ 1.7kg, tích hợp đầy đủ cổng kết nối giúp sử dụng linh hoạt.','assets/img/product/1780375469602_text_ng_n_6__2_234.png',0,1,'2026-06-02 11:44:29','2026-06-02 12:17:03',3,2,2,1,7,7,13,'AL16-52P-76DU'),
-(35,'Laptop ASUS Vivobook S14 S3407VA','Laptop ASUS Vivobook S14 S3407VA-LY146W trang bị vi xử lý Intel Core 5 210H, RAM 16GB DDR5, SSD 512GB cùng với màn hình 14 inch WUXGA sắc nét, chân thực. Máy có thiết kế mỏng nhẹ chỉ 1.4kg, vỏ kim loại bền bỉ, pin lớn 70Wh cho thời gian sử dụng dài. Hỗ trợ Wi-Fi 6, camera IR nhận diện khuôn mặt và bàn phím có đèn nền tích hợp phím Copilot.\r\n','assets/img/product/1780378095512_text_ng_n_4__8_52.webp',0,0,'2026-06-02 12:28:15','2026-06-02 12:28:55',3,4,4,1,1,2,8,'LY146W'),
+(34,'Laptop Acer Aspire Lite 16 GEN 2 AL16-52P-76DU','Laptop Acer Aspire Lite 16 GEN 2 AL16-52P-76DU sở hữu màn hình 16 inch Full HD+, RAM 16GB DDR5 tốc độ 4800MHz (hỗ trợ nâng cấp tối đa 64GB). Chiếc laptop Acer Aspire được trang bị Intel Core i7-1355U, card đồ họa Intel Iris Xe, cùng loa Stereo and webcam Full HD. Thiết kế gọn nhẹ 1.7kg, tích hợp đầy đủ cổng kết nối giúp sử dụng linh hoạt.','assets/img/product/1780375469602_text_ng_n_6__2_234.png',0,1,'2026-06-02 11:44:29','2026-06-02 12:17:03',3,2,2,1,7,7,13,'AL16-52P-76DU'),
+(35,'Laptop ASUS Vivobook S14 S3407VA','Laptop ASUS Vivobook S14 S3407VA-LY146W trang bị vi xử lý Intel Core 5 210H, RAM 16GB DDR5, SSD 512GB cùng với màn hình 14 inch WUXGA sắc nét, chân thực. Máy có thiết kế mỏng nhẹ chỉ 1.4kg, vỏ kim loại bền bỉ, pin lớn 70Wh cho thời gian sử dụng dài. Hỗ trợ Wi-Fi 6, camera IR nhận diện khuôn mặt and bàn phím có đèn nền tích hợp phím Copilot.\r\n','assets/img/product/1780378095512_text_ng_n_4__8_52.webp',0,0,'2026-06-02 12:28:15','2026-06-02 12:28:55',3,4,4,1,1,2,8,'LY146W'),
 (36,'Laptop Acer Gaming Aspire 7 A715-59G-57TU','Laptop Acer Gaming Aspire 7 A715-59G-57TU được trang bị vi xử lý Intel Core i5-12450H cân trơn tru mọi tác vụ từ văn phòng cho đến chơi game nặng. Hỗ trợ cho vi xử lý là card đồ hoạ RTX 3050 6GB giúp chơi game nặng mượt mà hơn. Người dùng có thể mở nhiều nội dung hiển thị cùng một lúc với màn hình lên đến 15.6 inch.\r\n\r\n','assets/img/product/1780379484406_text_ng_n_14__9_26.webp',0,1,'2026-06-02 12:51:24','2026-06-02 12:51:24',3,2,3,1,4,7,13,'A715-59G-57TU'),
-(37,'Laptop Acer Aspire Lite 15 AL15-46P-R73C','Laptop Acer Aspire Lite 15 AL15-46P-R73C sở hữu hiệu năng ấn tượng nhờ chip AMD Ryzen 3 5400U, RAM 8GB DDR4, cùng bộ nhớ trong SSD 512GB rộng rãi. Máy có màn hình Full HD 15.6 inch, tần số quét 60Hz trong thân máy chỉ 1.45kg. Laptop có pin 53Wh và hệ thống cổng đa dạng gồm: USB-C, USB-A và HDMI.\r\n\r\n','assets/img/product/1780379586909_sssxs_1__9.webp',0,1,'2026-06-02 12:53:06','2026-06-02 12:53:06',3,2,3,1,4,7,13,'AL15-46P-R73C');
+(37,'Laptop Acer Aspire Lite 15 AL15-46P-R73C','Laptop Acer Aspire Lite 15 AL15-46P-R73C sở hữu hiệu năng ấn tượng nhờ chip AMD Ryzen 3 5400U, RAM 8GB DDR4, cùng bộ nhớ trong SSD 512GB rộng rãi. Máy có màn hình Full HD 15.6 inch, tần số quét 60Hz trong thân máy chỉ 1.45kg. Laptop có pin 53Wh and hệ thống cổng đa dạng gồm: USB-C, USB-A and HDMI.\r\n\r\n','assets/img/product/1780379586909_sssxs_1__9.webp',0,1,'2026-06-02 12:53:06','2026-06-02 12:53:06',3,2,3,1,4,7,13,'AL15-46P-R73C');
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
 

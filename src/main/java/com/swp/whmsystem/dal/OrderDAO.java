@@ -5,6 +5,7 @@
 package com.swp.whmsystem.dal;
 
 import com.swp.whmsystem.model.Order;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -79,35 +80,35 @@ public class OrderDAO {
             return null;
         }
     }
-    
+
     public List<Order> searchOrder(String customerName, String status) {
 
         try (Connection conn = DBContext.getConnection()) {
             String sql = "select o.* from orders o join customers c on o.customer_id = c.id where ";
-            if(customerName != null && !customerName.isBlank()){
-                
-                    sql += "c.name LIKE ? ";
-                    if(!status.equals("ALL")){
-                        sql += "AND ";
+            if (customerName != null && !customerName.isBlank()) {
+
+                sql += "c.name LIKE ? ";
+                if (!status.equals("ALL")) {
+                    sql += "AND ";
                     sql += "o.status = ?";
-                    }
-            }else if(customerName == null || customerName.isBlank()){
-                    sql += "o.status = ?";
+                }
+            } else if (customerName == null || customerName.isBlank()) {
+                sql += "o.status = ?";
             }
-            
-            
+
+
             PreparedStatement ps = conn.prepareStatement(sql);
-            if(customerName != null && !customerName.isBlank()){
-                
-                    ps.setString(1, "%" + customerName + "%");
-                    if(!status.equals("ALL")){
-                        ps.setString(2,  status );
-                    }
-            }else if(customerName == null || customerName.isBlank()){
-                    ps.setString(1,  status );
+            if (customerName != null && !customerName.isBlank()) {
+
+                ps.setString(1, "%" + customerName + "%");
+                if (!status.equals("ALL")) {
+                    ps.setString(2, status);
+                }
+            } else if (customerName == null || customerName.isBlank()) {
+                ps.setString(1, status);
             }
-            
-            
+
+
             ResultSet rs = ps.executeQuery();
             List<Order> result = new ArrayList<>();
             while (rs.next()) {
@@ -120,7 +121,7 @@ public class OrderDAO {
         }
         return null;
     }
-    
+
 
     public Order insertOrder(Order o) {
         try {
@@ -185,13 +186,15 @@ public class OrderDAO {
         return o;
     }
 
-//    public static void main(String[] args) {
-//
-//        System.out.println((double)13500000.00);
-//    }
-//
-//
-//}
+    public static void main(String[] args) {
+        OrderDAO orderDAO = new OrderDAO();
+        List<Order> orderList = orderDAO.getAllOrder();
+        for (Order o : orderList) {
+            System.out.println(o);
+        }
+
+
+    }
 
 
 }

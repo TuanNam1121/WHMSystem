@@ -40,6 +40,11 @@
                             <div class="page-title">
                                 <h4>ORDER LIST</h4>
                             </div>
+                            <div class="page-btn">
+                    <a href="CreateOder" class="btn btn-added" id="btn-create-request">
+                        <img src="assets/img/icons/plus.svg" alt="img">Create Order
+                    </a>
+                </div>
                         </div>
 
                     <c:if test="${not empty sessionScope.message}">
@@ -116,12 +121,6 @@
                                                            id="filter-date">
                                                 </div>
                                             </div>
-                                            <div class="col-lg-3 col-sm-6 col-12">
-                                                <div class="form-group">
-                                                    <a class="btn btn-filters ms-auto" id="btn-apply-filter"><img
-                                                            src="assets/img/icons/search-whites.svg" alt="img"></a>
-                                                </div>
-                                            </div>
                                         </form>
                                     </div>
                                 </div>
@@ -129,11 +128,11 @@
 
                             <div class="table-responsive">
                                 <fmt:setLocale value="en_US"/>
-                                <table class="table datanew" id="manager-purchase-request-table">
+                                <table class="table datanew" >
                                     <thead>
                                         <tr>
                                             <th>id</th>
-                                            <th>Customer id</th>
+                                            <th>Customer name</th>
                                             <th>total price</th>
                                             <th>Note</th>
                                             <th>Order date</th>
@@ -146,7 +145,11 @@
                                         <c:forEach items="${orders}" var="o">
                                             <tr>
                                                 <td>${o.id}</td>
-                                                <td>${o.customerId}</td>
+                                                <c:forEach items="${customers}" var="c">
+                                                    <c:if test="${o.customerId == c.id}">
+                                                        <td>${c.name}</td>
+                                                    </c:if>
+                                                </c:forEach>
                                                 <td>
                                                     <fmt:formatNumber
                                                         value="${o.totalPrice}"
@@ -156,8 +159,8 @@
                                                 <td>${o.orderDate}</td>
                                                 <td>${o.createdBy}</td>
                                                 <td>${o.status}</td>
-                                                <td><a>View</a>
-                                                    <a>Update</a></td>
+                                                <td><a href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=view">View</a>
+                                                    <a href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=update">Update</a></td>
                                             </tr>
                                         </c:forEach>
                                     </tbody>

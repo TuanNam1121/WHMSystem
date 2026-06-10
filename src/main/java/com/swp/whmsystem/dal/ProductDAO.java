@@ -169,7 +169,7 @@ public class ProductDAO {
         }
         return null;
     }
-
+    
     public List<Product> getProductList() {
         List<Product> productList = new ArrayList<>();
         String sql = "select * from products order by isActive desc";
@@ -183,6 +183,18 @@ public class ProductDAO {
             ex.printStackTrace();
         }
         return productList;
+    }
+    
+    public void changeProductQuantity(int newQuantity, int id) {
+        String sql = "update products set total_quantity = ? where productid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+            ps.setInt(1, newQuantity);
+            ps.setInt(2, id);
+            ps.executeUpdate();
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public Product getProductFromSKU(String sku) {

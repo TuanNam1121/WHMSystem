@@ -76,6 +76,20 @@ public class OrderItemDAO {
             exception.printStackTrace();
         }
     }
+    
+    public void deleteOrderItem(int orderId) {
+        try {
+            Connection conn = DBContext.getConnection();
+            String sql = "delete from order_items"
+                    + " where orderid = ?";
+            st = conn.prepareStatement(sql);
+            st.setInt(1, orderId);
+            st.executeUpdate();
+            
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
 
     public void updateOrderItem(OrderItem o) {
         try {

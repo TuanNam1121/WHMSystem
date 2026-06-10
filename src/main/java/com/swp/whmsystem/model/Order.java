@@ -16,7 +16,7 @@ public class Order {
     private Timestamp updatedAt;
     private Timestamp completedAt;
     private int createdBy;
-    private int processdBy;
+    private int processedBy;
     private int customerId;
 
     public Order() {
@@ -32,7 +32,7 @@ public class Order {
         this.updatedAt = updatedAt;
         this.completedAt = completedAt;
         this.createdBy = createdBy;
-        this.processdBy = processdBy;
+        this.processedBy = processdBy;
         this.customerId = customerId;
     }
 
@@ -110,12 +110,12 @@ public class Order {
         this.createdBy = createdBy;
     }
 
-    public int getProcessdBy() {
-        return processdBy;
+    public int getProcessedBy() {
+        return processedBy;
     }
 
-    public void setProcessdBy(int processdBy) {
-        this.processdBy = processdBy;
+    public void setProcessedBy(int processdBy) {
+        this.processedBy = processdBy;
     }
 
     public int getCustomerId() {
@@ -130,7 +130,7 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Order{" + "id=" + id + ", totalPrice=" + totalPrice + ", note=" + note + ", orderDate=" + orderDate + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", completedAt=" + completedAt + ", createdBy=" + createdBy + ", processdBy=" + processdBy + ", customerId=" + customerId + '}';
+        return "Order{" + "id=" + id + ", totalPrice=" + totalPrice + ", note=" + note + ", orderDate=" + orderDate + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", completedAt=" + completedAt + ", createdBy=" + createdBy + ", processdBy=" + processedBy + ", customerId=" + customerId + '}';
     }
     
     

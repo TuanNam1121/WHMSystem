@@ -79,6 +79,48 @@ public class OrderDAO {
             return null;
         }
     }
+    
+    public List<Order> searchOrder(String customerName, String status) {
+
+        try (Connection conn = DBContext.getConnection()) {
+            String sql = "select o.* from orders o join customers c on o.customer_id = c.id where ";
+            if(customerName != null && !customerName.isBlank()){
+                
+                    sql += "c.name LIKE ? ";
+                    if(!status.equals("ALL")){
+                        sql += "AND ";
+                    sql += "o.status = ?";
+                    }
+            }else if(customerName == null || customerName.isBlank()){
+                    sql += "o.status = ?";
+            }
+            
+            
+            PreparedStatement ps = conn.prepareStatement(sql);
+            if(customerName != null && !customerName.isBlank()){
+                
+                    ps.setString(1, "%" + customerName + "%");
+                    if(!status.equals("ALL")){
+                        ps.setString(2,  status );
+                    }
+            }else if(customerName == null || customerName.isBlank()){
+                    ps.setString(1,  status );
+            }
+            
+            
+            ResultSet rs = ps.executeQuery();
+            List<Order> result = new ArrayList<>();
+            while (rs.next()) {
+                Order o = mapResultSetToOrder(rs);
+                result.add(o);
+            }
+            return result;
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return null;
+    }
+    
 
     public Order insertOrder(Order o) {
         try {
@@ -137,7 +179,7 @@ public class OrderDAO {
         o.setUpdatedAt(rs.getTimestamp("updatedat"));
         o.setCompletedAt(rs.getTimestamp("completedat"));
         o.setCreatedBy(rs.getInt("createdby"));
-        o.setProcessdBy(rs.getInt("processedby"));
+        o.setProcessedBy(rs.getInt("processedby"));
         o.setCustomerId(rs.getInt("customer_id"));
 
         return o;
@@ -145,27 +187,7 @@ public class OrderDAO {
 
 //    public static void main(String[] args) {
 //
-//        BrandDAO dao = new BrandDAO();
-//
-//        List<Brand> list = dao.getAllBrand();
-//        List<Brand> search = dao.searchBrand(null, null, null);
-//        Brand b = new Brand();
-//
-//        b.setId(1);
-//        b.setName("Dell");
-//        b.setDescription("Laptop brand");
-//        b.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-//
-//        dao.updateBrand(b);
-//
-//        for (Brand i : dao.getAllBrand()) {
-//            System.out.println(i.getId() + " " + i.getName() + " " + i.getDescription());
-//        }
-//        System.out.println(dao.getBrandByName("Dell").toString());
-//        System.out.println("====================");
-//        for (Brand asd : search) {
-//            System.out.println(asd);
-//        }
+//        System.out.println((double)13500000.00);
 //    }
 //
 //

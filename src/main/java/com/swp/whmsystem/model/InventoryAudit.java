@@ -1,0 +1,22 @@
+package com.swp.whmsystem.model;
+
+import com.swp.whmsystem.enums.InventoryAuditStatus;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class InventoryAudit {
+    private int id;
+    private int userId;
+    private InventoryAuditStatus status;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private String userFullName;
+    private List<InventoryAuditItem> inventoryAuditItems;
+}

@@ -106,7 +106,7 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="components.html"><i data-feather="layers"></i><span> Components</span> </a>
+                    <a href="InventoryAuditList"><i data-feather="layers"></i><span> Inventory Audit List</span> </a>
                 </li>
                 <li>
                     <a href="blankpage.jsp"><i data-feather="file"></i><span> Blank Page</span> </a>

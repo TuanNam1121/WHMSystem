@@ -155,35 +155,9 @@
                             </ul>
                         </div>
                     </div>
-                    <form action="productDetails" method="get">
-                        <div class="card mb-0" id="filter_inputs">
-                            <div class="card-body pb-0">
-                                <div class="row">
-                                    <div class="col-lg-12 col-sm-12">
-                                        <div class="row">
 
-                                            <div class="col-lg col-sm-6 col-12">
-                                                <div class="form-group">
-                                                    <input type="text" name="productName" placeholder="Search...">
-                                                </div>
-                                            </div>
-
-                                            <div class="col-lg-1 col-sm-6 col-12">
-                                                <div class="form-group">
-                                                    <button type="submit" class="btn btn-filters ms-auto"
-                                                            style="border: none; padding: 0;">
-                                                        <img src="assets/img/icons/search-whites.svg" alt="img">
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table datanew">
                             <thead>
                             <tr>
                                 <th>No</th>
@@ -242,6 +216,9 @@
 <script src="assets/js/feather.min.js"></script>
 
 <script src="assets/js/jquery.slimscroll.min.js"></script>
+
+<script src="assets/js/jquery.dataTables.min.js"></script>
+<script src="assets/js/dataTables.bootstrap4.min.js"></script>
 
 <script src="assets/js/bootstrap.bundle.min.js"></script>
 

@@ -38,6 +38,27 @@ public class CustomerDAO {
         return null;
     }
 
+    public String getCustomerNameById(int id) {
+        try {
+            Connection conn = DBContext.getConnection();
+            String sql = "select name from customers where id=?";
+            PreparedStatement st;
+            ResultSet rs;
+            st = conn.prepareStatement(sql);
+            st.setInt(1, id);
+            rs = st.executeQuery(); //only select
+            if (rs.next()) {
+                String name = rs.getString("name");
+
+                return name;
+            } else {
+                return null;
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return null;
+        }
+    }
 
     public Customer getCustomerByPhone(String phone) {
         try {

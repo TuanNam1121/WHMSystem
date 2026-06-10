@@ -28,7 +28,7 @@
                                                        alt="img"><span> Sales</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="saleslist.html">Sales List</a></li>
+                        <li><a href="OrderList">Sales List</a></li>
                         <li><a href="pos.html">POS</a></li>
                         <li><a href="pos.html">New Sales</a></li>
                         <li><a href="salesreturnlists.html">Sales Return List</a></li>

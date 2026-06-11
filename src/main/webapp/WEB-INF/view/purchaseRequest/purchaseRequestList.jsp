@@ -152,7 +152,7 @@
                             <c:forEach items="${purchaseList}" var="pr">
                                 <tr>
                                     <td class="text-bolds"><fmt:formatNumber value="${pr.id}" pattern="000"/></td>
-                                    <td>${pr.note}</td>
+                                    <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<c:out value='${pr.note}'/>">${pr.note}</td>
                                     <td>
                                         <c:choose>
                                             <c:when test="${pr.status == 'New' || pr.status == 'NEW'}">

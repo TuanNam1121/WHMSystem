@@ -32,12 +32,12 @@ public class PurchaseRequestList extends HttpServlet {
             throws ServletException, IOException {
         int prId = Integer.parseInt(request.getParameter("id"));
         PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
-        purchaseRequestDAO.deletePurchaseRequest(prId);
-
         PurchaseItemDAO purchaseItemDAO = new PurchaseItemDAO();
         purchaseItemDAO.deletePurchaseItemByRequestId(prId);
+        purchaseRequestDAO.deletePurchaseRequest(prId);
+
         HttpSession session = request.getSession();
-        session.setAttribute("error", "Purchase Request with Id: " + prId + "has been deleted!");
+        session.setAttribute("error", "Purchase Request with Id: " + prId + " has been deleted!");
         response.sendRedirect("purchaseRequestList");
     }
 

@@ -21,6 +21,7 @@ public class Order {
     private String customer;
     private String creater;
     private String processor;
+    private int totalQuantity;
     
 
     public Order() {
@@ -39,6 +40,15 @@ public class Order {
         this.processedBy = processdBy;
         this.customerId = customerId;
     }
+
+    public int getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public void setTotalQuantity(int totalQuantity) {
+        this.totalQuantity = totalQuantity;
+    }
+    
 
     public String getCustomer() {
         return customer;

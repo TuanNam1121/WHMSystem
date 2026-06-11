@@ -1,0 +1,236 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta name="description" content="POS - Bootstrap Admin Template">
+    <meta name="keywords"
+          content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
+    <meta name="author" content="Dreamguys - Bootstrap Admin Template">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Review Inventory Audit</title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/animate.css">
+    <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+<div id="global-loader">
+    <div class="whirly-loader"></div>
+</div>
+
+<div class="main-wrapper">
+    <jsp:include page="/WEB-INF/common/header.jsp"></jsp:include>
+    <jsp:include page="/WEB-INF/common/sidebar.jsp"></jsp:include>
+
+    <div class="page-wrapper">
+        <div class="content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h4>Review Inventory Audit</h4>
+                    <h6>Review audit request #${audit.id} before approval</h6>
+                </div>
+            </div>
+
+            <c:if test="${not empty message}">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error:</strong> ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                </div>
+            </c:if>
+
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label class="font-weight-bold"
+                                       style="font-size: 14px; color: #555;">Auditor</label>
+                                <div class="form-control-static"
+                                     style="font-size: 16px; font-weight: 600; padding: 8px 0;">
+                                    ${audit.userFullName}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label class="font-weight-bold"
+                                       style="font-size: 14px; color: #555;">Status</label>
+                                <div style="padding: 8px 0;">
+                                                    <span class="badges bg-lightgrey"
+                                                          style="font-size: 13px; padding: 6px 12px;">
+                                                        ${audit.status}
+                                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label class="font-weight-bold"
+                                       style="font-size: 14px; color: #555;">Created At</label>
+                                <div class="form-control-static"
+                                     style="font-size: 16px; padding: 8px 0;">
+                                    ${audit.createdAt}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label class="font-weight-bold"
+                                       style="font-size: 14px; color: #555;">Last Updated</label>
+                                <div class="form-control-static"
+                                     style="font-size: 16px; padding: 8px 0;">
+                                    ${audit.updatedAt}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <form id="reviewAuditForm" action="ReviewInventoryAudit" method="POST">
+                <input type="hidden" name="id" value="${audit.id}"/>
+                <input type="hidden" name="action" id="auditAction" value=""/>
+
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h5>Submitted Physical Quantities</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>SKU</th>
+                                    <th>Category</th>
+                                    <th class="text-end" style="width: 12%;">System Qty</th>
+                                    <th class="text-end" style="width: 12%;">Physical Qty</th>
+                                    <th class="text-end" style="width: 12%;">Discrepancy</th>
+                                    <th>Reason / Notes</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <c:forEach var="item" items="${audit.inventoryAuditItems}">
+                                    <c:set var="discrepancy"
+                                           value="${item.physicalQuantity - item.systemQuantity}"/>
+                                    <tr>
+                                        <td><strong>${item.productName}</strong></td>
+                                        <td><span
+                                                class="text-secondary font-weight-bold">${item.productSku}</span>
+                                        </td>
+                                        <td>${item.categoryName}</td>
+                                        <td class="text-end font-weight-bold">${item.systemQuantity}
+                                        </td>
+                                        <td class="text-end font-weight-bold text-primary">
+                                                ${item.physicalQuantity}</td>
+                                        <td class="text-end font-weight-bold">
+                                            <c:choose>
+                                                <c:when test="${discrepancy > 0}">
+                                                                        <span
+                                                                                class="text-success">+${discrepancy}</span>
+                                                </c:when>
+                                                <c:when test="${discrepancy < 0}">
+                                                    <span class="text-danger">${discrepancy}</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="text-secondary">0</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                                ${empty item.reason ? '-' : item.reason}
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-lg-12">
+                                <button type="button" class="btn btn-submit me-2 btn-approve"
+                                        style="background: #28c76f; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: 600;">
+                                    Approve Audit
+                                </button>
+                                <button type="button" class="btn btn-cancel me-2 btn-decline"
+                                        style="background: #ea5455; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: 600;">
+                                    Decline
+                                </button>
+                                <a href="InventoryAuditList" class="btn btn-cancel"
+                                   style="background: #637381; color: white; padding: 10px 20px; border-radius: 5px; font-weight: 600;">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="assets/js/jquery-3.6.0.min.js"></script>
+<script src="assets/js/feather.min.js"></script>
+<script src="assets/js/jquery.slimscroll.min.js"></script>
+<script src="assets/js/jquery.dataTables.min.js"></script>
+<script src="assets/js/dataTables.bootstrap4.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/plugins/select2/js/select2.min.js"></script>
+<script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+<script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
+<script src="assets/js/script.js"></script>
+
+<script>
+    $(document).ready(function () {
+        function confirmAction(config) {
+            Swal.fire({
+                icon: "warning",
+                showCancelButton: true,
+                title: config.title,
+                text: config.text,
+                confirmButtonColor: config.confirmColor,
+                confirmButtonText: config.confirmText
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    $("#auditAction").val(config.action);
+                    $("#reviewAuditForm").submit();
+                }
+            });
+        }
+
+        $(".btn-approve").on("click", function () {
+            confirmAction({
+                title: "Approve Audit?",
+                text: "This will complete this audit.",
+                confirmColor: "#28c76f",
+                confirmText: "Yes, approve it!",
+                action: "approve"
+            });
+        });
+
+        $(".btn-decline").on("click", function () {
+            confirmAction({
+                title: "Reject Audit?",
+                text: "This will permanently reject this audit",
+                confirmColor: "#ea5455",
+                confirmText: "Yes, reject it!",
+                action: "decline"
+            });
+        });
+    });
+</script>
+</body>
+
+</html>

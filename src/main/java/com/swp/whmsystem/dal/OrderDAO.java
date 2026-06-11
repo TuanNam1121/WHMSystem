@@ -32,9 +32,11 @@ public class OrderDAO {
                 Order o = mapResultSetToOrder(rs);
                 UserDAO ud = new UserDAO();
                 CustomerDAO cd = new CustomerDAO();
+                OrderItemDAO oid = new OrderItemDAO();
                 o.setCustomer(cd.getCustomerNameById(o.getCustomerId()));
                 o.setCreater(ud.getUserNameById(o.getCreatedBy()));
                 o.setProcessor(ud.getUserNameById(o.getProcessedBy()));
+                o.setTotalQuantity(oid.totalQuantityByOrderId(o.getId()));
                 result.add(o);
             }
             return result;
@@ -82,9 +84,11 @@ public class OrderDAO {
                 Order o = mapResultSetToOrder(rs);
                 UserDAO ud = new UserDAO();
                 CustomerDAO cd = new CustomerDAO();
+                OrderItemDAO oid = new OrderItemDAO();
                 o.setCustomer(cd.getCustomerNameById(o.getCustomerId()));
                 o.setCreater(ud.getUserNameById(o.getCreatedBy()));
                 o.setProcessor(ud.getUserNameById(o.getProcessedBy()));
+                o.setTotalQuantity(oid.totalQuantityByOrderId(o.getId()));
 
                 return o;
             } else {

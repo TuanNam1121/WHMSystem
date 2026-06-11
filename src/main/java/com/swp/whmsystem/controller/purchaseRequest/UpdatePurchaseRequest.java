@@ -94,7 +94,7 @@ public class UpdatePurchaseRequest extends HttpServlet {
                         PurchaseItem purchaseItem = new PurchaseItem();
                         purchaseItem.setPurchaseRequestId(pr.getId());
                         purchaseItem.setProductId(productId);
-                        purchaseItem.setRequiredQuantity(quantity);
+                        purchaseItem.setRequiredQty(quantity);
                         piDAO.insertPurchaseItem(purchaseItem);
                     } catch (NumberFormatException e) {
                         System.out.println(e.getMessage());

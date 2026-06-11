@@ -49,7 +49,7 @@ public class PurchaseItemDAO {
         item.setId(rs.getInt("id"));
         item.setPurchaseRequestId(rs.getInt("purchaserequestid"));
         item.setProductId(rs.getInt("product_id"));
-        item.setRequiredQuantity(rs.getInt("quantity"));
+        item.setRequiredQty(rs.getInt("quantity"));
         return item;
     }
 
@@ -59,7 +59,7 @@ public class PurchaseItemDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, item.getPurchaseRequestId());
             preparedStatement.setInt(2, item.getProductId());
-            preparedStatement.setInt(3, item.getRequiredQuantity());
+            preparedStatement.setInt(3, item.getRequiredQty());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -72,7 +72,7 @@ public class PurchaseItemDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, item.getPurchaseRequestId());
             preparedStatement.setInt(2, item.getProductId());
-            preparedStatement.setInt(3, item.getRequiredQuantity());
+            preparedStatement.setInt(3, item.getRequiredQty());
             preparedStatement.setInt(4, item.getId());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -90,6 +90,19 @@ public class PurchaseItemDAO {
             throw new RuntimeException(e);
         }
     }
+
+    public boolean softDeletePurItemByPurReqId(int prReid) {
+        String sql = "update purchase_request_items set isDeleted = ? where purchaserequestid = ?";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, 1);
+            preparedStatement.setInt(2, prReid);
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public boolean deletePurchaseItem(int id) {
         String sql = "delete from purchase_request_items where id = ?";
         try (Connection connection = DBContext.getConnection()) {

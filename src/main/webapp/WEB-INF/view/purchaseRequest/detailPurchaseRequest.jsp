@@ -104,8 +104,16 @@
                                     <div class="mt-auto pt-3">
                                         <div class="form-group mb-3">
                                             <label>Note</label>
-                                            <textarea class="form-control" rows="2" name="note" readonly
-                                                      id="request-note">${purchaseRequest.note}</textarea>
+                                            <c:choose>
+                                                <c:when test="${not empty purchaseRequest.note}">
+                                                    <textarea class="form-control" rows="2" name="note" readonly
+                                                              id="request-note">${purchaseRequest.note}</textarea>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <textarea class="form-control" rows="2" name="note" readonly
+                                                              id="request-note" style="color: #6c757d; font-style: italic;">No additional note provided.</textarea>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
 
                                         <div class="text-end">

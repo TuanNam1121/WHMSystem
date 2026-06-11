@@ -162,10 +162,10 @@
                             </div>
                             <div class="status-connector ${goodReceipt.status != 'NEW' ? 'done' : ''}"
                                  id="connector-1"></div>
-                            <div class="status-step ${goodReceipt.status == 'DOING' ? 'active' : (goodReceipt.status == 'COMPLETED' ? 'done' : '')}"
-                                 id="step-doing">
+                            <div class="status-step ${goodReceipt.status == 'PENDING' ? 'active' : (goodReceipt.status == 'COMPLETED' ? 'done' : '')}"
+                                 id="step-pending">
                                 <div class="step-circle"><i class="fas fa-cogs"></i></div>
-                                <div class="step-label">Doing</div>
+                                <div class="step-label">Pending</div>
                             </div>
                             <div class="status-connector ${goodReceipt.status == 'COMPLETED' ? 'done' : ''}"
                                  id="connector-2"></div>
@@ -236,11 +236,13 @@
                                     <i class="fas fa-times me-2"></i>Cancel
                                 </a>
                                 <input type="hidden" name="goodReId" value='${goodReceipt.id}'>
-                                <button type="submit" name="action" value="accept" class="btn btn-submit"
-                                        id="btn-accept-import"
-                                        style="padding: 10px 35px; background: #FF9F43;">
-                                    <i class="fas fa-play me-2"></i>Accept
-                                </button>
+                                <c:if test="${goodReceipt.status == 'NEW' || goodReceipt.status == 'New'}">
+                                    <button type="submit" name="action" value="accept" class="btn btn-submit"
+                                            id="btn-accept-import"
+                                            style="padding: 10px 35px; background: #FF9F43;">
+                                        <i class="fas fa-play me-2"></i>Accept
+                                    </button>
+                                </c:if>
                             </div>
                         </div>
                     </div>
@@ -269,53 +271,22 @@
         var urlParams = new URLSearchParams(window.location.search);
         var statusParam = urlParams.get('status');
 
-        if (statusParam === 'doing') {
-            setStatusDoing();
+        if (statusParam === 'pending') {
+            setStatusPending();
         } else if (statusParam === 'completed') {
             setStatusCompleted();
         }
 
 
 
-        // === COMPLETE (Doing → Completed) ===
-        $('#btn-complete-import').on('click', function () {
-            Swal.fire({
-                title: 'Complete Import?',
-                html: `
-                <div style="text-align:left; line-height: 1.8;">
-                    <p>Confirm that <strong>all products</strong> have been imported into the warehouse.</p>
-                    <p><strong>Request:</strong> IR-001</p>
-                    <p><strong>Products:</strong> 3 items (45 units total)</p>
-                    <hr>
-                    <p class="text-muted">Status will change from <strong>Doing</strong> → <strong>Completed</strong>.</p>
-                    <p class="text-muted">Inventory stock will be updated accordingly.</p>
-                </div>
-            `,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#28C76F',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: '<i class="fas fa-check-double me-1"></i> Yes, Complete!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    setStatusCompleted();
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Import Completed!',
-                        html: '<p>Import Request <strong>IR-001</strong> has been completed.</p><p>Inventory stock has been updated.</p>',
-                        confirmButtonColor: '#28C76F'
-                    });
-                }
-            });
-        });
+        
 
         // === Status Helper Functions ===
-        function setStatusDoing() {
+        function setStatusPending() {
             // Timeline
             $('#step-new').removeClass('active').addClass('done');
             $('#connector-1').addClass('done');
-            $('#step-doing').addClass('active');
+            $('#step-pending').addClass('active');
 
             // Buttons
             $('#btn-accept-import').hide();
@@ -327,7 +298,7 @@
             // Timeline
             $('#step-new').removeClass('active').addClass('done');
             $('#connector-1').addClass('done');
-            $('#step-doing').removeClass('active').addClass('done');
+            $('#step-pending').removeClass('active').addClass('done');
             $('#connector-2').addClass('done');
             $('#step-completed').addClass('done');
 

@@ -566,6 +566,7 @@ CREATE TABLE `purchase_request_items` (
   `purchaserequestid` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
+  `isDeleted` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `purchaserequestid` (`purchaserequestid`),
   KEY `product_id` (`product_id`),
@@ -580,7 +581,7 @@ CREATE TABLE `purchase_request_items` (
 
 LOCK TABLES `purchase_request_items` WRITE;
 /*!40000 ALTER TABLE `purchase_request_items` DISABLE KEYS */;
-INSERT INTO `purchase_request_items` VALUES (1,1,1,10),(2,2,5,20);
+INSERT INTO `purchase_request_items` VALUES (1,1,1,10,0),(2,2,5,20,0);
 /*!40000 ALTER TABLE `purchase_request_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -599,6 +600,7 @@ CREATE TABLE `purchase_requests` (
   `note` text,
   `createdat` datetime DEFAULT CURRENT_TIMESTAMP,
   `updatedat` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `isDeleted` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `createdby` (`createdby`),
   KEY `approvedby` (`approvedby`),
@@ -613,7 +615,7 @@ CREATE TABLE `purchase_requests` (
 
 LOCK TABLES `purchase_requests` WRITE;
 /*!40000 ALTER TABLE `purchase_requests` DISABLE KEYS */;
-INSERT INTO `purchase_requests` VALUES (1,3,2,'APPROVED','Nhập laptop Dell','2026-05-27 11:27:22','2026-05-27 11:27:22'),(2,5,2,'APPROVED','Nhập SSD Samsung','2026-05-27 11:27:22','2026-05-27 11:27:22');
+INSERT INTO `purchase_requests` VALUES (1,3,2,'APPROVED','Nhập laptop Dell','2026-05-27 11:27:22','2026-05-27 11:27:22',0),(2,5,2,'APPROVED','Nhập SSD Samsung','2026-05-27 11:27:22','2026-05-27 11:27:22',0);
 /*!40000 ALTER TABLE `purchase_requests` ENABLE KEYS */;
 UNLOCK TABLES;
 

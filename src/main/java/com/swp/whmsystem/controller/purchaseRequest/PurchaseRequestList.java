@@ -33,8 +33,8 @@ public class PurchaseRequestList extends HttpServlet {
         int prId = Integer.parseInt(request.getParameter("id"));
         PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
         PurchaseItemDAO purchaseItemDAO = new PurchaseItemDAO();
-        purchaseItemDAO.deletePurchaseItemByRequestId(prId);
-        purchaseRequestDAO.deletePurchaseRequest(prId);
+        purchaseItemDAO.softDeletePurItemByPurReqId(prId);
+        purchaseRequestDAO.softDeletePurchaseRequest(prId);
 
         HttpSession session = request.getSession();
         session.setAttribute("error", "Purchase Request with Id: " + prId + " has been deleted!");

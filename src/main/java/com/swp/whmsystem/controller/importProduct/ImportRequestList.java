@@ -66,7 +66,7 @@ public class ImportRequestList extends HttpServlet {
         List<PurchaseItem> purchaseItemList = purchaseItemDao.getAllPurchaseItems();
         UserDAO userDao = new UserDAO();
         int totalItem = 0;
-        for(PurchaseItem i : purchaseItemList) totalItem += i.getRequiredQuantity();
+        for(PurchaseItem i : purchaseItemList) totalItem += i.getRequiredQty();
         
         PurchaseRequest purchaseRequest = purchaseRequestDao.getPurchaseRequestById(g.getId());
         a.setGoodReceiptId(g.getId());

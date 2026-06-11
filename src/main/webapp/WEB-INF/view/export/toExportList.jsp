@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -125,8 +126,8 @@
                         <table class="table  datanew">
                             <thead>
                             <tr>
+                                <th>Id</th>
                                 <th>Date</th>
-                                <th>Reference</th>
                                 <th>To</th>
                                 <th>Items</th>
                                 <th>Grand total</th>
@@ -135,336 +136,372 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>8 June 2026</td>
-                                <td>EX001</td>
-                                <td>CellphoneS</td>
-                                <td>20</td>
-                                <td>100000000</td>
-                                <td><span class="badges bg-lightgreen">Completed</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <c:forEach items="${sessionScope.orderList}" var="o">
+                                <tr>
+                                    <td>${o.id}</td>
+                                    <td>
+                                        <fmt:formatDate value="${o.orderDate}" pattern="dd-MM-yyyy HH:mm:ss"/>
+                                    </td>
+                                    <td>${o.customer}</td>
+                                    <td>${o.totalQuantity}</td>
+                                    <td>
+                                        <fmt:formatNumber value="${o.totalPrice}" pattern="#,###"/>
+                                    </td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${o.status == 'COMPLETED'}">
+                                                <span class="badges bg-lightgreen">Completed</span>
+                                            </c:when>
+                                            <c:when test="${o.status == 'NEW'}">
+                                                <span class="badges bg-lightgrey">New</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="badges bg-lightgrey">${o.status}</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <c:if test="${o.status == 'NEW'}">
+                                                <a href="exportProduct?orderId=?">
+                                                    <button type="button" class="btn btn-primary btn-sm">Process
+                                                    </button>
+                                                </a>
+                                            </c:if>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            <%--                            <tr>--%>
+                            <%--                                <td>8 June 2026</td>--%>
+                            <%--                                <td>EX001</td>--%>
+                            <%--                                <td>CellphoneS</td>--%>
+                            <%--                                <td>20</td>--%>
+                            <%--                                <td>100000000</td>--%>
+                            <%--                                <td><span class="badges bg-lightgreen">Completed</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                 <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>08 June 2026</td>
-                                <td>EX002</td>
-                                <td>FPT Shop HBT</td>
-                                <td>15</td>
-                                <td>120,000,000</td>
-                                <td><span class="badges bg-lightgrey">New</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                        <c:if test="${'New' eq 'New'}">
-                                            <a href="exportProduct?orderId=?">
-                                                <button type="button" class="btn btn-primary btn-sm">Process</button>
-                                            </a>
-                                        </c:if>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>08 June 2026</td>--%>
+                            <%--                                <td>EX002</td>--%>
+                            <%--                                <td>FPT Shop HBT</td>--%>
+                            <%--                                <td>15</td>--%>
+                            <%--                                <td>120,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightgrey">New</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                        <c:if test="${'New' eq 'New'}">--%>
+                            <%--                                            <a href="exportProduct?orderId=?">--%>
+                            <%--                                                <button type="button" class="btn btn-primary btn-sm">Process</button>--%>
+                            <%--                                            </a>--%>
+                            <%--                                        </c:if>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>08 June 2026</td>
-                                <td>EX003</td>
-                                <td>Thế Giới Di Động</td>
-                                <td>50</td>
-                                <td>450,000,000</td>
-                                <td><span class="badges bg-lightgreen">Completed</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>08 June 2026</td>--%>
+                            <%--                                <td>EX003</td>--%>
+                            <%--                                <td>Thế Giới Di Động</td>--%>
+                            <%--                                <td>50</td>--%>
+                            <%--                                <td>450,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightgreen">Completed</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>07 June 2026</td>
-                                <td>EX004</td>
-                                <td>Phong Vũ Computer</td>
-                                <td>8</td>
-                                <td>185,000,000</td>
-                                <td><span class="badges bg-lightyellow">Pending</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>07 June 2026</td>--%>
+                            <%--                                <td>EX004</td>--%>
+                            <%--                                <td>Phong Vũ Computer</td>--%>
+                            <%--                                <td>8</td>--%>
+                            <%--                                <td>185,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightyellow">Pending</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>07 June 2026</td>
-                                <td>EX005</td>
-                                <td>Hoàng Hà Mobile</td>
-                                <td>35</td>
-                                <td>145,000,000</td>
-                                <td><span class="badges bg-lightred">Canceled</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>07 June 2026</td>--%>
+                            <%--                                <td>EX005</td>--%>
+                            <%--                                <td>Hoàng Hà Mobile</td>--%>
+                            <%--                                <td>35</td>--%>
+                            <%--                                <td>145,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightred">Canceled</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>06 June 2026</td>
-                                <td>EX006</td>
-                                <td>An Phát Computer</td>
-                                <td>12</td>
-                                <td>96,000,000</td>
-                                <td><span class="badges bg-lightgreen">Completed</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>06 June 2026</td>--%>
+                            <%--                                <td>EX006</td>--%>
+                            <%--                                <td>An Phát Computer</td>--%>
+                            <%--                                <td>12</td>--%>
+                            <%--                                <td>96,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightgreen">Completed</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>06 June 2026</td>
-                                <td>EX007</td>
-                                <td>GearVN HCM</td>
-                                <td>22</td>
-                                <td>310,000,000</td>
-                                <td><span class="badges bg-lightgreen">Completed</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>06 June 2026</td>--%>
+                            <%--                                <td>EX007</td>--%>
+                            <%--                                <td>GearVN HCM</td>--%>
+                            <%--                                <td>22</td>--%>
+                            <%--                                <td>310,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightgreen">Completed</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>05 June 2026</td>
-                                <td>EX008</td>
-                                <td>ShopDunk Hà Nội</td>
-                                <td>10</td>
-                                <td>260,000,000</td>
-                                <td><span class="badges bg-lightgrey">New</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                        <c:if test="${'New' eq 'New'}">
-                                            <button type="button" class="btn btn-primary btn-sm">Process</button>
-                                        </c:if>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>05 June 2026</td>--%>
+                            <%--                                <td>EX008</td>--%>
+                            <%--                                <td>ShopDunk Hà Nội</td>--%>
+                            <%--                                <td>10</td>--%>
+                            <%--                                <td>260,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightgrey">New</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                        <c:if test="${'New' eq 'New'}">--%>
+                            <%--                                            <button type="button" class="btn btn-primary btn-sm">Process</button>--%>
+                            <%--                                        </c:if>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>05 June 2026</td>
-                                <td>EX009</td>
-                                <td>CellphoneS Thái Hà</td>
-                                <td>18</td>
-                                <td>88,500,000</td>
-                                <td><span class="badges bg-lightyellow">Pending</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>05 June 2026</td>--%>
+                            <%--                                <td>EX009</td>--%>
+                            <%--                                <td>CellphoneS Thái Hà</td>--%>
+                            <%--                                <td>18</td>--%>
+                            <%--                                <td>88,500,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightyellow">Pending</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>04 June 2026</td>
-                                <td>EX010</td>
-                                <td>Vĩnh Phát Mobile</td>
-                                <td>25</td>
-                                <td>115,000,000</td>
-                                <td><span class="badges bg-lightgreen">Completed</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>04 June 2026</td>--%>
+                            <%--                                <td>EX010</td>--%>
+                            <%--                                <td>Vĩnh Phát Mobile</td>--%>
+                            <%--                                <td>25</td>--%>
+                            <%--                                <td>115,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightgreen">Completed</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>04 June 2026</td>
-                                <td>EX011</td>
-                                <td>HACOM Đống Đa</td>
-                                <td>14</td>
-                                <td>168,000,000</td>
-                                <td><span class="badges bg-lightred">Canceled</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>04 June 2026</td>--%>
+                            <%--                                <td>EX011</td>--%>
+                            <%--                                <td>HACOM Đống Đa</td>--%>
+                            <%--                                <td>14</td>--%>
+                            <%--                                <td>168,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightred">Canceled</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>03 June 2026</td>
-                                <td>EX012</td>
-                                <td>FPT Shop Cầu Giấy</td>
-                                <td>30</td>
-                                <td>210,000,000</td>
-                                <td><span class="badges bg-lightgreen">Completed</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>03 June 2026</td>--%>
+                            <%--                                <td>EX012</td>--%>
+                            <%--                                <td>FPT Shop Cầu Giấy</td>--%>
+                            <%--                                <td>30</td>--%>
+                            <%--                                <td>210,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightgreen">Completed</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>03 June 2026</td>
-                                <td>EX013</td>
-                                <td>Di Động Việt</td>
-                                <td>40</td>
-                                <td>320,000,000</td>
-                                <td><span class="badges bg-lightgreen">Completed</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>03 June 2026</td>--%>
+                            <%--                                <td>EX013</td>--%>
+                            <%--                                <td>Di Động Việt</td>--%>
+                            <%--                                <td>40</td>--%>
+                            <%--                                <td>320,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightgreen">Completed</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>02 June 2026</td>
-                                <td>EX014</td>
-                                <td> thinkPro Đội Cấn</td>
-                                <td>5</td>
-                                <td>135,000,000</td>
-                                <td><span class="badges bg-lightyellow">Pending</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>02 June 2026</td>--%>
+                            <%--                                <td>EX014</td>--%>
+                            <%--                                <td> thinkPro Đội Cấn</td>--%>
+                            <%--                                <td>5</td>--%>
+                            <%--                                <td>135,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightyellow">Pending</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>02 June 2026</td>
-                                <td>EX015</td>
-                                <td>Hoàng Hà Trần Quang Khải</td>
-                                <td>19</td>
-                                <td>76,000,000</td>
-                                <td><span class="badges bg-lightgreen">Completed</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>02 June 2026</td>--%>
+                            <%--                                <td>EX015</td>--%>
+                            <%--                                <td>Hoàng Hà Trần Quang Khải</td>--%>
+                            <%--                                <td>19</td>--%>
+                            <%--                                <td>76,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightgreen">Completed</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>01 June 2026</td>
-                                <td>EX016</td>
-                                <td>Bách Khoa Computer</td>
-                                <td>11</td>
-                                <td>54,000,000</td>
-                                <td><span class="badges bg-lightgrey">New</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                        <c:if test="${'New' eq 'New'}">
-                                            <button type="button" class="btn btn-primary btn-sm">Process</button>
-                                        </c:if>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>01 June 2026</td>--%>
+                            <%--                                <td>EX016</td>--%>
+                            <%--                                <td>Bách Khoa Computer</td>--%>
+                            <%--                                <td>11</td>--%>
+                            <%--                                <td>54,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightgrey">New</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                        <c:if test="${'New' eq 'New'}">--%>
+                            <%--                                            <button type="button" class="btn btn-primary btn-sm">Process</button>--%>
+                            <%--                                        </c:if>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>01 June 2026</td>
-                                <td>EX017</td>
-                                <td>Phong Vũ Nguyễn Thị Minh Khai</td>
-                                <td>16</td>
-                                <td>420,000,000</td>
-                                <td><span class="badges bg-lightgreen">Completed</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>01 June 2026</td>--%>
+                            <%--                                <td>EX017</td>--%>
+                            <%--                                <td>Phong Vũ Nguyễn Thị Minh Khai</td>--%>
+                            <%--                                <td>16</td>--%>
+                            <%--                                <td>420,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightgreen">Completed</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>31 May 2026</td>
-                                <td>EX018</td>
-                                <td>Minh Tuấn Mobile</td>
-                                <td>21</td>
-                                <td>295,000,000</td>
-                                <td><span class="badges bg-lightgreen">Completed</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>31 May 2026</td>--%>
+                            <%--                                <td>EX018</td>--%>
+                            <%--                                <td>Minh Tuấn Mobile</td>--%>
+                            <%--                                <td>21</td>--%>
+                            <%--                                <td>295,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightgreen">Completed</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>31 May 2026</td>
-                                <td>EX019</td>
-                                <td>Thế Giới Số 247</td>
-                                <td>7</td>
-                                <td>38,000,000</td>
-                                <td><span class="badges bg-lightred">Canceled</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>31 May 2026</td>--%>
+                            <%--                                <td>EX019</td>--%>
+                            <%--                                <td>Thế Giới Số 247</td>--%>
+                            <%--                                <td>7</td>--%>
+                            <%--                                <td>38,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightred">Canceled</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
 
-                            <tr>
-                                <td>30 May 2026</td>
-                                <td>EX020</td>
-                                <td>Vua Kho Lẻ miền Bắc</td>
-                                <td>100</td>
-                                <td>1,250,000,000</td>
-                                <td><span class="badges bg-lightgreen">Completed</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <a class="me-3" href="product-details.html">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <%--                            <tr>--%>
+                            <%--                                <td>30 May 2026</td>--%>
+                            <%--                                <td>EX020</td>--%>
+                            <%--                                <td>Vua Kho Lẻ miền Bắc</td>--%>
+                            <%--                                <td>100</td>--%>
+                            <%--                                <td>1,250,000,000</td>--%>
+                            <%--                                <td><span class="badges bg-lightgreen">Completed</span></td>--%>
+                            <%--                                <td>--%>
+                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                        <a class="me-3" href="product-details.html">--%>
+                            <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
+                            <%--                                        </a>--%>
+                            <%--                                    </div>--%>
+                            <%--                                </td>--%>
+                            <%--                            </tr>--%>
                             </tbody>
                         </table>
                     </div>

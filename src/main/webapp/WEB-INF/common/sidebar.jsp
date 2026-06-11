@@ -65,7 +65,7 @@
                                                        alt="img"><span> Transfer</span>
                         <span class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="exportProduct">Export Product</a></li>
+                        <li><a href="toExportList">Export Product</a></li>
                     </ul>
                 </li>
                 <li class="submenu">

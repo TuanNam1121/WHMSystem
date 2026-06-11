@@ -4,6 +4,7 @@
  */
 
 package com.swp.whmsystem.model;
+
 import java.sql.Timestamp;
 
 public class Order {
@@ -22,7 +23,7 @@ public class Order {
     private String creater;
     private String processor;
     private int totalQuantity;
-    
+
 
     public Order() {
     }
@@ -48,7 +49,7 @@ public class Order {
     public void setTotalQuantity(int totalQuantity) {
         this.totalQuantity = totalQuantity;
     }
-    
+
 
     public String getCustomer() {
         return customer;
@@ -73,8 +74,7 @@ public class Order {
     public void setProcessor(String processor) {
         this.processor = processor;
     }
-    
-    
+
 
     public String getStatus() {
         return status;
@@ -84,7 +84,6 @@ public class Order {
         this.status = status;
     }
 
-    
 
     public int getId() {
         return id;
@@ -165,14 +164,12 @@ public class Order {
     public void setCustomerId(int customerId) {
         this.customerId = customerId;
     }
-    
-    
+
 
     @Override
     public String toString() {
         return "Order{" + "id=" + id + ", totalPrice=" + totalPrice + ", note=" + note + ", orderDate=" + orderDate + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", completedAt=" + completedAt + ", createdBy=" + createdBy + ", processdBy=" + processedBy + ", customerId=" + customerId + '}';
     }
-    
-    
-    
+
+
 }

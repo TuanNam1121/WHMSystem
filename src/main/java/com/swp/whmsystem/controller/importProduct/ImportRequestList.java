@@ -27,10 +27,15 @@ public class ImportRequestList extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         User user = (User) request.getSession().getAttribute("user");
-//        if (user == null || user.getRoleId() != 3) {
-//            response.sendRedirect("login");
-//            return;
-//        }
+        try {
+            if (user == null) {
+                response.sendRedirect("login");
+                return;
+            }
+        } catch (Exception e) {
+            response.sendRedirect("login");
+            return;
+        }
 
         GoodReceiptDAO goodReceiptDAO = new GoodReceiptDAO();
         List<GoodReceipt> importRequests = goodReceiptDAO.getAllGoodReceiptForProcessor(user.getId());

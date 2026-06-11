@@ -84,6 +84,16 @@ public class ManagerPurchaseRequestDetail extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
+        try {
+            if (user == null) {
+                response.sendRedirect("login");
+                return;
+            }
+        } catch (Exception e) {
+            response.sendRedirect("login");
+            return;
+        }
+
         if (button.equalsIgnoreCase("Reject")) {
             purchaseRequest.setStatus("REJECTED");
             purchaseRequestDAO.updatePurchaseRequest(purchaseRequest);

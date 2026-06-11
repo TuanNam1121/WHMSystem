@@ -208,7 +208,7 @@
                                         </td>
                                         <td>${productMap[item.productId].category.name}</td>
                                         <td class="text-center"><strong
-                                                style="font-size: 16px;">${item.requiredQuantity}</strong>
+                                                style="font-size: 16px;">${item.requiredQty}</strong>
                                         </td>
                                     </tr>
                                 </c:forEach>

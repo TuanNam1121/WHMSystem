@@ -22,6 +22,16 @@ public class PurchaseRequestList extends HttpServlet {
         PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
+
+        try {
+            if (user == null) {
+                response.sendRedirect("login");
+                return;
+            }
+        } catch (Exception e) {
+            response.sendRedirect("login");
+            return;
+        }
         List<PurchaseRequest> purchaseRequests = purchaseRequestDAO.getAllPurchaseRequestForSaleman(user.getId());
         request.setAttribute("purchaseList", purchaseRequests);
         request.getRequestDispatcher("WEB-INF/view/purchaseRequest/purchaseRequestList.jsp").forward(request, response);

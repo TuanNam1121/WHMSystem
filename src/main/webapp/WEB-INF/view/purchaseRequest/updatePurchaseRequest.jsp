@@ -225,7 +225,7 @@
                 sku: "${productMap[item.productId].sku}",
                 category: "${productMap[item.productId].category.name}",
                 stock: ${productMap[item.productId].totalQuantity},
-                reqQty: ${item.requiredQuantity}
+                reqQty: ${item.requiredQty}
             }${!loop.last ? ',' : ''}
             </c:forEach>
         ];

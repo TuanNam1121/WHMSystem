@@ -55,11 +55,13 @@
                     <h6>Export products from Order.</h6>
                 </div>
             </div>
-            <c:if test="${not empty error}">
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong> ${error}</strong>
+            <c:if test="${not empty sessionScope.error}">
+                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                    <strong><i class="fas fa-exclamation-triangle"></i> Error:</strong> ${sessionScope.error}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+
+                <c:remove var="error" scope="session"/>
             </c:if>
             <div class="card">
                 <div class="card-body">
@@ -130,7 +132,7 @@
                                             <fmt:formatNumber value="${s.totalCost}" pattern="#,###"/>
                                         </td>
                                         <td>
-                                            <a href="javascript:void(0);" class="delete-set"><img
+                                            <a href="removeItem?tempId=${s.tempId}" class="delete-set"><img
                                                     src="assets/img/icons/delete.svg" alt="svg"></a>
                                         </td>
                                     </tr>
@@ -170,7 +172,7 @@
                         </div>
                         <div class="col-lg-12">
                             <a href="javascript:void(0);" class="btn btn-submit me-2">Submit</a>
-                            <a href="transferlist.html" class="btn btn-cancel">Cancel</a>
+                            <a href="cancelExport" class="btn btn-cancel">Cancel</a>
                         </div>
                     </div>
                 </div>
@@ -200,5 +202,32 @@
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
 <script src="assets/js/script.js"></script>
+<script>
+    $(document).ready(function () {
+        const skuInput = $('input[name="scannedSku"]');
+
+        // 1. Luôn ép con trỏ chuột nhảy vào ô quét mã sau mỗi lần tải trang
+        skuInput.focus();
+
+        // 2. Bắt sự kiện khi app quét (hoặc người dùng) gửi phím Enter (mã 13)
+        skuInput.on('keypress', function (e) {
+            if (e.which === 13) {
+                e.preventDefault(); // Chặn hành vi mặc định
+                $(this).closest('form').submit(); // Ép form gửi dữ liệu về Servlet
+            }
+        });
+
+        // 3. Tuyệt chiêu: Bắt luôn sự kiện Paste (Dán)
+        // Vì phần mềm Barcode to PC đang dùng lệnh Dán, đôi khi nó dán xong quên Enter.
+        skuInput.on('paste', function () {
+            setTimeout(function () {
+                // Đợi 0.1 giây để chữ dán kịp hiện vào ô, rồi tự động nhấn Submit
+                if (skuInput.val().trim() !== '') {
+                    skuInput.closest('form').submit();
+                }
+            }, 100);
+        });
+    });
+</script>
 </body>
 </html>

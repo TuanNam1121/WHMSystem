@@ -48,7 +48,7 @@
                             class="menu-arrow"></span></a>
                     <ul>
                         <li><a href="importRequestList">Import Request List</a></li>
-                        <li><a href="createexpense.html">Import History</a></li>
+                        <li><a href="ImportHistory">Import History</a></li>
                     </ul>
                 </li>
                 <li class="submenu">

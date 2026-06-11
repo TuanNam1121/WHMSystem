@@ -41,7 +41,7 @@
                     <h6>Create a new purchase request to send to Manager</h6>
                 </div>
             </div>
-            
+
             <c:if test="${not empty error}">
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
                     <strong>${error}</strong>
@@ -157,7 +157,7 @@
 
                                             <div class="text-end">
                                                 <input type="submit" class="btn btn-submit me-2"
-                                                   id="btn-send-request" value="Send Request">
+                                                       id="btn-send-request" value="Send Request">
                                                 <a href="purchaseRequestList" class="btn btn-cancel"
                                                    id="btn-cancel-create">Cancel</a>
                                             </div>

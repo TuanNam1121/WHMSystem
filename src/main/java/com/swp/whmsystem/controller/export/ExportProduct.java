@@ -1,5 +1,3 @@
-
-
 package com.swp.whmsystem.controller.export;
 
 import java.io.IOException;
@@ -15,7 +13,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-
 @WebServlet(name = "ExportProduct", urlPatterns = {"/exportProduct"})
 public class ExportProduct extends HttpServlet {
 
@@ -24,11 +21,19 @@ public class ExportProduct extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        OrderDAO orderDAO = new OrderDAO();
-        int orderId = Integer.parseInt(request.getParameter("orderId"));
-        Order order = orderDAO.getOrderById(orderId);
-
-        session.setAttribute("order", order);
+        String orderIdStr = request.getParameter("orderId");
+        if (orderIdStr != null && !orderIdStr.trim().isEmpty()) {
+            try {
+                int orderId = Integer.parseInt(orderIdStr.trim());
+                OrderDAO orderDAO = new OrderDAO();
+                Order order = orderDAO.getOrderById(orderId);
+                if (order != null) {
+                    session.setAttribute("order", order);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println(e.getMessage());
+            }
+        }
         request.getRequestDispatcher("WEB-INF/view/export/exportProduct.jsp").forward(request, response);
     }
 
@@ -57,10 +62,10 @@ public class ExportProduct extends HttpServlet {
                 }
 
                 if (productFromDB.getStock() <= 0) {
-                    request.setAttribute("error", "Product [" + productFromDB.getName() + "] is currently out of stock!");
+                    session.setAttribute("error", "Product [" + productFromDB.getName() + "] is currently out of stock!");
 
                 } else if (currentScannedQty >= productFromDB.getStock()) {
-                    request.setAttribute("error", "Exceeds stock limit! Only " + productFromDB.getStock() + " item(s) left for SKU [" + sku + "].");
+                    session.setAttribute("error", "Exceeds stock limit! Only " + productFromDB.getStock() + " item(s) left for SKU [" + sku + "].");
 
                 } else {
                     ExportItemDTO newItem = new ExportItemDTO();
@@ -74,11 +79,11 @@ public class ExportProduct extends HttpServlet {
                     scannedList.add(0, newItem);
                 }
             } else {
-                request.setAttribute("error", "Cannot find product with SKU: " + sku);
+                session.setAttribute("error", "Cannot find product with SKU: " + sku);
             }
         }
         session.setAttribute("scannedList", scannedList);
-        request.getRequestDispatcher("WEB-INF/view/export/exportProduct.jsp").forward(request, response);
+        response.sendRedirect("exportProduct");
     }
 
     @Override

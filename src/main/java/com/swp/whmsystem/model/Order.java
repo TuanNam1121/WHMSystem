@@ -22,12 +22,8 @@ public class Order {
     private String customer;
     private String creater;
     private String processor;
-<<<<<<< Updated upstream
     private int totalQuantity;
-    
-=======
 
->>>>>>> Stashed changes
 
     public Order() {
     }
@@ -53,7 +49,7 @@ public class Order {
     public void setTotalQuantity(int totalQuantity) {
         this.totalQuantity = totalQuantity;
     }
-    
+
 
     public String getCustomer() {
         return customer;

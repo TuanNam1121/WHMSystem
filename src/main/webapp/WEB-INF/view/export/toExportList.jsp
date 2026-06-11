@@ -129,10 +129,10 @@
                                 <th>Id</th>
                                 <th>Date</th>
                                 <th>To</th>
-                                <%--                                <th>Items</th>--%>
+                                <th>Items</th>
                                 <th>Grand total</th>
                                 <th>Status</th>
-                                <%--                                <th>Action</th>--%>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -143,10 +143,33 @@
                                         <fmt:formatDate value="${o.orderDate}" pattern="dd-MM-yyyy HH:mm:ss"/>
                                     </td>
                                     <td>${o.customer}</td>
+                                    <td>${o.totalQuantity}</td>
                                     <td>
                                         <fmt:formatNumber value="${o.totalPrice}" pattern="#,###"/>
                                     </td>
-                                    <td>${o.status}</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${o.status == 'COMPLETED'}">
+                                                <span class="badges bg-lightgreen">Completed</span>
+                                            </c:when>
+                                            <c:when test="${o.status == 'NEW'}">
+                                                <span class="badges bg-lightgrey">New</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="badges bg-lightgrey">${o.status}</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <c:if test="${o.status == 'NEW'}">
+                                                <a href="exportProduct?orderId=?">
+                                                    <button type="button" class="btn btn-primary btn-sm">Process
+                                                    </button>
+                                                </a>
+                                            </c:if>
+                                        </div>
+                                    </td>
                                 </tr>
                             </c:forEach>
                             <%--                            <tr>--%>
@@ -157,7 +180,7 @@
                             <%--                                <td>100000000</td>--%>
                             <%--                                <td><span class="badges bg-lightgreen">Completed</span></td>--%>
                             <%--                                <td>--%>
-                            <%--                                    <div class="d-flex align-items-center">--%>
+                            <%--                                 <div class="d-flex align-items-center">--%>
                             <%--                                        <a class="me-3" href="product-details.html">--%>
                             <%--                                            <img src="assets/img/icons/eye.svg" alt="img">--%>
                             <%--                                        </a>--%>

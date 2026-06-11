@@ -126,21 +126,27 @@
                         <table class="table  datanew">
                             <thead>
                             <tr>
+                                <th>Id</th>
                                 <th>Date</th>
-                                <%--                                <th>Reference</th>--%>
-                                <%--                                <th>To</th>--%>
+                                <th>To</th>
                                 <%--                                <th>Items</th>--%>
-                                <%--                                <th>Grand total</th>--%>
-                                <%--                                <th>Status</th>--%>
+                                <th>Grand total</th>
+                                <th>Status</th>
                                 <%--                                <th>Action</th>--%>
                             </tr>
                             </thead>
                             <tbody>
                             <c:forEach items="${sessionScope.orderList}" var="o">
                                 <tr>
+                                    <td>${o.id}</td>
                                     <td>
                                         <fmt:formatDate value="${o.orderDate}" pattern="dd-MM-yyyy HH:mm:ss"/>
                                     </td>
+                                    <td>${o.customer}</td>
+                                    <td>
+                                        <fmt:formatNumber value="${o.totalPrice}" pattern="#,###"/>
+                                    </td>
+                                    <td>${o.status}</td>
                                 </tr>
                             </c:forEach>
                             <%--                            <tr>--%>

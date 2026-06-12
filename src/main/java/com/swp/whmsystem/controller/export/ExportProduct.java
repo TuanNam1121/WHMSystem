@@ -16,24 +16,45 @@ import jakarta.servlet.http.HttpSession;
 @WebServlet(name = "ExportProduct", urlPatterns = {"/exportProduct"})
 public class ExportProduct extends HttpServlet {
 
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         HttpSession session = request.getSession();
         String orderIdStr = request.getParameter("orderId");
+
+        // TRƯỜNG HỢP 1: CÓ ORDER ID TRÊN URL (Mới bấm từ trang danh sách sang)
         if (orderIdStr != null && !orderIdStr.trim().isEmpty()) {
             try {
                 int orderId = Integer.parseInt(orderIdStr.trim());
                 OrderDAO orderDAO = new OrderDAO();
                 Order order = orderDAO.getOrderById(orderId);
+
                 if (order != null) {
+                    // 1. Lưu Order mới vào session
                     session.setAttribute("order", order);
+
+                    // 2. Dọn sạch giỏ hàng cũ (cực kỳ quan trọng để không bị lẫn lộn đơn)
+                    session.removeAttribute("scannedList");
+
+                    System.out.println(">>> [doGet] Đã lưu Order " + orderId + " vào Session!");
+                } else {
+                    System.out.println(">>> [doGet] Không tìm thấy Order trong Database!");
                 }
             } catch (NumberFormatException e) {
-                System.out.println(e.getMessage());
+                System.out.println(">>> [doGet] Lỗi định dạng ID: " + e.getMessage());
             }
         }
+        // TRƯỜNG HỢP 2: KHÔNG CÓ ORDER ID (Sau khi quét mã form tự reload)
+        else {
+            Order sessionOrder = (Order) session.getAttribute("order");
+            if (sessionOrder != null) {
+                System.out.println(">>> [doGet] URL không có ID, nhưng đã lấy thành công Order từ Session!");
+            } else {
+                System.out.println(">>> [doGet] BÁO ĐỘNG: Đã mất Session Order! Cần check lại hàm doPost!");
+            }
+        }
+
         request.getRequestDispatcher("WEB-INF/view/export/exportProduct.jsp").forward(request, response);
     }
 

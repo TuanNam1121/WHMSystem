@@ -27,7 +27,9 @@ public class PurchaseRequestList extends HttpServlet {
             return;
         }
 
-        List<PurchaseRequest> purchaseRequests = purchaseRequestDAO.getAllPurchaseRequestForSaleman(user.getId());
+        String dateStr = request.getParameter("date");
+        List<PurchaseRequest> purchaseRequests = purchaseRequestDAO.getPurchaseRequestByDateAndSaleman(dateStr, user.getId());
+
         request.setAttribute("purchaseList", purchaseRequests);
         request.getRequestDispatcher("WEB-INF/view/purchaseRequest/purchaseRequestList.jsp").forward(request, response);
     }

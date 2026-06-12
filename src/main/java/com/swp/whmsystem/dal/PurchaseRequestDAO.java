@@ -10,7 +10,7 @@ import java.util.List;
 public class PurchaseRequestDAO {
     public List<PurchaseRequest> getAllPurchaseRequest() {
         String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid " +
-                "where pr.isDeleted = 0 ORDER BY pr.createdat DESC";
+                "where pr.isDeleted = 0 ORDER BY pr.id DESC";
         List<PurchaseRequest> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -27,7 +27,7 @@ public class PurchaseRequestDAO {
 
     public List<PurchaseRequest> getAllPurchaseRequestForSaleman(int salemanId) {
         String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid " +
-                "WHERE pr.createdby = ? and pr.isDeleted = 0 ORDER BY pr.createdat DESC";
+                "WHERE pr.createdby = ? and pr.isDeleted = 0 ORDER BY pr.id DESC";
         List<PurchaseRequest> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection();) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -145,5 +145,78 @@ public class PurchaseRequestDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public List<PurchaseRequest> searchPurchaseItem(int id, String status, String date) {
+        StringBuilder sql = new StringBuilder("SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid " +
+                "where pr.isDeleted = 0") ;
+        String orderBy = "ORDER BY pr.id DESC";
+        List<String> parameter = new ArrayList<>();
+        if (id != 0) {
+            sql.append(" and pr.id = ?");
+            parameter.add(String.valueOf(id));
+        }
+        if (status != null) {
+            sql.append(" and pr.status = ?");
+            parameter.add(status);
+        }
+        List<PurchaseRequest> list = new ArrayList<>();
+        
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                PurchaseRequest p = mapResultSetToPurchaseRequest(resultSet);
+                list.add(p);
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<PurchaseRequest> getPurchaseRequestByDateAndSaleman(String dateStr, int salemanId) {
+        java.sql.Date sqlDate = null;
+        if (dateStr != null && !dateStr.trim().isEmpty()) {
+            String[] formats = {"dd-MM-yyyy", "yyyy-MM-dd", "dd/MM/yyyy", "MM/dd/yyyy"};
+            for (String format : formats) {
+                try {
+                    java.util.Date parsedDate = new java.text.SimpleDateFormat(format).parse(dateStr);
+                    sqlDate = new java.sql.Date(parsedDate.getTime());
+                    break;
+                } catch (java.text.ParseException e) {
+                    // try next format
+                }
+            }
+        }
+
+        String sql;
+        if (sqlDate != null) {
+            sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid " +
+                    "WHERE DATE(pr.createdat) = ? AND pr.createdby = ? AND pr.isDeleted = 0 ORDER BY pr.id DESC";
+        } else {
+            sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid " +
+                    "WHERE pr.createdby = ? AND pr.isDeleted = 0 ORDER BY pr.id DESC";
+        }
+
+        List<PurchaseRequest> list = new ArrayList<>();
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            if (sqlDate != null) {
+                preparedStatement.setDate(1, sqlDate);
+                preparedStatement.setInt(2, salemanId);
+            } else {
+                preparedStatement.setInt(1, salemanId);
+            }
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    PurchaseRequest p = mapResultSetToPurchaseRequest(resultSet);
+                    list.add(p);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
     }
 }

@@ -4,6 +4,7 @@
  */
 package com.swp.whmsystem.dal;
 
+import com.swp.whmsystem.dto.OrderItemDetailDTO;
 import com.swp.whmsystem.model.Order;
 
 import java.sql.Connection;
@@ -188,6 +189,7 @@ public class OrderDAO {
             exception.printStackTrace();
         }
     }
+
     public void updateOrder(Order o) {
         try {
             Connection conn = DBContext.getConnection();
@@ -222,10 +224,66 @@ public class OrderDAO {
         return o;
     }
 
+    public List<OrderItemDetailDTO> getOrderItemsByOrderId(int orderId) {
+        List<OrderItemDetailDTO> list = new ArrayList<>();
+
+        String sql = "SELECT p.name, p.img_url, p.sku, oi.quantity, oi.price " +
+                "FROM order_items oi " +
+                "JOIN products p ON oi.productid = p.productid " +
+                "WHERE oi.orderid = ?";
+
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, orderId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String name = rs.getString("name");
+                    String imgUrl = rs.getString("img_url");
+                    String sku = rs.getString("sku");
+                    int quantity = rs.getInt("quantity");
+                    double price = rs.getDouble("price");
+
+                    list.add(new OrderItemDetailDTO(name, imgUrl, sku, quantity, price));
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi khi lấy danh sách sản phẩm của Order ID: " + orderId);
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public List<Order> getExportHistory() {
+        String sql = "select * from orders where status not like 'NEW'";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            List<Order> result = new ArrayList<>();
+            while (rs.next()) {
+                Order o = mapResultSetToOrder(rs);
+                UserDAO ud = new UserDAO();
+                CustomerDAO cd = new CustomerDAO();
+                OrderItemDAO oid = new OrderItemDAO();
+                o.setCustomer(cd.getCustomerNameById(o.getCustomerId()));
+                o.setCreater(ud.getUserNameById(o.getCreatedBy()));
+                o.setProcessor(ud.getUserNameById(o.getProcessedBy()));
+                o.setTotalQuantity(oid.totalQuantityByOrderId(o.getId()));
+                result.add(o);
+            }
+            return result;
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return null;
+    }
+
+
     public static void main(String[] args) {
         OrderDAO orderDAO = new OrderDAO();
-        List<Order> orderList = orderDAO.getAllOrder();
-        for (Order o : orderList) {
+        List<OrderItemDetailDTO> orderList = orderDAO.getOrderItemsByOrderId(3);
+        for (OrderItemDetailDTO o : orderList) {
             System.out.println(o);
         }
 

@@ -66,6 +66,8 @@
                         <span class="menu-arrow"></span></a>
                     <ul>
                         <li><a href="toExportList">Export Product</a></li>
+                        <li><a href="exportHistory">Export History</a></li>
+
                     </ul>
                 </li>
                 <li class="submenu">

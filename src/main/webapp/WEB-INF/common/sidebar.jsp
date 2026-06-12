@@ -26,7 +26,7 @@
                                                        alt="img"><span> Sales</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="saleslist.html">Sales List</a></li>
+                        <li><a href="OrderList">Sales List</a></li>
                         <li><a href="pos.html">POS</a></li>
                         <li><a href="pos.html">New Sales</a></li>
                         <li><a href="salesreturnlists.html">Sales Return List</a></li>
@@ -48,7 +48,7 @@
                             class="menu-arrow"></span></a>
                     <ul>
                         <li><a href="importRequestList">Import Request List</a></li>
-                        <li><a href="createexpense.html">Import History</a></li>
+                        <li><a href="ImportHistory">Import History</a></li>
                     </ul>
                 </li>
                 <li class="submenu">
@@ -65,7 +65,7 @@
                                                        alt="img"><span> Transfer</span>
                         <span class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="exportProduct">Export Product</a></li>
+                        <li><a href="toExportList">Export Product</a></li>
                     </ul>
                 </li>
                 <li class="submenu">
@@ -106,7 +106,7 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="components.html"><i data-feather="layers"></i><span> Components</span> </a>
+                    <a href="InventoryAuditList"><i data-feather="layers"></i><span> Inventory Audit List</span> </a>
                 </li>
                 <li>
                     <a href="blankpage.jsp"><i data-feather="file"></i><span> Blank Page</span> </a>

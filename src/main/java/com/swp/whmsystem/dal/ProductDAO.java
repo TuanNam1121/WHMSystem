@@ -169,7 +169,7 @@ public class ProductDAO {
         }
         return null;
     }
-
+    
     public List<Product> getProductList() {
         List<Product> productList = new ArrayList<>();
         String sql = "select * from products order by isActive desc";
@@ -183,6 +183,18 @@ public class ProductDAO {
             ex.printStackTrace();
         }
         return productList;
+    }
+    
+    public void changeProductQuantity(int newQuantity, int id) {
+        String sql = "update products set total_quantity = ? where productid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+            ps.setInt(1, newQuantity);
+            ps.setInt(2, id);
+            ps.executeUpdate();
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public Product getProductFromSKU(String sku) {
@@ -477,6 +489,23 @@ public class ProductDAO {
         return productItemList;
     }
 
+    public String getSKUFromId(int id) {
+        String SKU = "";
+        String sql = "select sku from products where productid = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                SKU = rs.getString("sku");
+            }
+            return SKU;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return SKU;
+    }
+
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
 //        RomDAO rom = new RomDAO();
@@ -491,10 +520,12 @@ public class ProductDAO {
 //        for (Product p2 : testSort) {
 //            System.out.println(p2);
 //        }
-
-        List<ProductItem> testItem = dao.getProductItems(1);
-        for (ProductItem pi : testItem) {
-            System.out.println(pi);
-        }
+//
+//        List<ProductItem> testItem = dao.getProductItems(1);
+//        for (ProductItem pi : testItem) {
+//            System.out.println(pi);
+//        }
+        String sku = dao.getSKUFromId(1);
+        System.out.println(sku);
     }
 }

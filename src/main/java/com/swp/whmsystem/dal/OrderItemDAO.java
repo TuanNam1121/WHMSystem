@@ -76,6 +76,29 @@ public class OrderItemDAO {
             exception.printStackTrace();
         }
     }
+    
+    public int totalQuantityByOrderId(int orderId){
+        List<OrderItem> list = getOrderItemByOrderId(orderId);
+        int total = 0;
+        for(OrderItem oi:list){
+            total += oi.getQuantity();
+        }
+        return total;
+    }
+    
+    public void deleteOrderItem(int orderId) {
+        try {
+            Connection conn = DBContext.getConnection();
+            String sql = "delete from order_items"
+                    + " where orderid = ?";
+            st = conn.prepareStatement(sql);
+            st.setInt(1, orderId);
+            st.executeUpdate();
+            
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
 
     public void updateOrderItem(OrderItem o) {
         try {

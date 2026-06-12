@@ -1,0 +1,90 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.swp.whmsystem.dal;
+
+import com.swp.whmsystem.model.Product;
+import com.swp.whmsystem.model.ProductItem;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author Admin
+ */
+public class ProductItemDAO {
+    public List<ProductItem> getAllProductItem(){
+        List<ProductItem> list = new ArrayList<>();
+        String sql = "select * from product_items order by imported_at desc";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                ProductItem p = mapResultsetToProductItem(resultSet);
+                list.add(p);
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    public List<ProductItem> getAllProductItemByGoodReceiptID(int grId){
+        List<ProductItem> list = new ArrayList<>();
+        String sql = "select * from product_items where goodreceiptsitemid = ? order by imported_at desc";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, grId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                ProductItem p = mapResultsetToProductItem(resultSet);
+                list.add(p);
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    public List<ProductItem> getAllProductItemByProductId(int prId){
+        List<ProductItem> list = new ArrayList<>();
+        String sql = "select * from product_items where product_id = ? order by imported_at desc";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, prId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                ProductItem p = mapResultsetToProductItem(resultSet);
+                list.add(p);
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    public ProductItem mapResultsetToProductItem(ResultSet rs) throws SQLException{
+        ProductItem i = new ProductItem();
+        i.setId(rs.getInt("id"));
+        i.setSerial(rs.getString("serial"));
+        i.setProductId(rs.getInt("product_id"));
+        i.setImportPrice(rs.getInt("imported_price"));
+        i.setStatus(rs.getString("status"));
+        i.setGoodReceiptItemId(rs.getInt("goodreceiptsitemid"));
+        i.setImportAt(rs.getTimestamp("imported_at"));
+        return i;
+    }
+    
+    public static void main(String[] args) {
+        ProductItemDAO dao = new ProductItemDAO();
+        for(ProductItem i : dao.getAllProductItemByProductId(5)){
+            System.out.println(i);
+        }
+    }
+    
+}

@@ -4,6 +4,7 @@
  */
 
 package com.swp.whmsystem.model;
+
 import java.sql.Timestamp;
 
 public class Order {
@@ -16,8 +17,13 @@ public class Order {
     private Timestamp updatedAt;
     private Timestamp completedAt;
     private int createdBy;
-    private int processdBy;
+    private int processedBy;
     private int customerId;
+    private String customer;
+    private String creater;
+    private String processor;
+    private int totalQuantity;
+
 
     public Order() {
     }
@@ -32,9 +38,43 @@ public class Order {
         this.updatedAt = updatedAt;
         this.completedAt = completedAt;
         this.createdBy = createdBy;
-        this.processdBy = processdBy;
+        this.processedBy = processdBy;
         this.customerId = customerId;
     }
+
+    public int getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public void setTotalQuantity(int totalQuantity) {
+        this.totalQuantity = totalQuantity;
+    }
+
+
+    public String getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(String customer) {
+        this.customer = customer;
+    }
+
+    public String getCreater() {
+        return creater;
+    }
+
+    public void setCreater(String creater) {
+        this.creater = creater;
+    }
+
+    public String getProcessor() {
+        return processor;
+    }
+
+    public void setProcessor(String processor) {
+        this.processor = processor;
+    }
+
 
     public String getStatus() {
         return status;
@@ -44,7 +84,6 @@ public class Order {
         this.status = status;
     }
 
-    
 
     public int getId() {
         return id;
@@ -110,12 +149,12 @@ public class Order {
         this.createdBy = createdBy;
     }
 
-    public int getProcessdBy() {
-        return processdBy;
+    public int getProcessedBy() {
+        return processedBy;
     }
 
-    public void setProcessdBy(int processdBy) {
-        this.processdBy = processdBy;
+    public void setProcessedBy(int processdBy) {
+        this.processedBy = processdBy;
     }
 
     public int getCustomerId() {
@@ -125,14 +164,12 @@ public class Order {
     public void setCustomerId(int customerId) {
         this.customerId = customerId;
     }
-    
-    
+
 
     @Override
     public String toString() {
-        return "Order{" + "id=" + id + ", totalPrice=" + totalPrice + ", note=" + note + ", orderDate=" + orderDate + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", completedAt=" + completedAt + ", createdBy=" + createdBy + ", processdBy=" + processdBy + ", customerId=" + customerId + '}';
+        return "Order{" + "id=" + id + ", totalPrice=" + totalPrice + ", note=" + note + ", orderDate=" + orderDate + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", completedAt=" + completedAt + ", createdBy=" + createdBy + ", processdBy=" + processedBy + ", customerId=" + customerId + '}';
     }
-    
-    
-    
+
+
 }

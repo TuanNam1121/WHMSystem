@@ -5,6 +5,7 @@
 package com.swp.whmsystem.dal;
 
 import com.swp.whmsystem.model.Order;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -29,6 +30,13 @@ public class OrderDAO {
             List<Order> result = new ArrayList<>();
             while (rs.next()) {
                 Order o = mapResultSetToOrder(rs);
+                UserDAO ud = new UserDAO();
+                CustomerDAO cd = new CustomerDAO();
+                OrderItemDAO oid = new OrderItemDAO();
+                o.setCustomer(cd.getCustomerNameById(o.getCustomerId()));
+                o.setCreater(ud.getUserNameById(o.getCreatedBy()));
+                o.setProcessor(ud.getUserNameById(o.getProcessedBy()));
+                o.setTotalQuantity(oid.totalQuantityByOrderId(o.getId()));
                 result.add(o);
             }
             return result;
@@ -48,6 +56,11 @@ public class OrderDAO {
             List<Order> result = new ArrayList<>();
             while (rs.next()) {
                 Order o = mapResultSetToOrder(rs);
+                UserDAO ud = new UserDAO();
+                CustomerDAO cd = new CustomerDAO();
+                o.setCustomer(cd.getCustomerNameById(o.getCustomerId()));
+                o.setCreater(ud.getUserNameById(o.getCreatedBy()));
+                o.setProcessor(ud.getUserNameById(o.getProcessedBy()));
                 result.add(o);
             }
             return result;
@@ -69,6 +82,13 @@ public class OrderDAO {
             if (rs.next()) {
 
                 Order o = mapResultSetToOrder(rs);
+                UserDAO ud = new UserDAO();
+                CustomerDAO cd = new CustomerDAO();
+                OrderItemDAO oid = new OrderItemDAO();
+                o.setCustomer(cd.getCustomerNameById(o.getCustomerId()));
+                o.setCreater(ud.getUserNameById(o.getCreatedBy()));
+                o.setProcessor(ud.getUserNameById(o.getProcessedBy()));
+                o.setTotalQuantity(oid.totalQuantityByOrderId(o.getId()));
 
                 return o;
             } else {
@@ -79,6 +99,53 @@ public class OrderDAO {
             return null;
         }
     }
+
+    public List<Order> searchOrder(String customerName, String status) {
+
+        try (Connection conn = DBContext.getConnection()) {
+            String sql = "select o.* from orders o join customers c on o.customer_id = c.id where ";
+            if (customerName != null && !customerName.isBlank()) {
+
+                sql += "c.name LIKE ? ";
+                if (!status.equals("ALL")) {
+                    sql += "AND ";
+                    sql += "o.status = ?";
+                }
+            } else if (customerName == null || customerName.isBlank()) {
+                sql += "o.status = ?";
+            }
+
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            if (customerName != null && !customerName.isBlank()) {
+
+                ps.setString(1, "%" + customerName + "%");
+                if (!status.equals("ALL")) {
+                    ps.setString(2, status);
+                }
+            } else if (customerName == null || customerName.isBlank()) {
+                ps.setString(1, status);
+            }
+
+
+            ResultSet rs = ps.executeQuery();
+            List<Order> result = new ArrayList<>();
+            while (rs.next()) {
+                Order o = mapResultSetToOrder(rs);
+                UserDAO ud = new UserDAO();
+                CustomerDAO cd = new CustomerDAO();
+                o.setCustomer(cd.getCustomerNameById(o.getCustomerId()));
+                o.setCreater(ud.getUserNameById(o.getCreatedBy()));
+                o.setProcessor(ud.getUserNameById(o.getProcessedBy()));
+                result.add(o);
+            }
+            return result;
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return null;
+    }
+
 
     public Order insertOrder(Order o) {
         try {
@@ -109,6 +176,18 @@ public class OrderDAO {
         return null;
     }
 
+    public void updateOrderPrice(Order o) {
+        try {
+            Connection conn = DBContext.getConnection();
+            String sql = "UPDATE orders SET total_price = ? WHERE id = ?";
+            st = conn.prepareStatement(sql);
+            st.setDouble(1, o.getTotalPrice());
+            st.setInt(2, o.getId());
+            st.executeUpdate();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
     public void updateOrder(Order o) {
         try {
             Connection conn = DBContext.getConnection();
@@ -137,39 +216,21 @@ public class OrderDAO {
         o.setUpdatedAt(rs.getTimestamp("updatedat"));
         o.setCompletedAt(rs.getTimestamp("completedat"));
         o.setCreatedBy(rs.getInt("createdby"));
-        o.setProcessdBy(rs.getInt("processedby"));
+        o.setProcessedBy(rs.getInt("processedby"));
         o.setCustomerId(rs.getInt("customer_id"));
 
         return o;
     }
 
-//    public static void main(String[] args) {
-//
-//        BrandDAO dao = new BrandDAO();
-//
-//        List<Brand> list = dao.getAllBrand();
-//        List<Brand> search = dao.searchBrand(null, null, null);
-//        Brand b = new Brand();
-//
-//        b.setId(1);
-//        b.setName("Dell");
-//        b.setDescription("Laptop brand");
-//        b.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-//
-//        dao.updateBrand(b);
-//
-//        for (Brand i : dao.getAllBrand()) {
-//            System.out.println(i.getId() + " " + i.getName() + " " + i.getDescription());
-//        }
-//        System.out.println(dao.getBrandByName("Dell").toString());
-//        System.out.println("====================");
-//        for (Brand asd : search) {
-//            System.out.println(asd);
-//        }
-//    }
-//
-//
-//}
+    public static void main(String[] args) {
+        OrderDAO orderDAO = new OrderDAO();
+        List<Order> orderList = orderDAO.getAllOrder();
+        for (Order o : orderList) {
+            System.out.println(o);
+        }
+
+
+    }
 
 
 }

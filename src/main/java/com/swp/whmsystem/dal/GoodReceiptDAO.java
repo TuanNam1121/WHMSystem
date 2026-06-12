@@ -1,7 +1,10 @@
 package com.swp.whmsystem.dal;
 
+import com.swp.whmsystem.dto.ImportHistoryDTO;
 import com.swp.whmsystem.model.GoodReceipt;
 import com.swp.whmsystem.model.GoodReceiptItem;
+import com.swp.whmsystem.model.Product;
+import com.swp.whmsystem.model.ProductItem;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -60,6 +63,22 @@ public class GoodReceiptDAO {
         }
         return null;
     }
+    
+    public GoodReceipt getGoodReceiptByGoodReceipId(int goodReceiptId) {
+        String sql = "SELECT * FROM good_receipts WHERE id = ? LIMIT 1";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, goodReceiptId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapResultSetToGoodReceipt(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
 
     public GoodReceipt getGoodReceiptById(int id) {
         String sql = "SELECT * FROM good_receipts WHERE id = ?";
@@ -85,6 +104,7 @@ public class GoodReceiptDAO {
         c.setStatus(rs.getString("status"));
         c.setCreatedAt(rs.getTimestamp("created_at"));
         c.setNote(rs.getString("note"));
+        c.setSupplierName(rs.getString("supplier_name"));
         return c;
     }
 
@@ -127,12 +147,60 @@ public class GoodReceiptDAO {
             throw new RuntimeException(e);
         }
     }
+    
+    public List<GoodReceipt> searchProduct(int receiptId,int purchaseid, String supplier, int processedby, String sortBy) {
+        List<GoodReceipt> goodReceipts = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+                "select * from good_receipts where 1 = 1"
+        );
+        List<String> parameter = new ArrayList<>();
+                
+        if (receiptId != -1) {
+            sql.append(" and id = ? ");
+            parameter.add(String.valueOf(receiptId));
+        }
+        
+        if (purchaseid != -1) {
+            sql.append(" and purchaserequestid = ? ");
+            parameter.add(String.valueOf(purchaseid));
+        }
+
+        if (supplier != null && !supplier.trim().isEmpty()) {
+            sql.append(" and supplier_name like ?");
+            parameter.add("%" + supplier + "%");
+        }
+
+        if (processedby != -1) {
+            sql.append(" and processedby = ? ");
+            parameter.add(String.valueOf(processedby));
+        }
+
+        if (sortBy != null && !sortBy.trim().isEmpty()) {
+            switch (sortBy) {
+                case "date_latest" -> sql.append(" order by created_at asc");
+                case "date_earliest" -> sql.append(" order by created_at desc");
+            }
+        }
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString());) {
+            System.out.println(sql.toString());
+            for (int i = 0; i < parameter.size(); i++) {
+                ps.setObject(i + 1, parameter.get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                goodReceipts.add(mapResultSetToGoodReceipt(rs));
+            }
+            return goodReceipts;
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return goodReceipts;
+    }
 
     public static void main(String[] args) {
-        GoodReceiptDAO dao = new GoodReceiptDAO();
-        List<GoodReceipt> a = dao.getAllGoodReceipt();
-        for(GoodReceipt i : a){
-            System.out.println(i);
-        }
+        GoodReceiptDAO gr = new GoodReceiptDAO();
+        GoodReceiptItemDAO gri = new GoodReceiptItemDAO();
+        ProductItemDAO pi = new ProductItemDAO();
     }
 }

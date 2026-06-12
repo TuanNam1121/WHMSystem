@@ -3,15 +3,25 @@ package com.swp.whmsystem.model;
 import java.sql.Timestamp;
 
 public class GoodReceipt {
+
     private int id;
     private int purchaseRequestId;
     private int processedBy;
     private String status;
     private Timestamp createdAt;
     private String note;
+    private String supplierName;
 //    private int supplier;               anh dùng như nào tự điền nhé
 
     public GoodReceipt() {
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
 
     public int getId() {

@@ -4,6 +4,7 @@
  */
 package com.swp.whmsystem.dto;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +24,7 @@ public class ImportHistoryDTO {
     private String supplier;
     private String importBy;
     private int items;
-    private String total; 
+    private int total; 
     private String status;
-    private LocalDateTime completedAt;
+    private Timestamp completedAt;
 }

@@ -1,4 +1,6 @@
-
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -18,6 +20,21 @@
         <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
         <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
         <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
+        <link rel="stylesheet" href="assets/css/style.css">
+        
+         <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
+
+        <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+
+        <link rel="stylesheet" href="assets/css/animate.css">
+
+        <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
+
+        <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
+
+        <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
+        <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
+
         <link rel="stylesheet" href="assets/css/style.css">
 
         <style>
@@ -78,118 +95,9 @@
         </style>
     </head>
     <body>
-        <div id="global-loader">
-            <div class="whirly-loader"> </div>
-        </div>
 
-        <div class="main-wrapper">
-
-            <div class="header">
-                <div class="header-left active">
-                    <a href="index.html" class="logo"><img src="assets/img/logo.png" alt=""></a>
-                    <a href="index.html" class="logo-small"><img src="assets/img/logo-small.png" alt=""></a>
-                    <a id="toggle_btn" href="javascript:void(0);"></a>
-                </div>
-
-                <a id="mobile_btn" class="mobile_btn" href="#sidebar">
-                    <span class="bar-icon"><span></span><span></span><span></span></span>
-                </a>
-
-                <ul class="nav user-menu">
-                    <li class="nav-item">
-                        <div class="top-nav-search">
-                            <a href="javascript:void(0);" class="responsive-search"><i class="fa fa-search"></i></a>
-                            <form action="#">
-                                <div class="searchinputs">
-                                    <input type="text" placeholder="Search Here ...">
-                                    <div class="search-addon"><span><img src="assets/img/icons/closes.svg" alt="img"></span></div>
-                                </div>
-                                <a class="btn" id="searchdiv"><img src="assets/img/icons/search.svg" alt="img"></a>
-                            </form>
-                        </div>
-                    </li>
-
-                    <li class="nav-item dropdown has-arrow main-drop">
-                        <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
-                            <span class="user-img"><img src="assets/img/profiles/avator1.jpg" alt="">
-                                <span class="status online"></span></span>
-                        </a>
-                        <div class="dropdown-menu menu-drop-user">
-                            <div class="profilename">
-                                <div class="profileset">
-                                    <span class="user-img"><img src="assets/img/profiles/avator1.jpg" alt="">
-                                        <span class="status online"></span></span>
-                                    <div class="profilesets">
-                                        <h6>Nguyen Van A</h6>
-                                        <h5>Warehouse Staff</h5>
-                                    </div>
-                                </div>
-                                <hr class="m-0">
-                                <a class="dropdown-item" href="profile.html"> <i class="me-2" data-feather="user"></i> My Profile</a>
-                                <a class="dropdown-item" href="generalsettings.html"><i class="me-2" data-feather="settings"></i>Settings</a>
-                                <hr class="m-0">
-                                <a class="dropdown-item logout pb-0" href="signin.html"><img src="assets/img/icons/log-out.svg" class="me-2" alt="img">Logout</a>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-
-                <div class="dropdown mobile-user-menu">
-                    <a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="profile.html">My Profile</a>
-                        <a class="dropdown-item" href="generalsettings.html">Settings</a>
-                        <a class="dropdown-item" href="signin.html">Logout</a>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="sidebar" id="sidebar">
-                <div class="sidebar-inner slimscroll">
-                    <div id="sidebar-menu" class="sidebar-menu">
-                        <ul>
-                            <li>
-                                <a href="index.html"><img src="assets/img/icons/dashboard.svg" alt="img"><span> Dashboard</span> </a>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><img src="assets/img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="productlist.html">Product List</a></li>
-                                    <li><a href="addproduct.html">Add Product</a></li>
-                                    <li><a href="categorylist.html">Category List</a></li>
-                                    <li><a href="brandlist.html">Brand List</a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><img src="assets/img/icons/purchase1.svg" alt="img"><span> Import Request</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="warehouse-import-request-list.html">My Import Requests</a></li>
-                                    <li><a href="import-history-list.html" class="active">Import History</a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><img src="assets/img/icons/transfer1.svg" alt="img"><span> Export</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="create-export-order.html">Create Export Order</a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><img src="assets/img/icons/time.svg" alt="img"><span> Report</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="inventoryreport.html">Inventory Report</a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><img src="assets/img/icons/settings.svg" alt="img"><span> Settings</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="generalsettings.html">General Settings</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+        <jsp:include page="/WEB-INF/common/header.jsp"></jsp:include>
+        <jsp:include page="/WEB-INF/common/sidebar.jsp"></jsp:include>
 
             <div class="page-wrapper">
                 <div class="content">
@@ -198,143 +106,85 @@
                             <h4 class="mb-0" style="font-size: 22px; font-weight: 700; color: #333;">Import History Detail</h4>
                         </div>
                         <div class="page-btn">
-                            <span class="status-badge">COMPLETED</span>
-                        </div>
+                        <c:choose>
+                            <c:when test="${i.status == 'NEW'}">
+                                <span class="badges bg-lightyellow">${detail.status}</span>
+                            </c:when>
+                            <c:when test="${i.status == 'COMPLETED'}">
+                                <span class="badges bg-lightgreen">${detail.status}</span>
+                            </c:when>
+                        </c:choose>
                     </div>
-
-                    <div class="row mb-4">
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
-                            <div class="card info-card h-100">
-                                <div class="card-body">
-                                    <span class="info-label">Receipt</span>
-                                    <h5 class="info-value">GR-2026-0031</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
-                            <div class="card info-card h-100">
-                                <div class="card-body">
-                                    <span class="info-label">Purchase Request</span>
-                                    <h5 class="info-value">PR-2026-0007</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
-                            <div class="card info-card h-100">
-                                <div class="card-body">
-                                    <span class="info-label">Supplier</span>
-                                    <h5 class="info-value">FPT Supplier HCM</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
-                            <div class="card info-card h-100">
-                                <div class="card-body">
-                                    <span class="info-label">Handled By</span>
-                                    <h5 class="info-value">Not assigned</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
-                            <div class="card info-card h-100">
-                                <div class="card-body">
-                                    <span class="info-label">Received At</span>
-                                    <h5 class="info-value">06/06/2026 14:20</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="table-container bg-white">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Serial / IMEI</th>
-                                        <th>Unit</th>
-                                        <th class="text-end">Imported Price</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style="font-weight: 600; color: #333;">Dell Latitude 5450</td>
-                                        <td style="color: #6c757d;">DLL5450-0001</td>
-                                        <td style="color: #6c757d;">pcs</td>
-                                        <td class="text-end" style="color: #6c757d;">15,000,000 d</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-weight: 600; color: #333;">Dell Latitude 5450</td>
-                                        <td style="color: #6c757d;">DLL5450-0002</td>
-                                        <td style="color: #6c757d;">pcs</td>
-                                        <td class="text-end" style="color: #6c757d;">15,000,000 d</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-weight: 600; color: #333;">Dell Latitude 5450</td>
-                                        <td style="color: #6c757d;">DLL5450-0003</td>
-                                        <td style="color: #6c757d;">pcs</td>
-                                        <td class="text-end" style="color: #6c757d;">15,000,000 d</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-weight: 600; color: #333;">Dell Latitude 5450</td>
-                                        <td style="color: #6c757d;">DLL5450-0004</td>
-                                        <td style="color: #6c757d;">pcs</td>
-                                        <td class="text-end" style="color: #6c757d;">15,000,000 d</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-weight: 600; color: #333;">Dell Latitude 5450</td>
-                                        <td style="color: #6c757d;">DLL5450-0005</td>
-                                        <td style="color: #6c757d;">pcs</td>
-                                        <td class="text-end" style="color: #6c757d;">15,000,000 d</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-weight: 600; color: #333;">Dell Latitude 5450</td>
-                                        <td style="color: #6c757d;">(empty)</td>
-                                        <td style="color: #6c757d;">pcs</td>
-                                        <td class="text-end" style="color: #6c757d;">15,000,000 d</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-weight: 600; color: #333;">Dell Latitude 5450</td>
-                                        <td style="color: #6c757d;">(empty)</td>
-                                        <td style="color: #6c757d;">pcs</td>
-                                        <td class="text-end" style="color: #6c757d;">15,000,000 d</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-weight: 600; color: #333;">Dell Latitude 5450</td>
-                                        <td style="color: #6c757d;">(empty)</td>
-                                        <td style="color: #6c757d;">pcs</td>
-                                        <td class="text-end" style="color: #6c757d;">15,000,000 d</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-weight: 600; color: #333;">Logitech Mouse M650</td>
-                                        <td style="color: #6c757d;">M650-0001</td>
-                                        <td style="color: #6c757d;">pcs</td>
-                                        <td class="text-end" style="color: #6c757d;">450,000 d</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-weight: 600; color: #333;">Logitech Mouse M650</td>
-                                        <td style="color: #6c757d;">M650-0002</td>
-                                        <td style="color: #6c757d;">pcs</td>
-                                        <td class="text-end" style="color: #6c757d;">450,000 d</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-weight: 600; color: #333;">Logitech Mouse M650</td>
-                                        <td style="color: #6c757d;">M650-0003</td>
-                                        <td style="color: #6c757d;">pcs</td>
-                                        <td class="text-end" style="color: #6c757d;">450,000 d</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-weight: 600; color: #333;">Logitech Mouse M650</td>
-                                        <td style="color: #6c757d;">M650-0004</td>
-                                        <td style="color: #6c757d;">pcs</td>
-                                        <td class="text-end" style="color: #6c757d;">450,000 d</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
                 </div>
+
+                <div class="row mb-4">
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                        <div class="card info-card h-100">
+                            <div class="card-body">
+                                <span class="info-label">Receipt</span>
+                                <h5 class="info-value">GR-${detail.receiptId}</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                        <div class="card info-card h-100">
+                            <div class="card-body">
+                                <span class="info-label">Purchase Request</span>
+                                <h5 class="info-value">PR-${detail.purchaseRequestId}</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                        <div class="card info-card h-100">
+                            <div class="card-body">
+                                <span class="info-label">Supplier</span>
+                                <h5 class="info-value">${detail.supplier}</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                        <div class="card info-card h-100">
+                            <div class="card-body">
+                                <span class="info-label">Processed By</span>
+                                <h5 class="info-value">${detail.importBy}</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                        <div class="card info-card h-100">
+                            <div class="card-body">
+                                <span class="info-label">Received At</span>
+                                <h5 class="info-value">${detail.completedAt}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container bg-white">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Serial / IMEI</th>
+                                    <th>Unit</th>
+                                    <th>Imported Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="${list}" var="i">
+                                    <tr>
+                                        <td>GR-${i.productName}</td>
+                                        <td>GR-${i.serial}</td>
+                                        <td>${i.unit}</td>
+                                        <td>${i.importedPrice} VND</td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
 

@@ -1,3 +1,6 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -32,8 +35,8 @@
             <div class="content">
                 <div class="page-header">
                     <div class="page-title">
-                        <h4>Product List</h4>
-                        <h6>Manage your products</h6>
+                        <h4>Import History</h4>
+                        <h6>Manage your import history</h6>
                     </div>
                     <div class="page-btn">
                         <a href="addproduct.html" class="btn btn-added"><img src="assets/img/icons/plus.svg" alt="img" class="me-1">Add New Product</a>
@@ -69,56 +72,58 @@
                             </div>
                         </div>
 
+                        <form action="ImportHistory" method="get">
                         <div class="card mb-0" id="filter_inputs">
                             <div class="card-body pb-0">
                                 <div class="row">
                                     <div class="col-lg-12 col-sm-12">
                                         <div class="row">
+
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <select class="select">
-                                                        <option>Choose Product</option>
-                                                        <option>Macbook pro</option>
-                                                        <option>Orange</option>
-                                                    </select>
+                                                    <input type="text" name="receiptid" placeholder="Search Receipt Id">
                                                 </div>
                                             </div>
+
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <select class="select">
-                                                        <option>Choose Category</option>
-                                                        <option>Computers</option>
-                                                        <option>Fruits</option>
-                                                    </select>
+                                                    <input type="text" name="purchaseid" placeholder="Search Purchase Request Id">
                                                 </div>
                                             </div>
+                                            
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <select class="select">
-                                                        <option>Choose Sub Category</option>
-                                                        <option>Computer</option>
-                                                    </select>
+                                                    <input type="text" name="supplier" placeholder="Search Supplier Name">
                                                 </div>
                                             </div>
+
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <select class="select">
-                                                        <option>Brand</option>
-                                                        <option>N/D</option>
+                                                    <select class="select" name="processedby">
+                                                        <option value="">Choose Processor</option>
+                                                        <c:forEach items="${sessionScope.userList}" var="c">
+                                                            <option value="${c.id}">${c.fullName}</option>
+                                                        </c:forEach>
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-lg col-sm-6 col-12 ">
+
+                                            <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <select class="select">
-                                                        <option>Price</option>
-                                                        <option>150.00</option>
+                                                    <select class="select" name="sortBy">
+                                                        <option value="">Date Sort</option>                                                        <option value="skuZA">SKU Z-A</option>
+                                                        <option value="date_latest">Latest</option>
+                                                        <option value="date_earliest">Earliest</option>
                                                     </select>
                                                 </div>
                                             </div>
+
                                             <div class="col-lg-1 col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <a class="btn btn-filters ms-auto"><img src="assets/img/icons/search-whites.svg" alt="img"></a>
+                                                    <button type="submit" class="btn btn-filters ms-auto"
+                                                            style="border: none; padding: 0;">
+                                                        <img src="assets/img/icons/search-whites.svg" alt="img">
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -126,6 +131,7 @@
                                 </div>
                             </div>
                         </div>
+                    </form>
 
                         <div class="table-responsive">
                             <table class="table  datanew">
@@ -138,31 +144,37 @@
                                         <th>Items</th>
                                         <th>Total</th>
                                         <th>Status</th>
-                                        <th>Complete At</th>
+                                        <th>Received At</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <c:forEach items="${list}" var="i">
                                     <tr>
-                                        <td class="productimgname">
-                                            <a href="javascript:void(0);" class="product-img">
-                                                <img src="assets/img/product/product1.jpg" alt="product">
-                                            </a>
-                                            <a href="javascript:void(0);">Macbook pro</a>
-                                        </td>
-                                        <td>PT001</td>
-                                        <td>Computers</td>
-                                        <td>N/D</td>
-                                        <td>1500.00</td>
-                                        <td>pc</td>
-                                        <td>100.00</td>
-                                        <td>Admin</td>
-                                        <td>
-                                            <a class="me-3" href="ImportHistoryDetail">
-                                                Details
-                                            </a>
-                                        </td>
-                                    </tr>
+                                    <td>GR-${i.receiptId}</td>
+                                    <td>PR-${i.purchaseRequestId}</td>
+                                    <td>${i.supplier}</td>
+                                    <td>${i.importBy}</td>
+                                    <td>${i.items}</td>
+                                    <td>${i.total}</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${i.status == 'NEW'}">
+                                                <span class="badges bg-lightyellow">${i.status}</span>
+                                            </c:when>
+                                            <c:when test="${i.status == 'COMPLETED'}">
+                                                <span class="badges bg-lightgreen">${i.status}</span>
+                                            </c:when>
+                                        </c:choose>
+                                    </td>
+                                    <td>${i.completedAt}</td>
+                                    <td>
+                                        <a class="me-3" href="ImportHistoryDetail?receiptId=${i.receiptId}">
+                                            <img src="assets/img/icons/edit.svg" alt="img">
+                                        </a>
+                                    </td>
+                                </tr>
+                            </c:forEach>
                                 </tbody>
                             </table>
                         </div>
@@ -171,8 +183,6 @@
 
             </div>
         </div>
-    </div>
-
 
     <script src="assets/js/jquery-3.6.0.min.js"></script>
 

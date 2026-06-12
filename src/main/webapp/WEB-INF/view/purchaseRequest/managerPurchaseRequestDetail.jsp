@@ -289,13 +289,20 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 d-flex align-items-center">
-                                                    <div class="p-3"
-                                                        style="background: #e9ecef; border-radius: 8px; width: 100%;">
-                                                        <p class="mb-0"><i
-                                                                class="fas fa-info-circle me-2 text-info"></i>An Import
-                                                            Request has been assigned to this staff to handle the
-                                                            products.</p>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label><strong><i class="fas fa-comment-dots me-1"></i> Note from Manager</strong></label>
+                                                        <div class="p-3 mt-1"
+                                                            style="background: #f0f4ff; border-radius: 8px; border-left: 4px solid #3B82F6; width: 100%; min-height: 80px;">
+                                                            <p class="mb-0" id="detail-manager-note">
+                                                                <c:choose>
+                                                                    <c:when test="${not empty managerNote}">
+                                                                        ${managerNote}
+                                                                    </c:when>
+                                                                    <c:otherwise>No note from manager.</c:otherwise>
+                                                                </c:choose>
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

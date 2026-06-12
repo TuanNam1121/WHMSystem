@@ -22,16 +22,11 @@ public class PurchaseRequestList extends HttpServlet {
         PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-
-        try {
-            if (user == null) {
-                response.sendRedirect("login");
-                return;
-            }
-        } catch (Exception e) {
+        if (user == null) {
             response.sendRedirect("login");
             return;
         }
+
         List<PurchaseRequest> purchaseRequests = purchaseRequestDAO.getAllPurchaseRequestForSaleman(user.getId());
         request.setAttribute("purchaseList", purchaseRequests);
         request.getRequestDispatcher("WEB-INF/view/purchaseRequest/purchaseRequestList.jsp").forward(request, response);
@@ -43,8 +38,8 @@ public class PurchaseRequestList extends HttpServlet {
         int prId = Integer.parseInt(request.getParameter("id"));
         PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
         PurchaseItemDAO purchaseItemDAO = new PurchaseItemDAO();
-        purchaseItemDAO.softDeletePurItemByPurReqId(prId);
-        purchaseRequestDAO.softDeletePurchaseRequest(prId);
+        purchaseItemDAO.deletePurchaseItemByRequestId(prId);
+        purchaseRequestDAO.deletePurchaseRequest(prId);
 
         HttpSession session = request.getSession();
         session.setAttribute("error", "Purchase Request with Id: " + prId + " has been deleted!");

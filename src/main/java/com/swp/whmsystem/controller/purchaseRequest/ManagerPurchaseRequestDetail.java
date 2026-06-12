@@ -61,6 +61,7 @@ public class ManagerPurchaseRequestDetail extends HttpServlet {
             if (gr != null) {
                 User assignedStaff = userDao.getUserFromId(gr.getProcessedBy());
                 request.setAttribute("assignedStaff", assignedStaff);
+                request.setAttribute("managerNote", gr.getNote());
             }
         }
 

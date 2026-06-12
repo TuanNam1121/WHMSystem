@@ -9,7 +9,8 @@ import java.util.List;
 
 public class PurchaseRequestDAO {
     public List<PurchaseRequest> getAllPurchaseRequest() {
-        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid ORDER BY pr.createdat DESC";
+        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid " +
+                "where pr.isDeleted = 0 ORDER BY pr.createdat DESC";
         List<PurchaseRequest> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -25,7 +26,8 @@ public class PurchaseRequestDAO {
     }
 
     public List<PurchaseRequest> getAllPurchaseRequestForSaleman(int salemanId) {
-        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid WHERE pr.createdby = ? ORDER BY pr.createdat DESC";
+        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid " +
+                "WHERE pr.createdby = ? and pr.isDeleted = 0 ORDER BY pr.createdat DESC";
         List<PurchaseRequest> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection();) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -116,6 +118,18 @@ public class PurchaseRequestDAO {
             preparedStatement.setString(3, request.getStatus() != null ? request.getStatus() : "NEW");
             preparedStatement.setString(4, request.getNote());
             preparedStatement.setInt(5, request.getId());
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean softDeletePurchaseRequest(int id) {
+        String sql = "UPDATE purchase_requests SET isDeleted = ? WHERE id = ?";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, 1);
+            preparedStatement.setInt(2, id);
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);

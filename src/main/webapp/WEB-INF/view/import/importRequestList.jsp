@@ -44,6 +44,21 @@
                 </div>
             </div>
 
+            <c:if test="${not empty sessionScope.message}">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>${sessionScope.message}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <% session.removeAttribute("message"); %>
+            </c:if>
+            <c:if test="${not empty sessionScope.error}">
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>${sessionScope.error}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <% session.removeAttribute("error"); %>
+            </c:if>
+
             <div class="card">
                 <div class="card-body">
                     <div class="table-top">
@@ -122,7 +137,7 @@
                             <tbody>
                             <c:forEach items="${importRequests}" var="ir">
                                 <tr>
-                                    <td class="text-bolds">IR-
+                                    <td class="text-bolds">
                                         <fmt:formatNumber value='${ir.id}' pattern='000'/>
                                     </td>
                                     <td>${not empty ir.note ? ir.note : 'No note provided'}</td>
@@ -130,22 +145,18 @@
                                         <c:choose>
                                             <c:when
                                                     test="${ir.status == 'NEW' || ir.status == 'New'}">
-                                                                    <span
-                                                                            class="badges bg-lightyellow">${ir.status}</span>
+                                                <span class="badges bg-lightyellow">${ir.status}</span>
                                             </c:when>
                                             <c:when
                                                     test="${ir.status == 'DOING' || ir.status == 'Doing'}">
-                                                                    <span
-                                                                            class="badges bg-lightpurple">${ir.status}</span>
+                                                <span class="badges bg-lightpurple">${ir.status}</span>
                                             </c:when>
                                             <c:when
                                                     test="${ir.status == 'COMPLETED' || ir.status == 'Completed'}">
-                                                                    <span
-                                                                            class="badges bg-lightgreen">${ir.status}</span>
+                                                <span class="badges bg-lightgreen">${ir.status}</span>
                                             </c:when>
                                             <c:otherwise>
-                                                                    <span
-                                                                            class="badges bg-lightgrey">${ir.status}</span>
+                                                <span class="badges bg-lightgrey">${ir.status}</span>
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
@@ -155,7 +166,7 @@
                                     </td>
                                     <td>
                                         <a class="btn btn-sm btn-outline-primary"
-                                           href="warehouseImportRequestDetail?id=${ir.id}">
+                                           href="importRequestDetail?goodReId=${ir.id}">
                                             <i class="fas fa-eye me-1"></i> View Detail
                                         </a>
                                     </td>

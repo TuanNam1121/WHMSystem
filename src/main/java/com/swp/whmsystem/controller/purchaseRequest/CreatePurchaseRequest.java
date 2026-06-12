@@ -55,7 +55,7 @@ public class CreatePurchaseRequest extends HttpServlet {
                 PurchaseItem purchaseItem = new PurchaseItem();
                 purchaseItem.setPurchaseRequestId(p.getId());
                 purchaseItem.setProductId(productId);
-                purchaseItem.setQuantity(quantity);
+                purchaseItem.setRequiredQty(quantity);
 
                 PurchaseItemDAO purchaseItemDAO = new PurchaseItemDAO();
                 purchaseItemDAO.insertPurchaseItem(purchaseItem);

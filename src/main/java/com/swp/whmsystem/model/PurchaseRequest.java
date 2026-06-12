@@ -10,6 +10,7 @@ public class PurchaseRequest {
     private String note;
     private Timestamp createdAt;
     private String createdByUsername;
+    private boolean isDeleted;
 
     public PurchaseRequest() {
     }
@@ -68,5 +69,13 @@ public class PurchaseRequest {
 
     public void setCreatedByUsername(String createdByUsername) {
         this.createdByUsername = createdByUsername;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }

@@ -4,7 +4,8 @@ public class PurchaseItem {
     private int id;
     private int purchaseRequestId;
     private int productId;
-    private int quantity;
+    private int requiredQty;
+    private boolean isDeleted;
 
     public PurchaseItem() {
     }
@@ -33,11 +34,20 @@ public class PurchaseItem {
         this.productId = productId;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getRequiredQty() {
+        return requiredQty;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setRequiredQty(int requiredQty) {
+        this.requiredQty = requiredQty;
     }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
 }

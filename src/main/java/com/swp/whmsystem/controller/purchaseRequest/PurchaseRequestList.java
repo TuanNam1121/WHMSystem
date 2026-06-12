@@ -1,5 +1,6 @@
 package com.swp.whmsystem.controller.purchaseRequest;
 
+import com.swp.whmsystem.dal.PurchaseItemDAO;
 import com.swp.whmsystem.dal.PurchaseRequestDAO;
 import com.swp.whmsystem.model.PurchaseRequest;
 import com.swp.whmsystem.model.User;
@@ -21,6 +22,11 @@ public class PurchaseRequestList extends HttpServlet {
         PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+
         List<PurchaseRequest> purchaseRequests = purchaseRequestDAO.getAllPurchaseRequestForSaleman(user.getId());
         request.setAttribute("purchaseList", purchaseRequests);
         request.getRequestDispatcher("WEB-INF/view/purchaseRequest/purchaseRequestList.jsp").forward(request, response);
@@ -29,7 +35,15 @@ public class PurchaseRequestList extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response);
+        int prId = Integer.parseInt(request.getParameter("id"));
+        PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
+        PurchaseItemDAO purchaseItemDAO = new PurchaseItemDAO();
+        purchaseItemDAO.deletePurchaseItemByRequestId(prId);
+        purchaseRequestDAO.deletePurchaseRequest(prId);
+
+        HttpSession session = request.getSession();
+        session.setAttribute("error", "Purchase Request with Id: " + prId + " has been deleted!");
+        response.sendRedirect("purchaseRequestList");
     }
 
     @Override

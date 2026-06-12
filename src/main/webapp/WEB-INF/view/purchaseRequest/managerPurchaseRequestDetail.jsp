@@ -55,7 +55,7 @@
                                         <div class="col-lg-3 col-sm-6 col-12">
                                             <div class="form-group">
                                                 <label>Request Code</label>
-                                                <input type="text" value="PR-<fmt:formatNumber value='${purchaseRequest.id}' pattern='000' />" disabled
+                                                <input type="text" value="<fmt:formatNumber value='${purchaseRequest.id}' pattern='000' />" disabled
                                                     class="form-control" id="detail-request-code">
                                             </div>
                                         </div>
@@ -113,7 +113,7 @@
                                                         <strong
                                                             id="detail-salesman-name">${salesman.fullName}</strong><br>
                                                         <small class="text-muted"
-                                                            id="detail-salesman-id">SM-${salesman.id}</small>
+                                                            id="detail-salesman-id">${salesman.id}</small>
                                                     </div>
                                                 </div>
                                             </div>
@@ -156,7 +156,7 @@
                                                             <a href="javascript:void(0);">${product.name}</a>
                                                         </td>
                                                         <td>${product.category.name}</td>
-                                                        <td class="text-center"><strong>${item.quantity}</strong></td>
+                                                        <td class="text-center"><strong>${item.requiredQty}</strong></td>
                                                         <td class="text-center">
                                                             <span
                                                                 class="badges ${product.totalQuantity <= 10 ? 'bg-lightred' : 'bg-lightgreen'}">${product.totalQuantity}
@@ -289,13 +289,20 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 d-flex align-items-center">
-                                                    <div class="p-3"
-                                                        style="background: #e9ecef; border-radius: 8px; width: 100%;">
-                                                        <p class="mb-0"><i
-                                                                class="fas fa-info-circle me-2 text-info"></i>An Import
-                                                            Request has been assigned to this staff to handle the
-                                                            products.</p>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label><strong><i class="fas fa-comment-dots me-1"></i> Note from Manager</strong></label>
+                                                        <div class="p-3 mt-1"
+                                                            style="background: #f0f4ff; border-radius: 8px; border-left: 4px solid #3B82F6; width: 100%; min-height: 80px;">
+                                                            <p class="mb-0" id="detail-manager-note">
+                                                                <c:choose>
+                                                                    <c:when test="${not empty managerNote}">
+                                                                        ${managerNote}
+                                                                    </c:when>
+                                                                    <c:otherwise>No note from manager.</c:otherwise>
+                                                                </c:choose>
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

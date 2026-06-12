@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: tung
-  Date: 9/6/26
-  Time: 13:13
+  Date: 12/6/26
+  Time: 19:44
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -74,76 +74,6 @@
                                        readonly="readonly">
                             </div>
                         </div>
-                        <hr>
-                        <div class="page-title">
-                            <h6>Export Items</h6>
-                            <br>
-                        </div>
-                        <div class="table-top">
-                            <div class="search-set">
-                                <div class="search-path">
-                                    <a class="btn btn-filter" id="filter_search">
-                                        <img src="assets/img/icons/filter.svg" alt="img">
-                                        <span><img src="assets/img/icons/closes.svg" alt="img"></span>
-                                    </a>
-                                </div>
-                                <div class="search-input">
-                                    <a class="btn btn-searchset">
-                                        <img src="assets/img/icons/search-white.svg" alt="img">
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table  datanew">
-                                <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Product</th>
-                                    <th>SKU</th>
-                                    <th>Qty</th>
-                                    <th>Price</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <c:forEach items="${sessionScope.pickingList}" var="p" varStatus="v">
-                                    <tr>
-                                        <td>${v.index + 1}</td>
-                                        <td class="productimgname">
-                                            <a href="javascript:void(0);" class="product-img">
-                                                <img src="${p.imgUrl}" alt="product">
-                                            </a>
-                                            <p>${p.name}</p>
-                                        </td>
-                                        <td>${p.sku}</td>
-                                        <td>${p.quantity}</td>
-                                        <td>
-                                            <fmt:formatNumber value="${p.price}" pattern="#,###"/>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-
-                                </tbody>
-                            </table>
-                        </div>
-                        <hr>
-
-                        <form action="exportProduct" method="post" id="scanBarcodeForm">
-                            <div class="col-lg-12 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Scan/Search Product (SKU)</label>
-                                    <div class="input-groupicon">
-                                        <input type="text" name="sku" id="skuInput"
-                                               placeholder="Scan barcode and wait..." autofocus required>
-                                        <div class="addonset">
-                                            <img src="assets/img/icons/scanners.svg" alt="img">
-                                        </div>
-                                    </div>
-                                    <button type="submit" id="btnScanSubmit"
-                                            style="position: absolute; left: -9999px;"></button>
-                                </div>
-                            </div>
-                        </form>
                     </div>
 
                     <form action="submitExport" method="post" id="submitExportForm">
@@ -153,16 +83,13 @@
                                     <thead>
                                     <tr>
                                         <th>Product Name</th>
+                                        <th>SKU</th>
                                         <th>S/N</th>
-                                        <th>QTY</th>
                                         <th>Price</th>
-                                        <th>Stock</th>
-                                        <th>Total Cost ($)</th>
-                                        <th></th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <c:forEach items="${sessionScope.scannedList}" var="s">
+                                    <c:forEach items="${sessionScope.itemList}" var="s">
                                         <tr class="bor-b1">
                                             <td class="productimgname">
                                                 <a class="product-img">
@@ -170,23 +97,10 @@
                                                 </a>
                                                 <a href="javascript:void(0);">${s.name}</a>
                                             </td>
-                                            <td>
-                                                <input type="hidden" name="tempIds" value="${s.tempId}">
-                                                <input type="text" name="sn" class="form-control"
-                                                       placeholder="Enter S/N" required>
-                                            </td>
-                                            <td>${s.qty}</td>
+                                            <td>${s.sku}</td>
+                                            <td>${s.serial}</td>
                                             <td>
                                                 <fmt:formatNumber value="${s.price}" pattern="#,###"/>
-                                            </td>
-                                            <td>${s.stock}</td>
-                                            <td>
-                                                <fmt:formatNumber value="${s.totalCost}" pattern="#,###"/>
-                                            </td>
-                                            <td>
-                                                <a href="removeItem?tempId=${s.tempId}" class="delete-set">
-                                                    <img src="assets/img/icons/delete.svg" alt="svg">
-                                                </a>
                                             </td>
                                         </tr>
                                     </c:forEach>
@@ -210,11 +124,8 @@
                             <div class="col-lg-3 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label>Status</label>
-                                    <select class="select" name="status" required>
-                                        <option value="">Choose Status</option>
-                                        <option value="Completed">Completed</option>
-                                        <option value="Doing">Doing</option>
-                                    </select>
+                                    <input type="text" class="form-control" value="${sessionScope.order.status}"
+                                           readonly="readonly">
                                 </div>
                             </div>
                             <div class="col-lg-12">
@@ -225,8 +136,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-12">
-                                <button type="submit" class="btn btn-submit me-2" id="btnSubmitExport">Submit</button>
-                                <a href="cancelExport" class="btn btn-cancel">Cancel</a>
+                                <a href="exportHistory" class="btn btn-cancel">Cancel</a>
                             </div>
                         </div>
                     </form>

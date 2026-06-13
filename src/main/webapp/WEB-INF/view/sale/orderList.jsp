@@ -111,7 +111,9 @@
                                                     <select name="searchStatus" class="select" id="filter-status">
                                                         <option ${searchStatus==null?'selected':''} value="ALL">Choose Status</option>
                                                         <option ${searchStatus=='NEW'?'selected':''} value="NEW">New</option>
+                                                        <option ${searchStatus=='DOING'?'selected':''} value="DOING">On going</option>
                                                         <option ${searchStatus=='COMPLETED'?'selected':''} value="COMPLETED">Completed</option>
+                                                        <option ${searchStatus=='CANCELLED'?'selected':''} value="CANCELLED">Cancelled</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -160,10 +162,12 @@
                                                        href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=view">
                                                         <img src="assets/img/icons/eye.svg" alt="img">
                                                     </a>
-                                                    <a class="me-3"
-                                                       href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=update">
-                                                        <img src="assets/img/icons/edit.svg" alt="img">
-                                                    </a>
+                                                    <c:if test="${o.status != 'COMPLETED'}">
+                                                        <a class="me-3"
+                                                           href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=update">
+                                                            <img src="assets/img/icons/edit.svg" alt="img">
+                                                        </a>
+                                                    </c:if>
                                                 </td>
                                             </tr>
                                         </c:forEach>

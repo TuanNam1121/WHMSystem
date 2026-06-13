@@ -5,6 +5,14 @@
 
 package com.swp.whmsystem.controller.sale;
 
+import com.swp.whmsystem.dal.CustomerDAO;
+import com.swp.whmsystem.dal.OrderDAO;
+import com.swp.whmsystem.dal.OrderItemDAO;
+import com.swp.whmsystem.dal.ProductDAO;
+import com.swp.whmsystem.model.Customer;
+import com.swp.whmsystem.model.Order;
+import com.swp.whmsystem.model.OrderItem;
+import com.swp.whmsystem.model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,6 +20,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.sql.Timestamp;
 
 /**
  *
@@ -57,6 +67,25 @@ public class OrderDetail extends HttpServlet {
     throws ServletException, IOException {
         String id = request.getParameter("id");
         String action = request.getParameter("action");
+        request.setAttribute("action", action);
+        
+        OrderDAO od = new OrderDAO();
+        Order order = od.getOrderById(Integer.parseInt(id));
+        request.setAttribute("order", order);
+        CustomerDAO cd = new CustomerDAO();
+        request.setAttribute("customers", cd.getAllCustomer());
+        
+        if(order.getStatus().equals("NEW")){
+            ProductDAO pd = new ProductDAO();
+        request.setAttribute("products", pd.getProductList());
+        OrderItemDAO oid = new OrderItemDAO();
+        request.setAttribute("orderItems", oid.getOrderItemByOrderId(order.getId()));
+        
+        
+        request.getRequestDispatcher("WEB-INF/view/sale/orderDetail.jsp").forward(request, response);
+        }else{
+            request.getRequestDispatcher("WEB-INF/view/sale/orderDetail.jsp").forward(request, response);
+        }
         
     } 
 
@@ -70,7 +99,51 @@ public class OrderDetail extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        String note = request.getParameter("note");
+        String orderidStr = request.getParameter("orderid");
+        int orderid = Integer.parseInt(orderidStr);
+        
+        OrderDAO od = new OrderDAO();
+        Order order = od.getOrderById(orderid);
+        order.setNote(note);
+        
+        String[] productIds = request.getParameterValues("productId");
+        ProductDAO pd = new ProductDAO();
+        
+        OrderItemDAO oid = new OrderItemDAO();
+        oid.deleteOrderItem(orderid);
+        double total = 0;
+
+        for (String pid : productIds) {
+
+            int productId = Integer.parseInt(pid);
+
+            String quantityStr = request.getParameter("quantity_" + productId);
+
+            String priceStr = request.getParameter("price_" + productId);
+
+            if (quantityStr != null && !quantityStr.isBlank() && priceStr != null && !priceStr.isBlank()) {
+
+                int quantity = Integer.parseInt(quantityStr);
+                double price = Double.parseDouble(priceStr);
+                if (quantity > 0 && price > 0) {
+                    total += (price * quantity);
+                    OrderItem item = new OrderItem();
+
+                    item.setOrderId(orderid);
+                    item.setProductId(productId);
+                    item.setQuantity(quantity);
+                    item.setPrice(price);
+                    oid.insertOrderItem(item);
+                }
+            }
+        }
+        
+        
+        order.setTotalPrice(total);
+        od.updateOrderPrice(order);
+        od.updateOrderNote(order);
+        response.sendRedirect("OrderList");
     }
 
     /** 

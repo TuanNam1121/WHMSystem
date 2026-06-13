@@ -59,11 +59,29 @@ public class CustomerDAO {
             return null;
         }
     }
+    public Customer getCustomerById(int id) {
+        try {
+            Connection conn = DBContext.getConnection();
+            String sql = "select * from customers where id = ?";
+            PreparedStatement st;
+            ResultSet rs;
+            st = conn.prepareStatement(sql);
+            st.setInt(1, id);
+            rs = st.executeQuery(); //only select
+            if (rs.next()) {
+
+                return mapResultSetToCustomer(rs);
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+            return null;
+    }
 
     public Customer getCustomerByPhone(String phone) {
         try {
             Connection conn = DBContext.getConnection();
-            String sql = "select * from customers where phone=?";
+            String sql = "select * from customers where phone = ?";
             PreparedStatement st;
             ResultSet rs;
             st = conn.prepareStatement(sql);

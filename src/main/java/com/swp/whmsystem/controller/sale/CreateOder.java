@@ -114,11 +114,11 @@ public class CreateOder extends HttpServlet {
         order.setCreatedBy(user.getId());
         order.setCustomerId(customer.getId());
 
-        Order createdOrder = od.insertOrder(order);
 
         String[] productIds = request.getParameterValues("productId");
         ProductDAO pd = new ProductDAO();
-
+        
+        Order createdOrder = od.insertOrder(order);
         double total = 0;
 
         for (String pid : productIds) {

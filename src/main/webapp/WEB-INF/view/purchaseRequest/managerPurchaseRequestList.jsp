@@ -90,44 +90,60 @@
                         </div>
                     </div>
 
-                    <div class="card" id="filter_inputs">
-                        <div class="card-body pb-0">
-                            <div class="row">
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <input type="text" placeholder="Enter Request Code" id="filter-code">
+                    <form action="managerPurchaseRequestList" method="get">
+                        <div class="card" id="filter_inputs">
+                            <div class="card-body pb-0">
+                                <div class="row">
+                                    <div class="col-lg-2 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <input type="text" placeholder="Enter Request Code" id="filter-code" name="code" value="${param.code}">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <select class="select" id="filter-status">
-                                            <option>Choose Status</option>
-                                            <option>New</option>
-                                            <option>Approved</option>
-                                            <option>Rejected</option>
-                                            <option>Processing</option>
-                                            <option>Completed</option>
-                                        </select>
+                                    <div class="col-lg-2 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <select class="select" id="filter-status" name="status">
+                                                <option value="">Choose Status</option>
+                                                <option value="New" ${param.status == 'New' ? 'selected' : ''}>New</option>
+                                                <option value="Approved" ${param.status == 'Approved' ? 'selected' : ''}>Approved</option>
+                                                <option value="Rejected" ${param.status == 'Rejected' ? 'selected' : ''}>Rejected</option>
+                                                <option value="Processing" ${param.status == 'Processing' ? 'selected' : ''}>Processing</option>
+                                                <option value="Completed" ${param.status == 'Completed' ? 'selected' : ''}>Completed</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <input type="text" class="datetimepicker cal-icon" placeholder="Choose Date"
-                                               id="filter-date">
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <input type="text" class="datetimepicker cal-icon" placeholder="Choose Date"
+                                                   id="filter-date" name="date" value="${param.date}">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-3 col-sm-6 col-12">
-                                    <div class="form-group">
-                                        <a class="btn btn-filters ms-auto" id="btn-apply-filter"><img
-                                                src="assets/img/icons/search-whites.svg" alt="img"></a>
+                                    <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <select class="select" id="filter-sort" name="sort">
+                                                <option value="">Sort By</option>
+                                                <option value="id_desc" ${param.sort == 'id_desc' ? 'selected' : ''}>ID (Desc)</option>
+                                                <option value="id_asc" ${param.sort == 'id_asc' ? 'selected' : ''}>ID (Asc)</option>
+                                                <option value="status_desc" ${param.sort == 'status_desc' ? 'selected' : ''}>Status (Desc)</option>
+                                                <option value="status_asc" ${param.sort == 'status_asc' ? 'selected' : ''}>Status (Asc)</option>
+                                                <option value="date_desc" ${param.sort == 'date_desc' ? 'selected' : ''}>Date (Desc)</option>
+                                                <option value="date_asc" ${param.sort == 'date_asc' ? 'selected' : ''}>Date (Asc)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-filters ms-auto" id="btn-apply-filter" style="border: none;">
+                                                <img src="assets/img/icons/search-whites.svg" alt="img">
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
 
                     <div class="table-responsive">
-                        <table class="table datanew" id="manager-purchase-request-table">
+                        <table class="table custom-datanew" id="manager-purchase-request-table">
                             <thead>
                             <tr>
                                 <th>Request Code</th>
@@ -206,5 +222,28 @@
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
 <script src="assets/js/script.js"></script>
+<script>
+    $(document).ready(function () {
+        if ($('.custom-datanew').length > 0) {
+            $('.custom-datanew').DataTable({
+                "bFilter": true,
+                "sDom": 'fBtlpi',
+                'pagingType': 'numbers',
+                "ordering": true,
+                "order": [],
+                "language": {
+                    search: ' ',
+                    sLengthMenu: '_MENU_',
+                    searchPlaceholder: "Search...",
+                    info: "_START_ - _END_ of _TOTAL_ items",
+                },
+                initComplete: (settings, json) => {
+                    $('.dataTables_filter').appendTo('#tableSearch');
+                    $('.dataTables_filter').appendTo('.search-input');
+                },
+            });
+        }
+    });
+</script>
 </body>
 </html>

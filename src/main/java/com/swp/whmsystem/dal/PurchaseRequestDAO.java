@@ -4,12 +4,12 @@ import com.swp.whmsystem.model.*;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class PurchaseRequestDAO {
     public List<PurchaseRequest> getAllPurchaseRequest() {
-        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid " +
+        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr " +
+                "LEFT JOIN users u ON pr.createdby = u.userid " +
                 "where pr.isDeleted = 0 ORDER BY pr.id DESC";
         List<PurchaseRequest> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection()) {
@@ -26,7 +26,8 @@ public class PurchaseRequestDAO {
     }
 
     public List<PurchaseRequest> getAllPurchaseRequestForSaleman(int salemanId) {
-        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid " +
+        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr " +
+                "LEFT JOIN users u ON pr.createdby = u.userid " +
                 "WHERE pr.createdby = ? and pr.isDeleted = 0 ORDER BY pr.id DESC";
         List<PurchaseRequest> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection();) {
@@ -45,7 +46,8 @@ public class PurchaseRequestDAO {
     }
 
     public PurchaseRequest getPurchaseRequestById(int id) {
-        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid WHERE pr.id = ?";
+        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr " +
+                "LEFT JOIN users u ON pr.createdby = u.userid WHERE pr.id = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
@@ -61,7 +63,8 @@ public class PurchaseRequestDAO {
     }
 
     public PurchaseRequest getLatestPurchaseRequestBySalemanId(int salemanId) {
-        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid WHERE pr.createdby = ? ORDER BY pr.createdat DESC LIMIT 1";
+        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr " +
+                "LEFT JOIN users u ON pr.createdby = u.userid WHERE pr.createdby = ? ORDER BY pr.createdat DESC LIMIT 1";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, salemanId);
@@ -147,76 +150,63 @@ public class PurchaseRequestDAO {
         }
     }
 
-    public List<PurchaseRequest> searchPurchaseItem(int id, String status, String date) {
-        StringBuilder sql = new StringBuilder("SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid " +
+    public List<PurchaseRequest> searchPurchaseItem(int salemanId, int id, String status, String dateStr, String sort) {
+        StringBuilder sql = new StringBuilder("SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr " +
+                "LEFT JOIN users u ON pr.createdby = u.userid " +
                 "where pr.isDeleted = 0") ;
-        String orderBy = "ORDER BY pr.id DESC";
-        List<String> parameter = new ArrayList<>();
+        List<Object> parameter = new ArrayList<>();
+        if (salemanId != 0) {
+            sql.append(" and pr.createdBy = ?");
+            parameter.add(salemanId);
+        }
         if (id != 0) {
             sql.append(" and pr.id = ?");
-            parameter.add(String.valueOf(id));
+            parameter.add(id);
         }
-        if (status != null) {
+        if (status != null && !status.isEmpty()) {
             sql.append(" and pr.status = ?");
-            parameter.add(status);
+            parameter.add(status.toUpperCase());
         }
+        if (dateStr != null && !dateStr.isEmpty()) {
+            try {
+                String format = "dd-MM-yyyy";
+                java.util.Date parsedDate = new SimpleDateFormat(format).parse(dateStr);
+                java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
+
+                sql.append(" and DATE(pr.createdat) = ?");
+                parameter.add(sqlDate);
+            } catch (Exception e) {
+                System.out.println("Date parsing error: " + e.getMessage());
+            }
+        }
+        if (sort != null && !sort.isEmpty()) {
+            switch (sort) {
+                case "id_asc": sql.append(" order by pr.id asc"); break;
+                case "status_desc": sql.append(" order by pr.status desc"); break;
+                case "status_asc": sql.append(" order by pr.status asc"); break;
+                case "date_desc": sql.append(" order by pr.createdat desc"); break;
+                case "date_asc": sql.append(" order by pr.createdat asc"); break;
+                case "id_desc":
+                default: sql.append(" order by pr.id desc"); break;
+            }
+        } else {
+            sql.append(" order by pr.id desc");
+        }
+
         List<PurchaseRequest> list = new ArrayList<>();
-        
+
         try (Connection connection = DBContext.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql.toString());
+            for (int i = 0; i < parameter.size(); i++) {
+                preparedStatement.setObject(i + 1, parameter.get(i));
+            }
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                PurchaseRequest p = mapResultSetToPurchaseRequest(resultSet);
-                list.add(p);
+                list.add(mapResultSetToPurchaseRequest(resultSet));
             }
             return list;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public List<PurchaseRequest> getPurchaseRequestByDateAndSaleman(String dateStr, int salemanId) {
-        java.sql.Date sqlDate = null;
-        if (dateStr != null && !dateStr.trim().isEmpty()) {
-            String[] formats = {"dd-MM-yyyy", "yyyy-MM-dd", "dd/MM/yyyy", "MM/dd/yyyy"};
-            for (String format : formats) {
-                try {
-                    java.util.Date parsedDate = new java.text.SimpleDateFormat(format).parse(dateStr);
-                    sqlDate = new java.sql.Date(parsedDate.getTime());
-                    break;
-                } catch (java.text.ParseException e) {
-                    // try next format
-                }
-            }
-        }
-
-        String sql;
-        if (sqlDate != null) {
-            sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid " +
-                    "WHERE DATE(pr.createdat) = ? AND pr.createdby = ? AND pr.isDeleted = 0 ORDER BY pr.id DESC";
-        } else {
-            sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr LEFT JOIN users u ON pr.createdby = u.userid " +
-                    "WHERE pr.createdby = ? AND pr.isDeleted = 0 ORDER BY pr.id DESC";
-        }
-
-        List<PurchaseRequest> list = new ArrayList<>();
-        try (Connection connection = DBContext.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            if (sqlDate != null) {
-                preparedStatement.setDate(1, sqlDate);
-                preparedStatement.setInt(2, salemanId);
-            } else {
-                preparedStatement.setInt(1, salemanId);
-            }
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    PurchaseRequest p = mapResultSetToPurchaseRequest(resultSet);
-                    list.add(p);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return list;
     }
 }

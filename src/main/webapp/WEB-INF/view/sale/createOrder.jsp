@@ -57,13 +57,13 @@
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Customer Name</label>
-                                            <input type="text" name="customerName">
+                                            <input required type="text" name="customerName" maxlength="50">
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Customer Phone</label>
-                                            <input type="text" name="customerPhone">
+                                            <input required type="text" name="customerPhone" minlength="10" maxlength="10">
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
@@ -73,26 +73,30 @@
                                         </div>
                                     </div>
 
-                                    <table style="max-width: 800px; border: solid 1px black; margin-left: 50px">
-                                        <tr>
-                                            <td>product</td>
-                                            <td>quantity</td>
-                                            <td>price</td>
-                                            <td>in stock</td>
-                                        </tr>
-                                        <c:forEach items="${products}" var="p">               
+                                    <div style="max-height: 450px; overflow: auto">
+                                        <table class="table table-hover table-nowrap mb-0" >
+                                            <input id="searchBar" type="text" placeholder="Enter product name">
                                             <tr>
-                                                <td>${p.name}</td>
-                                                <td><input type="number" name="quantity_${p.productId}" min="0" max="${p.totalQuantity}" style="width: 80px"></td>
-                                                <td><input type="number"  name="price_${p.productId}" min="0" style="width: 120px"></td>
-                                                <td>${p.totalQuantity}</td>
-                                                <td hidden>
-                                                    <input type="hidden" name="productId" value="${p.productId}">
-                                                </td>
+                                                <td>Product</td>
+                                                <td>Quantity</td>
+                                                <td>Price</td>
+                                                <td>In stock</td>
                                             </tr>
-                                        </c:forEach>
-                                    </table>
-
+                                            <c:forEach items="${products}" var="p">  
+                                                <c:if test="${p.totalQuantity>0}">
+                                                    <tr class="product-item">
+                                                        <td id="product-name">${p.name}</td>
+                                                        <td><input type="number" name="quantity_${p.productId}" min="0" max="${p.totalQuantity}" style="width: 80px"></td>
+                                                        <td><input type="number"  name="price_${p.productId}" min="0" style="width: 120px"></td>
+                                                        <td>${p.totalQuantity}</td>
+                                                        <td hidden>
+                                                            <input type="hidden" name="productId" value="${p.productId}">
+                                                        </td>
+                                                    </tr>
+                                                </c:if>
+                                            </c:forEach>
+                                        </table>
+                                    </div>
                                     <div class="col-lg-12">
                                         <input class="btn btn-submit me-2" type="submit" value="CREATE">
                                         <a href="${pageContext.request.contextPath}/OrderList" class="btn btn-cancel">CANCEL</a>
@@ -124,5 +128,18 @@
         <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
         <script src="assets/js/script.js"></script>
+        <script>
+             $('#searchBar').on('input', function () {
+            const searchTerm = $(this).val().toLowerCase();
+            $('.product-item').each(function () {
+                const name = $(this).find('#product-name').text().toLowerCase();
+                if (name.includes(searchTerm)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+        </script>
     </body>
 </html>

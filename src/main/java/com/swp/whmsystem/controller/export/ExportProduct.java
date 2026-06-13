@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.swp.whmsystem.dal.*;
 import com.swp.whmsystem.dto.ExportItemDTO;
+import com.swp.whmsystem.dto.OrderItemDetailDTO;
 import com.swp.whmsystem.model.Order;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -34,6 +35,9 @@ public class ExportProduct extends HttpServlet {
                     // 1. Lưu Order mới vào session
                     session.setAttribute("order", order);
 
+                    List<OrderItemDetailDTO> pickingList = orderDAO.getOrderItemsByOrderId(orderId);
+                    session.setAttribute("pickingList", pickingList); // Lưu vào session để hiện lên UI
+
                     // 2. Dọn sạch giỏ hàng cũ (cực kỳ quan trọng để không bị lẫn lộn đơn)
                     session.removeAttribute("scannedList");
 
@@ -55,6 +59,16 @@ public class ExportProduct extends HttpServlet {
             }
         }
 
+        List<ExportItemDTO> scannedList = (List<ExportItemDTO>) session.getAttribute("scannedList");
+        double grandTotal = 0.0;
+
+        if (scannedList != null && !scannedList.isEmpty()) {
+            for (ExportItemDTO item : scannedList) {
+                grandTotal += item.getTotalCost();
+            }
+        }
+
+        request.setAttribute("grandTotal", grandTotal);
         request.getRequestDispatcher("WEB-INF/view/export/exportProduct.jsp").forward(request, response);
     }
 

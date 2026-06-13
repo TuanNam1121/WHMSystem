@@ -1,5 +1,6 @@
 package com.swp.whmsystem.dal;
 
+import com.swp.whmsystem.dto.ExportDetailItemDTO;
 import com.swp.whmsystem.dto.ExportItemDTO;
 
 import java.sql.SQLException;
@@ -164,9 +165,48 @@ public class ExportItemDAO {
         }
     }
 
+    public List<ExportDetailItemDTO> getExportedItemsByOrderId(int orderId) {
+        List<ExportDetailItemDTO> list = new ArrayList<>();
+
+        String sql = "SELECT p.name, p.img_url, p.sku, pi.serial, oi.price " +
+                "FROM order_items oi " +
+                "JOIN products p ON oi.productid = p.productid " +
+                "JOIN order_items_product_items oipi ON oi.id = oipi.orderitemid " +
+                "JOIN product_items pi ON oipi.productitemid = pi.id " +
+                "WHERE oi.orderid = ?";
+
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, orderId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String name = rs.getString("name");
+                    String imgUrl = rs.getString("img_url");
+                    String sku = rs.getString("sku");
+                    String serial = rs.getString("serial");
+                    double price = rs.getDouble("price");
+
+                    list.add(new ExportDetailItemDTO(name, imgUrl, sku, serial, price));
+                }
+            }
+        } catch (Exception e) {
+            System.err.println(">>> [Lỗi DAO] Không lấy được chi tiết Export cho Order ID: " + orderId);
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
     public static void main(String[] args) {
         ExportItemDAO exportItemDAO = new ExportItemDAO();
         ExportItemDTO dto = exportItemDAO.getItemBySKU("D15-23");
         System.out.println(dto);
+
+        List<ExportDetailItemDTO> list = exportItemDAO.getExportedItemsByOrderId(4);
+        for (ExportDetailItemDTO e : list) {
+            System.out.println(e);
+        }
     }
 }

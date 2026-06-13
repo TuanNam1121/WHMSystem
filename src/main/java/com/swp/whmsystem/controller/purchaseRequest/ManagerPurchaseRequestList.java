@@ -17,7 +17,23 @@ public class ManagerPurchaseRequestList extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
-        List<PurchaseRequest> purchaseRequests = purchaseRequestDAO.getAllPurchaseRequest();
+        
+        String codeStr = request.getParameter("code");
+        int code = 0;
+        if (codeStr != null && !codeStr.trim().isEmpty()) {
+            try {
+                code = Integer.parseInt(codeStr.trim());
+            } catch (NumberFormatException e) {
+                // ignore
+            }
+        }
+        
+        String status = request.getParameter("status");
+        String dateStr = request.getParameter("date");
+        String sort = request.getParameter("sort");
+
+        List<PurchaseRequest> purchaseRequests = purchaseRequestDAO.searchPurchaseItem(0, code, status, dateStr, sort);
+        
         request.setAttribute("purchaseList", purchaseRequests);
         request.getRequestDispatcher("WEB-INF/view/purchaseRequest/managerPurchaseRequestList.jsp").forward(request, response);
     }

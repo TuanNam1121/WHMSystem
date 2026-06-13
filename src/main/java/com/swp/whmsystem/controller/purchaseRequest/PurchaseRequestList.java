@@ -27,7 +27,22 @@ public class PurchaseRequestList extends HttpServlet {
             return;
         }
 
-        List<PurchaseRequest> purchaseRequests = purchaseRequestDAO.getAllPurchaseRequestForSaleman(user.getId());
+        String codeStr = request.getParameter("code");
+        int code = 0;
+        if (codeStr != null && !codeStr.trim().isEmpty()) {
+            try {
+                code = Integer.parseInt(codeStr.trim());
+            } catch (NumberFormatException e) {
+                // ignore or handle error
+            }
+        }
+        
+        String status = request.getParameter("status");
+        String dateStr = request.getParameter("date");
+        String sort = request.getParameter("sort");
+
+        List<PurchaseRequest> purchaseRequests = purchaseRequestDAO.searchPurchaseItem(user.getId(), code, status, dateStr, sort);
+
         request.setAttribute("purchaseList", purchaseRequests);
         request.getRequestDispatcher("WEB-INF/view/purchaseRequest/purchaseRequestList.jsp").forward(request, response);
     }

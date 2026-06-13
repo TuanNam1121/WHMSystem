@@ -170,6 +170,34 @@ public class ProductDAO {
         return null;
     }
     
+    public String getProductNameById(int productid) {
+        String sql = "select name from products where productid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+            ps.setInt(1, productid);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString("name");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    
+    public int getProductQuantityById(int productid) {
+        String sql = "select total_quantity from products where productid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+            ps.setInt(1, productid);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("total_quantity");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return -1;
+    }
+    
     public List<Product> getProductList() {
         List<Product> productList = new ArrayList<>();
         String sql = "select * from products order by isActive desc";

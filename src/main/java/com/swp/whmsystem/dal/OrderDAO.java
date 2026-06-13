@@ -189,6 +189,30 @@ public class OrderDAO {
             exception.printStackTrace();
         }
     }
+    public void updateOrderNote(Order o) {
+        try {
+            Connection conn = DBContext.getConnection();
+            String sql = "UPDATE orders SET note = ? WHERE id = ?";
+            st = conn.prepareStatement(sql);
+            st.setString(1, o.getNote());
+            st.setInt(2, o.getId());
+            st.executeUpdate();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+    public void updateOrderStatus(Order o) {
+        try {
+            Connection conn = DBContext.getConnection();
+            String sql = "UPDATE orders SET status = ? WHERE id = ?";
+            st = conn.prepareStatement(sql);
+            st.setString(1, o.getStatus());
+            st.setInt(2, o.getId());
+            st.executeUpdate();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
 
     public void updateOrder(Order o) {
         try {

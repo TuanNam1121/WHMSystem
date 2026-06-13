@@ -12,6 +12,8 @@ public class OrderItem {
     private int productId;
     private int quantity;
     private double price;
+    private String productName;
+    private int inStock;
 
     public OrderItem() {
     }
@@ -23,6 +25,26 @@ public class OrderItem {
         this.quantity = quantity;
         this.price = price;
     }
+
+    public int getInStock() {
+        return inStock;
+    }
+
+    public void setInStock(int inStock) {
+        this.inStock = inStock;
+    }
+    
+    
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+    
+    
 
     public int getId() {
         return id;

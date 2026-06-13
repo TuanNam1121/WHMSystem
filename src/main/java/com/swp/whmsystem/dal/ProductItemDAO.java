@@ -68,6 +68,27 @@ public class ProductItemDAO {
         }
     }
     
+    public List<ProductItem> getAllProductItemByOrderId(int orderId){
+        List<ProductItem> list = new ArrayList<>();
+        String sql = "select p.* from product_items p "
+                + "join order_items_product_items op on p.id = op.productitemid "
+                + "join order_items oi on op.orderitemid = oi.id "
+                + "join orders o on oi.orderid = o.id "
+                + "where o.id = ?";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, orderId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                ProductItem p = mapResultsetToProductItem(resultSet);
+                list.add(p);
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     public ProductItem mapResultsetToProductItem(ResultSet rs) throws SQLException{
         ProductItem i = new ProductItem();
         i.setId(rs.getInt("id"));

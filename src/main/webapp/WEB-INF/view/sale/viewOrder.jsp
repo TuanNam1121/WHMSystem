@@ -142,7 +142,12 @@
                                     </c:if>
                                     <div class="col-lg-12">
                                         <a class="btn btn-submit me-2"
-                                           href="${pageContext.request.contextPath}/OrderDetail?id=${order.id}&action=update">UPDATE</a>
+                                           <c:if test="${order.status!='COMPLETED'}">
+                                               <c:if test="${order.status!='CANCELLED'}">
+                                               href="${pageContext.request.contextPath}/OrderDetail?id=${order.id}&action=update">UPDATE</a>
+                                           </c:if>
+                                           </c:if>
+                                           
                                         <a href="${pageContext.request.contextPath}/OrderList" class="btn btn-cancel">DONE</a>
                                     </div>
                                 </div>

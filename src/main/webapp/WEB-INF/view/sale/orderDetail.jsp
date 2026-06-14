@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <c:set var="activeMenu" value="permissions" scope="request" />
 <c:set var="pageTitle" value="Create Order" scope="request" />
@@ -50,7 +51,7 @@
                     <c:if test="${not empty message}">
                         <div class="alert alert-danger" role="alert">${message}</div>
                     </c:if>
-                    <form action="${pageContext.request.contextPath}/OrderDetail" method="post">
+                        <form id="${order.status=='NEW'?'new-form':''}" action="${pageContext.request.contextPath}/${order.status=='NEW'?'OrderDetail':'OrderUpdateStatus'}" method="post">
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
@@ -66,7 +67,7 @@
                                             <label>Customer Phone</label>
                                             <c:forEach items="${customers}" var="c">
                                                 <c:if test="${c.id == order.customerId}">
-                                            <input type="text" name="customerPhone" value="${c.phone}" readonly>
+                                                    <input type="text" name="customerPhone" value="${c.phone}" readonly>
                                                 </c:if>
                                             </c:forEach>
                                         </div>
@@ -78,78 +79,127 @@
                                         </div>
                                     </div>
 
-                                    <c:if test="${action=='update'}">
-                                    <div class="table-responsive flex-grow-1"
-                                         style="max-height: 400px; overflow-y: auto;">
-                                        <table class="table table-hover table-nowrap mb-0">
-                                            <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
-                                                <tr>
-                                                    <th>Name</th>
-                                                    <th>SKU</th>
-                                                    <th>Category</th>
-                                                    <th>Quantity</th>
-                                                    <th>Status</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="product-list-body">
-                                                <c:forEach items="${products}" var="p">
-                                                    <c:if test="${p.totalQuantity>0}">
-                                                        <tr class="product-item">
-                                                            <td class="product-name">${p.name}</td>
-                                                            <td class="product-sku">${p.sku}</td>
-                                                            <td class="product-category">${p.category.name}</td>
-                                                            <td class="product-quantity">${p.totalQuantity}</td>
-                                                            <td><span
-                                                                    class="badges ${p.isActive ? 'bg-lightgreen' : 'bg-lightred'}">
-                                                                    ${p.isActive ? 'Active' : 'Inactive'}</span>
-                                                            </td>
-                                                            <td>
-                                                                <a class="btn btn-sm btn-outline-primary add-product-btn"
-                                                                   data-id="${p.productId}"
-                                                                   data-name="${p.name}"
-                                                                   data-sku="${p.sku}"
-                                                                   data-category="${p.category.name}"
-                                                                   data-stock="${p.totalQuantity}"
-                                                                   data-active="${p.isActive}"
-                                                                   href="javascript:void(0);">
-                                                                    <i class="fas fa-plus"></i> Add
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                    </c:if>
-                                                </c:forEach>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    
-                                    <div class="table-responsive flex-grow-1"
-                                         style="max-height: 250px; overflow-y: auto;">
-                                        <table class="table table-hover mb-0">
-                                            <thead
-                                                style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
-                                                <tr>
-                                                    <th>Name</th>
-                                                    <th>In Stock</th>
-                                                    <th>Quantity</th>
-                                                    <th>Price</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="selected-product-list" >
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    </c:if>
-                                    <div class="col-lg-12">
+                                    <c:if test="${order.status=='NEW'}">
+                                        <div class="table-responsive flex-grow-1"
+                                             style="max-height: 400px; overflow-y: auto;">
+                                            <table class="table table-hover table-nowrap mb-0">
+                                                <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>SKU</th>
+                                                        <th>Category</th>
+                                                        <th>Quantity</th>
+                                                        <th>Status</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="product-list-body">
+                                                    <c:forEach items="${products}" var="p">
+                                                        <c:if test="${p.totalQuantity>0}">
+                                                            <tr class="product-item">
+                                                                <td class="product-name">${p.name}</td>
+                                                                <td class="product-sku">${p.sku}</td>
+                                                                <td class="product-category">${p.category.name}</td>
+                                                                <td class="product-quantity">${p.totalQuantity}</td>
+                                                                <td><span
+                                                                        class="badges ${p.isActive ? 'bg-lightgreen' : 'bg-lightred'}">
+                                                                        ${p.isActive ? 'Active' : 'Inactive'}</span>
+                                                                </td>
+                                                                <td>
+                                                                    <a class="btn btn-sm btn-outline-primary add-product-btn"
+                                                                       data-id="${p.productId}"
+                                                                       data-name="${p.name}"
+                                                                       data-sku="${p.sku}"
+                                                                       data-category="${p.category.name}"
+                                                                       data-stock="${p.totalQuantity}"
+                                                                       data-active="${p.isActive}"
+                                                                       href="javascript:void(0);">
+                                                                        <i class="fas fa-plus"></i> Add
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        </c:if>
+                                                    </c:forEach>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="table-responsive flex-grow-1"
+                                             style="max-height: 250px; overflow-y: auto;">
+                                            <table class="table table-hover mb-0">
+                                                <thead
+                                                    style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>In Stock</th>
+                                                        <th>Quantity</th>
+                                                        <th>Price</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="selected-product-list" >
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col-lg-12">
                                         <input class="btn btn-submit me-2" type="submit" value="UPDATE">
                                         <a href="${pageContext.request.contextPath}/OrderList" class="btn btn-cancel">${action=='update'?'RETURN':'CANCEL'}</a>
                                     </div>
+                                    
+                                    </c:if>
+                                        
+
+                                    <c:if test="${order.status != 'NEW'}">
+                                        <div class="row">
+                                            <div class="table-responsive ">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Product Name</th>
+                                                            <th>SKU</th>
+                                                            <th>S/N</th>
+                                                            <th>Price</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <c:forEach items="${itemList}" var="s">
+                                                            <tr class="bor-b1">
+                                                                <td class="productimgname">
+                                                                    <a class="product-img">
+                                                                        <img src="${s.imgUrl}" alt="product">
+                                                                    </a>
+                                                                    <a href="javascript:void(0);">${s.name}</a>
+                                                                </td>
+                                                                <td>${s.sku}</td>
+                                                                <td>${s.serial}</td>
+                                                                <td>
+                                                                    <fmt:formatNumber value="${s.price}" pattern="#,###"/>
+                                                                </td>
+                                                            </tr>
+                                                        </c:forEach>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-sm-6 col-12">
+                                                <div class="form-group">
+                                        
+                                            
+                                            <select style="margin-top: 50px; margin-bottom: 50px" name="orderStatus">
+                                                <option value="COMPLETED">Completed</option>
+                                                <option value="CANCELLED">Cancelled</option>
+                                            </select>
+                                            <div class="col-lg-12">
+                                        <input class="btn btn-submit me-2" type="submit" value="UPDATE">
+                                        <a href="${pageContext.request.contextPath}/OrderList" class="btn btn-cancel">${action=='update'?'RETURN':'CANCEL'}</a>
+                                    </div>
+                                                </div>
+                                                </div>
+                                    </c:if>
                                 </div>
                             </div>
                         </div>
                     </form>
-
                 </div>
             </div>
         </div>
@@ -180,23 +230,23 @@
             {
                 <c:forEach items="${products}" var="p">
                     <c:if test="${p.productId == oi.productId}">
-                    id: ${p.productId},
+            id: ${p.productId},
                     name: "${p.name}",
                     stock: ${p.totalQuantity},
                     </c:if>
                 </c:forEach>
-                    quantity: ${oi.quantity},
+            quantity: ${oi.quantity},
                     price: ${oi.price}
             }<c:if test="${!status.last}">,</c:if>
             </c:forEach>
             ];
-                    function renderSelectedItems() {
-                    let html = '';
-                            if (selectedItems.length === 0) {
+            function renderSelectedItems() {
+                let html = '';
+                if (selectedItems.length === 0) {
                     html = '<tr><td colspan="6" class="text-center text-muted">No products selected</td></tr>';
-                    } else {
+                } else {
                     selectedItems.forEach((item, index) => {
-                    html += `
+                        html += `
                         <tr>
                             <input type="hidden" value="\${item.id}" name="productId">
                             <td>\${item.name}</td>
@@ -211,65 +261,66 @@
                         </tr>
                     `;
                     });
-                    }
-                    $('#selected-product-list').html(html);
-                    }
+                }
+                $('#selected-product-list').html(html);
+            }
 
             // Initial render
             renderSelectedItems();
-                    // Search Product directly in DOM
-                    $('#product-search').on('input', function () {
-            const searchTerm = $(this).val().toLowerCase();
-                    $('.product-item').each(function () {
-            const name = $(this).find('.product-name').text().toLowerCase();
+            // Search Product directly in DOM
+            $('#product-search').on('input', function () {
+                const searchTerm = $(this).val().toLowerCase();
+                $('.product-item').each(function () {
+                    const name = $(this).find('.product-name').text().toLowerCase();
                     const sku = $(this).find('.product-sku').text().toLowerCase();
                     if (name.includes(searchTerm) || sku.includes(searchTerm)) {
-            $(this).show();
-            } else {
-            $(this).hide();
-            }
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
             });
-            });
-                    // Add Product
-                    $(document).on('click', '.add-product-btn', function () {
-            const isActive = $(this).data('active');
-                    if (isActive === false || isActive === 'false') {
-            Swal.fire({
-            icon: 'error',
-                    title: 'Cannot Add Product',
-                    text: 'You cannot add an inactive product.',
-                    confirmButtonColor: '#FF9F43'
-            });
+            // Add Product
+            $(document).on('click', '.add-product-btn', function () {
+                const isActive = $(this).data('active');
+                if (isActive === false || isActive === 'false') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Cannot Add Product',
+                        text: 'You cannot add an inactive product.',
+                        confirmButtonColor: '#FF9F43'
+                    });
                     return;
-            }
+                }
 
-            const id = $(this).data('id');
-                    const name = $(this).data('name');
-                    const sku = $(this).data('sku');
-                    const category = $(this).data('category');
-                    const stock = $(this).data('stock');
-                    const existingItem = selectedItems.find(item => item.id === id);
-                    if (existingItem) {
-            existingItem.quantity++;
-            } else {
-            selectedItems.push({
-            id: id,
-                    name: name,
-                    stock: stock,
-                    quantity: 1
+                const id = $(this).data('id');
+                const name = $(this).data('name');
+                const sku = $(this).data('sku');
+                const category = $(this).data('category');
+                const stock = $(this).data('stock');
+                const existingItem = selectedItems.find(item => item.id === id);
+                if (existingItem) {
+                    existingItem.quantity++;
+                } else {
+                    selectedItems.push({
+                        id: id,
+                        name: name,
+                        stock: stock,
+                        quantity: 1
+                    });
+                }
+                renderSelectedItems();
             });
-            }
-            renderSelectedItems();
+            // Remove Product
+            $(document).on('click', '.remove-item-btn', function () {
+                const id = $(this).data('id');
+                selectedItems = selectedItems.filter(item => item.id !== id);
+                renderSelectedItems();
             });
-                    // Remove Product
-                    $(document).on('click', '.remove-item-btn', function () {
-            const id = $(this).data('id');
-                    selectedItems = selectedItems.filter(item => item.id !== id);
-                    renderSelectedItems();
-            });
-                    // Send Request Validation
-                    $('form').on('submit', function (e) {
-            if (selectedItems.length === 0) {
+            
+            // Send Request Validation
+            $('#new-form').on('submit', function (e) {
+            if (selectedItems.length === 0 ) {
             e.preventDefault();
                     Swal.fire({
                     icon: 'error',
@@ -280,7 +331,8 @@
                     return false;
             }
             });
-            });
+            }
+            );
         </script>
     </body>
 </html>

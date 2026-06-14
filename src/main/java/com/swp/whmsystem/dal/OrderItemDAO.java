@@ -51,8 +51,8 @@ public class OrderItemDAO {
             while (rs.next()) {
 
                 OrderItem o = mapResultSetToOrder(rs);
-//                ProductDAO pd = new ProductDAO();
-//                o.setProductName(pd.getProductNameById(o.getProductId()));
+                ProductDAO pd = new ProductDAO();
+                o.setProductName(pd.getProductNameById(o.getProductId()));
 //                o.setInStock(pd.getProductQuantityById(o.getProductId()));
                 result.add(o);
             }

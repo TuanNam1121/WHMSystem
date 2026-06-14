@@ -73,8 +73,7 @@ public class ProductItemDAO {
         String sql = "select p.* from product_items p "
                 + "join order_items_product_items op on p.id = op.productitemid "
                 + "join order_items oi on op.orderitemid = oi.id "
-                + "join orders o on oi.orderid = o.id "
-                + "where o.id = ?";
+                + "where oi.orderid = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, orderId);
@@ -86,6 +85,18 @@ public class ProductItemDAO {
             return list;
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+    
+    public void updateProductItemStatus(ProductItem pi){
+        String sql = "update product_items set status = ? where id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+            ps.setString(1, pi.getStatus());
+            ps.setInt(2, pi.getId());
+            ps.executeUpdate();
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
     

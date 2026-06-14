@@ -153,7 +153,7 @@
                                                         value="${o.totalPrice}"
                                                         pattern="#,##0.00"/>
                                                 </td>
-                                                <td>${o.note}</td>
+                                                <td style="max-width: 200px; overflow-x: auto">${o.note}</td>
                                                 <td>${o.orderDate}</td>
                                                 <td>${o.creater}</td>
                                                 <td>${o.status}</td>
@@ -163,10 +163,12 @@
                                                         <img src="assets/img/icons/eye.svg" alt="img">
                                                     </a>
                                                     <c:if test="${o.status != 'COMPLETED'}">
+                                                    <c:if test="${o.status != 'CANCELLED'}">
                                                         <a class="me-3"
                                                            href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=update">
                                                             <img src="assets/img/icons/edit.svg" alt="img">
                                                         </a>
+                                                    </c:if>
                                                     </c:if>
                                                 </td>
                                             </tr>

@@ -137,8 +137,13 @@
                             <tbody>
                             <c:forEach items="${importRequests}" var="ir">
                                 <tr>
+<<<<<<< Updated upstream
                                     <td class="text-bolds">
                                         <fmt:formatNumber value='${ir.id}' pattern='000'/>
+=======
+                                    <td class="text-bolds"><a href="managerPurchaseRequestDetail?id=${ir.id}">IR-
+                                            <fmt:formatNumber value='${ir.id}' pattern='000'/></a>
+>>>>>>> Stashed changes
                                     </td>
                                     <td>${not empty ir.note ? ir.note : 'No note provided'}</td>
                                     <td>
@@ -166,8 +171,13 @@
                                     </td>
                                     <td>
                                         <a class="btn btn-sm btn-outline-primary"
+<<<<<<< Updated upstream
                                            href="importRequestDetail?goodReId=${ir.id}">
                                             <i class="fas fa-eye me-1"></i> View Detail
+=======
+                                           href="ImportProduct?id=${ir.id}">
+                                            <i class="fas fa-eye me-1"></i> Import
+>>>>>>> Stashed changes
                                         </a>
                                     </td>
                                 </tr>

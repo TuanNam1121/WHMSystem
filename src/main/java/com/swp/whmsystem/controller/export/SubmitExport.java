@@ -1,4 +1,4 @@
-package com.swp.whmsystem.controller.export; // Check lại package cho đúng
+package com.swp.whmsystem.controller.export;
 
 import com.swp.whmsystem.dal.ExportItemDAO;
 import com.swp.whmsystem.dto.ExportItemDTO;
@@ -23,25 +23,23 @@ public class SubmitExport extends HttpServlet {
 
         HttpSession session = request.getSession();
 
-        // 1. Lấy dữ liệu từ Form (Nút Select và các ô Input)
-        String status = request.getParameter("status");
+        // 1. ÉP CỨNG STATUS LUÔN LÀ DOING
+        String status = "DOING";
+
         String[] tempIds = request.getParameterValues("tempIds");
         String[] serialNumbers = request.getParameterValues("sn");
 
-        // 2. Lấy dữ liệu từ Session ra
+        @SuppressWarnings("unchecked")
         List<ExportItemDTO> scannedList = (List<ExportItemDTO>) session.getAttribute("scannedList");
         Order currentOrder = (Order) session.getAttribute("order");
 
-        // 3. Validate cơ bản: Đảm bảo dữ liệu không bị null và độ dài 2 mảng bằng nhau
         if (scannedList != null && currentOrder != null &&
                 tempIds != null && serialNumbers != null && tempIds.length == serialNumbers.length) {
 
-            // 4. Lắp S/N người dùng nhập vào đúng sản phẩm trong danh sách
             for (int i = 0; i < tempIds.length; i++) {
                 String idToFind = tempIds[i];
                 String snToSet = serialNumbers[i];
 
-                // Quét danh sách tìm sản phẩm khớp id thì nhét S/N vào
                 for (ExportItemDTO item : scannedList) {
                     if (idToFind.equals(item.getTempId())) {
                         item.setSerial(snToSet);
@@ -50,36 +48,25 @@ public class SubmitExport extends HttpServlet {
                 }
             }
 
-            // --- KHU VỰC IN RA CONSOLE ĐỂ BRO TEST TRƯỚC KHI LÀM DATABASE ---
-            System.out.println("=== CHỐT ĐƠN XUẤT KHO ===");
-            System.out.println("Order ID: " + currentOrder.getId());
-            System.out.println("Trạng thái: " + status);
-            for (ExportItemDTO item : scannedList) {
-                System.out.println("- SKU: " + item.getSku() + " | S/N: " + item.getSerial());
-            }
-            System.out.println("=========================");
+            ExportItemDAO exportItemDAO = new ExportItemDAO();
+            // 2. GỌI DAO VÀ HỨNG KẾT QUẢ TRẢ VỀ LÀ DẠNG STRING
+            String result = exportItemDAO.processExportTransaction(currentOrder.getId(), scannedList, status);
 
-            // 5. GỌI DAO ĐỂ LƯU VÀO DATABASE BẰNG TRANSACTION TẠI ĐÂY
-            ExportItemDAO orderDAO = new ExportItemDAO();
-            boolean isSuccess = orderDAO.processExportTransaction(currentOrder.getId(), scannedList, status);
-
-            if (isSuccess) {
-                // 6. Dọn dẹp sạch sẽ Session sau khi thành công
+            if ("SUCCESS".equals(result)) {
                 session.removeAttribute("scannedList");
-                session.removeAttribute("order"); // Xóa luôn order nếu không cần giữ lại
+                // (Tùy chọn) Xóa session order nếu muốn quay về danh sách trống
+                // session.removeAttribute("order");
 
-                // (Tùy chọn) Có thể set 1 cái session successMessage để JSP hiện thông báo xanh lá
-                session.setAttribute("successMessage", "Xuất kho thành công!");
-
-                // Chuyển về trang danh sách đơn hàng hoặc trang nào bro muốn
+                session.setAttribute("successMessage", "Export successful!");
                 response.sendRedirect("exportProduct");
             } else {
-                session.setAttribute("error", "Lỗi lưu Database. Vui lòng thử lại!");
+                // NẾU CÓ LỖI (S/N KHÔNG AVAILABLE), NÉM CHÍNH XÁC LỖI ĐÓ LÊN MÀN HÌNH
+                session.setAttribute("error", result);
                 response.sendRedirect("exportProduct");
             }
 
         } else {
-            session.setAttribute("error", "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại!");
+            session.setAttribute("error", "Invalid data submitted. Please check again!");
             response.sendRedirect("exportProduct");
         }
     }

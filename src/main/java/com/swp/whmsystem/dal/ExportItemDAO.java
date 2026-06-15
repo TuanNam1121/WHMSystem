@@ -47,18 +47,14 @@ public class ExportItemDAO {
         return dto;
     }
 
-    public boolean processExportTransaction(int orderId, List<ExportItemDTO> exportList, String status) {
+    public String processExportTransaction(int orderId, List<ExportItemDTO> exportList, String status) {
         Connection conn = null;
         try {
             conn = new DBContext().getConnection();
-            conn.setAutoCommit(false); // BẮT ĐẦU TRANSACTION
+            conn.setAutoCommit(false);
 
-            // =====================================================================
-            // BƯỚC 1: CẬP NHẬT TRẠNG THÁI ORDERS + THỜI GIAN (updatedat, completedat)
-            // =====================================================================
-            // Dùng hàm UPPER để đảm bảo status luôn là chữ IN HOA khớp với ENUM ('NEW', 'DOING', 'COMPLETED')
+            // BƯỚC 1: CẬP NHẬT TRẠNG THÁI ORDERS
             String dbStatus = status.toUpperCase();
-
             String sqlUpdateOrder = "UPDATE orders SET status = ?, updatedat = CURRENT_TIMESTAMP, " +
                     "completedat = CASE WHEN ? = 'COMPLETED' THEN CURRENT_TIMESTAMP ELSE completedat END " +
                     "WHERE id = ?";
@@ -69,28 +65,17 @@ public class ExportItemDAO {
                 psOrder.executeUpdate();
             }
 
-            // =====================================================================
-            // CHUẨN BỊ SQL CHO CÁC BƯỚC TRONG VÒNG LẶP (KHỚP 100% CẤU TRÚC DB)
-            // =====================================================================
-
-            // Tìm chính xác ID của sản phẩm, mã seri và chi tiết đơn hàng
-            String sqlGetIds = "SELECT pi.id AS productitemid, oi.id AS orderitemid, p.productid AS product_id " +
+            // BƯỚC 2: CHUẨN BỊ SQL
+            String sqlGetIds = "SELECT pi.id AS productitemid, oi.id AS orderitemid, p.productid AS product_id, pi.status " +
                     "FROM product_items pi " +
                     "JOIN products p ON pi.product_id = p.productid " +
                     "JOIN order_items oi ON oi.productid = p.productid " +
                     "WHERE pi.serial = ? AND p.sku = ? AND oi.orderid = ?";
 
             String sqlMapItem = "INSERT INTO order_items_product_items (orderitemid, productitemid) VALUES (?, ?)";
-
-            // ĐÃ FIX THEO ENUM CỦA BRO: Dùng chữ 'SOLD' thay vì 'EXPORTED'
             String sqlUpdateProductItem = "UPDATE product_items SET status = 'SOLD' WHERE id = ?";
-
-            // Cập nhật tồn kho (total_quantity) và giờ cập nhật (updatedat)
             String sqlUpdateProductQty = "UPDATE products SET total_quantity = total_quantity - 1, updatedat = CURRENT_TIMESTAMP WHERE productid = ?";
-
-            // Ghi log vào stock_movement
-            String sqlStockMovement = "INSERT INTO stock_movement (productid, quantity, reference_type, type) " +
-                    "VALUES (?, 1, 'EXPORT', 'DECREASED')";
+            String sqlStockMovement = "INSERT INTO stock_movement (productid, quantity, reference_type, type) VALUES (?, 1, 'EXPORT', 'DECREASED')";
 
             try (PreparedStatement psGetIds = conn.prepareStatement(sqlGetIds);
                  PreparedStatement psMapItem = conn.prepareStatement(sqlMapItem);
@@ -100,7 +85,6 @@ public class ExportItemDAO {
 
                 for (ExportItemDTO item : exportList) {
 
-                    // 1. TÌM ID
                     psGetIds.setString(1, item.getSerial());
                     psGetIds.setString(2, item.getSku());
                     psGetIds.setInt(3, orderId);
@@ -111,48 +95,51 @@ public class ExportItemDAO {
 
                     try (ResultSet rs = psGetIds.executeQuery()) {
                         if (rs.next()) {
+                            String itemStatus = rs.getString("status");
+
+                            // CHỐT CHẶN VALIDATE S/N: Kiểm tra xem hàng có đang AVAILABLE không
+                            if (!"AVAILABLE".equalsIgnoreCase(itemStatus)) {
+                                throw new SQLException("S/N [" + item.getSerial() + "] is currently in " + itemStatus + " status and cannot be exported!");
+                            }
+
                             productItemId = rs.getInt("productitemid");
                             orderItemId = rs.getInt("orderitemid");
                             productId = rs.getInt("product_id");
                         } else {
-                            throw new SQLException("Không tìm thấy Order Item hoặc Serial Number hợp lệ: " + item.getSerial());
+                            throw new SQLException("S/N [" + item.getSerial() + "] does not exist or SKU mismatch!");
                         }
                     }
 
-                    // 2. MAP VÀO BẢNG order_items_product_items
+                    // Map dữ liệu và cập nhật DB
                     psMapItem.setInt(1, orderItemId);
                     psMapItem.setInt(2, productItemId);
                     psMapItem.executeUpdate();
 
-                    // 3. ĐỔI TRẠNG THÁI SẢN PHẨM VẬT LÝ VỀ 'SOLD'
                     psUpdateProductItem.setInt(1, productItemId);
                     psUpdateProductItem.executeUpdate();
 
-                    // 4. TRỪ TỒN KHO TỔNG BẢNG products
                     psUpdateQty.setInt(1, productId);
                     psUpdateQty.executeUpdate();
 
-                    // 5. GHI LOG LỊCH SỬ KHO (stock_movement)
                     psMovement.setInt(1, productId);
                     psMovement.executeUpdate();
                 }
             }
 
-            // CHỐT GIAO DỊCH XUỐNG DB
             conn.commit();
-            return true;
+            return "SUCCESS";
 
         } catch (Exception e) {
-            System.err.println("=== LỖI TRANSACTION XUẤT KHO ===");
+            System.err.println("=== EXPORT TRANSACTION ERROR ===");
             e.printStackTrace();
             try {
                 if (conn != null) {
-                    conn.rollback(); // Có biến là quay xe ngay lập tức
+                    conn.rollback();
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
-            return false;
+            return e.getMessage() != null ? e.getMessage() : "Unknown system error while saving to Database!";
         } finally {
             try {
                 if (conn != null) {

@@ -13,20 +13,28 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.util.List;
+
 import com.swp.whmsystem.model.User;
 import com.swp.whmsystem.model.GoodReceipt;
 import com.swp.whmsystem.dal.GoodReceiptDAO;
+
 import java.util.ArrayList;
 
-@WebServlet(name = "ImportRequestList", urlPatterns = { "/importRequestList" })
+@WebServlet(name = "ImportRequestList", urlPatterns = {"/importRequestList"})
 public class ImportRequestList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         User user = (User) request.getSession().getAttribute("user");
-        if (user == null) {
+        try {
+            if (user == null) {
+                response.sendRedirect("login");
+                return;
+            }
+        } catch (Exception e) {
             response.sendRedirect("login");
             return;
         }
@@ -37,20 +45,19 @@ public class ImportRequestList extends HttpServlet {
         request.setAttribute("importRequests", importRequests);
         request.getRequestDispatcher("WEB-INF/view/import/importRequestList.jsp").forward(request, response);
 
-        // HttpSession session = request.getSession();
+//         HttpSession session = request.getSession();
 
-        // GoodReceiptDAO goodReceiptDao = new GoodReceiptDAO();
+//         GoodReceiptDAO goodReceiptDao = new GoodReceiptDAO();
 
-        // User user = (User) session.getAttribute("user");
-        // List<GoodReceipt> receiptList =
-        // goodReceiptDao.getAllGoodReceiptForProcessor(user.getId());
-        // List<ImportRequestDTO> list = new ArrayList<>();
-        // for(GoodReceipt i : receiptList){
-        // list.add(toImportRequestDTO(i));
-        // }
+//         User user = (User) session.getAttribute("user");        
+//         List<GoodReceipt> receiptList = goodReceiptDao.getAllGoodReceiptForProcessor(user.getId());
+//         List<ImportRequestDTO> list = new ArrayList<>();
+//         for(GoodReceipt i : receiptList){
+//             list.add(toImportRequestDTO(i));
+//         }
 
-        // request.setAttribute("list", list);
-        // request.getRequestDispatcher("WEB-INF/view/import/ImportRequestList.jsp").forward(request,response);
+//         request.setAttribute("list", list);
+//         request.getRequestDispatcher("WEB-INF/view/import/ImportRequestList.jsp").forward(request,response);
     }
 
     @Override
@@ -58,5 +65,6 @@ public class ImportRequestList extends HttpServlet {
             throws ServletException, IOException {
 
     }
+
 
 }

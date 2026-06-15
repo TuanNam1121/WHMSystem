@@ -57,6 +57,14 @@
                 <c:remove var="error" scope="session"/>
             </c:if>
 
+            <c:if test="${not empty sessionScope.successMessage}">
+                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                    <strong>${sessionScope.successMessage}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <c:remove var="successMessage" scope="session"/>
+            </c:if>
+
             <div class="card">
                 <div class="card-body">
                     <div class="row">
@@ -200,23 +208,14 @@
                                     <ul>
                                         <li class="total">
                                             <h4>Grand Total</h4>
-                                            <h5><fmt:formatNumber value="${requestScope.grandTotal}" pattern="#,##"/></h5>
+                                            <h5><fmt:formatNumber value="${requestScope.grandTotal}"
+                                                                  pattern="#,##"/></h5>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-lg-3 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label>Status</label>
-                                    <select class="select" name="status" required>
-                                        <option value="">Choose Status</option>
-                                        <option value="Completed">Completed</option>
-                                        <option value="Doing">Doing</option>
-                                    </select>
-                                </div>
-                            </div>
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label>Description</label>

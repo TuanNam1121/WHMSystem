@@ -202,5 +202,8 @@ public class GoodReceiptDAO {
         GoodReceiptDAO gr = new GoodReceiptDAO();
         GoodReceiptItemDAO gri = new GoodReceiptItemDAO();
         ProductItemDAO pi = new ProductItemDAO();
+        for(ProductItem i  : pi.getAllProductItem()){
+            System.out.println(i);
+        }
     }
 }

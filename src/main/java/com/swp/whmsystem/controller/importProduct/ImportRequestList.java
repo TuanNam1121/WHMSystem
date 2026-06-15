@@ -41,7 +41,6 @@ public class ImportRequestList extends HttpServlet {
 
         GoodReceiptDAO goodReceiptDAO = new GoodReceiptDAO();
         List<GoodReceipt> importRequests = goodReceiptDAO.getAllGoodReceiptForProcessor(user.getId());
-
         request.setAttribute("importRequests", importRequests);
         request.getRequestDispatcher("WEB-INF/view/import/importRequestList.jsp").forward(request, response);
 

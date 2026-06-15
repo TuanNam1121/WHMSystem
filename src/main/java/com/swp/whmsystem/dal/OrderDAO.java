@@ -310,8 +310,6 @@ public class OrderDAO {
         for (OrderItemDetailDTO o : orderList) {
             System.out.println(o);
         }
-
-
     }
 
 

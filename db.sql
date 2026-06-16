@@ -566,6 +566,7 @@ CREATE TABLE `purchase_request_items` (
   `purchaserequestid` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
+  `price` decimal(15,2) DEFAULT NULL,
   `isDeleted` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `purchaserequestid` (`purchaserequestid`),
@@ -581,7 +582,7 @@ CREATE TABLE `purchase_request_items` (
 
 LOCK TABLES `purchase_request_items` WRITE;
 /*!40000 ALTER TABLE `purchase_request_items` DISABLE KEYS */;
-INSERT INTO `purchase_request_items` VALUES (1,1,1,10,0),(2,2,5,20,0);
+INSERT INTO `purchase_request_items` VALUES (1,1,1,10,15000000,0),(2,2,5,20,20000000,0);
 /*!40000 ALTER TABLE `purchase_request_items` ENABLE KEYS */;
 UNLOCK TABLES;
 

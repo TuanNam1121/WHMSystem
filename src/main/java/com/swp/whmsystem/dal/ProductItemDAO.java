@@ -112,6 +112,21 @@ public class ProductItemDAO {
         return i;
     }
     
+    public boolean insertProductItem(ProductItem item) {
+        String sql = "INSERT INTO product_items (serial, product_id, imported_price, goodreceiptsitemid, status) VALUES (?, ?, ?, ?, ?)";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, item.getSerial());
+            preparedStatement.setInt(2, item.getProductId());
+            preparedStatement.setInt(3, item.getImportPrice());
+            preparedStatement.setInt(4, item.getGoodReceiptItemId());
+            preparedStatement.setString(5, item.getStatus() != null ? item.getStatus() : "AVAILABLE");
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void main(String[] args) {
         ProductItemDAO dao = new ProductItemDAO();
         for(ProductItem i : dao.getAllProductItemByProductId(5)){

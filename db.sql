@@ -162,7 +162,7 @@ CREATE TABLE `good_receipts_items` (
 
 LOCK TABLES `good_receipts_items` WRITE;
 /*!40000 ALTER TABLE `good_receipts_items` DISABLE KEYS */;
-INSERT INTO `good_receipts_items` VALUES (1,1,1,10),(2,2,5,20);
+INSERT INTO `good_receipts_items` VALUES (1,1,1,10, NOW()),(2,2,5,20, NOW());
 /*!40000 ALTER TABLE `good_receipts_items` ENABLE KEYS */;
 UNLOCK TABLES;
 

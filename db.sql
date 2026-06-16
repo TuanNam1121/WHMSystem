@@ -147,6 +147,7 @@ CREATE TABLE `good_receipts_items` (
   `goodreceiptid` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
   `actual_quantity` int(11) NOT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `goodreceiptid` (`goodreceiptid`),
   KEY `product_id` (`product_id`),

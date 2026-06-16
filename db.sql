@@ -349,7 +349,7 @@ DROP TABLE IF EXISTS `orders`;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `status` enum('NEW','DOING','COMPLETED') DEFAULT 'NEW',
+  `status` enum('NEW','DOING','COMPLETED','CANCELLED') DEFAULT 'NEW',
   `total_price` decimal(15,2) DEFAULT NULL,
   `note` text,
   `orderdate` datetime DEFAULT NULL,

@@ -137,7 +137,7 @@
                                                     <th>Name</th>
                                                     <th>SKU</th>
                                                     <th>Category</th>
-                                                    <th>In Stock</th>
+                                                    <th>Price</th>
                                                     <th style="width: 150px;">Required Quantity</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -201,7 +201,9 @@
                             <td>\${item.name}</td>
                             <td>\${item.sku}</td>
                             <td>\${item.category}</td>
-                            <td>\${item.stock}</td>
+                            <td>
+                                <input name="selectedPrice\${index}" type="number" class="form-control form-control-sm price-input" data-id="\${item.id}" value="\${item.price}" min="1000000" style="width: 100px;" required>
+                            </td>
                             <td>
                                 <input name="selectedQty\${index}" type="number" class="form-control form-control-sm qty-input" data-id="\${item.id}" value="\${item.reqQty}" min="50" style="width: 100px;">
                             </td>
@@ -263,7 +265,8 @@
                     sku: sku,
                     category: category,
                     stock: stock,
-                    reqQty: 50
+                    reqQty: 50,
+                    price: ''
                 });
             }
             renderSelectedItems();
@@ -274,6 +277,28 @@
             const id = $(this).data('id');
             selectedItems = selectedItems.filter(item => item.id !== id);
             renderSelectedItems();
+        });
+
+        // Update Price
+        $(document).on('change', '.price-input', function () {
+            const id = $(this).data('id');
+            const newPrice = parseInt($(this).val());
+            const item = selectedItems.find(i => i.id === id);
+            if (item) {
+                if (isNaN(newPrice) || newPrice < 1000000) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Price',
+                        text: 'Price must be at least 1,000,000.',
+                        confirmButtonColor: '#FF9F43'
+                    });
+                    item.price = '';
+                    $(this).val('');
+                } else {
+                    item.price = newPrice;
+                    $(this).val(item.price);
+                }
+            }
         });
 
         // Update Qty
@@ -318,6 +343,18 @@
                     icon: 'error',
                     title: 'Invalid Quantity',
                     text: 'Quantity for ' + invalidItem.name + ' must be at least 50.',
+                    confirmButtonColor: '#FF9F43'
+                });
+                return false;
+            }
+
+            const invalidPriceItem = selectedItems.find(i => i.price === '' || isNaN(i.price) || i.price < 1000000);
+            if (invalidPriceItem) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Price',
+                    text: 'Price for ' + invalidPriceItem.name + ' must be at least 1,000,000 and is required.',
                     confirmButtonColor: '#FF9F43'
                 });
                 return false;

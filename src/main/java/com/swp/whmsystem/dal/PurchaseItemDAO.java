@@ -50,16 +50,18 @@ public class PurchaseItemDAO {
         item.setPurchaseRequestId(rs.getInt("purchaserequestid"));
         item.setProductId(rs.getInt("product_id"));
         item.setRequiredQty(rs.getInt("quantity"));
+        item.setPrice(rs.getInt("price"));
         return item;
     }
 
     public boolean insertPurchaseItem(PurchaseItem item) {
-        String sql = "insert into purchase_request_items (purchaserequestid, product_id, quantity) values (?, ?, ?)";
+        String sql = "insert into purchase_request_items (purchaserequestid, product_id, quantity, price) values (?, ?, ?, ?)";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, item.getPurchaseRequestId());
             preparedStatement.setInt(2, item.getProductId());
             preparedStatement.setInt(3, item.getRequiredQty());
+            preparedStatement.setInt(4, item.getPrice());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -67,13 +69,14 @@ public class PurchaseItemDAO {
     }
 
     public boolean updatePurchaseItem(PurchaseItem item) {
-        String sql = "update purchase_request_items set purchaserequestid = ?, product_id = ?, quantity = ? where id = ?";
+        String sql = "update purchase_request_items set purchaserequestid = ?, product_id = ?, quantity = ?, price = ? where id = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, item.getPurchaseRequestId());
             preparedStatement.setInt(2, item.getProductId());
             preparedStatement.setInt(3, item.getRequiredQty());
-            preparedStatement.setInt(4, item.getId());
+            preparedStatement.setInt(4, item.getPrice());
+            preparedStatement.setInt(5, item.getId());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);

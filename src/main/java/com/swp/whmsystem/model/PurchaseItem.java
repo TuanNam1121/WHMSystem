@@ -4,6 +4,7 @@ public class PurchaseItem {
     private int id;
     private int purchaseRequestId;
     private int productId;
+    private int price;
     private int requiredQty;
     private boolean isDeleted;
 
@@ -50,4 +51,11 @@ public class PurchaseItem {
         isDeleted = deleted;
     }
 
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
 }

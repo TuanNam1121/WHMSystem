@@ -45,17 +45,20 @@ public class CreatePurchaseRequest extends HttpServlet {
         while (true) {
             String productIdStr = request.getParameter("selectedId" + i);
             String qtyStr = request.getParameter("selectedQty" + i);
-            if (productIdStr == null || qtyStr == null) {
+            String priceStr = request.getParameter("selectedPrice" + i);
+            if (productIdStr == null || qtyStr == null || priceStr == null) {
                 break;
             }
             try {
                 int productId = Integer.parseInt(productIdStr);
                 int quantity = Integer.parseInt(qtyStr);
+                int price = Integer.parseInt(priceStr);
 
                 PurchaseItem purchaseItem = new PurchaseItem();
                 purchaseItem.setPurchaseRequestId(p.getId());
                 purchaseItem.setProductId(productId);
                 purchaseItem.setRequiredQty(quantity);
+                purchaseItem.setPrice(price);
 
                 PurchaseItemDAO purchaseItemDAO = new PurchaseItemDAO();
                 purchaseItemDAO.insertPurchaseItem(purchaseItem);

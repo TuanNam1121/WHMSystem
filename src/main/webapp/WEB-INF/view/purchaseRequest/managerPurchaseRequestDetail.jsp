@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
     <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+        <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
             <!DOCTYPE html>
             <html lang="en">
 
@@ -139,6 +140,7 @@
                                                     <th>#</th>
                                                     <th>Product Name</th>
                                                     <th>Category</th>
+                                                    <th>Price</th>
                                                     <th class="text-center">Quantity Requested</th>
                                                     <th class="text-center">Current Stock</th>
                                                 </tr>
@@ -156,6 +158,10 @@
                                                             <a href="javascript:void(0);">${product.name}</a>
                                                         </td>
                                                         <td>${product.category.name}</td>
+                                                        <td>
+                                                            <fmt:formatNumber value="${item.price}" pattern="#,###" var="formattedPrice" />
+                                                            ${fn:replace(formattedPrice, ',', '.')}đ
+                                                        </td>
                                                         <td class="text-center"><strong>${item.requiredQty}</strong></td>
                                                         <td class="text-center">
                                                             <span

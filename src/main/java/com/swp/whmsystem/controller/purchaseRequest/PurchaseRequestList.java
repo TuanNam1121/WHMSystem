@@ -26,6 +26,9 @@ public class PurchaseRequestList extends HttpServlet {
             response.sendRedirect("login");
             return;
         }
+        if (user.getRoleId() != 4) {
+            response.sendRedirect("home");
+        }
 
         String codeStr = request.getParameter("code");
         int code = 0;

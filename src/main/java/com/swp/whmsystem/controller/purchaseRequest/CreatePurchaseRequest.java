@@ -6,11 +6,13 @@ import com.swp.whmsystem.dal.PurchaseRequestDAO;
 import com.swp.whmsystem.model.Product;
 import com.swp.whmsystem.model.PurchaseItem;
 import com.swp.whmsystem.model.PurchaseRequest;
+import com.swp.whmsystem.model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,6 +22,16 @@ public class CreatePurchaseRequest extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+        if (user.getRoleId() != 4) {
+            response.sendRedirect("home");
+        }
+
         ProductDAO productDAO = new ProductDAO();
         List<Product> productList = productDAO.getProductList();
         request.setAttribute("productListForPurchase", productList);

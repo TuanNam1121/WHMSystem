@@ -205,7 +205,7 @@
                                 <input name="selectedPrice\${index}" type="number" class="form-control form-control-sm price-input" data-id="\${item.id}" value="\${item.price}" min="1000000" style="width: 100px;" required>
                             </td>
                             <td>
-                                <input name="selectedQty\${index}" type="number" class="form-control form-control-sm qty-input" data-id="\${item.id}" value="\${item.reqQty}" min="50" style="width: 100px;">
+                                <input name="selectedQty\${index}" type="number" class="form-control form-control-sm qty-input" data-id="\${item.id}" value="\${item.reqQty}" min="1" style="width: 100px;">
                             </td>
                             <td>
                                 <a class="delete-set remove-item-btn" href="javascript:void(0);" data-id="\${item.id}">
@@ -265,7 +265,7 @@
                     sku: sku,
                     category: category,
                     stock: stock,
-                    reqQty: 50,
+                    reqQty: 1,
                     price: ''
                 });
             }
@@ -307,15 +307,15 @@
             const newQty = parseInt($(this).val());
             const item = selectedItems.find(i => i.id === id);
             if (item) {
-                if (newQty < 50) {
+                if (newQty < 1) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Invalid Quantity',
-                        text: 'Quantity must be at least 50.',
+                        text: 'Quantity must be at least 1.',
                         confirmButtonColor: '#FF9F43'
                     });
-                    item.reqQty = 50;
-                    $(this).val(50);
+                    item.reqQty = 1;
+                    $(this).val(1);
                 } else {
                     item.reqQty = newQty;
                     $(this).val(item.reqQty);
@@ -336,13 +336,13 @@
                 return false;
             }
 
-            const invalidItem = selectedItems.find(i => i.reqQty < 50);
+            const invalidItem = selectedItems.find(i => i.reqQty < 1);
             if (invalidItem) {
                 e.preventDefault();
                 Swal.fire({
                     icon: 'error',
                     title: 'Invalid Quantity',
-                    text: 'Quantity for ' + invalidItem.name + ' must be at least 50.',
+                    text: 'Quantity for ' + invalidItem.name + ' must be at least 1.',
                     confirmButtonColor: '#FF9F43'
                 });
                 return false;

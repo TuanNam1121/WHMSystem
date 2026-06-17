@@ -52,6 +52,11 @@
                                 <a href="home">Purchase List</a>
                             </c:if>
                         </li>
+                        <c:if test="${sessionScope.user.roleId == 4}">
+                            <li>
+                                <a href="createPurchaseRequest">Create Purchase Request</a>
+                            </li>
+                        </c:if>
                         <%--<li><a href="purchaseRequestList">Purchase List for salesman</a></li>--%>
                         <%--<li><a href="managerPurchaseRequestList">Purchase List for manager</a></li>--%>
                     </ul>

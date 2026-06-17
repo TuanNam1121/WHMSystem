@@ -111,7 +111,7 @@ CREATE TABLE `good_receipts` (
   `purchaserequestid` int(11) NOT NULL,
   `processedby` int(11) NOT NULL,
   `supplier_name` varchar(100),
-  `status` enum('NEW', 'DRAFT','CANCELLED','SUBMITTED','COMPLETED','PENDING','REJECTED') DEFAULT 'NEW',
+  `status` enum('NEW', 'INCOMPLETED','COMPLETED') DEFAULT 'NEW',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `note` text,
@@ -147,6 +147,7 @@ CREATE TABLE `good_receipts_items` (
   `goodreceiptid` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
   `actual_quantity` int(11) NOT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `goodreceiptid` (`goodreceiptid`),
   KEY `product_id` (`product_id`),
@@ -161,7 +162,7 @@ CREATE TABLE `good_receipts_items` (
 
 LOCK TABLES `good_receipts_items` WRITE;
 /*!40000 ALTER TABLE `good_receipts_items` DISABLE KEYS */;
-INSERT INTO `good_receipts_items` VALUES (1,1,1,10),(2,2,5,20);
+INSERT INTO `good_receipts_items` VALUES (1,1,1,10, NOW()),(2,2,5,20, NOW());
 /*!40000 ALTER TABLE `good_receipts_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -349,7 +350,7 @@ DROP TABLE IF EXISTS `orders`;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `status` enum('NEW','DOING','COMPLETED') DEFAULT 'NEW',
+  `status` enum('NEW','DOING','COMPLETED','CANCELLED') DEFAULT 'NEW',
   `total_price` decimal(15,2) DEFAULT NULL,
   `note` text,
   `orderdate` datetime DEFAULT NULL,

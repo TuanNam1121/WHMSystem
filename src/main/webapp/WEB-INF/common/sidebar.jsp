@@ -1,3 +1,6 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <div class="sidebar" id="sidebar">
     <div class="sidebar-inner slimscroll">
         <div id="sidebar-menu" class="sidebar-menu">
@@ -38,8 +41,19 @@
                                                        alt="img"><span> Purchase</span>
                         <span class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="purchaseRequestList">Purchase List for salesman</a></li>
-                        <li><a href="managerPurchaseRequestList">Purchase List for manager</a></li>
+                        <li>
+                            <c:if test="${sessionScope.user.roleId == 2}">
+                                <a href="managerPurchaseRequestList">Purchase List</a>
+                            </c:if>
+                            <c:if test="${sessionScope.user.roleId == 4}">
+                                <a href="purchaseRequestList">Purchase List</a>
+                            </c:if>
+                            <c:if test="${sessionScope.user.roleId != 2 && sessionScope.user.roleId != 4}">
+                                <a href="home">Purchase List</a>
+                            </c:if>
+                        </li>
+                        <%--<li><a href="purchaseRequestList">Purchase List for salesman</a></li>--%>
+                        <%--<li><a href="managerPurchaseRequestList">Purchase List for manager</a></li>--%>
                     </ul>
                 </li>
                 <li class="submenu">

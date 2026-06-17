@@ -28,35 +28,20 @@ public class ImportRequestList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        User user = (User) request.getSession().getAttribute("user");
-        try {
-            if (user == null) {
-                response.sendRedirect("login");
-                return;
-            }
-        } catch (Exception e) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
             response.sendRedirect("login");
             return;
+        }
+        if (user.getRoleId() != 3) {
+            response.sendRedirect("home");
         }
 
         GoodReceiptDAO goodReceiptDAO = new GoodReceiptDAO();
         List<GoodReceipt> importRequests = goodReceiptDAO.getAllGoodReceiptForProcessor(user.getId());
         request.setAttribute("importRequests", importRequests);
         request.getRequestDispatcher("WEB-INF/view/import/importRequestList.jsp").forward(request, response);
-
-//         HttpSession session = request.getSession();
-
-//         GoodReceiptDAO goodReceiptDao = new GoodReceiptDAO();
-
-//         User user = (User) session.getAttribute("user");        
-//         List<GoodReceipt> receiptList = goodReceiptDao.getAllGoodReceiptForProcessor(user.getId());
-//         List<ImportRequestDTO> list = new ArrayList<>();
-//         for(GoodReceipt i : receiptList){
-//             list.add(toImportRequestDTO(i));
-//         }
-
-//         request.setAttribute("list", list);
-//         request.getRequestDispatcher("WEB-INF/view/import/ImportRequestList.jsp").forward(request,response);
     }
 
     @Override

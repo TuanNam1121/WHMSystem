@@ -24,6 +24,16 @@ public class ManagerPurchaseRequestDetail extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+        if (user.getRoleId() != 2) {
+            response.sendRedirect("home");
+        }
+
         String idStr = request.getParameter("id");
         if (idStr == null) {
             response.sendRedirect("managerPurchaseRequestList");

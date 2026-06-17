@@ -349,14 +349,14 @@
 
                             if (!allFilled) {
                                 Swal.fire({
-                                    title: 'Incomplete Serials',
-                                    html: '<p>There are <strong>' + emptyCount + '</strong> serial fields that are still empty.</p><p>Do you want to continue saving the import?</p>',
+                                    title: 'Cảnh báo',
+                                    html: '<p>Vẫn còn <strong>' + emptyCount + '</strong> sản phẩm chưa được nhập SerialNumber.</p><p>Bạn có chắc chắn không?</p>',
                                     icon: 'warning',
                                     showCancelButton: true,
                                     confirmButtonColor: '#28C76F',
                                     cancelButtonColor: '#6c757d',
-                                    confirmButtonText: '<i class="fas fa-check me-1"></i> Yes, Save Import',
-                                    cancelButtonText: 'Cancel'
+                                    confirmButtonText: '<i class="fas fa-check me-1"></i> Xác nhận',
+                                    cancelButtonText: 'Hủy'
                                 }).then(function (result) {
                                     if (result.isConfirmed) {
                                         completeImport();

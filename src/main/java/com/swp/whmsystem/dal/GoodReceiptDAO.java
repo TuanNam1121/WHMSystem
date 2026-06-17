@@ -121,7 +121,7 @@ public class GoodReceiptDAO {
             throw new RuntimeException(e);
         }
     }
-
+    // Thêm invoicenumber vào nữa
     public boolean updateGoodReceipt(GoodReceipt receipt) {
         String sql = "update good_receipts set purchaserequestid = ?, processedby = ?, status = ?, note = ?, supplier_name = ? where id = ?";
         try (Connection connection = DBContext.getConnection()) {

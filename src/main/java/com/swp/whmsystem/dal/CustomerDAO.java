@@ -112,6 +112,40 @@ public class CustomerDAO {
             exception.printStackTrace();
         }
     }
+    
+    public void updateCustomer(Customer c) {
+        try (Connection conn = DBContext.getConnection()){
+            
+            String sql = "UPDATE customers SET name = ?, phone = ? WHERE id = ?";
+            st = conn.prepareStatement(sql);
+            st.setString(1, c.getName());
+            st.setString(2, c.getPhone());
+            st.setInt(3, c.getId());
+            st.executeUpdate();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+    
+    public List<Customer> SearchCustomer(String search) {
+
+        try (Connection conn = DBContext.getConnection()) {
+        String sql = "select * from customers where name like ? or phone like ?";
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ps.setString(1, "%" + search + "%");
+             ps.setString(2, "%" + search + "%");
+             ResultSet rs = ps.executeQuery();
+            List<Customer> result = new ArrayList<>();
+            while (rs.next()) {
+                Customer c = mapResultSetToCustomer(rs);
+                result.add(c);
+            }
+            return result;
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return null;
+    }
 
     private Customer mapResultSetToCustomer(ResultSet rs) throws SQLException {
         Customer c = new Customer();

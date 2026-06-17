@@ -57,13 +57,13 @@
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Customer Name</label>
-                                            <input required type="text" name="customerName" maxlength="50">
+                                            <input type="text" name="customerName" value="${customer.name}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Customer Phone</label>
-                                            <input required type="text" name="customerPhone" minlength="10" maxlength="10">
+                                            <input type="text" name="customerPhone" value="${customer.phone}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">

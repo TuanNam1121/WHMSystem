@@ -66,6 +66,24 @@ public class GoodReceiptItemDAO {
         }
     }
 
+    public int insertGoodReceiptItemAndGetId(GoodReceiptItem item) {
+        String sql = "insert into good_receipts_items (goodreceiptid, product_id, actual_quantity) values (?, ?, ?)";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            preparedStatement.setInt(1, item.getGoodReceiptId());
+            preparedStatement.setInt(2, item.getProductId());
+            preparedStatement.setInt(3, item.getActualQuantity());
+            preparedStatement.executeUpdate();
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                return generatedKeys.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return -1;
+    }
+
     public boolean updateGoodReceiptItem(GoodReceiptItem item) {
         String sql = "update good_receipts_items set goodreceiptid = ?, product_id = ?, actual_quantity = ? where id = ?";
         try (Connection connection = DBContext.getConnection()) {

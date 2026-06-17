@@ -121,21 +121,23 @@ public class GoodReceiptDAO {
             throw new RuntimeException(e);
         }
     }
-
+    // Thêm invoicenumber vào nữa
     public boolean updateGoodReceipt(GoodReceipt receipt) {
-        String sql = "update good_receipts set purchaserequestid = ?, processedby = ?, status = ?, note = ? where id = ?";
+        String sql = "update good_receipts set purchaserequestid = ?, processedby = ?, status = ?, note = ?, supplier_name = ? where id = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, receipt.getPurchaseRequestId());
             preparedStatement.setInt(2, receipt.getProcessedBy());
             preparedStatement.setString(3, receipt.getStatus() != null ? receipt.getStatus() : "DRAFT");
             preparedStatement.setString(4, receipt.getNote());
-            preparedStatement.setInt(5, receipt.getId());
+            preparedStatement.setString(5, receipt.getSupplierName());
+            preparedStatement.setInt(6, receipt.getId());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
 
     public boolean deleteGoodReceipt(int id) {
         String sql = "delete from good_receipts where id = ?";
@@ -201,9 +203,6 @@ public class GoodReceiptDAO {
     public static void main(String[] args) {
         GoodReceiptDAO gr = new GoodReceiptDAO();
         GoodReceiptItemDAO gri = new GoodReceiptItemDAO();
-        ProductItemDAO pi = new ProductItemDAO();
-        for(ProductItem i  : pi.getAllProductItem()){
-            System.out.println(i);
-        }
+        System.out.println(gr.getGoodReceiptById(3));
     }
 }

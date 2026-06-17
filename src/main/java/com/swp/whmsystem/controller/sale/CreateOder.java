@@ -68,6 +68,11 @@ public class CreateOder extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String customerIdStr = request.getParameter("id");
+        int customerId = Integer.parseInt(customerIdStr);
+        CustomerDAO cd = new CustomerDAO();
+        request.setAttribute("customer", cd.getCustomerById(customerId));
+        
         ProductDAO pd = new ProductDAO();
         request.setAttribute("products", pd.getProductList());
         request.getRequestDispatcher("WEB-INF/view/sale/createOrder.jsp").forward(request, response);

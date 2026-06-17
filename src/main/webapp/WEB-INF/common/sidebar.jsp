@@ -100,14 +100,8 @@
                                                        alt="img"><span> People</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="customerlist.html">Customer List</a></li>
-                        <li><a href="addcustomer.jsp">Add Customer </a></li>
+                        <li><a href="CustomerList">Customer List</a></li>
                         <li><a href="supplierlist.html">Supplier List</a></li>
-                        <li><a href="addsupplier.jsp">Add Supplier </a></li>
-                        <li><a href="userlist.html">User List</a></li>
-                        <li><a href="adduser.jsp">Add User</a></li>
-                        <li><a href="storelist.html">Store List</a></li>
-                        <li><a href="addstore.jsp">Add Store</a></li>
                     </ul>
                 </li>
                 <li class="submenu">

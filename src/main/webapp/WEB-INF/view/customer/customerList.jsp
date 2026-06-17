@@ -38,28 +38,26 @@
                     <div class="content">
                         <div class="page-header">
                             <div class="page-title">
-                                <h4>ORDER LIST</h4>
+                                <h4>CUSTOMER LIST</h4>
                             </div>
                             <div class="page-btn">
-                                <a href="CustomerList" class="btn btn-added" id="btn-create-request">
-                                    <img src="assets/img/icons/plus.svg" alt="img">Create Order
+                                <a href="CreateCustomer" class="btn btn-added" id="btn-create-request">
+                                    ADD CUSTOMER
                                 </a>
                             </div>
                         </div>
 
-                    <c:if test="${not empty sessionScope.message}">
+                    <c:if test="${not empty requestScope.message}">
                         <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                            <strong>${sessionScope.message}</strong>
+                            <strong>${requestScope.message}</strong>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                        <% session.removeAttribute("message"); %>
                     </c:if>
-                    <c:if test="${not empty sessionScope.error}">
+                    <c:if test="${not empty requestScope.error}">
                         <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                            <strong>${sessionScope.error}</strong>
+                            <strong>${requestScope.error}</strong>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                        <% session.removeAttribute("error"); %>
                     </c:if>
 
                     <div class="card">
@@ -99,22 +97,11 @@
                                     <div class="row">  
 
 
-                                        <form style="display:flex" action="${pageContext.request.contextPath}/OrderList" method="post">
+                                        <form style="display:flex" action="${pageContext.request.contextPath}/CustomerList" method="post">
                                             <div class="col-lg-3 col-sm-6 col-12">
 
                                                 <div class="form-group">
-                                                    <input name="searchName" type="text" placeholder="Enter customer name" value="${searchName}" id="filter-code">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-3 col-sm-6 col-12">
-                                                <div class="form-group">
-                                                    <select name="searchStatus" class="select" id="filter-status">
-                                                        <option ${searchStatus==null?'selected':''} value="ALL">Choose Status</option>
-                                                        <option ${searchStatus=='NEW'?'selected':''} value="NEW">New</option>
-                                                        <option ${searchStatus=='DOING'?'selected':''} value="DOING">On going</option>
-                                                        <option ${searchStatus=='COMPLETED'?'selected':''} value="COMPLETED">Completed</option>
-                                                        <option ${searchStatus=='CANCELLED'?'selected':''} value="CANCELLED">Cancelled</option>
-                                                    </select>
+                                                    <input name="searchName" type="text" placeholder="Enter name or phone" value="${searchName}" id="filter-code">
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-sm-6 col-12">
@@ -135,41 +122,32 @@
                                         <tr>
                                             <th>id</th>
                                             <th>Customer name</th>
-                                            <th>total price</th>
-                                            <th>Note</th>
-                                            <th>Order date</th>
-                                            <th>Created by</th>
-                                            <th>Status</th>
+                                            <th>Phone</th>
                                             <th>Action</th>
+                                            <th>Create Order</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach items="${orders}" var="o">
+                                        <c:forEach items="${customers}" var="c">
                                             <tr>
-                                                <td>${o.id}</td>
-                                                <td>${o.customer}</td>
-                                                <td>
-                                                    <fmt:formatNumber
-                                                        value="${o.totalPrice}"
-                                                        pattern="#,##0.00"/>
-                                                </td>
-                                                <td style="max-width: 200px; overflow-x: auto">${o.note}</td>
-                                                <td>${o.orderDate}</td>
-                                                <td>${o.creater}</td>
-                                                <td>${o.status}</td>
+                                                <td>${c.id}</td>
+                                                <td>${c.name}</td>
+                                                <td>${c.phone}</td>
                                                 <td>
                                                     <a class="me-3"
-                                                       href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=view">
+                                                       href="${pageContext.request.contextPath}/ViewCustomer?id=${c.id}">
                                                         <img src="assets/img/icons/eye.svg" alt="img">
                                                     </a>
-                                                    <c:if test="${o.status != 'COMPLETED'}">
-                                                    <c:if test="${o.status != 'CANCELLED'}">
-                                                        <a class="me-3"
-                                                           href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=update">
+                                                        <a class="btn btn-added"  id="btn-create-request"
+                                                           href="${pageContext.request.contextPath}/UpdateCustomer?id=${c.id}">
                                                             <img src="assets/img/icons/edit.svg" alt="img">
                                                         </a>
-                                                    </c:if>
-                                                    </c:if>
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-added"  id="btn-create-request"
+                                                           href="${pageContext.request.contextPath}/CreateOder?id=${c.id}">
+                                                            <img src="assets/img/icons/plus.svg" alt="img">
+                                                        </a>
                                                 </td>
                                             </tr>
                                         </c:forEach>

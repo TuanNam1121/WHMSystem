@@ -15,7 +15,11 @@ import java.util.List;
 
 public class GoodReceiptDAO {
     public List<GoodReceipt> getAllGoodReceipt() {
-        String sql = "select * from good_receipts order by created_at desc";
+        String sql = "SELECT gr.*, s.suppliername AS actual_supplier_name, s.supplierid AS actual_supplier_id " +
+                     "FROM good_receipts gr " +
+                     "LEFT JOIN purchase_requests pr ON gr.purchaserequestid = pr.id " +
+                     "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid " +
+                     "ORDER BY gr.created_at DESC";
         List<GoodReceipt> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -31,7 +35,11 @@ public class GoodReceiptDAO {
     }
 
     public List<GoodReceipt> getAllGoodReceiptForProcessor(int processorId) {
-        String sql = "select * from good_receipts where processedby = ? order by created_at desc";
+        String sql = "SELECT gr.*, s.suppliername AS actual_supplier_name, s.supplierid AS actual_supplier_id " +
+                     "FROM good_receipts gr " +
+                     "LEFT JOIN purchase_requests pr ON gr.purchaserequestid = pr.id " +
+                     "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid " +
+                     "WHERE gr.processedby = ? ORDER BY gr.created_at DESC";
         List<GoodReceipt> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -49,7 +57,11 @@ public class GoodReceiptDAO {
     }
     
     public List<GoodReceipt> getNewAndImcompletedGoodReceiptForProcessor(int processorId) {
-        String sql = "select * from good_receipts where processedby = ? and status in ('NEW', 'IMCOMPLETED') order by created_at desc";
+        String sql = "SELECT gr.*, s.suppliername AS actual_supplier_name, s.supplierid AS actual_supplier_id " +
+                     "FROM good_receipts gr " +
+                     "LEFT JOIN purchase_requests pr ON gr.purchaserequestid = pr.id " +
+                     "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid " +
+                     "WHERE gr.processedby = ? AND gr.status IN ('NEW', 'IMCOMPLETED') ORDER BY gr.created_at DESC";
         List<GoodReceipt> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -67,7 +79,11 @@ public class GoodReceiptDAO {
     }
 
     public GoodReceipt getGoodReceiptByPurchaseRequestId(int purchaseRequestId) {
-        String sql = "SELECT * FROM good_receipts WHERE purchaserequestid = ? LIMIT 1";
+        String sql = "SELECT gr.*, s.suppliername AS actual_supplier_name, s.supplierid AS actual_supplier_id " +
+                     "FROM good_receipts gr " +
+                     "LEFT JOIN purchase_requests pr ON gr.purchaserequestid = pr.id " +
+                     "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid " +
+                     "WHERE gr.purchaserequestid = ? LIMIT 1";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, purchaseRequestId);
@@ -83,7 +99,11 @@ public class GoodReceiptDAO {
     }
     
     public GoodReceipt getGoodReceiptByGoodReceipId(int goodReceiptId) {
-        String sql = "SELECT * FROM good_receipts WHERE id = ? LIMIT 1";
+        String sql = "SELECT gr.*, s.suppliername AS actual_supplier_name, s.supplierid AS actual_supplier_id " +
+                     "FROM good_receipts gr " +
+                     "LEFT JOIN purchase_requests pr ON gr.purchaserequestid = pr.id " +
+                     "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid " +
+                     "WHERE gr.id = ? LIMIT 1";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, goodReceiptId);
@@ -99,7 +119,11 @@ public class GoodReceiptDAO {
     }
 
     public GoodReceipt getGoodReceiptById(int id) {
-        String sql = "SELECT * FROM good_receipts WHERE id = ?";
+        String sql = "SELECT gr.*, s.suppliername AS actual_supplier_name, s.supplierid AS actual_supplier_id " +
+                     "FROM good_receipts gr " +
+                     "LEFT JOIN purchase_requests pr ON gr.purchaserequestid = pr.id " +
+                     "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid " +
+                     "WHERE gr.id = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
@@ -122,7 +146,15 @@ public class GoodReceiptDAO {
         c.setStatus(rs.getString("status"));
         c.setCreatedAt(rs.getTimestamp("created_at"));
         c.setNote(rs.getString("note"));
-        c.setSupplierName(rs.getString("supplier_name"));
+        try {
+            c.setSupplierName(rs.getString("actual_supplier_name"));
+            c.setSupplierId(rs.getInt("actual_supplier_id"));
+        } catch (SQLException e) {
+            try {
+                c.setSupplierName(rs.getString("supplier_name"));
+            } catch (SQLException ex) {
+            }
+        }
         return c;
     }
 
@@ -171,7 +203,11 @@ public class GoodReceiptDAO {
     public List<GoodReceipt> searchProduct(int receiptId,int purchaseid, String supplier, int processedby, String sortBy) {
         List<GoodReceipt> goodReceipts = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-                "select * from good_receipts where 1 = 1"
+                "SELECT gr.*, s.suppliername AS actual_supplier_name, s.supplierid AS actual_supplier_id " +
+                "FROM good_receipts gr " +
+                "LEFT JOIN purchase_requests pr ON gr.purchaserequestid = pr.id " +
+                "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid " +
+                "WHERE 1 = 1"
         );
         List<String> parameter = new ArrayList<>();
                 
@@ -186,7 +222,8 @@ public class GoodReceiptDAO {
         }
 
         if (supplier != null && !supplier.trim().isEmpty()) {
-            sql.append(" and supplier_name like ?");
+            sql.append(" and (gr.supplier_name like ? OR s.suppliername like ?)");
+            parameter.add("%" + supplier + "%");
             parameter.add("%" + supplier + "%");
         }
 

@@ -11,6 +11,8 @@ public class PurchaseRequest {
     private Timestamp createdAt;
     private String createdByUsername;
     private boolean isDeleted;
+    private int supplierId;
+    private String supplierName;
 
     public PurchaseRequest() {
     }
@@ -77,5 +79,21 @@ public class PurchaseRequest {
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public int getSupplierId() {
+        return supplierId;
+    }
+
+    public void setSupplierId(int supplierId) {
+        this.supplierId = supplierId;
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
 }

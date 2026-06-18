@@ -121,7 +121,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="col-lg-2 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label>Request Code</label>
                                     <input type="text"
@@ -129,15 +129,15 @@
                                            class="form-control" id="detail-request-code">
                                 </div>
                             </div>
-                            <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="col-lg-2 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label>Related Purchase Request</label>
+                                    <label>Related PR</label>
                                     <input type="text"
                                            value="<fmt:formatNumber value='${goodReceipt.purchaseRequestId}' pattern='000'/>"
                                            disabled class="form-control" id="detail-related-pr">
                                 </div>
                             </div>
-                            <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="col-lg-2 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label>Assigned By</label>
                                     <input type="text" value="${approvedBy}" disabled class="form-control"
@@ -150,6 +150,17 @@
                                     <input type="text"
                                            value="<fmt:formatDate value='${goodReceipt.createdAt}' pattern='dd MMM yyyy'/>"
                                            disabled class="form-control" id="detail-created-at">
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Supplier</label>
+                                    <div class="d-flex align-items-center mt-1">
+                                        <div>
+                                            <strong id="detail-supplier-name">${goodReceipt.supplierName}</strong><br>
+                                            <small class="text-muted" id="detail-supplier-id">ID: ${goodReceipt.supplierId}</small>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -55,12 +55,23 @@
                         <input type="hidden" id="salesman-id" name="salesmanId" value="${sessionScope.user.id}">
 
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-lg-6">
                                 <div class="form-group">
                                     <label>Salesman</label>
                                     <input type="text" value="${sessionScope.user.fullName}" disabled
                                            class="form-control"
                                            id="salesman-display">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Supplier <span class="text-danger">*</span></label>
+                                    <select class="select" name="supplierId" required>
+                                        <option value="" disabled selected>Select a supplier</option>
+                                        <c:forEach items="${requestScope.supplierList}" var="s">
+                                            <option value="${s.supplierId}">${s.supplierName}</option>
+                                        </c:forEach>
+                                    </select>
                                 </div>
                             </div>
                         </div>

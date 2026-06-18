@@ -8,8 +8,9 @@ import java.util.*;
 
 public class PurchaseRequestDAO {
     public List<PurchaseRequest> getAllPurchaseRequest() {
-        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr " +
+        String sql = "SELECT pr.*, u.username AS createdByUsername, s.suppliername FROM purchase_requests pr " +
                 "LEFT JOIN users u ON pr.createdby = u.userid " +
+                "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid " +
                 "where pr.isDeleted = 0 ORDER BY pr.id DESC";
         List<PurchaseRequest> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection()) {
@@ -26,8 +27,9 @@ public class PurchaseRequestDAO {
     }
 
     public List<PurchaseRequest> getAllPurchaseRequestForSaleman(int salemanId) {
-        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr " +
+        String sql = "SELECT pr.*, u.username AS createdByUsername, s.suppliername FROM purchase_requests pr " +
                 "LEFT JOIN users u ON pr.createdby = u.userid " +
+                "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid " +
                 "WHERE pr.createdby = ? and pr.isDeleted = 0 ORDER BY pr.id DESC";
         List<PurchaseRequest> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection();) {
@@ -46,8 +48,9 @@ public class PurchaseRequestDAO {
     }
 
     public PurchaseRequest getPurchaseRequestById(int id) {
-        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr " +
-                "LEFT JOIN users u ON pr.createdby = u.userid WHERE pr.id = ?";
+        String sql = "SELECT pr.*, u.username AS createdByUsername, s.suppliername FROM purchase_requests pr " +
+                "LEFT JOIN users u ON pr.createdby = u.userid " +
+                "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid WHERE pr.id = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
@@ -63,8 +66,9 @@ public class PurchaseRequestDAO {
     }
 
     public PurchaseRequest getLatestPurchaseRequestBySalemanId(int salemanId) {
-        String sql = "SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr " +
-                "LEFT JOIN users u ON pr.createdby = u.userid WHERE pr.createdby = ? ORDER BY pr.createdat DESC LIMIT 1";
+        String sql = "SELECT pr.*, u.username AS createdByUsername, s.suppliername FROM purchase_requests pr " +
+                "LEFT JOIN users u ON pr.createdby = u.userid " +
+                "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid WHERE pr.createdby = ? ORDER BY pr.createdat DESC LIMIT 1";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, salemanId);
@@ -86,10 +90,12 @@ public class PurchaseRequestDAO {
         c.setApprovedBy(rs.getInt("approvedby"));
         c.setStatus(rs.getString("status"));
         c.setNote(rs.getString("note"));
+        c.setSupplierId(rs.getInt("supplierid"));
         Timestamp ts = rs.getTimestamp("createdat");
         c.setCreatedAt(ts);
         try {
             c.setCreatedByUsername(rs.getString("createdByUsername"));
+            c.setSupplierName(rs.getString("suppliername"));
         } catch (SQLException e) {
             // Column might not exist in some queries if not updated
         }
@@ -97,11 +103,12 @@ public class PurchaseRequestDAO {
     }
 
     public boolean insertPurchaseRequest(PurchaseRequest request) {
-        String sql = "insert into purchase_requests (createdby, note) values (?, ?)";
+        String sql = "insert into purchase_requests (createdby, note, supplierid) values (?, ?, ?)";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, request.getCreatedBy());
             preparedStatement.setString(2, request.getNote());
+            preparedStatement.setInt(3, request.getSupplierId());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -109,7 +116,7 @@ public class PurchaseRequestDAO {
     }
 
     public boolean updatePurchaseRequest(PurchaseRequest request) {
-        String sql = "UPDATE purchase_requests SET createdby = ?, approvedby = ?, status = ?, note = ? WHERE id = ?";
+        String sql = "UPDATE purchase_requests SET createdby = ?, approvedby = ?, status = ?, note = ?, supplierid = ? WHERE id = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, request.getCreatedBy());
@@ -120,7 +127,8 @@ public class PurchaseRequestDAO {
             }
             preparedStatement.setString(3, request.getStatus() != null ? request.getStatus() : "NEW");
             preparedStatement.setString(4, request.getNote());
-            preparedStatement.setInt(5, request.getId());
+            preparedStatement.setInt(5, request.getSupplierId());
+            preparedStatement.setInt(6, request.getId());
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -151,8 +159,9 @@ public class PurchaseRequestDAO {
     }
 
     public List<PurchaseRequest> searchPurchaseItem(int salemanId, int id, String status, String dateStr, String sort) {
-        StringBuilder sql = new StringBuilder("SELECT pr.*, u.username AS createdByUsername FROM purchase_requests pr " +
+        StringBuilder sql = new StringBuilder("SELECT pr.*, u.username AS createdByUsername, s.suppliername FROM purchase_requests pr " +
                 "LEFT JOIN users u ON pr.createdby = u.userid " +
+                "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid " +
                 "where pr.isDeleted = 0") ;
         List<Object> parameter = new ArrayList<>();
         if (salemanId != 0) {

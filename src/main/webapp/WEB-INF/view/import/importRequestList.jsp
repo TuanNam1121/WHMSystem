@@ -137,7 +137,7 @@
                             <tbody>
                             <c:forEach items="${importRequests}" var="ir">
                                 <tr>
-                                    <td class="text-bolds"><a href="managerPurchaseRequestDetail?id=${ir.id}">IR-
+                                    <td class="text-bolds"><a href="managerPurchaseRequestDetail?id=${ir.id}">
                                             <fmt:formatNumber value='${ir.id}' pattern='000'/></a>
                                     </td>
                                     <td>${not empty ir.note ? ir.note : 'No note provided'}</td>

@@ -106,7 +106,7 @@
                             class="menu-arrow"></span></a>
                     <ul>
                         <li><a href="CustomerList">Customer List</a></li>
-                        <li><a href="supplierlist.html">Supplier List</a></li>
+                        <li><a href="listSupplier">Supplier List</a></li>
                     </ul>
                 </li>
                 <li class="submenu">

@@ -12,9 +12,17 @@ public class GoodReceipt {
     private String note;
     private String supplierName;
     private String invoiceNumber;
-//    private int supplier;               anh dùng như nào tự điền nhé
+    private int supplierId;
 
     public GoodReceipt() {
+    }
+
+    public int getSupplierId() {
+        return supplierId;
+    }
+
+    public void setSupplierId(int supplierId) {
+        this.supplierId = supplierId;
     }
 
     public String getInvoiceNumber() {

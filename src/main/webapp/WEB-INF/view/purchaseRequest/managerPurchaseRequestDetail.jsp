@@ -53,14 +53,15 @@
                             <div class="card">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="col-lg-2 col-sm-6 col-12">
                                             <div class="form-group">
                                                 <label>Request Code</label>
-                                                <input type="text" value="<fmt:formatNumber value='${purchaseRequest.id}' pattern='000' />" disabled
-                                                    class="form-control" id="detail-request-code">
+                                                <strong class="form-control" id="detail-request-code" style="border: none; background-color: #e9ecef; display: flex; align-items: center;">
+                                                    <fmt:formatNumber value='${purchaseRequest.id}' pattern='000' />
+                                                </strong>
                                             </div>
                                         </div>
-                                        <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="col-lg-2 col-sm-6 col-12">
                                             <div class="form-group">
                                                 <label>Status</label>
                                                 <div>
@@ -101,12 +102,12 @@
                                         <div class="col-lg-3 col-sm-6 col-12">
                                             <div class="form-group">
                                                 <label>Created At</label>
-                                                <input type="text"
-                                                    value="<fmt:formatDate value='${purchaseRequest.createdAt}' pattern='dd MMM yyyy - hh:mm a'/>"
-                                                    disabled class="form-control" id="detail-created-at">
+                                                <strong class="form-control" id="detail-created-at" style="border: none; background-color: #e9ecef; display: flex; align-items: center;">
+                                                    <fmt:formatDate value='${purchaseRequest.createdAt}' pattern='dd MMM yyyy - hh:mm a'/>
+                                                </strong>
                                             </div>
                                         </div>
-                                        <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="col-lg-2 col-sm-6 col-12">
                                             <div class="form-group">
                                                 <label>Salesman</label>
                                                 <div class="d-flex align-items-center mt-1">
@@ -115,6 +116,19 @@
                                                             id="detail-salesman-name">${salesman.fullName}</strong><br>
                                                         <small class="text-muted"
                                                             id="detail-salesman-id">${salesman.id}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label>Supplier</label>
+                                                <div class="d-flex align-items-center mt-1">
+                                                    <div>
+                                                        <strong
+                                                            id="detail-supplier-name">${purchaseRequest.supplierName}</strong><br>
+                                                        <small class="text-muted"
+                                                            id="detail-supplier-id">ID: ${purchaseRequest.supplierId}</small>
                                                     </div>
                                                 </div>
                                             </div>

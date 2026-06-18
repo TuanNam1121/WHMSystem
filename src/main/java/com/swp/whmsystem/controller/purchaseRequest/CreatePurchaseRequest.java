@@ -3,6 +3,7 @@ package com.swp.whmsystem.controller.purchaseRequest;
 import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.dal.PurchaseItemDAO;
 import com.swp.whmsystem.dal.PurchaseRequestDAO;
+import com.swp.whmsystem.dal.SupplierDAO;
 import com.swp.whmsystem.model.Product;
 import com.swp.whmsystem.model.PurchaseItem;
 import com.swp.whmsystem.model.PurchaseRequest;
@@ -36,6 +37,9 @@ public class CreatePurchaseRequest extends HttpServlet {
         List<Product> productList = productDAO.getProductList();
         request.setAttribute("productListForPurchase", productList);
 
+        SupplierDAO supplierDAO = new SupplierDAO();
+        request.setAttribute("supplierList", supplierDAO.getAllSuppliers());
+
         request.getRequestDispatcher("WEB-INF/view/purchaseRequest/createPurchaseRequest.jsp").forward(request, response);
     }
 
@@ -44,10 +48,19 @@ public class CreatePurchaseRequest extends HttpServlet {
             throws ServletException, IOException {
         int salesmanId = Integer.parseInt(request.getParameter("salesmanId"));
         String note = request.getParameter("note");
-        try{
+        int supplierId = 0;
+        try {
+            supplierId = Integer.parseInt(request.getParameter("supplierId"));
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "Please select a supplier!");
+            doGet(request, response);
+            return;
+        }
+
         PurchaseRequest p = new PurchaseRequest();
         p.setCreatedBy(salesmanId);
         p.setNote(note);
+        p.setSupplierId(supplierId);
 
         PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
         purchaseRequestDAO.insertPurchaseRequest(p);

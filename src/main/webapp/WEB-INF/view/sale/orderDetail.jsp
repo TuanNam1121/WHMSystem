@@ -182,13 +182,9 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-3 col-sm-6 col-12">
-                                                <div class="form-group">
-                                        
-                                            
-                                            <select style="margin-top: 50px; margin-bottom: 50px" name="orderStatus">
-                                                <option value="COMPLETED">Completed</option>
-                                                <option value="CANCELLED">Cancelled</option>
-                                            </select>
+                                            <div class="form-group" style="margin-top: 40px; margin-bottom: 40px;">
+                                                    <input checked type="radio" name="orderStatus" value="COMPLETED">COMPLETED
+                                                    <input type="radio" name="orderStatus" value="CANCELLED">CANCELLED
                                             <div class="col-lg-12">
                                         <input class="btn btn-submit me-2" type="submit" value="UPDATE">
                                         <a href="${pageContext.request.contextPath}/OrderList" class="btn btn-cancel">${action=='update'?'RETURN':'CANCEL'}</a>

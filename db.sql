@@ -588,6 +588,41 @@ INSERT INTO `purchase_request_items` VALUES (1,1,1,10,15000000,0),(2,2,5,20,2000
 UNLOCK TABLES;
 
 --
+-- Table structure for table `suppliers`
+--
+
+DROP TABLE IF EXISTS `suppliers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `suppliers` (
+  `supplierid` int(11) NOT NULL AUTO_INCREMENT,
+  `suppliername` varchar(255) NOT NULL,
+  `phone` varchar(10) DEFAULT NULL,
+  `email` varchar(50) NOT NULL,
+  `address` text,
+  `isactive` tinyint(1) DEFAULT '1',
+  `createdat` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updatedat` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`supplierid`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `suppliers`
+--
+
+LOCK TABLES `suppliers` WRITE;
+/*!40000 ALTER TABLE `suppliers` DISABLE KEYS */;
+INSERT INTO `suppliers` VALUES 
+(1,'Công ty TNHH Công nghệ An Phát','0912345678','contact@anphat.com.vn','123 Thái Hà, Hà Nội',1,'2026-06-18 10:00:00','2026-06-18 10:00:00'),
+(2,'Cửa hàng Điện tử Phong Vũ','0987654321','sales@phongvu.vn','456 Nguyễn Thị Minh Khai, TP.HCM',1,'2026-06-18 10:05:00','2026-06-18 10:05:00'),
+(3,'Đại lý Phân phối Dell Việt Nam','0901112233','info@dell.com.vn','789 Lê Duẩn, Đà Nẵng',1,'2026-06-18 10:10:00','2026-06-18 10:10:00'),
+(4,'Công ty Cổ phần Thế Giới Số (Digiworld)','0933334444','partner@digiworld.com.vn','Tòa nhà Etown, Hà Nội',1,'2026-06-18 10:15:00','2026-06-18 10:15:00'),
+(5,'Công ty TNHH Phụ kiện Viễn thông FPT','0977778888','supplier@fpt.com.vn','KCN Đình Vũ, Hải Phòng',0,'2026-06-18 10:20:00','2026-06-18 10:20:00');
+/*!40000 ALTER TABLE `suppliers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `purchase_requests`
 --
 
@@ -603,11 +638,13 @@ CREATE TABLE `purchase_requests` (
   `createdat` datetime DEFAULT CURRENT_TIMESTAMP,
   `updatedat` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `isDeleted` TINYINT(1) NOT NULL DEFAULT 0,
+  `supplierid` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `createdby` (`createdby`),
   KEY `approvedby` (`approvedby`),
   CONSTRAINT `purchase_requests_ibfk_1` FOREIGN KEY (`createdby`) REFERENCES `users` (`userid`),
-  CONSTRAINT `purchase_requests_ibfk_2` FOREIGN KEY (`approvedby`) REFERENCES `users` (`userid`)
+  CONSTRAINT `purchase_requests_ibfk_2` FOREIGN KEY (`approvedby`) REFERENCES `users` (`userid`),
+  CONSTRAINT `purchase_requests_ibfk_3` FOREIGN KEY (`supplierid`) REFERENCES `suppliers` (`supplierid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -617,7 +654,7 @@ CREATE TABLE `purchase_requests` (
 
 LOCK TABLES `purchase_requests` WRITE;
 /*!40000 ALTER TABLE `purchase_requests` DISABLE KEYS */;
-INSERT INTO `purchase_requests` VALUES (1,3,2,'APPROVED','Nhập laptop Dell','2026-05-27 11:27:22','2026-05-27 11:27:22',0),(2,5,2,'APPROVED','Nhập SSD Samsung','2026-05-27 11:27:22','2026-05-27 11:27:22',0);
+INSERT INTO `purchase_requests` VALUES (1,3,2,'APPROVED','Nhập laptop Dell','2026-05-27 11:27:22','2026-05-27 11:27:22',0,1),(2,5,2,'APPROVED','Nhập SSD Samsung','2026-05-27 11:27:22','2026-05-27 11:27:22',0,2);
 /*!40000 ALTER TABLE `purchase_requests` ENABLE KEYS */;
 UNLOCK TABLES;
 

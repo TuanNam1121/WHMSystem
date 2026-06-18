@@ -17,7 +17,6 @@ import com.swp.whmsystem.model.GoodReceiptItem;
 import com.swp.whmsystem.model.Product;
 import com.swp.whmsystem.model.ProductItem;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

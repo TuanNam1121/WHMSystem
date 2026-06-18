@@ -115,13 +115,11 @@ CREATE TABLE `good_receipts` (
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `note` text,
-  `supplierid` int(11) not null,
   PRIMARY KEY (`id`),
   KEY `purchaserequestid` (`purchaserequestid`),
   KEY `processedby` (`processedby`),
   CONSTRAINT `good_receipts_ibfk_1` FOREIGN KEY (`purchaserequestid`) REFERENCES `purchase_requests` (`id`),
-  CONSTRAINT `good_receipts_ibfk_2` FOREIGN KEY (`processedby`) REFERENCES `users` (`userid`),
-  CONSTRAINT `good_receipts_ibfk_3` FOREIGN KEY (`supplierid`) REFERENCES `suppliers` (`supplierid`)
+  CONSTRAINT `good_receipts_ibfk_2` FOREIGN KEY (`processedby`) REFERENCES `users` (`userid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -132,8 +130,8 @@ CREATE TABLE `good_receipts` (
 LOCK TABLES `good_receipts` WRITE;
 /*!40000 ALTER TABLE `good_receipts` DISABLE KEYS */;
 INSERT INTO `good_receipts` VALUES 
-(1, 1, 5, 'ASUS', 'COMPLETED', '2026-05-27 11:27:22', '2026-05-27 11:27:22','Good',1),
-(2, 2, 5, 'INTEL', 'COMPLETED', '2026-05-27 11:27:22', '2026-05-27 11:27:22','Broke',2);
+(1, 1, 5, 'ASUS', 'COMPLETED', '2026-05-27 11:27:22', '2026-05-27 11:27:22','Good'),
+(2, 2, 5, 'INTEL', 'COMPLETED', '2026-05-27 11:27:22', '2026-05-27 11:27:22','Broke');
 /*!40000 ALTER TABLE `good_receipts` ENABLE KEYS */;
 UNLOCK TABLES;
 

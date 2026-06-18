@@ -10,6 +10,7 @@ import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.dal.ProductItemDAO;
 import com.swp.whmsystem.dal.PurchaseItemDAO;
 import com.swp.whmsystem.dal.PurchaseRequestDAO;
+import com.swp.whmsystem.dal.StockMovementDAO;
 import com.swp.whmsystem.dal.UserDAO;
 import com.swp.whmsystem.dto.ProductItemRowDTO;
 import com.swp.whmsystem.model.GoodReceipt;
@@ -18,6 +19,7 @@ import com.swp.whmsystem.model.Product;
 import com.swp.whmsystem.model.ProductItem;
 import com.swp.whmsystem.model.PurchaseItem;
 import com.swp.whmsystem.model.PurchaseRequest;
+import com.swp.whmsystem.model.StockMovement;
 import com.swp.whmsystem.model.User;
 import com.swp.whmsystem.utils.ProductItemValidation;
 import java.io.IOException;
@@ -77,16 +79,56 @@ public class ImportProduct extends HttpServlet {
                 nestedList.add(a);
                 totalItem += quantity;
             }
-            
+
+            String status = goodReceipt.getStatus();
+            if ("INCOMPLETED".equals(status)) {
+                // Lấy danh sách các item đã import từ good_receipt_item
+                GoodReceiptItemDAO griDAO = new GoodReceiptItemDAO();
+                List<GoodReceiptItem> importedItems = griDAO.getItemsByGoodReceiptId(goodReceiptId);
+
+                // Tạo Map<productId, actualQuantity> để biết mỗi product đã nhận bao nhiêu
+                Map<Integer, Integer> importedMap = new HashMap<>();
+                for (GoodReceiptItem item : importedItems) {
+                    importedMap.put(item.getProductId(),
+                            importedMap.getOrDefault(item.getProductId(), 0) + item.getActualQuantity());
+                }
+
+                // Trừ đi số lượng đã import từ nestedList
+                // Reset lại totalItem và rebuild nestedList chỉ với phần còn lại
+                totalItem = 0;
+                List<List<ProductItemRowDTO>> remainingList = new ArrayList<>();
+                for (List<ProductItemRowDTO> productGroup : nestedList) {
+                    if (productGroup.isEmpty()) {
+                        continue;
+                    }
+                    int productId = productGroup.get(0).getProductId();
+                    int alreadyImported = importedMap.getOrDefault(productId, 0);
+                    int remaining = productGroup.size() - alreadyImported;
+
+                    if (remaining > 0) {
+                        // Chỉ giữ lại "remaining" dòng (bỏ bớt phần đã import)
+                        List<ProductItemRowDTO> remainingGroup = new ArrayList<>(
+                                productGroup.subList(0, remaining)
+                        );
+                        remainingList.add(remainingGroup);
+                        totalItem += remaining;
+                    }
+                    // Nếu remaining <= 0 → product này đã import đủ, không thêm vào
+                }
+                nestedList = remainingList;
+            }
+
             List<ProductItemRowDTO> list = new ArrayList<>();
-            for(List<ProductItemRowDTO> i : nestedList) list.addAll(i);
+            for (List<ProductItemRowDTO> i : nestedList) {
+                list.addAll(i);
+            }
             session.setAttribute("prCode", prCode);
             session.setAttribute("approvedAt", approvedAt);
             session.setAttribute("handler", handler);
             session.setAttribute("creator", creator);
             session.setAttribute("totalItem", totalItem);
             session.setAttribute("list", list);
-            
+
             List<List<ProductItemRowDTO>> importItems = nestedList;
             request.setAttribute("goodReceiptId", goodReceiptId);
             request.setAttribute("importItems", importItems);
@@ -177,6 +219,7 @@ public class ImportProduct extends HttpServlet {
         GoodReceiptItemDAO gri = new GoodReceiptItemDAO();
         ProductItemDAO pi = new ProductItemDAO();
         ProductDAO productDAO = new ProductDAO();
+        StockMovementDAO stockMovementDAO = new StockMovementDAO();
 
         Map<Integer, List<ProductItemRowDTO>> a = new HashMap<>();
         // set thành từng list product serial để insert vào cùng good_receipt_item
@@ -213,6 +256,14 @@ public class ImportProduct extends HttpServlet {
                 productItem.setStatus("AVAILABLE");
                 pi.insertProductItem(productItem);
             }
+
+            // insert stock_movement
+            StockMovement stockMovement = new StockMovement();
+            stockMovement.setProductId(product.getProductId());
+            stockMovement.setQuantity(val.size());
+            stockMovement.setType("INCREASED");
+            stockMovement.setReference_type("IMPORT");
+            stockMovementDAO.insertStockMovement(stockMovement);
         }
 
         // update good_receipt
@@ -225,12 +276,18 @@ public class ImportProduct extends HttpServlet {
         List<PurchaseItem> purchaseItems = purchaseItemDAO.getItemsByPurchaseRequestId(purchaseRequest.getId());
         List<GoodReceiptItem> goodReceiptItems = gri.getItemsByGoodReceiptId(goodReceiptId);
         if (status.equals("NEW")) {
-            if (isCompleted(purchaseItems, goodReceiptItems)) goodReceipt.setStatus("COMPLETED");
-            else goodReceipt.setStatus("INCOMPLETED");
-        } else{
-            if (isCompleted(purchaseItems, goodReceiptItems)) goodReceipt.setStatus("COMPLETED");
+            if (isCompleted(purchaseItems, goodReceiptItems)) {
+                goodReceipt.setStatus("COMPLETED");
+            } else {
+                goodReceipt.setStatus("INCOMPLETED");
+            }
+        } else {
+            if (isCompleted(purchaseItems, goodReceiptItems)) {
+                goodReceipt.setStatus("COMPLETED");
+            }
         }
         gr.updateGoodReceipt(goodReceipt);
+
     }
 
     private boolean isCompleted(List<PurchaseItem> purchaseItems, List<GoodReceiptItem> goodReceiptItems) {
@@ -272,8 +329,8 @@ public class ImportProduct extends HttpServlet {
                 importList.get(i).setSerial(serials[i]);
             }
         }
-                
-         Map<Integer, List<ProductItemRowDTO>> a = new HashMap<>();
+
+        Map<Integer, List<ProductItemRowDTO>> a = new HashMap<>();
         // set thành từng list product serial để insert vào cùng good_receipt_item
         for (ProductItemRowDTO i : importList) {
             int productId = i.getProductId();
@@ -284,13 +341,13 @@ public class ImportProduct extends HttpServlet {
                 a.get(productId).add(i);
             }
         }
-        
+
         List<List<ProductItemRowDTO>> list = new ArrayList<>();
-        
+
         for (Map.Entry<Integer, List<ProductItemRowDTO>> entry : a.entrySet()) {
             list.add(entry.getValue());
         }
-        
+
         return list;
     }
 

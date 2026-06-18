@@ -44,7 +44,7 @@ public class CreatePurchaseRequest extends HttpServlet {
             throws ServletException, IOException {
         int salesmanId = Integer.parseInt(request.getParameter("salesmanId"));
         String note = request.getParameter("note");
-
+        try{
         PurchaseRequest p = new PurchaseRequest();
         p.setCreatedBy(salesmanId);
         p.setNote(note);
@@ -80,6 +80,11 @@ public class CreatePurchaseRequest extends HttpServlet {
                 return;
             }
             i++;
+        }
+        }catch(Exception ex){
+            request.setAttribute("message", ex.getMessage());
+            request.getRequestDispatcher("WEB-INF/view/purchaseRequest/createPurchaseRequest.jsp").forward(request, response);
+            return;
         }
         request.getSession().setAttribute("message", "Create a purchase request successfully! Wait for the confirmation by manager!");
         response.sendRedirect("purchaseRequestList");

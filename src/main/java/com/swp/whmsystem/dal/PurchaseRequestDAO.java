@@ -97,11 +97,12 @@ public class PurchaseRequestDAO {
     }
 
     public boolean insertPurchaseRequest(PurchaseRequest request) {
-        String sql = "insert into purchase_requests (createdby, note) values (?, ?)";
+        String sql = "insert into purchase_requests (createdby, note, supplierid) values (?, ?, ?)";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, request.getCreatedBy());
             preparedStatement.setString(2, request.getNote());
+            preparedStatement.setInt(3, 1); // request thêm supplier_id
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);

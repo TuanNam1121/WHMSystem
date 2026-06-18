@@ -49,7 +49,7 @@ public class GoodReceiptDAO {
     }
     
     public List<GoodReceipt> getNewAndImcompletedGoodReceiptForProcessor(int processorId) {
-        String sql = "select * from good_receipts where processedby = ? and status in ('NEW', 'IMCOMPLETED') order by created_at desc";
+        String sql = "select * from good_receipts where processedby = ? and status in ('NEW', 'INCOMPLETED') order by created_at desc";
         List<GoodReceipt> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);

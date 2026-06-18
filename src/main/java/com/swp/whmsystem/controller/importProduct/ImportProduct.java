@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import kotlin.collections.ArrayDeque;
 
 /**
  *
@@ -177,6 +176,7 @@ public class ImportProduct extends HttpServlet {
         GoodReceiptDAO gr = new GoodReceiptDAO();
         GoodReceiptItemDAO gri = new GoodReceiptItemDAO();
         ProductItemDAO pi = new ProductItemDAO();
+        ProductDAO productDAO = new ProductDAO();
 
         Map<Integer, List<ProductItemRowDTO>> a = new HashMap<>();
         // set thành từng list product serial để insert vào cùng good_receipt_item
@@ -193,6 +193,9 @@ public class ImportProduct extends HttpServlet {
         for (Map.Entry<Integer, List<ProductItemRowDTO>> entry : a.entrySet()) {
             Integer key = entry.getKey();
             List<ProductItemRowDTO> val = entry.getValue();
+            Product product = productDAO.getProductFromId(key);
+            product.setTotalQuantity(product.getTotalQuantity() + val.size());
+            productDAO.updateProduct(product);
             GoodReceiptItem goodReceiptItem = new GoodReceiptItem();
             goodReceiptItem.setGoodReceiptId(goodReceiptId);
             goodReceiptItem.setProductId(key);

@@ -159,12 +159,17 @@
                                     <td>${i.total}</td>
                                     <td>
                                         <c:choose>
-                                            <c:when test="${i.status == 'NEW'}">
+                                            <c:when
+                                                    test="${i.status == 'NEW'}">
                                                 <span class="badges bg-lightyellow">${i.status}</span>
                                             </c:when>
-                                            <c:when test="${i.status == 'COMPLETED'}">
+                                            <c:when
+                                                    test="${i.status == 'COMPLETED'}">
                                                 <span class="badges bg-lightgreen">${i.status}</span>
                                             </c:when>
+                                            <c:otherwise>
+                                                <span class="badges bg-lightgrey">${i.status}</span>
+                                            </c:otherwise>
                                         </c:choose>
                                     </td>
                                     <td>${i.completedAt}</td>

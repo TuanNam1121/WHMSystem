@@ -34,9 +34,28 @@ public class ProductItemDAO {
         }
     }
     
-    public List<ProductItem> getAllProductItemByGoodReceiptID(int grId){
+    public List<ProductItem> getAllProductItemByGoodReceiptItemId(int goodReceiptItemId){
         List<ProductItem> list = new ArrayList<>();
         String sql = "select * from product_items where goodreceiptsitemid = ? order by imported_at desc";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, goodReceiptItemId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                ProductItem p = mapResultsetToProductItem(resultSet);
+                list.add(p);
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    public List<ProductItem> getAllProductItemByGoodReceiptID(int grId){
+        List<ProductItem> list = new ArrayList<>();
+        String sql = """
+                     select pi.id, pi.serial, pi.imported_price, pi.current_price, pi.isactive, pi.imported_at, pi.product_id, pi.goodreceiptsitemid, pi.status 
+                     from product_items pi join good_receipts_items gri on pi.goodreceiptsitemid = gri.id where gri.goodreceiptid = ? order by imported_at desc""";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, grId);

@@ -148,10 +148,6 @@
                                                 <span class="badges bg-lightyellow">${ir.status}</span>
                                             </c:when>
                                             <c:when
-                                                    test="${ir.status == 'DOING' || ir.status == 'Doing'}">
-                                                <span class="badges bg-lightpurple">${ir.status}</span>
-                                            </c:when>
-                                            <c:when
                                                     test="${ir.status == 'COMPLETED' || ir.status == 'Completed'}">
                                                 <span class="badges bg-lightgreen">${ir.status}</span>
                                             </c:when>

@@ -47,6 +47,24 @@ public class GoodReceiptDAO {
         }
         return list;
     }
+    
+    public List<GoodReceipt> getNewAndImcompletedGoodReceiptForProcessor(int processorId) {
+        String sql = "select * from good_receipts where processedby = ? and status in ('NEW', 'IMCOMPLETED') order by created_at desc";
+        List<GoodReceipt> list = new ArrayList<>();
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, processorId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    GoodReceipt p = mapResultSetToGoodReceipt(resultSet);
+                    list.add(p);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
 
     public GoodReceipt getGoodReceiptByPurchaseRequestId(int purchaseRequestId) {
         String sql = "SELECT * FROM good_receipts WHERE purchaserequestid = ? LIMIT 1";

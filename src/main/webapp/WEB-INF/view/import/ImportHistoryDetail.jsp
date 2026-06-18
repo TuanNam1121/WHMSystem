@@ -21,8 +21,8 @@
         <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
         <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
         <link rel="stylesheet" href="assets/css/style.css">
-        
-         <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
+
+        <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
 
         <link rel="stylesheet" href="assets/css/bootstrap.min.css">
 
@@ -113,9 +113,27 @@
                             <c:when test="${i.status == 'COMPLETED'}">
                                 <span class="badges bg-lightgreen">${detail.status}</span>
                             </c:when>
+                            <c:otherwise>
+                                <span class="badges bg-lightgrey">${detail.status}</span>
+                            </c:otherwise>
                         </c:choose>
                     </div>
                 </div>
+
+                <c:if test="${not empty message}">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <strong>${message}</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <% session.removeAttribute("message"); %>
+                </c:if>
+                <c:if test="${not empty error}">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <strong>${error}</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <% session.removeAttribute("error"); %>
+                </c:if>
 
                 <div class="row mb-4">
                     <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
@@ -174,8 +192,8 @@
                             <tbody>
                                 <c:forEach items="${list}" var="i">
                                     <tr>
-                                        <td>GR-${i.productName}</td>
-                                        <td>GR-${i.serial}</td>
+                                        <td>${i.productName}</td>
+                                        <td>${i.serial}</td>
                                         <td>${i.unit}</td>
                                         <td>${i.importedPrice} VND</td>
                                     </tr>

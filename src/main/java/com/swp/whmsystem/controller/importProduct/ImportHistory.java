@@ -89,7 +89,7 @@ public class ImportHistory extends HttpServlet {
         
         for(GoodReceiptItem i : gri){
             item += i.getActualQuantity();
-            List<ProductItem> pi = piDao.getAllProductItemByGoodReceiptID(i.getId());
+            List<ProductItem> pi = piDao.getAllProductItemByGoodReceiptItemId(i.getId());
             for(ProductItem p : pi) total += p.getImportPrice();
         }
         

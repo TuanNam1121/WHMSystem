@@ -39,7 +39,7 @@ public class ImportRequestList extends HttpServlet {
         }
 
         GoodReceiptDAO goodReceiptDAO = new GoodReceiptDAO();
-        List<GoodReceipt> importRequests = goodReceiptDAO.getAllGoodReceiptForProcessor(user.getId());
+        List<GoodReceipt> importRequests = goodReceiptDAO.getNewAndImcompletedGoodReceiptForProcessor(user.getId());
         request.setAttribute("importRequests", importRequests);
         request.getRequestDispatcher("WEB-INF/view/import/importRequestList.jsp").forward(request, response);
     }

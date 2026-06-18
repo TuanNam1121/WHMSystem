@@ -19,6 +19,7 @@ import com.swp.whmsystem.model.ProductItem;
 import com.swp.whmsystem.model.PurchaseItem;
 import com.swp.whmsystem.model.PurchaseRequest;
 import com.swp.whmsystem.model.User;
+import com.swp.whmsystem.utils.ProductItemValidation;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -28,9 +29,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import kotlin.collections.ArrayDeque;
 
 /**
  *
@@ -61,7 +63,7 @@ public class ImportProduct extends HttpServlet {
             String creator = user.getUserNameById(purchaseRequest.getCreatedBy());
             int totalItem = 0;
             List<PurchaseItem> purchaseList = pi.getItemsByPurchaseRequestId(prCode);
-            List<List<ProductItemRowDTO>> list = new ArrayList<>();
+            List<List<ProductItemRowDTO>> nestedList = new ArrayList<>();
             for (PurchaseItem i : purchaseList) {
                 int productId = i.getProductId();
                 int quantity = i.getRequiredQty();
@@ -73,18 +75,20 @@ public class ImportProduct extends HttpServlet {
                             price);
                     a.add(dto);
                 }
+                nestedList.add(a);
                 totalItem += quantity;
-                list.add(a);
             }
-
+            
+            List<ProductItemRowDTO> list = new ArrayList<>();
+            for(List<ProductItemRowDTO> i : nestedList) list.addAll(i);
             session.setAttribute("prCode", prCode);
             session.setAttribute("approvedAt", approvedAt);
             session.setAttribute("handler", handler);
             session.setAttribute("creator", creator);
             session.setAttribute("totalItem", totalItem);
             session.setAttribute("list", list);
-
-            List<List<ProductItemRowDTO>> importItems = (List<List<ProductItemRowDTO>>) session.getAttribute("importItems");
+            
+            List<List<ProductItemRowDTO>> importItems = nestedList;
             request.setAttribute("goodReceiptId", goodReceiptId);
             request.setAttribute("importItems", importItems);
         } catch (NumberFormatException ex) {
@@ -117,7 +121,7 @@ public class ImportProduct extends HttpServlet {
         } catch (NumberFormatException ex) {
             session.setAttribute("message", "Invalid Good Receipt ID.");
             session.setAttribute("messageType", "danger");
-            response.sendRedirect(request.getContextPath() + "/ImportProduct");
+            response.sendRedirect(request.getContextPath() + "/importRequestList");
             return;
         }
 
@@ -135,22 +139,22 @@ public class ImportProduct extends HttpServlet {
             return;
         }
         try {
-            GoodReceiptDAO grDAO = new GoodReceiptDAO();
-            GoodReceiptItemDAO griDAO = new GoodReceiptItemDAO();
-            ProductItemDAO productItemDAO = new ProductItemDAO();
+            List<ProductItemRowDTO> importItems = (List<ProductItemRowDTO>) session.getAttribute("list");
+            List<ProductItemRowDTO> filledList = filledSerial(productIds, serials, itemPrices);
+            String valid = ProductItemValidation.validateProductItem(filledList);
 
-            List<ProductItemRowDTO> filledList = toItemListDTO(productIds, serials, itemPrices);
-            if (productIds.length != serials.length) {
-                // xử lý nhập thiếu
-
+            if (!"true".equals(valid)) {
+                List<List<ProductItemRowDTO>> filledReturnedList = returnListDTO(importItems, serials);
+                request.setAttribute("goodReceiptId", goodReceiptId);
+                request.setAttribute("importItems", filledReturnedList);
+                request.setAttribute("message", valid);
+                request.getRequestDispatcher("WEB-INF/view/import/importProduct.jsp").forward(request, response);
+                return;
+            } else {
+                handleImport(goodReceiptId, supplierName, invoiceNumber, filledList);
             }
-            else{
-                
-            }
-
-            // 4. Clear session import data
+            // clear
             session.removeAttribute("list");
-            session.removeAttribute("importItems");
             session.removeAttribute("prCode");
             session.removeAttribute("approvedAt");
             session.removeAttribute("handler");
@@ -159,20 +163,132 @@ public class ImportProduct extends HttpServlet {
 
             session.setAttribute("message", "Import saved successfully! Inventory has been updated.");
             session.setAttribute("messageType", "success");
-            response.sendRedirect(request.getContextPath() + "/good-receipt-list");
-
+            request.getRequestDispatcher("WEB-INF/view/import/importProduct.jsp").forward(request, response);
         } catch (Exception ex) {
-            ex.printStackTrace();
             session.setAttribute("message", "Error saving import: " + ex.getMessage());
             session.setAttribute("messageType", "danger");
             response.sendRedirect(request.getContextPath() + "/ImportProduct?id=" + goodReceiptId);
         }
     }
-    
-    private List<ProductItemRowDTO> toItemListDTO(String[] productIds, String[] serials, String[] itemPrices){
+
+    private void handleImport(int goodReceiptId, String supplierName, String invoiceNumber, List<ProductItemRowDTO> productItemList) {
+        PurchaseRequestDAO pr = new PurchaseRequestDAO();
+        PurchaseItemDAO purchaseItemDAO = new PurchaseItemDAO();
+        GoodReceiptDAO gr = new GoodReceiptDAO();
+        GoodReceiptItemDAO gri = new GoodReceiptItemDAO();
+        ProductItemDAO pi = new ProductItemDAO();
+
+        Map<Integer, List<ProductItemRowDTO>> a = new HashMap<>();
+        // set thành từng list product serial để insert vào cùng good_receipt_item
+        for (ProductItemRowDTO i : productItemList) {
+            int productId = i.getProductId();
+            if (a.containsKey(productId)) {
+                a.get(productId).add(i);
+            } else {
+                a.put(productId, new ArrayList());
+                a.get(productId).add(i);
+            }
+        }
+
+        for (Map.Entry<Integer, List<ProductItemRowDTO>> entry : a.entrySet()) {
+            Integer key = entry.getKey();
+            List<ProductItemRowDTO> val = entry.getValue();
+            GoodReceiptItem goodReceiptItem = new GoodReceiptItem();
+            goodReceiptItem.setGoodReceiptId(goodReceiptId);
+            goodReceiptItem.setProductId(key);
+            goodReceiptItem.setActualQuantity(val.size());
+            // insert good_receipt_item
+            int goodReceiptItemId = gri.insertGoodReceiptItemAndGetId(goodReceiptItem);
+
+            // insert product_item
+            for (ProductItemRowDTO i : val) {
+                ProductItem productItem = new ProductItem();
+                productItem.setSerial(i.getSerial());
+                productItem.setProductId(i.getProductId());
+                productItem.setImportPrice(i.getImportedPrice());
+                productItem.setGoodReceiptItemId(goodReceiptItemId);
+                productItem.setStatus("AVAILABLE");
+                pi.insertProductItem(productItem);
+            }
+        }
+
+        // update good_receipt
+        GoodReceipt goodReceipt = gr.getGoodReceiptByGoodReceipId(goodReceiptId);
+        goodReceipt.setSupplierName(supplierName);
+        goodReceipt.setInvoiceNumber(invoiceNumber);
+        String status = goodReceipt.getStatus();
+
+        PurchaseRequest purchaseRequest = pr.getPurchaseRequestById(goodReceipt.getPurchaseRequestId());
+        List<PurchaseItem> purchaseItems = purchaseItemDAO.getItemsByPurchaseRequestId(purchaseRequest.getId());
+        List<GoodReceiptItem> goodReceiptItems = gri.getItemsByGoodReceiptId(goodReceiptId);
+        if (status.equals("NEW")) {
+            if (isCompleted(purchaseItems, goodReceiptItems)) goodReceipt.setStatus("COMPLETED");
+            else goodReceipt.setStatus("INCOMPLETED");
+        } else{
+            if (isCompleted(purchaseItems, goodReceiptItems)) goodReceipt.setStatus("COMPLETED");
+        }
+        gr.updateGoodReceipt(goodReceipt);
+    }
+
+    private boolean isCompleted(List<PurchaseItem> purchaseItems, List<GoodReceiptItem> goodReceiptItems) {
+        int purchaseQuantity = 0;
+        int goodReceiptQuantity = 0;
+
+        for (PurchaseItem i : purchaseItems) {
+            purchaseQuantity += i.getRequiredQty();
+        }
+        for (GoodReceiptItem i : goodReceiptItems) {
+            goodReceiptQuantity += i.getActualQuantity();
+        }
+        return purchaseQuantity == goodReceiptQuantity;
+    }
+
+    private List<ProductItemRowDTO> filledSerial(String[] productIds, String[] serials, String[] itemPrices) {
         List<ProductItemRowDTO> list = new ArrayList<>();
+        for (int i = 0; i < serials.length; ++i) {
+            String serial = serials[i];
+            String productId_raw = productIds[i];
+            String itemPrice_raw = itemPrices[i];
+
+            int productId = Integer.parseInt(productId_raw);
+            int itemPrice = Integer.parseInt(itemPrice_raw);
+            if (!"".equals(serial)) {
+                ProductItemRowDTO dto = new ProductItemRowDTO();
+                dto.setProductId(productId);
+                dto.setSerial(serial.trim());
+                dto.setImportedPrice(itemPrice);
+                list.add(dto);
+            }
+        }
+        return list;
+    }
+
+    private List<List<ProductItemRowDTO>> returnListDTO(List<ProductItemRowDTO> importList, String[] serials) {
+        for (int i = 0; i < serials.length; ++i) {
+            if (!serials[i].equals("")) {
+                importList.get(i).setSerial(serials[i]);
+            }
+        }
+                
+         Map<Integer, List<ProductItemRowDTO>> a = new HashMap<>();
+        // set thành từng list product serial để insert vào cùng good_receipt_item
+        for (ProductItemRowDTO i : importList) {
+            int productId = i.getProductId();
+            if (a.containsKey(productId)) {
+                a.get(productId).add(i);
+            } else {
+                a.put(productId, new ArrayList());
+                a.get(productId).add(i);
+            }
+        }
         
+        List<List<ProductItemRowDTO>> list = new ArrayList<>();
+        
+        for (Map.Entry<Integer, List<ProductItemRowDTO>> entry : a.entrySet()) {
+            list.add(entry.getValue());
+        }
         
         return list;
     }
+
 }

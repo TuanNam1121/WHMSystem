@@ -126,6 +126,22 @@ public class ProductItemDAO {
             throw new RuntimeException(e);
         }
     }
+    
+    public ProductItem existedSerial(int productId, String serial){
+        String sql = "SELECT * FROM wms.product_items where serial = ? and product_id = ?";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, serial);
+            preparedStatement.setInt(2, productId);
+            ResultSet rs = preparedStatement.executeQuery();
+            if(rs.next()){
+                return mapResultsetToProductItem(rs);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
 
     public static void main(String[] args) {
         ProductItemDAO dao = new ProductItemDAO();

@@ -597,8 +597,8 @@ DROP TABLE IF EXISTS `suppliers`;
 CREATE TABLE `suppliers` (
   `supplierid` int(11) NOT NULL AUTO_INCREMENT,
   `suppliername` varchar(255) NOT NULL,
-  `phone` varchar(10) DEFAULT NULL,
-  `email` varchar(50) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `email` varchar(100) NOT NULL,
   `address` text,
   `isactive` tinyint(1) DEFAULT '1',
   `createdat` datetime DEFAULT CURRENT_TIMESTAMP,

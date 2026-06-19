@@ -19,6 +19,18 @@
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .form-group input[type=number], .form-group input[type=email] {
+            border: 1px solid rgba(145, 158, 171, .32);
+            height: 40px;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 500;
+            color: #637381;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 
 <body>
@@ -55,25 +67,29 @@
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Supplier Name <span class="text-danger">*</span></label>
-                                    <input type="text" name="supplierName" class="form-control" required placeholder="Enter supplier name" value="${supplier.supplierName}">
+                                    <input type="text" name="supplierName" class="form-control" required
+                                           placeholder="Enter supplier name" value="${supplier.supplierName}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Phone <span class="text-danger">*</span></label>
-                                    <input type="number" name="phone" class="form-control" required placeholder="Enter phone number" value="${supplier.phone}">
+                                    <input type="number" name="phone" class="form-control" required
+                                           placeholder="Enter phone number" value="${supplier.phone}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Email <span class="text-danger">*</span></label>
-                                    <input type="email" name="email" class="form-control" required placeholder="Enter email address" value="${supplier.email}">
+                                    <input type="email" name="email" class="form-control" required
+                                           placeholder="Enter email address" value="${supplier.email}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Address <span class="text-danger">*</span></label>
-                                    <input type="text" name="address" class="form-control" required placeholder="Enter address" value="${supplier.address}">
+                                    <input type="text" name="address" class="form-control" required
+                                           placeholder="Enter address" value="${supplier.address}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-12">
@@ -81,11 +97,12 @@
                                     <label>Status</label>
                                     <select class="select" name="isActive">
                                         <option value="true" ${supplier.isActive() ? 'selected' : ''}>Active</option>
-                                        <option value="false" ${!supplier.isActive() ? 'selected' : ''}>Inactive</option>
+                                        <option value="false" ${!supplier.isActive() ? 'selected' : ''}>Inactive
+                                        </option>
                                     </select>
                                 </div>
                             </div>
-                            
+
                             <div class="col-lg-12">
                                 <div class="form-group text-end mt-4">
                                     <a href="listSupplier" class="btn btn-cancel me-2">Cancel</a>

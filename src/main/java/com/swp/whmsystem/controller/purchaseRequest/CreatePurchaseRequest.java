@@ -38,7 +38,7 @@ public class CreatePurchaseRequest extends HttpServlet {
         request.setAttribute("productListForPurchase", productList);
 
         SupplierDAO supplierDAO = new SupplierDAO();
-        request.setAttribute("supplierList", supplierDAO.getAllSuppliers());
+        request.setAttribute("supplierList", supplierDAO.getActiveSuppliers());
 
         request.getRequestDispatcher("WEB-INF/view/purchaseRequest/createPurchaseRequest.jsp").forward(request, response);
     }

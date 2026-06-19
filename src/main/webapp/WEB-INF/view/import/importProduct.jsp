@@ -40,7 +40,7 @@
                             <h6>Fill in serial numbers and pricing for imported products</h6>
                         </div>
                         <div class="page-btn">
-                            <a href="warehouse-import-request-list.html" class="btn btn-cancel"
+                            <a href="importRequestList" class="btn btn-cancel"
                                id="btn-back-to-list">
                                 <i class="fas fa-arrow-left me-2"></i>Back to List
                             </a>
@@ -271,7 +271,6 @@
                                                                        }
                                                                        totalFilled += filled;
                                                                    });
-
                                                                    document.getElementById('summary-serials-filled').textContent = totalFilled;
                                                                }
 

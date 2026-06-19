@@ -94,6 +94,11 @@ public class CreatePurchaseRequest extends HttpServlet {
             }
             i++;
         }
+        }catch(Exception ex){
+            request.setAttribute("message", ex.getMessage());
+            request.getRequestDispatcher("WEB-INF/view/purchaseRequest/createPurchaseRequest.jsp").forward(request, response);
+            return;
+        }
         request.getSession().setAttribute("message", "Create a purchase request successfully! Wait for the confirmation by manager!");
         response.sendRedirect("purchaseRequestList");
     }

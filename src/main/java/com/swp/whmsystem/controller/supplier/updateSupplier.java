@@ -30,6 +30,7 @@ public class updateSupplier extends HttpServlet {
                 response.sendRedirect("listSupplier");
                 return;
             }
+
             request.setAttribute("supplier", supplier);
             request.getRequestDispatcher("/WEB-INF/view/supplier/updateSupplier.jsp").forward(request, response);
         } catch (NumberFormatException e) {
@@ -73,7 +74,7 @@ public class updateSupplier extends HttpServlet {
         }
 
         if (email.length() > 50 || !UserFormValidation.isValidEmail(email)) {
-            request.setAttribute("error", "Invalid email format or email is too long.");
+            request.setAttribute("error", "Invalid email format.");
             request.setAttribute("id", String.valueOf(supplierId));
             request.getRequestDispatcher("/WEB-INF/view/supplier/updateSupplier.jsp").forward(request, response);
             return;
@@ -85,17 +86,9 @@ public class updateSupplier extends HttpServlet {
         supplier.setPhone(phone);
         supplier.setEmail(email);
         supplier.setAddress(address);
-        supplier.setActive("1".equals(isActiveStr) || "true".equalsIgnoreCase(isActiveStr));
+        supplier.setActive("true".equalsIgnoreCase(isActiveStr));
 
-        boolean isSuccess = false;
-        try {
-            isSuccess = supplierDAO.updateSupplier(supplier);
-        } catch (Exception e) {
-            request.setAttribute("error", "Database error occurred while updating supplier: " + e.getMessage());
-            request.setAttribute("id", String.valueOf(supplierId));
-            request.getRequestDispatcher("/WEB-INF/view/supplier/updateSupplier.jsp").forward(request, response);
-            return;
-        }
+        boolean isSuccess = supplierDAO.updateSupplier(supplier);
 
         if (isSuccess) {
             request.getSession().setAttribute("message", "Supplier updated successfully!");

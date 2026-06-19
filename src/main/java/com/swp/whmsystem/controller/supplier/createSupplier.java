@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import com.swp.whmsystem.utils.UserFormValidation;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name = "CreateSupplier", urlPatterns = {"/createSupplier"})
 public class createSupplier extends HttpServlet {
@@ -57,7 +58,8 @@ public class createSupplier extends HttpServlet {
         boolean isSuccess = dao.insertSupplier(supplier);
 
         if (isSuccess) {
-            request.getSession().setAttribute("message", "Supplier added successfully!");
+            HttpSession session = request.getSession();
+            session.setAttribute("message", "Supplier added successfully!");
             response.sendRedirect("listSupplier");
         } else {
             request.setAttribute("error", "Failed to add supplier. Please try again.");

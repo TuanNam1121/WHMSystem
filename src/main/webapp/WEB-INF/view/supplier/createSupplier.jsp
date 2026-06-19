@@ -54,28 +54,32 @@
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Supplier Name <span class="text-danger">*</span></label>
-                                    <input type="text" name="supplierName" class="form-control" required placeholder="Enter supplier name">
+                                    <input type="text" name="supplierName" class="form-control" required
+                                           placeholder="Enter supplier name">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Phone <span class="text-danger">*</span></label>
-                                    <input type="number" name="phone" class="form-control" required placeholder="Enter phone number">
+                                    <input type="number" name="phone" class="form-control" required
+                                           placeholder="Enter phone number">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Email <span class="text-danger">*</span></label>
-                                    <input type="email" name="email" class="form-control" required placeholder="Enter email address">
+                                    <input type="email" name="email" class="form-control" required
+                                           placeholder="Enter email address">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Address <span class="text-danger">*</span></label>
-                                    <input type="text" name="address" class="form-control" required placeholder="Enter address">
+                                    <input type="text" name="address" class="form-control" required
+                                           placeholder="Enter address">
                                 </div>
                             </div>
-                            
+
                             <div class="col-lg-12">
                                 <div class="form-group text-end mt-4">
                                     <a href="listSupplier" class="btn btn-cancel me-2">Cancel</a>

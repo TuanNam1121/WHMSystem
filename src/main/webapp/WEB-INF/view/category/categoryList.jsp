@@ -52,35 +52,8 @@
 
             <div class="card">
                 <div class="card-body">
-                    <div class="table-top">
-                        <div class="search-set">
-                            <div class="search-path">
-                                <a class="btn btn-filter" id="filter_search">
-                                    <img src="assets/img/icons/filter.svg" alt="img">
-                                    <span><img src="assets/img/icons/closes.svg" alt="img"></span>
-                                </a>
-                            </div>
-                            <div class="search-input">
-                                <a class="btn btn-searchset"><img src="assets/img/icons/search-white.svg" alt="img"></a>
-                            </div>
-                        </div>
-                        <div class="wordset">
-                            <ul>
-                                <li>
-                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img
-                                            src="assets/img/icons/pdf.svg" alt="img"></a>
-                                </li>
-                                <li>
-                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img
-                                            src="assets/img/icons/excel.svg" alt="img"></a>
-                                </li>
-                                <li>
-                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img
-                                            src="assets/img/icons/printer.svg" alt="img"></a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                    <form action="categoryList" method="get">
+
 
                     <c:if test="${not empty sessionScope.error}">
                         <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -89,10 +62,12 @@
                         </div>
                         <% session.removeAttribute("error"); %>
                     </c:if>
-                    <form action="categoryList" method="get">
-                        <div class="card" id="filter_inputs">
-                            <div class="card-body pb-0">
-                                <div class="row">
+                    <div class="row">
+                        <div class="col-lg-3 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <input type="text" name="keyword" class="form-control" value="${keywordStr}" placeholder="Search...">
+                                        </div>
+                                    </div>
                                     <div class="col-lg-2 col-sm-6 col-12">
                                         <div class="form-group">
                                             <select class="select" name="categoryId">
@@ -132,21 +107,12 @@
                                             </button>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
+                    </div>
                     </form>
                     <div class="table-responsive">
-                        <table class="table  datanew">
+                        <table class="table">
                             <thead>
                             <tr>
-                                <th>
-                                    <label class="checkboxs">
-                                        <input type="checkbox" id="select-all">
-                                        <span class="checkmarks"></span>
-                                    </label>
-                                </th>
                                 <th>Category name</th>
                                 <th>Description</th>
                                 <th>Active</th>
@@ -157,12 +123,6 @@
 
                             <c:forEach items="${sessionScope.searchedCategoryList}" var="c">
                                 <tr>
-                                    <td>
-                                        <label class="checkboxs">
-                                            <input type="checkbox">
-                                            <span class="checkmarks"></span>
-                                        </label>
-                                    </td>
                                     <td>
                                         <a href="javascript:void(0);">${c.name}</a>
                                     </td>
@@ -178,6 +138,30 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Pagination -->
+                    <c:if test="${totalPages > 0}">
+                        <div class="row mt-4">
+                            <div class="col-sm-12 col-md-12">
+                                <div class="dataTables_paginate paging_simple_numbers">
+                                    <ul class="pagination justify-content-end">
+                                        <li class="paginate_button page-item previous ${currentPage == 1 ? 'disabled' : ''}">
+                                            <a href="categoryList?page=${currentPage - 1}&categoryId=${categoryIdStr}&active=${activeStr}&sortBy=${sortByStr}&keyword=${keywordStr}" class="page-link">Previous</a>
+                                        </li>
+                                        <c:forEach begin="1" end="${totalPages}" var="i">
+                                            <li class="paginate_button page-item ${currentPage == i ? 'active' : ''}">
+                                                <a href="categoryList?page=${i}&categoryId=${categoryIdStr}&active=${activeStr}&sortBy=${sortByStr}&keyword=${keywordStr}" class="page-link">${i}</a>
+                                            </li>
+                                        </c:forEach>
+                                        <li class="paginate_button page-item next ${currentPage == totalPages ? 'disabled' : ''}">
+                                            <a href="categoryList?page=${currentPage + 1}&categoryId=${categoryIdStr}&active=${activeStr}&sortBy=${sortByStr}&keyword=${keywordStr}" class="page-link">Next</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </c:if>
+
                 </div>
             </div>
 

@@ -145,7 +145,44 @@ public class CategoryDAO {
 //        return false;
 //    }
 
-    public List<Category> searchCategory(int categoryId, int active, String sortBy) {
+    public int getTotalCategory(int categoryId, int active, String keyword) {
+        StringBuilder sql = new StringBuilder(
+                "select count(*) from categories c " +
+                        "where 1=1"
+        );
+        List<String> parameter = new ArrayList<>();
+
+        if (categoryId != -1) {
+            sql.append(" and categoryid = ?");
+            parameter.add(String.valueOf(categoryId));
+        }
+
+        if (active != -1) {
+            sql.append(" and isactive = ?");
+            parameter.add(String.valueOf(active));
+        }
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" and name like ?");
+            parameter.add("%" + keyword.trim() + "%");
+        }
+
+        try (Connection conn = DBContext.getConnection()) {
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            for (int i = 0; i < parameter.size(); i++) {
+                ps.setObject(i + 1, parameter.get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return 0;
+    }
+
+    public List<Category> searchCategory(int categoryId, int active, String keyword, String sortBy, int offset, int limit) {
         List<Category> categoryList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "select * from categories c " +
@@ -163,6 +200,11 @@ public class CategoryDAO {
         if (active != -1) {
             sql.append(" and isactive = ?");
             parameter.add(String.valueOf(active));
+        }
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" and name like ?");
+            parameter.add("%" + keyword.trim() + "%");
         }
 
         if (sortBy != null && !sortBy.trim().isEmpty()) {
@@ -183,14 +225,18 @@ public class CategoryDAO {
             }
         }
 
+        sql.append(" limit ? offset ?");
 
         try (Connection conn = DBContext.getConnection()
         ) {
             System.out.println(sql.toString());
             PreparedStatement ps = conn.prepareStatement(sql.toString());
-            for (int i = 0; i < parameter.size(); i++) {
+            int i = 0;
+            for (; i < parameter.size(); i++) {
                 ps.setObject(i + 1, parameter.get(i));
             }
+            ps.setInt(i + 1, limit);
+            ps.setInt(i + 2, offset);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 categoryList.add(mapResultSetToCategory(rs));

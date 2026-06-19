@@ -25,6 +25,20 @@
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
 
     <link rel="stylesheet" href="assets/css/style.css">
+
+    <style>
+        .product-list-card .table-top {
+            justify-content: flex-end;
+        }
+
+        .product-list-card #filter_inputs {
+            display: block !important;
+        }
+
+        .product-list-card .dataTables_filter {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
 <jsp:include page="/WEB-INF/common/header.jsp"></jsp:include>
@@ -50,42 +64,11 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card product-list-card">
                 <div class="card-body">
 
-                    <div class="table-top">
-                        <div class="search-set">
-                            <div class="search-path">
-                                <a class="btn btn-filter" id="filter_search">
-                                    <img src="assets/img/icons/filter.svg" alt="img">
-                                    <span><img src="assets/img/icons/closes.svg" alt="img"></span>
-                                </a>
-                            </div>
-                            <div class="search-input">
-                                <a class="btn btn-searchset"><img src="assets/img/icons/search-white.svg" alt="img"></a>
-                            </div>
-                        </div>
-
-
-                        <div class="wordset">
-                            <ul>
-                                <li>
-                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img
-                                            src="assets/img/icons/pdf.svg" alt="img"></a>
-                                </li>
-                                <li>
-                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img
-                                            src="assets/img/icons/excel.svg" alt="img"></a>
-                                </li>
-                                <li>
-                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img
-                                            src="assets/img/icons/printer.svg" alt="img"></a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
                     <form action="productlist" method="get">
-                        <div class="card mb-0" id="filter_inputs">
+                        <div class="card mb-0" id="filter_inputs" style="display: block !important;">
                             <div class="card-body pb-0">
                                 <div class="row">
                                     <div class="col-lg-12 col-sm-12">
@@ -99,7 +82,11 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <input type="text" name="productSku" placeholder="Product SKU">
+                                                    <select class="select" name="isActive">
+                                                        <option value="">Choose Status</option>
+                                                        <option value="1">Active</option>
+                                                        <option value="0">Inactive</option>
+                                                    </select>
                                                 </div>
                                             </div>
 

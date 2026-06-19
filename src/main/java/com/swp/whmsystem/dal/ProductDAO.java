@@ -408,7 +408,7 @@ public class ProductDAO {
         return product;
     }
 
-    public List<Product> searchProduct(String name, String sku, int categoryId, int brandId, String sortBy) {
+    public List<Product> searchProduct(String name, int categoryId, int brandId, int isActive, String sortBy) {
         List<Product> productList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "select p.* from products p "
@@ -425,11 +425,6 @@ public class ProductDAO {
             parameter.add("%" + name.trim() + "%");
         }
 
-        if (sku != null && !sku.trim().isEmpty()) {
-            sql.append(" and p.sku like ?");
-            parameter.add("%" + sku + "%");
-        }
-
         if (categoryId != -1) {
             sql.append(" and p.categoryid = ?");
             parameter.add(String.valueOf(categoryId));
@@ -438,6 +433,11 @@ public class ProductDAO {
         if (brandId != -1) {
             sql.append(" and p.brandid = ?");
             parameter.add(String.valueOf(brandId));
+        }
+
+        if (isActive != -1) {
+            sql.append(" and p.isActive = ?");
+            parameter.add(String.valueOf(isActive));
         }
 
         if (sortBy != null && !sortBy.trim().isEmpty()) {
@@ -544,7 +544,7 @@ public class ProductDAO {
 //        p1.setDescription("con mèo kêu");
 //        p1.setRom(rom.getRomById(2));
 //        dao.updateProduct(p1);
-//        List<Product> testSort = dao.searchProduct(null, null, -1, -1, "brandAZ");
+//        List<Product> testSort = dao.searchProduct(null, -1, -1, -1, "brandAZ");
 //        for (Product p2 : testSort) {
 //            System.out.println(p2);
 //        }

@@ -6,7 +6,6 @@ import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.dal.UserDAO;
 import com.swp.whmsystem.dal.GoodReceiptDAO;
 import com.swp.whmsystem.model.*;
-import jakarta.mail.Session;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

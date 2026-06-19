@@ -1,9 +1,6 @@
 
 package com.swp.whmsystem.filter;
 
-import com.swp.whmsystem.dal.UserDAO;
-import com.swp.whmsystem.model.Role;
-import com.swp.whmsystem.model.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebFilter;

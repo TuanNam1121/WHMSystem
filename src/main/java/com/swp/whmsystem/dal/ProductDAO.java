@@ -408,7 +408,8 @@ public class ProductDAO {
         return product;
     }
 
-    public List<Product> searchProduct(String name, int categoryId, int brandId, int isActive, String sortBy) {
+    public List<Product> searchProduct(String name, int categoryId, int brandId, int isActive,
+                                       String sortBy, int pageSize, int page) {
         List<Product> productList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "select p.* from products p "
@@ -416,7 +417,7 @@ public class ProductDAO {
                         + "left join brands b ON p.brandid = b.brandid "
                         + "where 1=1"
         );
-        List<String> parameter = new ArrayList<>();
+        List<Object> parameter = new ArrayList<>();
         if (name != null && !name.trim().isEmpty()) {
             sql.append(" and (p.name like ? or c.name like ? or b.name like ? or p.sku like ?)");
             parameter.add("%" + name.trim() + "%");
@@ -467,7 +468,14 @@ public class ProductDAO {
                     sql.append(" order by b.name desc");
                     break;
             }
+        } else {
+            sql.append(" order by p.productid asc");
         }
+
+        int offset = (page - 1) * pageSize;
+        sql.append(" limit ? offset ?");
+        parameter.add(pageSize);
+        parameter.add(offset);
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString());) {
             System.out.println(sql.toString());
@@ -483,6 +491,52 @@ public class ProductDAO {
             System.out.println(ex.getMessage());
         }
         return productList;
+    }
+
+    public int countProducts(String name, int categoryId, int brandId, int isActive) {
+        StringBuilder sql = new StringBuilder(
+                "select count(*) from products p "
+                        + "left join categories c ON p.categoryid = c.categoryid "
+                        + "left join brands b ON p.brandid = b.brandid "
+                        + "where 1=1"
+        );
+        List<Object> parameters = new ArrayList<>();
+
+        if (name != null && !name.trim().isEmpty()) {
+            String keyword = "%" + name.trim() + "%";
+            sql.append(" and (p.name like ? or c.name like ? or b.name like ? or p.sku like ?)");
+            parameters.add(keyword);
+            parameters.add(keyword);
+            parameters.add(keyword);
+            parameters.add(keyword);
+        }
+        if (categoryId != -1) {
+            sql.append(" and p.categoryid = ?");
+            parameters.add(categoryId);
+        }
+        if (brandId != -1) {
+            sql.append(" and p.brandid = ?");
+            parameters.add(brandId);
+        }
+        if (isActive != -1) {
+            sql.append(" and p.isActive = ?");
+            parameters.add(isActive);
+        }
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < parameters.size(); i++) {
+                ps.setObject(i + 1, parameters.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return 0;
     }
 
     private ProductItem mapFromResultSetToProductItem(ResultSet rs) throws SQLException {
@@ -544,7 +598,7 @@ public class ProductDAO {
 //        p1.setDescription("con mèo kêu");
 //        p1.setRom(rom.getRomById(2));
 //        dao.updateProduct(p1);
-//        List<Product> testSort = dao.searchProduct(null, -1, -1, -1, "brandAZ");
+//        List<Product> testSort = dao.searchProduct(null, -1, -1, -1, "brandAZ", 10, 1);
 //        for (Product p2 : testSort) {
 //            System.out.println(p2);
 //        }

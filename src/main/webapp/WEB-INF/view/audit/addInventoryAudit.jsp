@@ -57,15 +57,13 @@
                 </c:if>
                 <div class="card">
                     <div class="card-body">
-                        <div class="table-top">
-                            <div class="wordset">
+                        <div class="row mb-3 align-items-center">
+                            <div class="col-md-8">
                                 <h6>Select the products that need to be physically audited below.</h6>
                             </div>
-                            <div class="search-set">
-                                <div class="search-input">
-                                    <a class="btn btn-searchset"><img
-                                            src="assets/img/icons/search-whites.svg" alt="img"></a>
-                                </div>
+                            <div class="col-md-4">
+                                <input type="text" id="searchInput" class="form-control"
+                                       placeholder="Search products...">
                             </div>
                         </div>
                         <div class="table-responsive">
@@ -95,8 +93,8 @@
                                                 <input class="form-check-input" type="checkbox"
                                                        name="selectedProductIds"
                                                        value="${product.productId}"
-                                                       id="chk_${product.productId}"
-                                                        ${isChecked ? 'checked' : '' }>
+                                                       id="chk_${product.productId}" ${isChecked
+                                                        ? 'checked' : '' }>
                                             </div>
                                         </td>
                                         <td><span
@@ -121,7 +119,7 @@
                             <div class="col-lg-12 text-end">
                                 <a href="InventoryAuditList" class="btn btn-cancel me-2">Cancel</a>
                                 <button type="submit" name="action" value="draft"
-                                        class="btn btn-cancel me-2" style="background: #82868b;">Save as Draft
+                                        class="btn btn-cancel me-2">Save as Draft
                                 </button>
                                 <button type="submit" name="action" value="submit"
                                         class="btn btn-submit">Submit
@@ -150,8 +148,7 @@
 <script>
 
     function validateForm() {
-        var table = $('.audit-table').DataTable();
-        var checkedCount = table.$('input[name="selectedProductIds"]:checked').length;
+        var checkedCount = document.querySelectorAll('input[name="selectedProductIds"]:checked').length;
         if (checkedCount === 0) {
             Swal.fire({
                 icon: 'warning',
@@ -163,55 +160,24 @@
         return true;
     }
 
-    $(document).ready(function () {
-        var table = $('.audit-table').DataTable({
-            "bFilter": true,
-            "paging": false,
-            "info": false,
-            "sDom": 'fBt',
-            "ordering": true,
-            "language": {
-                search: ' ',
-                searchPlaceholder: "Search...",
-            },
-            initComplete: function () {
-                $('.dataTables_filter').appendTo('.search-input');
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        var filter = this.value.toLowerCase();
+        var rows = document.querySelectorAll('.audit-table tbody tr');
+
+        rows.forEach(function (row) {
+            var text = row.textContent.toLowerCase();
+            if (text.indexOf(filter) > -1) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
             }
         });
+    });
 
-        $('#auditForm').on('submit', function (e) {
-            if (!validateForm()) {
-                e.preventDefault();
-            }
-
-            var form = this;
-
-
-            table.$('input[name="selectedProductIds"]:checked').each(function () {
-
-                if (!$.contains(document, this)) {
-
-                    $(form).append(
-                        $('<input>')
-                            .attr('type', 'hidden')
-                            .attr('name', this.name)
-                            .val(this.value)
-                    );
-
-
-                    var productId = this.value;
-                    var systemQtyInput = table.$('input[name="systemQuantity_' + productId + '"]')[0];
-                    if (systemQtyInput) {
-                        $(form).append(
-                            $('<input>')
-                                .attr('type', 'hidden')
-                                .attr('name', systemQtyInput.name)
-                                .val(systemQtyInput.value)
-                        );
-                    }
-                }
-            });
-        });
+    document.getElementById('auditForm').addEventListener('submit', function (e) {
+        if (!validateForm()) {
+            e.preventDefault();
+        }
     });
 </script>
 </body>

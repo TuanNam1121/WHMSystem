@@ -38,7 +38,6 @@
                             <div class="page-header">
                                 <div class="page-title">
                                     <h4>Perform Inventory Audit</h4>
-                                    <h6>Complete details for audit request #${audit.id}</h6>
                                 </div>
                             </div>
 
@@ -168,12 +167,10 @@
 
                                         <div class="row mt-4">
                                             <div class="col-lg-12">
-                                                <button type="submit" class="btn btn-submit me-2"
-                                                    style="background: #ff9f43; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: 600;">
+                                                <button type="submit" class="btn btn-submit me-2">
                                                     Submit Audit
                                                 </button>
-                                                <a href="InventoryAuditList" class="btn btn-cancel"
-                                                    style="background: #637381; color: white; padding: 10px 20px; border-radius: 5px; font-weight: 600;">Cancel</a>
+                                                <a href="InventoryAuditList" class="btn btn-cancel">Cancel</a>
                                             </div>
                                         </div>
                                     </div>

@@ -37,13 +37,36 @@ public class ModelList extends HttpServlet {
         } catch (NumberFormatException ignored) {
         }
 
-        List<Model> models = modelDao.getModelsByFilter(brandId, status);
+        String search = request.getParameter("search");
+        
+        int page = 1;
+        int pageSize = 10;
+        
+        String pageParam = request.getParameter("page");
+        if (pageParam != null) {
+            try {
+                page = Integer.parseInt(pageParam);
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
+        }
+        
+        int offset = (page - 1) * pageSize;
+        
+        List<Model> models = modelDao.getModelsByFilter(brandId, status, search, offset, pageSize);
         List<Brand> brands = brandDao.getAllBrand();
+        
+        int totalRecords = modelDao.countModelsByFilter(brandId, status, search);
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
         request.setAttribute("models", models);
         request.setAttribute("brands", brands);
         request.setAttribute("status", status);
         request.setAttribute("selectedBrandId", brandId);
+        request.setAttribute("search", search);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("pageSize", pageSize);
         request.getRequestDispatcher("WEB-INF/view/product/modelList.jsp").forward(request, response);
     }
 }

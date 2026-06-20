@@ -65,25 +65,30 @@ public class ChipDAO {
         return null;
     }
 
-    public List<Chip> getChipsByFilter(String status) {
+    public List<Chip> getChipsByFilter(String status, String keyword, int offset, int limit) {
         List<Chip> list = new ArrayList<>();
 
-        StringBuilder sql = new StringBuilder("SELECT * FROM chips");
-        boolean hasWhere = false;
+        StringBuilder sql = new StringBuilder("SELECT * FROM chips WHERE 1=1");
 
         if ("active".equalsIgnoreCase(status)) {
-            sql.append(hasWhere ? " AND" : " WHERE");
-            sql.append(" isactive = 1");
-            hasWhere = true;
+            sql.append(" AND isactive = 1");
         } else if ("inactive".equalsIgnoreCase(status)) {
-            sql.append(hasWhere ? " AND" : " WHERE");
-            sql.append(" isactive = 0");
-            hasWhere = true;
+            sql.append(" AND isactive = 0");
         }
 
-        sql.append(" ORDER BY id");
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND name LIKE ?");
+        }
+
+        sql.append(" ORDER BY id LIMIT ? OFFSET ?");
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                ps.setString(paramIndex++, "%" + keyword.trim() + "%");
+            }
+            ps.setInt(paramIndex++, limit);
+            ps.setInt(paramIndex, offset);
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -94,6 +99,35 @@ public class ChipDAO {
         }
 
         return list;
+    }
+    
+    public int countChipsByFilter(String status, String keyword) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM chips WHERE 1=1");
+
+        if ("active".equalsIgnoreCase(status)) {
+            sql.append(" AND isactive = 1");
+        } else if ("inactive".equalsIgnoreCase(status)) {
+            sql.append(" AND isactive = 0");
+        }
+        
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND name LIKE ?");
+        }
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                ps.setString(1, "%" + keyword.trim() + "%");
+            }
+            
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return 0;
     }
 
 

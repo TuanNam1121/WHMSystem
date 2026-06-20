@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "ReviewInventoryAudit", urlPatterns = {"/ReviewInventoryAudit"})
+@WebServlet(name = "ReviewInventoryAudit", urlPatterns = { "/ReviewInventoryAudit" })
 public class ReviewInventoryAudit extends HttpServlet {
     private InventoryAuditDAO inventoryAuditDAO;
 
@@ -27,7 +27,8 @@ public class ReviewInventoryAudit extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.APPROVE_INVENTORY_AUDIT, "Only managers with approve audit permission are authorized to review inventory audits.")) {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.APPROVE_INVENTORY_AUDIT,
+                "Only managers with approve audit permission are authorized to review inventory audits.")) {
             return;
         }
 
@@ -60,7 +61,8 @@ public class ReviewInventoryAudit extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.APPROVE_INVENTORY_AUDIT, "Only managers with approve audit permission are authorized to review inventory audits.")) {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.APPROVE_INVENTORY_AUDIT,
+                "Only managers with approve audit permission are authorized to review inventory audits.")) {
             return;
         }
 

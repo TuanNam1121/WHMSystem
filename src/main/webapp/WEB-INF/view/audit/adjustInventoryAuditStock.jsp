@@ -130,24 +130,6 @@
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 <script src="assets/js/script.js"></script>
 
-<script>
-    $(document).ready(function () {
-        $("#adjustStockForm").on("submit", function (e) {
-            e.preventDefault();
-            Swal.fire({
-                title: "Submit Serials?",
-                text: "This will submit the serials and the audit to the manager.",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, submit it!"
-            }).then(function (result) {
-                if (result.isConfirmed) document.getElementById("adjustStockForm").submit();
-            });
-        });
-    });
-</script>
 </body>
 
 </html>

@@ -103,7 +103,6 @@
 
             <form id="reviewAuditForm" action="ReviewInventoryAudit" method="POST">
                 <input type="hidden" name="id" value="${audit.id}"/>
-                <input type="hidden" name="action" id="auditAction" value=""/>
 
                 <div class="card mt-4">
                     <div class="card-body">
@@ -162,11 +161,11 @@
 
                         <div class="row mt-4">
                             <div class="col-lg-12">
-                                <button type="button" class="btn btn-submit me-2 btn-approve"
+                                <button type="submit" name="action" value="approve" class="btn btn-submit me-2 btn-approve"
                                         style="background: #28c76f; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: 600;">
                                     Approve Audit
                                 </button>
-                                <button type="button" class="btn btn-cancel me-2 btn-decline"
+                                <button type="submit" name="action" value="decline" class="btn btn-cancel me-2 btn-decline"
                                         style="background: #ea5455; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: 600;">
                                     Decline
                                 </button>
@@ -192,45 +191,7 @@
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 <script src="assets/js/script.js"></script>
 
-<script>
-    $(document).ready(function () {
-        function confirmAction(config) {
-            Swal.fire({
-                icon: "warning",
-                showCancelButton: true,
-                title: config.title,
-                text: config.text,
-                confirmButtonColor: config.confirmColor,
-                confirmButtonText: config.confirmText
-            }).then(function (result) {
-                if (result.isConfirmed) {
-                    $("#auditAction").val(config.action);
-                    $("#reviewAuditForm").submit();
-                }
-            });
-        }
 
-        $(".btn-approve").on("click", function () {
-            confirmAction({
-                title: "Approve Audit?",
-                text: "This will complete this audit.",
-                confirmColor: "#28c76f",
-                confirmText: "Yes, approve it!",
-                action: "approve"
-            });
-        });
-
-        $(".btn-decline").on("click", function () {
-            confirmAction({
-                title: "Reject Audit?",
-                text: "This will permanently reject this audit",
-                confirmColor: "#ea5455",
-                confirmText: "Yes, reject it!",
-                action: "decline"
-            });
-        });
-    });
-</script>
 </body>
 
 </html>

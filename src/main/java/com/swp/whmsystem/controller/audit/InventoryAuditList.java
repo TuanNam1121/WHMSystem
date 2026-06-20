@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "InventoryAuditList", urlPatterns = {"/InventoryAuditList"})
+@WebServlet(name = "InventoryAuditList", urlPatterns = { "/InventoryAuditList" })
 public class InventoryAuditList extends HttpServlet {
     private InventoryAuditDAO inventoryAuditDAO;
 
@@ -24,15 +24,16 @@ public class InventoryAuditList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_INVENTORY_AUDIT, "You are not authorized to view the inventory audits.")) {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_INVENTORY_AUDIT,
+                "You are not authorized to view the inventory audits.")) {
             return;
         }
 
         String keyword = request.getParameter("keyword");
-        
+
         int page = 1;
         int pageSize = 10;
-        
+
         String pageParam = request.getParameter("page");
         if (pageParam != null) {
             try {
@@ -41,7 +42,7 @@ public class InventoryAuditList extends HttpServlet {
                 page = 1;
             }
         }
-        
+
         int offset = (page - 1) * pageSize;
 
         List<InventoryAudit> inventoryAudits = inventoryAuditDAO.getInventoryAuditsByFilter(keyword, offset, pageSize);

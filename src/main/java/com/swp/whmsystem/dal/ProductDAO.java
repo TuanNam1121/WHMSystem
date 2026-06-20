@@ -572,6 +572,119 @@ public class ProductDAO {
         return productItemList;
     }
 
+    public List<ProductItem> searchProductItems(int productId, String serial, String date,
+                                                String status, String sortBy, int pageSize, int page) {
+        List<ProductItem> productItemList = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+                "select pi.* from product_items pi "
+                        + "where pi.product_id = ?"
+        );
+        List<Object> parameter = new ArrayList<>();
+        parameter.add(productId);
+
+        if (serial != null && !serial.trim().isEmpty()) {
+            sql.append(" and pi.serial like ?");
+            parameter.add("%" + serial.trim() + "%");
+        }
+
+        if (date != null && !date.trim().isEmpty()) {
+            sql.append(" and date_format(pi.imported_at, '%d/%m/%Y') = ?");
+            parameter.add(date.trim());
+        }
+
+        if (status != null && !status.trim().isEmpty()) {
+            sql.append(" and pi.status = ?");
+            parameter.add(status);
+        }
+
+        if (sortBy != null && !sortBy.trim().isEmpty()) {
+            switch (sortBy) {
+                case "serialAZ":
+                    sql.append(" order by pi.serial asc");
+                    break;
+                case "serialZA":
+                    sql.append(" order by pi.serial desc");
+                    break;
+                case "dateNewest":
+                    sql.append(" order by pi.imported_at desc");
+                    break;
+                case "dateOldest":
+                    sql.append(" order by pi.imported_at asc");
+                    break;
+                case "importPriceLow":
+                    sql.append(" order by pi.imported_price asc");
+                    break;
+                case "importPriceHigh":
+                    sql.append(" order by pi.imported_price desc");
+                    break;
+                case "exportPriceLow":
+                    sql.append(" order by pi.export_price asc");
+                    break;
+                case "exportPriceHigh":
+                    sql.append(" order by pi.export_price desc");
+                    break;
+            }
+        } else {
+            sql.append(" order by pi.id asc");
+        }
+
+        int offset = (page - 1) * pageSize;
+        sql.append(" limit ? offset ?");
+        parameter.add(pageSize);
+        parameter.add(offset);
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString());) {
+            System.out.println(sql.toString());
+            for (int i = 0; i < parameter.size(); i++) {
+                ps.setObject(i + 1, parameter.get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                productItemList.add(mapFromResultSetToProductItem(rs));
+            }
+            return productItemList;
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return productItemList;
+    }
+
+    public int countProductItems(int productId, String serial, String date, String status) {
+        StringBuilder sql = new StringBuilder(
+                "select count(*) from product_items pi "
+                        + "where pi.product_id = ?"
+        );
+        List<Object> parameters = new ArrayList<>();
+        parameters.add(productId);
+
+        if (serial != null && !serial.trim().isEmpty()) {
+            sql.append(" and pi.serial like ?");
+            parameters.add("%" + serial.trim() + "%");
+        }
+        if (date != null && !date.trim().isEmpty()) {
+            sql.append(" and date_format(pi.imported_at, '%d/%m/%Y') = ?");
+            parameters.add(date.trim());
+        }
+        if (status != null && !status.trim().isEmpty()) {
+            sql.append(" and pi.status = ?");
+            parameters.add(status);
+        }
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < parameters.size(); i++) {
+                ps.setObject(i + 1, parameters.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return 0;
+    }
+
     public String getSKUFromId(int id) {
         String SKU = "";
         String sql = "select sku from products where productid = ?";

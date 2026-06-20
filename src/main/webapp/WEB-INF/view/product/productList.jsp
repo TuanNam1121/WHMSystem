@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
 
-    <link rel="stylesheet" href="assets/css/style.css?v=20260621-product-pagination">
+    <link rel="stylesheet" href="assets/css/style.css?v=20260621-table-pagination">
 
     <style>
         .product-list-card .table-top {
@@ -81,8 +81,12 @@
                                                 <div class="form-group">
                                                     <select class="select" name="isActive">
                                                         <option value="">Choose Status</option>
-                                                        <option value="1" ${param.isActive == '1' ? 'selected' : ''}>Active</option>
-                                                        <option value="0" ${param.isActive == '0' ? 'selected' : ''}>Inactive</option>
+                                                        <option value="1" ${param.isActive == '1' ? 'selected' : ''}>
+                                                            Active
+                                                        </option>
+                                                        <option value="0" ${param.isActive == '0' ? 'selected' : ''}>
+                                                            Inactive
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -93,7 +97,7 @@
                                                         <option value="">Choose Category</option>
                                                         <c:forEach items="${sessionScope.categoryList}" var="c">
                                                             <option value="${c.categoryId}"
-                                                                    ${param.categoryId == c.categoryId ? 'selected' : ''}>
+                                                                ${param.categoryId == c.categoryId ? 'selected' : ''}>
                                                                     ${c.name}
                                                             </option>
                                                         </c:forEach>
@@ -107,7 +111,7 @@
                                                         <option value="">Choose Brand</option>
                                                         <c:forEach items="${sessionScope.brandList}" var="b">
                                                             <option value="${b.id}"
-                                                                    ${param.brandId == b.id ? 'selected' : ''}>
+                                                                ${param.brandId == b.id ? 'selected' : ''}>
                                                                     ${b.name}
                                                             </option>
                                                         </c:forEach>
@@ -119,14 +123,30 @@
                                                 <div class="form-group">
                                                     <select class="select" name="sortBy">
                                                         <option value="">Sort By</option>
-                                                        <option value="nameAZ" ${param.sortBy == 'nameAZ' ? 'selected' : ''}>Name A-Z</option>
-                                                        <option value="nameZA" ${param.sortBy == 'nameZA' ? 'selected' : ''}>Name Z-A</option>
-                                                        <option value="skuAZ" ${param.sortBy == 'skuAZ' ? 'selected' : ''}>SKU A-Z</option>
-                                                        <option value="skuZA" ${param.sortBy == 'skuZA' ? 'selected' : ''}>SKU Z-A</option>
-                                                        <option value="cateAZ" ${param.sortBy == 'cateAZ' ? 'selected' : ''}>Category A-Z</option>
-                                                        <option value="cateZA" ${param.sortBy == 'cateZA' ? 'selected' : ''}>Category Z-A</option>
-                                                        <option value="brandAZ" ${param.sortBy == 'brandAZ' ? 'selected' : ''}>Brand A-Z</option>
-                                                        <option value="brandZA" ${param.sortBy == 'brandZA' ? 'selected' : ''}>Brand Z-A</option>
+                                                        <option value="nameAZ" ${param.sortBy == 'nameAZ' ? 'selected' : ''}>
+                                                            Name A-Z
+                                                        </option>
+                                                        <option value="nameZA" ${param.sortBy == 'nameZA' ? 'selected' : ''}>
+                                                            Name Z-A
+                                                        </option>
+                                                        <option value="skuAZ" ${param.sortBy == 'skuAZ' ? 'selected' : ''}>
+                                                            SKU A-Z
+                                                        </option>
+                                                        <option value="skuZA" ${param.sortBy == 'skuZA' ? 'selected' : ''}>
+                                                            SKU Z-A
+                                                        </option>
+                                                        <option value="cateAZ" ${param.sortBy == 'cateAZ' ? 'selected' : ''}>
+                                                            Category A-Z
+                                                        </option>
+                                                        <option value="cateZA" ${param.sortBy == 'cateZA' ? 'selected' : ''}>
+                                                            Category Z-A
+                                                        </option>
+                                                        <option value="brandAZ" ${param.sortBy == 'brandAZ' ? 'selected' : ''}>
+                                                            Brand A-Z
+                                                        </option>
+                                                        <option value="brandZA" ${param.sortBy == 'brandZA' ? 'selected' : ''}>
+                                                            Brand Z-A
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -147,114 +167,51 @@
 
                         <div class="table-responsive">
                             <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Product</th>
-                                <th>SKU</th>
-                                <th>Category</th>
-                                <th>Brand</th>
-                                <th>Qty</th>
-                                <th>Active</th>
-                                <th>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            <c:forEach items="${sessionScope.productList}" var="p">
+                                <thead>
                                 <tr>
-                                    <td>${p.productId}</td>
-                                    <td class="productimgname">
-                                        <a href="javascript:void(0);" class="product-img">
-                                            <img src="${p.imgUrl}" alt="product">
-                                        </a>
-                                        <p>${p.name}</p>
-                                    </td>
-                                    <td>${p.sku}</td>
-                                    <td>${p.category.name}</td>
-                                    <td>${p.brand.name}</td>
-                                    <td>${p.totalQuantity}</td>
-                                    <td>${p.isActive ? "Active" : "Inactive"}</td>
-                                    <td>
-
-                                        <a class="me-3" href="productDetails?productId=${p.productId}">
-                                            <img src="assets/img/icons/eye.svg" alt="img">
-                                        </a>
-                                        <a class="me-3" href="UpdateProduct?productid=${p.productId}">
-                                            <img src="assets/img/icons/edit.svg" alt="img">
-                                        </a>
-                                    </td>
+                                    <th>Id</th>
+                                    <th>Product</th>
+                                    <th>SKU</th>
+                                    <th>Category</th>
+                                    <th>Brand</th>
+                                    <th>Qty</th>
+                                    <th>Active</th>
+                                    <th>Action</th>
                                 </tr>
-                            </c:forEach>
+                                </thead>
+                                <tbody>
 
-                            </tbody>
+                                <c:forEach items="${sessionScope.productList}" var="p">
+                                    <tr>
+                                        <td>${p.productId}</td>
+                                        <td class="productimgname">
+                                            <a href="javascript:void(0);" class="product-img">
+                                                <img src="${p.imgUrl}" alt="product">
+                                            </a>
+                                            <p>${p.name}</p>
+                                        </td>
+                                        <td>${p.sku}</td>
+                                        <td>${p.category.name}</td>
+                                        <td>${p.brand.name}</td>
+                                        <td>${p.totalQuantity}</td>
+                                        <td>${p.isActive ? "Active" : "Inactive"}</td>
+                                        <td>
+
+                                            <a class="me-3" href="productDetails?productId=${p.productId}">
+                                                <img src="assets/img/icons/eye.svg" alt="img">
+                                            </a>
+                                            <a class="me-3" href="UpdateProduct?productid=${p.productId}">
+                                                <img src="assets/img/icons/edit.svg" alt="img">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+
+                                </tbody>
                             </table>
                         </div>
 
-                        <div class="product-table-footer">
-                            <div class="product-page-size">
-                                <label for="pageSize">Show per page:</label>
-                                <select id="pageSize" name="pageSize"
-                                        class="form-select form-select-sm product-page-size-select"
-                                        onchange="this.form.submit()">
-                                    <option value="10" ${pageSize == 10 ? "selected" : ""}>10</option>
-                                    <option value="25" ${pageSize == 25 ? "selected" : ""}>25</option>
-                                    <option value="50" ${pageSize == 50 ? "selected" : ""}>50</option>
-                                    <option value="100" ${pageSize == 100 ? "selected" : ""}>100</option>
-                                </select>
-                            </div>
-
-                            <nav class="product-pagination" aria-label="Product pages">
-                                <ul class="pagination mb-4">
-                                    <li class="page-item ${page == 1 ? 'disabled' : ''}">
-                                        <button class="page-link" type="submit" name="page" value="${page - 1}"
-                                                ${page == 1 ? 'disabled' : ''} aria-label="Previous page">«</button>
-                                    </li>
-
-                                    <c:choose>
-                                        <c:when test="${totalPages <= 5}">
-                                            <c:forEach begin="1" end="${totalPages}" var="pageNumber">
-                                                <li class="page-item ${page == pageNumber ? 'active' : ''}">
-                                                    <button class="page-link" type="submit" name="page"
-                                                            value="${pageNumber}">
-                                                            ${pageNumber}
-                                                    </button>
-                                                </li>
-                                            </c:forEach>
-                                        </c:when>
-
-                                        <c:otherwise>
-                                            <c:forEach begin="1" end="3" var="pageNumber">
-                                                <li class="page-item ${page == pageNumber ? 'active' : ''}">
-                                                    <button class="page-link" type="submit" name="page"
-                                                            value="${pageNumber}">
-                                                            ${pageNumber}
-                                                    </button>
-                                                </li>
-                                            </c:forEach>
-
-                                            <li class="page-item disabled">
-                                                <span class="page-link">...</span>
-                                            </li>
-
-                                            <c:forEach begin="${totalPages - 1}" end="${totalPages}" var="pageNumber">
-                                                <li class="page-item ${page == pageNumber ? 'active' : ''}">
-                                                    <button class="page-link" type="submit" name="page"
-                                                            value="${pageNumber}">
-                                                            ${pageNumber}
-                                                    </button>
-                                                </li>
-                                            </c:forEach>
-                                        </c:otherwise>
-                                    </c:choose>
-
-                                    <li class="page-item ${page == totalPages ? 'disabled' : ''}">
-                                        <button class="page-link" type="submit" name="page" value="${page + 1}"
-                                                ${page == totalPages ? 'disabled' : ''} aria-label="Next page">»</button>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
+                        <jsp:include page="/WEB-INF/common/pagination.jsp"/>
                     </form>
                 </div>
             </div>

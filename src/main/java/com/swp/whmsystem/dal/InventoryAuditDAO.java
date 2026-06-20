@@ -326,8 +326,6 @@ public class InventoryAuditDAO {
         }
     }
 
-}
-
     public boolean refreshSystemQuantities(int auditId) {
         String sql = "UPDATE inventory_audit_items i " +
                 "JOIN products p ON i.productid = p.productid " +

@@ -18,7 +18,6 @@ public class InventoryAuditItemSerialDAO {
         item.setSerial(rs.getString("serial"));
         item.setType(rs.getString("type"));
         return item;
-        return item;
     }
 
     public List<InventoryAuditItemSerial> getSerialsByAuditItemId(int auditItemId) {
@@ -43,7 +42,7 @@ public class InventoryAuditItemSerialDAO {
             ps.setInt(1, serial.getAuditItemId());
             ps.setString(2, serial.getSerial());
             ps.setString(3, serial.getType());
-            
+
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);

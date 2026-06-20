@@ -39,7 +39,7 @@
                     <div class="page-title">
                         <h4>Inventory Audit List</h4>
                     </div>
-                    <c:if test="${sessionScope.userPermissions.contains('CREATE_INVENTORY_AUDIT')}">
+                    <c:if test="${sessionScope.userPermissions.contains('CREATE_INVENTORY_AUDIT') && !hasActiveAudit}">
                         <div class="page-btn">
                             <a href="AddInventoryAudit" class="btn btn-added">
                                 <img src="assets/img/icons/plus.svg" alt="img" class="mr-2">Add New Audit

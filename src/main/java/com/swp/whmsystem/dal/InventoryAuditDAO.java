@@ -283,7 +283,6 @@ public class InventoryAuditDAO {
                 ps.executeBatch();
             }
 
-            // Process serials
             for (InventoryAuditItem item : items) {
                 if (item.getPhysicalQuantity() != item.getSystemQuantity()) {
                     String getSerialsSql = "SELECT * FROM inventory_audit_item_serials WHERE audit_item_id = ?";
@@ -339,10 +338,11 @@ public class InventoryAuditDAO {
         }
     }
 
-    public boolean hasSubmittedAudit() {
-        String sql = "SELECT COUNT(*) FROM inventory_audit WHERE status = ?";
+    public boolean hasActiveAudit() {
+        String sql = "SELECT COUNT(*) FROM inventory_audit WHERE status IN (?, ?)";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, InventoryAuditStatus.SUBMITTED.name());
+            ps.setString(2, InventoryAuditStatus.PENDING.name());
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;

@@ -38,6 +38,11 @@ public class AddInventoryAudit extends HttpServlet {
             return;
         }
 
+        if (inventoryAuditDAO.hasActiveAudit()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "An active audit is already in progress. Please complete or cancel it before starting a new one.");
+            return;
+        }
+
         List<Product> products = productDAO.getProductList();
         request.setAttribute("products", products);
         request.getRequestDispatcher("/WEB-INF/view/audit/addInventoryAudit.jsp").forward(request, response);
@@ -66,6 +71,14 @@ public class AddInventoryAudit extends HttpServlet {
         String action = request.getParameter("action");
         InventoryAuditStatus status = "submit".equalsIgnoreCase(action) ? InventoryAuditStatus.SUBMITTED
                 : InventoryAuditStatus.DRAFT;
+
+        if (status == InventoryAuditStatus.SUBMITTED && inventoryAuditDAO.hasActiveAudit()) {
+            request.setAttribute("message", "There is already an active inventory audit in progress. You cannot submit a new one until the current one is completed or cancelled.");
+            List<Product> products = productDAO.getProductList();
+            request.setAttribute("products", products);
+            request.getRequestDispatcher("/WEB-INF/view/audit/addInventoryAudit.jsp").forward(request, response);
+            return;
+        }
 
         InventoryAudit audit = new InventoryAudit();
         audit.setUserId(user.getId());

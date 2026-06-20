@@ -109,6 +109,15 @@ public class EditInventoryAudit extends HttpServlet {
         InventoryAuditStatus status = "submit".equalsIgnoreCase(action) ? InventoryAuditStatus.SUBMITTED
                 : InventoryAuditStatus.DRAFT;
 
+        if (status == InventoryAuditStatus.SUBMITTED && inventoryAuditDAO.hasActiveAudit()) {
+            request.setAttribute("message", "There is already an active inventory audit in progress. You cannot submit a new one until the current one is completed or cancelled.");
+            List<Product> products = productDAO.getProductList();
+            request.setAttribute("products", products);
+            request.setAttribute("audit", audit);
+            request.getRequestDispatcher("/WEB-INF/view/audit/addInventoryAudit.jsp").forward(request, response);
+            return;
+        }
+
         inventoryAuditDAO.updateInventoryAuditStatus(auditId, status);
         inventoryAuditDAO.deleteInventoryAuditItemsByAuditId(auditId);
 

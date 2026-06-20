@@ -131,8 +131,22 @@ public class PerformInventoryAudit extends HttpServlet {
             }
 
 
-            inventoryAuditDAO.submitAuditForReview(auditId, items);
-            response.sendRedirect("InventoryAuditList");
+            boolean hasDiscrepancy = false;
+            for (InventoryAuditItem item : items) {
+                if (item.getPhysicalQuantity() != item.getSystemQuantity()) {
+                    hasDiscrepancy = true;
+                    break;
+                }
+            }
+            
+            inventoryAuditDAO.updateAuditItems(items);
+
+            if (hasDiscrepancy) {
+                response.sendRedirect(request.getContextPath() + "/AdjustInventoryAuditStock?id=" + auditId);
+            } else {
+                inventoryAuditDAO.updateInventoryAuditStatus(auditId, InventoryAuditStatus.PENDING);
+                response.sendRedirect("InventoryAuditList");
+            }
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
         }

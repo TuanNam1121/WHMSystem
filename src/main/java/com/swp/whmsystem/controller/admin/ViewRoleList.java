@@ -24,8 +24,31 @@ public class ViewRoleList extends HttpServlet {
 
         String keyword = request.getParameter("keyword");
         String sortBy = request.getParameter("sortBy");
-        List<Role> roleList = roleDAO.findRoleByFilter(keyword, sortBy);
+        
+        int page = 1;
+        int pageSize = 10;
+        
+        String pageParam = request.getParameter("page");
+        if (pageParam != null) {
+            try {
+                page = Integer.parseInt(pageParam);
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
+        }
+        
+        int offset = (page - 1) * pageSize;
+        
+        List<Role> roleList = roleDAO.findRoleByFilter(keyword, sortBy, offset, pageSize);
+        int totalRecords = roleDAO.countRoleByFilter(keyword);
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+
         request.setAttribute("rolelist", roleList);
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("sortBy", sortBy);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("pageSize", pageSize);
         request.getRequestDispatcher("WEB-INF/view/admin/viewRoleList.jsp").forward(request, response);
     }
 

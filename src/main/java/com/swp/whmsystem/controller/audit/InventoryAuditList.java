@@ -28,9 +28,31 @@ public class InventoryAuditList extends HttpServlet {
             return;
         }
 
-        List<InventoryAudit> inventoryAudits = inventoryAuditDAO.getAllInventoryAudit();
+        String keyword = request.getParameter("keyword");
+        
+        int page = 1;
+        int pageSize = 10;
+        
+        String pageParam = request.getParameter("page");
+        if (pageParam != null) {
+            try {
+                page = Integer.parseInt(pageParam);
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
+        }
+        
+        int offset = (page - 1) * pageSize;
+
+        List<InventoryAudit> inventoryAudits = inventoryAuditDAO.getInventoryAuditsByFilter(keyword, offset, pageSize);
+        int totalRecords = inventoryAuditDAO.countInventoryAuditsByFilter(keyword);
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
         request.setAttribute("inventoryAudits", inventoryAudits);
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("pageSize", pageSize);
         request.getRequestDispatcher("/WEB-INF/view/audit/inventoryAuditList.jsp").forward(request, response);
     }
 }

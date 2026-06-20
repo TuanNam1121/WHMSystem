@@ -42,47 +42,44 @@
                 </div>
                 <div class="page-btn">
                     <a href="InventoryAuditList" class="btn btn-added">
-                        <img src="assets/img/icons/return1.svg" alt="img" class="me-2">Back to List
+                        <img src="assets/img/icons/return1.svg" alt="img" class="mr-2">Back to List
                     </a>
                 </div>
             </div>
-
 
             <div class="card">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
-                                <label class="font-weight-bold" style="font-size: 14px; color: #555;">Auditor</label>
-                                <div class="form-control-static"
-                                     style="font-size: 16px; font-weight: 600; padding: 8px 0;">
+                                <label>Auditor</label>
+                                <div class="form-control-static font-weight-bold">
                                     ${audit.userFullName}
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
-                                <label class="font-weight-bold" style="font-size: 14px; color: #555;">Status</label>
-                                <div style="padding: 8px 0;">
-                                    <span class="badges bg-lightgrey" style="font-size: 13px; padding: 6px 12px;">
-                                        ${audit.status}
-                                    </span>
+                                <label>Status</label>
+                                <div>
+                                                    <span class="badges bg-lightgrey">
+                                                        ${audit.status}
+                                                    </span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
-                                <label class="font-weight-bold" style="font-size: 14px; color: #555;">Created At</label>
-                                <div class="form-control-static" style="font-size: 16px; padding: 8px 0;">
+                                <label>Created At</label>
+                                <div class="form-control-static">
                                     ${audit.createdAt}
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
-                                <label class="font-weight-bold" style="font-size: 14px; color: #555;">Last
-                                    Updated</label>
-                                <div class="form-control-static" style="font-size: 16px; padding: 8px 0;">
+                                <label>Last Updated</label>
+                                <div class="form-control-static">
                                     ${audit.updatedAt}
                                 </div>
                             </div>
@@ -91,35 +88,35 @@
                 </div>
             </div>
 
-
             <div class="card mt-4">
                 <div class="card-body">
                     <div class="card-title">
                         <h5>Audited Products</h5>
                     </div>
                     <div class="table-responsive">
-                        <table class="table datanew">
+                        <table class="table">
                             <thead>
                             <tr>
                                 <th>Product Name</th>
                                 <th>SKU</th>
                                 <th>Category</th>
-                                <th class="text-end">System Qty</th>
-                                <th class="text-end">Physical Qty</th>
-                                <th class="text-end">Discrepancy</th>
+                                <th>System Qty</th>
+                                <th>Physical Qty</th>
+                                <th>Discrepancy</th>
                                 <th>Reason</th>
                             </tr>
                             </thead>
                             <tbody>
                             <c:forEach var="item" items="${audit.inventoryAuditItems}">
                                 <tr>
-                                    <td><strong>${item.productName}</strong></td>
-                                    <td><span class="text-secondary font-weight-bold">${item.productSku}</span></td>
+                                    <td>${item.productName}</td>
+                                    <td>${item.productSku}</td>
                                     <td>${item.categoryName}</td>
-                                    <td class="text-end font-weight-bold">${item.systemQuantity}</td>
-                                    <td class="text-end font-weight-bold">${item.physicalQuantity}</td>
-                                    <td class="text-end font-weight-bold">
-                                        <c:set var="disc" value="${item.physicalQuantity - item.systemQuantity}"/>
+                                    <td>${item.systemQuantity}</td>
+                                    <td>${item.physicalQuantity}</td>
+                                    <td>
+                                        <c:set var="disc"
+                                               value="${item.physicalQuantity - item.systemQuantity}"/>
                                         <c:choose>
                                             <c:when test="${disc > 0}">
                                                 <span class="text-success">+${disc}</span>
@@ -128,7 +125,7 @@
                                                 <span class="text-danger">${disc}</span>
                                             </c:when>
                                             <c:otherwise>
-                                                <span class="text-secondary">0</span>
+                                                <span>0</span>
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
@@ -138,9 +135,28 @@
                                                 ${item.reason}
                                             </c:when>
                                             <c:otherwise>
-                                                <span class="text-muted font-italic">No reason provided</span>
+                                                <span class="text-muted">No reason provided</span>
                                             </c:otherwise>
                                         </c:choose>
+                                    </td>
+                                </tr>
+                                <tr style="background-color: #f8f9fa;">
+                                    <td colspan="7">
+                                        <div style="font-size: 13px;">
+                                            <strong class="me-2">Serials Adjusted:</strong>
+                                            <c:forEach var="serial" items="${item.serials}">
+                                                <c:choose>
+                                                    <c:when test="${serial.type == 'ADD'}">
+                                                                            <span class="badge bg-success me-1">+
+                                                                                    ${serial.serial}</span>
+                                                    </c:when>
+                                                    <c:when test="${serial.type == 'DELETE'}">
+                                                                            <span class="badge bg-danger me-1">-
+                                                                                    ${serial.serial}</span>
+                                                    </c:when>
+                                                </c:choose>
+                                            </c:forEach>
+                                        </div>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -164,4 +180,5 @@
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 <script src="assets/js/script.js"></script>
 </body>
+
 </html>

@@ -57,26 +57,31 @@ public class UnitDAO {
         return null;
     }
 
-    public List<Unit> getUnitsByFilter(String status) {
+    public List<Unit> getUnitsByFilter(String status, String keyword, int offset, int limit) {
         List<Unit> list = new ArrayList<>();
 
-        StringBuilder sql = new StringBuilder("SELECT * FROM units");
-        boolean hasWhere = false;
+        StringBuilder sql = new StringBuilder("SELECT * FROM units WHERE 1=1");
 
         if ("active".equalsIgnoreCase(status)) {
-            sql.append(hasWhere ? " AND" : " WHERE");
-            sql.append(" isactive = 1");
-            hasWhere = true;
+            sql.append(" AND isactive = 1");
         } else if ("inactive".equalsIgnoreCase(status)) {
-            sql.append(hasWhere ? " AND" : " WHERE");
-            sql.append(" isactive = 0");
-            hasWhere = true;
+            sql.append(" AND isactive = 0");
+        }
+        
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND name LIKE ?");
         }
 
-        sql.append(" ORDER BY id");
+        sql.append(" ORDER BY id LIMIT ? OFFSET ?");
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-
+            int paramIndex = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                ps.setString(paramIndex++, "%" + keyword.trim() + "%");
+            }
+            ps.setInt(paramIndex++, limit);
+            ps.setInt(paramIndex, offset);
+            
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 list.add(mapUnit(rs));
@@ -86,6 +91,35 @@ public class UnitDAO {
         }
 
         return list;
+    }
+    
+    public int countUnitsByFilter(String status, String keyword) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM units WHERE 1=1");
+
+        if ("active".equalsIgnoreCase(status)) {
+            sql.append(" AND isactive = 1");
+        } else if ("inactive".equalsIgnoreCase(status)) {
+            sql.append(" AND isactive = 0");
+        }
+        
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND name LIKE ?");
+        }
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                ps.setString(1, "%" + keyword.trim() + "%");
+            }
+            
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return 0;
     }
 
     public int count() {

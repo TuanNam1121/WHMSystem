@@ -25,30 +25,31 @@ import java.util.ArrayList;
 
 @WebServlet(name = "ImportRequestList", urlPatterns = {"/importRequestList"})
 public class ImportRequestList extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            response.sendRedirect("login");
-            return;
+        try {
+            HttpSession session = request.getSession();
+            User user = (User) session.getAttribute("user");
+            if (user == null) {
+                response.sendRedirect("login");
+                return;
+            }
+            GoodReceiptDAO goodReceiptDAO = new GoodReceiptDAO();
+            List<GoodReceipt> importRequests = goodReceiptDAO.getNewAndImcompletedGoodReceiptForProcessor(user.getId());
+            request.setAttribute("importRequests", importRequests);
+        } catch (Exception ex) {
+            request.setAttribute("message", ex.getMessage());
+            request.getRequestDispatcher("WEB-INF/view/import/importRequestList.jsp").forward(request, response);
         }
-        if (user.getRoleId() != 3) {
-            response.sendRedirect("home");
-        }
-
-        GoodReceiptDAO goodReceiptDAO = new GoodReceiptDAO();
-        List<GoodReceipt> importRequests = goodReceiptDAO.getNewAndImcompletedGoodReceiptForProcessor(user.getId());
-        request.setAttribute("importRequests", importRequests);
         request.getRequestDispatcher("WEB-INF/view/import/importRequestList.jsp").forward(request, response);
     }
-
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        
     }
-
-
+    
 }

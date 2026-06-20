@@ -56,11 +56,21 @@ public class AdjustInventoryAuditStock extends HttpServlet {
                 return;
             }
 
+            if (audit.getStatus() != InventoryAuditStatus.SUBMITTED) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Only submitted audits can have their stock adjusted.");
+                return;
+            }
+
             List<InventoryAuditItem> discrepancyItems = new ArrayList<>();
             for (InventoryAuditItem item : audit.getInventoryAuditItems()) {
                 if (item.getPhysicalQuantity() != item.getSystemQuantity()) {
                     discrepancyItems.add(item);
                 }
+            }
+
+            if (discrepancyItems.isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No discrepancies to adjust.");
+                return;
             }
 
             request.setAttribute("audit", audit);
@@ -94,11 +104,21 @@ public class AdjustInventoryAuditStock extends HttpServlet {
                 return;
             }
 
+            if (audit.getStatus() != InventoryAuditStatus.SUBMITTED) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Only submitted audits can have their stock adjusted.");
+                return;
+            }
+
             List<InventoryAuditItem> discrepancyItems = new ArrayList<>();
             for (InventoryAuditItem item : audit.getInventoryAuditItems()) {
                 if (item.getPhysicalQuantity() != item.getSystemQuantity()) {
                     discrepancyItems.add(item);
                 }
+            }
+
+            if (discrepancyItems.isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No discrepancies to adjust.");
+                return;
             }
 
             boolean hasError = false;

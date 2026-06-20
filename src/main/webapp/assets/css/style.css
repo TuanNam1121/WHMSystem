@@ -5498,7 +5498,7 @@ span.select2-container.select2-container--default.select2-container--open {
     display: block !important
 }
 
-.product-table-footer {
+.table-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -5506,20 +5506,20 @@ span.select2-container.select2-container--default.select2-container--open {
     margin-top: 15px
 }
 
-.product-page-size {
+.page-size {
     display: flex;
     align-items: center;
     flex: 0 0 auto;
     gap: 6px
 }
 
-.product-page-size label {
+.page-size label {
     margin: 0;
     white-space: nowrap;
     font-size: 12px
 }
 
-.product-page-size .product-page-size-select {
+.page-size .page-size-select {
     width: 70px !important;
     min-width: 70px;
     height: 32px;
@@ -5528,27 +5528,27 @@ span.select2-container.select2-container--default.select2-container--open {
     font-size: 12px
 }
 
-.product-table-footer .product-pagination {
+.table-footer .table-pagination {
     display: flex !important;
     flex: 1 1 auto;
     justify-content: flex-end !important;
     margin-left: auto !important
 }
 
-.product-table-footer .product-pagination .pagination {
+.table-footer .table-pagination .pagination {
     justify-content: flex-end !important;
     margin-top: 0;
     margin-bottom: 0 !important
 }
 
 @media (max-width: 575px) {
-    .product-table-footer {
+    .table-footer {
         align-items: flex-start;
         flex-direction: column;
         gap: 15px
     }
 
-    .product-table-footer .product-pagination {
+    .table-footer .table-pagination {
         align-self: flex-end;
         width: 100%
     }

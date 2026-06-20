@@ -123,7 +123,8 @@
             <div class="card">
                 <div class="card-body">
 
-                    <form action="productlist" method="get">
+                    <form action="productDetails" method="get">
+                        <input type="hidden" name="productId" value="${param.productId}">
                         <div class="card mb-0" id="filter_inputs" style="display: block !important;">
                             <div class="card-body pb-0">
                                 <div class="row">
@@ -132,48 +133,63 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <input type="text" name="productName" placeholder="Search...">
+                                                    <input type="text" name="serial" value="${param.serial}"
+                                                           placeholder="Search serial...">
                                                 </div>
                                             </div>
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <input type="text" name="date" placeholder="Date: dd/mm/yyyy">
+                                                    <input type="text" name="date" value="${param.date}"
+                                                           placeholder="Date: dd/mm/yyyy">
                                                 </div>
                                             </div>
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <select class="select" name="isActive">
+                                                    <select class="select" name="status">
                                                         <option value="">Choose Status</option>
-                                                        <option value="AVAILABLE">Available</option>
-                                                        <option value="UNAVAILABLE">Unavailable</option>
-                                                        <option value="SOLD">Sold</option>
+                                                        <option value="AVAILABLE" ${param.status == 'AVAILABLE' ? 'selected' : ''}>
+                                                            Available
+                                                        </option>
+                                                        <option value="UNAVAILABLE" ${param.status == 'UNAVAILABLE' ? 'selected' : ''}>
+                                                            Unavailable
+                                                        </option>
+                                                        <option value="SOLD" ${param.status == 'SOLD' ? 'selected' : ''}>
+                                                            Sold
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>
-
-                                            <div class="col-lg col-sm-6 col-12">
-                                                <div class="form-group">
-                                                    <select class="select" name="categoryId">
-                                                        <option value="">Active</option>
-                                                        <option value="1">Active</option>
-                                                        <option value="0">Inactive</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <select class="select" name="sortBy">
                                                         <option value="">Sort By</option>
-                                                        <option value="nameAZ">Serial: A-Z</option>
-                                                        <option value="nameZA">Serial: Z-A</option>
-                                                        <option value="skuAZ">Date: Newest</option>
-                                                        <option value="skuZA">Date: Oldest</option>
-                                                        <option value="cateAZ">Price: Low to high</option>
-                                                        <option value="cateZA">Price: High to low</option>
+                                                        <option value="serialAZ" ${param.sortBy == 'serialAZ' ? 'selected' : ''}>
+                                                            Serial: A-Z
+                                                        </option>
+                                                        <option value="serialZA" ${param.sortBy == 'serialZA' ? 'selected' : ''}>
+                                                            Serial: Z-A
+                                                        </option>
+                                                        <option value="dateNewest" ${param.sortBy == 'dateNewest' ? 'selected' : ''}>
+                                                            Date: Newest
+                                                        </option>
+                                                        <option value="dateOldest" ${param.sortBy == 'dateOldest' ? 'selected' : ''}>
+                                                            Date: Oldest
+                                                        </option>
+                                                        <option value="importPriceLow" ${param.sortBy == 'importPriceLow' ? 'selected' : ''}>
+                                                            Import price: Low to high
+                                                        </option>
+                                                        <option value="importPriceHigh" ${param.sortBy == 'importPriceHigh' ? 'selected' : ''}>
+                                                            Import price: High to low
+                                                        </option>
+                                                        <option value="exportPriceLow" ${param.sortBy == 'exportPriceLow' ? 'selected' : ''}>
+                                                            Export price: Low to high
+                                                        </option>
+                                                        <option value="exportPriceHigh" ${param.sortBy == 'exportPriceHigh' ? 'selected' : ''}>
+                                                            Export price: High to low
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -191,60 +207,57 @@
                                 </div>
                             </div>
                         </div>
-                    </form>
 
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Serial Number</th>
-                                <th>Imported Date</th>
-                                <th>Imported Price</th>
-                                <th>Export Price</th>
-                                <th>Active</th>
-                                <th>Status</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            <c:forEach items="${sessionScope.productItemList}" var="p" varStatus="v">
+                        <div class="table-responsive" id="product-item-table" tabindex="-1">
+                            <table class="table">
+                                <thead>
                                 <tr>
-                                    <td>${v.index+1}</td>
-                                    <td>${p.serial}</td>
-                                    <td>
-                                        <fmt:formatDate value="${p.importAt}" pattern="dd-MM-yyyy HH:mm:ss"/>
-                                    </td>
-                                    <td>
-                                        <fmt:formatNumber value="${p.importPrice}" pattern="#,###"/>
-                                    </td>
-                                    <td>
-                                        <fmt:formatNumber value="${p.exportPrice}" pattern="#,###"/>
-                                    </td>
-                                    <td>${p.active ? "Active" : "Inactive"}</td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${p.status == 'AVAILABLE'}">
-                                                <span class="badges bg-lightgreen">Available</span>
-                                            </c:when>
-                                            <c:when test="${p.status == 'SOLD'}">
-                                                <span class="badges bg-lightgrey">Sold</span>
-                                            </c:when>
-                                            <c:when test="${p.status == 'UNAVAILABLE'}">
-                                                <span class="badges bg-lightred">Unavailable</span>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="badges bg-lightgrey">${p.status}</span>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>
+                                    <th>No</th>
+                                    <th>Serial Number</th>
+                                    <th>Imported Date</th>
+                                    <th>Imported Price</th>
+                                    <th>Export Price</th>
+                                    <th>Status</th>
                                 </tr>
-                            </c:forEach>
+                                </thead>
+                                <tbody>
 
-                            </tbody>
-
-                        </table>
-                    </div>
+                                <c:forEach items="${sessionScope.productItemList}" var="p" varStatus="v">
+                                    <tr>
+                                        <td>${v.index+1}</td>
+                                        <td>${p.serial}</td>
+                                        <td>
+                                            <fmt:formatDate value="${p.importAt}" pattern="dd-MM-yyyy HH:mm:ss"/>
+                                        </td>
+                                        <td>
+                                            <fmt:formatNumber value="${p.importPrice}" pattern="#,###"/>
+                                        </td>
+                                        <td>
+                                            <fmt:formatNumber value="${p.exportPrice}" pattern="#,###"/>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${p.status == 'AVAILABLE'}">
+                                                    <span class="badges bg-lightgreen">Available</span>
+                                                </c:when>
+                                                <c:when test="${p.status == 'SOLD'}">
+                                                    <span class="badges bg-lightgrey">Sold</span>
+                                                </c:when>
+                                                <c:when test="${p.status == 'UNAVAILABLE'}">
+                                                    <span class="badges bg-lightred">Unavailable</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="badges bg-lightgrey">${p.status}</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+                        <jsp:include page="/WEB-INF/common/pagination.jsp"/>
+                    </form>
                 </div>
             </div>
         </div>
@@ -263,6 +276,15 @@
 <script src="assets/plugins/owlcarousel/owl.carousel.min.js"></script>
 <script src="assets/plugins/select2/js/select2.min.js"></script>
 <script src="assets/js/script.js"></script>
+<c:if test="${focusTable}">
+    <script>
+        window.addEventListener("load", function () {
+            const table = document.getElementById("product-item-table");
+            table.scrollIntoView({behavior: "smooth", block: "start"});
+            table.focus({preventScroll: true});
+        });
+    </script>
+</c:if>
 </body>
 </html>
 </body>

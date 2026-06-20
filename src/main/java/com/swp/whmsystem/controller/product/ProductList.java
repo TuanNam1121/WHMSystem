@@ -22,7 +22,6 @@ import jakarta.servlet.http.HttpSession;
 @WebServlet(name = "ProductList", urlPatterns = {"/productlist"})
 public class ProductList extends HttpServlet {
 
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

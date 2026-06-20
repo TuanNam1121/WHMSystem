@@ -2637,18 +2637,19 @@ table.dataTable > thead .sorting:before, table.dataTable > thead .sorting_asc:be
     margin: 0 5px
 }
 
-.pagination li a {
+.pagination li .page-link {
     border-radius: 5px;
     background: #637381;
     color: #fff
 }
 
-.pagination li a:hover {
+.pagination li a:hover,
+.pagination li button:hover {
     background: #ff9f43;
     color: #fff
 }
 
-.pagination li.active a.page-link {
+.pagination li.active .page-link {
     background: #ff9f43;
     border-color: #ff9f43;
     border-radius: 5px

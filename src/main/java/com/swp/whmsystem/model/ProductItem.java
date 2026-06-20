@@ -7,6 +7,7 @@ public class ProductItem {
     private String serial;
     private Timestamp importAt;
     private int importPrice;
+    private int exportPrice;
     private boolean isActive;
     private int goodReceiptItemId;
     private int productId;
@@ -15,11 +16,12 @@ public class ProductItem {
     public ProductItem() {
     }
 
-    public ProductItem(int id, String serial, Timestamp importAt, int importPrice, boolean isActive, int goodReceiptItemId, int productId, String status) {
+    public ProductItem(int id, String serial, Timestamp importAt, int importPrice, int exportPrice, boolean isActive, int goodReceiptItemId, int productId, String status) {
         this.id = id;
         this.serial = serial;
         this.importAt = importAt;
         this.importPrice = importPrice;
+        this.exportPrice = exportPrice;
         this.isActive = isActive;
         this.goodReceiptItemId = goodReceiptItemId;
         this.productId = productId;
@@ -56,6 +58,14 @@ public class ProductItem {
 
     public void setImportPrice(int importPrice) {
         this.importPrice = importPrice;
+    }
+
+    public int getExportPrice() {
+        return exportPrice;
+    }
+
+    public void setExportPrice(int exportPrice) {
+        this.exportPrice = exportPrice;
     }
 
     public boolean isActive() {
@@ -97,6 +107,7 @@ public class ProductItem {
                 ", serial='" + serial + '\'' +
                 ", importAt=" + importAt +
                 ", importPrice=" + importPrice +
+                ", exportPrice=" + exportPrice +
                 ", isActive=" + isActive +
                 ", goodReceiptItemId=" + goodReceiptItemId +
                 ", productId=" + productId +

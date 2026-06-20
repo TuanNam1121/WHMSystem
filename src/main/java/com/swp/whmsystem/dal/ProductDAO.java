@@ -169,7 +169,7 @@ public class ProductDAO {
         }
         return null;
     }
-    
+
     public String getProductNameById(int productid) {
         String sql = "select name from products where productid = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
@@ -183,7 +183,7 @@ public class ProductDAO {
         }
         return null;
     }
-    
+
     public int getProductQuantityById(int productid) {
         String sql = "select total_quantity from products where productid = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
@@ -197,7 +197,7 @@ public class ProductDAO {
         }
         return -1;
     }
-    
+
     public List<Product> getProductList() {
         List<Product> productList = new ArrayList<>();
         String sql = "select * from products order by isActive desc";
@@ -212,14 +212,14 @@ public class ProductDAO {
         }
         return productList;
     }
-    
+
     public void changeProductQuantity(int newQuantity, int id) {
         String sql = "update products set total_quantity = ? where productid = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setInt(1, newQuantity);
             ps.setInt(2, id);
             ps.executeUpdate();
-            
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -545,6 +545,7 @@ public class ProductDAO {
         productItem.setSerial(rs.getString("serial"));
         productItem.setImportAt(rs.getTimestamp("imported_at"));
         productItem.setImportPrice(rs.getInt("imported_price"));
+        productItem.setExportPrice(rs.getInt("export_price"));
         productItem.setActive((rs.getBoolean("isActive")));
         productItem.setGoodReceiptItemId(rs.getInt("goodreceiptsitemid"));
         productItem.setProductId(rs.getInt("product_id"));

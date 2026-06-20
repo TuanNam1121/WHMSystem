@@ -141,12 +141,6 @@
                         <table class="table  datanew">
                             <thead>
                             <tr>
-                                <th>
-                                    <label class="checkboxs">
-                                        <input type="checkbox" id="select-all">
-                                        <span class="checkmarks"></span>
-                                    </label>
-                                </th>
                                 <th>Category name</th>
                                 <th>Description</th>
                                 <th>Active</th>
@@ -157,12 +151,6 @@
 
                             <c:forEach items="${sessionScope.searchedCategoryList}" var="c">
                                 <tr>
-                                    <td>
-                                        <label class="checkboxs">
-                                            <input type="checkbox">
-                                            <span class="checkmarks"></span>
-                                        </label>
-                                    </td>
                                     <td>
                                         <a href="javascript:void(0);">${c.name}</a>
                                     </td>

@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet(name = "CancelInventoryAudit", urlPatterns = {"/CancelInventoryAudit"})
+@WebServlet(name = "CancelInventoryAudit", urlPatterns = { "/CancelInventoryAudit" })
 public class CancelInventoryAudit extends HttpServlet {
     private InventoryAuditDAO inventoryAuditDAO;
 
@@ -25,7 +25,8 @@ public class CancelInventoryAudit extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_INVENTORY_AUDIT, "Only staff with cancel audit permission are authorized to cancel inventory audits.")) {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_INVENTORY_AUDIT,
+                "Only staff with cancel audit permission are authorized to cancel inventory audits.")) {
             return;
         }
 
@@ -50,7 +51,8 @@ public class CancelInventoryAudit extends HttpServlet {
 
                 inventoryAuditDAO.updateInventoryAuditStatus(auditId, InventoryAuditStatus.CANCELLED);
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Only draft or submitted audits can be cancelled.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                        "Only draft or submitted audits can be cancelled.");
                 return;
             }
 

@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "PerformInventoryAudit", urlPatterns = {"/PerformInventoryAudit"})
+@WebServlet(name = "PerformInventoryAudit", urlPatterns = { "/PerformInventoryAudit" })
 public class PerformInventoryAudit extends HttpServlet {
     private InventoryAuditDAO inventoryAuditDAO;
 
@@ -27,7 +27,8 @@ public class PerformInventoryAudit extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.PERFORM_INVENTORY_AUDIT, "Only staff with perform audit permission are authorized to perform inventory audits.")) {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.PERFORM_INVENTORY_AUDIT,
+                "Only staff with perform audit permission are authorized to perform inventory audits.")) {
             return;
         }
 
@@ -60,7 +61,8 @@ public class PerformInventoryAudit extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.PERFORM_INVENTORY_AUDIT, "Only staff with perform audit permission are authorized to perform inventory audits.")) {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.PERFORM_INVENTORY_AUDIT,
+                "Only staff with perform audit permission are authorized to perform inventory audits.")) {
             return;
         }
 
@@ -105,7 +107,6 @@ public class PerformInventoryAudit extends HttpServlet {
                         break;
                     }
 
-
                     if (physicalQuantity != item.getSystemQuantity()) {
                         if (reason == null || reason.trim().isEmpty()) {
                             hasError = true;
@@ -126,10 +127,10 @@ public class PerformInventoryAudit extends HttpServlet {
             if (hasError) {
                 request.setAttribute("message", errorMessage);
                 request.setAttribute("audit", audit);
-                request.getRequestDispatcher("/WEB-INF/view/audit/performInventoryAudit.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/view/audit/performInventoryAudit.jsp").forward(request,
+                        response);
                 return;
             }
-
 
             boolean hasDiscrepancy = false;
             for (InventoryAuditItem item : items) {
@@ -138,7 +139,7 @@ public class PerformInventoryAudit extends HttpServlet {
                     break;
                 }
             }
-            
+
             inventoryAuditDAO.updateAuditItems(items);
 
             if (hasDiscrepancy) {

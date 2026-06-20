@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "AddInventoryAudit", urlPatterns = {"/AddInventoryAudit"})
+@WebServlet(name = "AddInventoryAudit", urlPatterns = { "/AddInventoryAudit" })
 public class AddInventoryAudit extends HttpServlet {
     private ProductDAO productDAO;
     private InventoryAuditDAO inventoryAuditDAO;
@@ -33,7 +33,8 @@ public class AddInventoryAudit extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_INVENTORY_AUDIT, "Only managers with create audit permission are authorized to create inventory audits.")) {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_INVENTORY_AUDIT,
+                "Only managers with create audit permission are authorized to create inventory audits.")) {
             return;
         }
 
@@ -45,7 +46,8 @@ public class AddInventoryAudit extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_INVENTORY_AUDIT, "Only managers with create audit permission are authorized to create inventory audits.")) {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_INVENTORY_AUDIT,
+                "Only managers with create audit permission are authorized to create inventory audits.")) {
             return;
         }
 
@@ -62,7 +64,8 @@ public class AddInventoryAudit extends HttpServlet {
         }
 
         String action = request.getParameter("action");
-        InventoryAuditStatus status = "submit".equalsIgnoreCase(action) ? InventoryAuditStatus.SUBMITTED : InventoryAuditStatus.DRAFT;
+        InventoryAuditStatus status = "submit".equalsIgnoreCase(action) ? InventoryAuditStatus.SUBMITTED
+                : InventoryAuditStatus.DRAFT;
 
         InventoryAudit audit = new InventoryAudit();
         audit.setUserId(user.getId());
@@ -91,7 +94,8 @@ public class AddInventoryAudit extends HttpServlet {
                 item.setReason("");
 
                 inventoryAuditDAO.insertInventoryAuditItem(item);
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
         }
 
         response.sendRedirect("InventoryAuditList");

@@ -21,7 +21,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "AdjustInventoryAuditStock", urlPatterns = {"/AdjustInventoryAuditStock"})
+@WebServlet(name = "AdjustInventoryAuditStock", urlPatterns = { "/AdjustInventoryAuditStock" })
 public class AdjustInventoryAuditStock extends HttpServlet {
     private InventoryAuditDAO inventoryAuditDAO;
     private InventoryAuditItemSerialDAO serialDAO;
@@ -37,7 +37,8 @@ public class AdjustInventoryAuditStock extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.PERFORM_INVENTORY_AUDIT, "Only staff with perform audit permission are authorized to perform inventory audits.")) {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.PERFORM_INVENTORY_AUDIT,
+                "Only staff with perform audit permission are authorized to perform inventory audits.")) {
             return;
         }
 
@@ -64,7 +65,8 @@ public class AdjustInventoryAuditStock extends HttpServlet {
 
             request.setAttribute("audit", audit);
             request.setAttribute("discrepancyItems", discrepancyItems);
-            request.getRequestDispatcher("/WEB-INF/view/audit/adjustInventoryAuditStock.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/audit/adjustInventoryAuditStock.jsp").forward(request,
+                    response);
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
         }
@@ -73,7 +75,8 @@ public class AdjustInventoryAuditStock extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.PERFORM_INVENTORY_AUDIT, "Only staff with perform audit permission are authorized to perform inventory audits.")) {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.PERFORM_INVENTORY_AUDIT,
+                "Only staff with perform audit permission are authorized to perform inventory audits.")) {
             return;
         }
 
@@ -125,7 +128,8 @@ public class AdjustInventoryAuditStock extends HttpServlet {
 
                 if (validSerials.size() != requiredCount) {
                     hasError = true;
-                    errorMessage = "For " + item.getProductName() + ", you must provide exactly " + requiredCount + " serials.";
+                    errorMessage = "For " + item.getProductName() + ", you must provide exactly " + requiredCount
+                            + " serials.";
                     break;
                 }
 
@@ -134,7 +138,8 @@ public class AdjustInventoryAuditStock extends HttpServlet {
                         ProductItem pi = productItemDAO.existedSerial(item.getProductId(), serial);
                         if (pi == null || !"AVAILABLE".equals(pi.getStatus())) {
                             hasError = true;
-                            errorMessage = "Serial " + serial + " for " + item.getProductName() + " does not exist or is not AVAILABLE.";
+                            errorMessage = "Serial " + serial + " for " + item.getProductName()
+                                    + " does not exist or is not AVAILABLE.";
                             break;
                         }
                     }
@@ -146,19 +151,20 @@ public class AdjustInventoryAuditStock extends HttpServlet {
 
                     serialsToInsert.add(itemSerial);
                 }
-                
-                if (hasError) break;
+
+                if (hasError)
+                    break;
             }
 
             if (hasError) {
                 request.setAttribute("message", errorMessage);
                 request.setAttribute("audit", audit);
                 request.setAttribute("discrepancyItems", discrepancyItems);
-                request.getRequestDispatcher("/WEB-INF/view/audit/adjustInventoryAuditStock.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/view/audit/adjustInventoryAuditStock.jsp").forward(request,
+                        response);
                 return;
             }
 
-            // Validated successfully, insert serials
             for (InventoryAuditItem item : discrepancyItems) {
                 serialDAO.deleteSerialsByAuditItemId(item.getId());
             }
@@ -166,7 +172,7 @@ public class AdjustInventoryAuditStock extends HttpServlet {
             for (InventoryAuditItemSerial itemSerial : serialsToInsert) {
                 serialDAO.insertSerial(itemSerial);
             }
-            
+
             inventoryAuditDAO.updateInventoryAuditStatus(auditId, InventoryAuditStatus.PENDING);
 
             response.sendRedirect(request.getContextPath() + "/InventoryAuditList");

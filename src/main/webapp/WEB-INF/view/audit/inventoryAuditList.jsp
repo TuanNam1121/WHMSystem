@@ -39,7 +39,7 @@
                     <div class="page-title">
                         <h4>Inventory Audit List</h4>
                     </div>
-                    <c:if test="${sessionScope.roleName == 'MANAGER'}">
+                    <c:if test="${sessionScope.userPermissions.contains('CREATE_INVENTORY_AUDIT')}">
                         <div class="page-btn">
                             <a href="AddInventoryAudit" class="btn btn-added">
                                 <img src="assets/img/icons/plus.svg" alt="img" class="mr-2">Add New Audit
@@ -84,22 +84,22 @@
                                                 <a class="mr-3" href="InventoryAuditDetail?id=${audit.id}">
                                                     <img src="assets/img/icons/eye.svg" alt="img">
                                                 </a>
-                                                <c:if test="${sessionScope.roleName == 'WAREHOUSE_STAFF' && audit.status == 'SUBMITTED'}">
+                                                <c:if test="${sessionScope.userPermissions.contains('PERFORM_INVENTORY_AUDIT') && audit.status == 'SUBMITTED'}">
                                                     <a class="mr-3" href="PerformInventoryAudit?id=${audit.id}">
                                                         <img src="assets/img/icons/edit.svg" alt="img">
                                                     </a>
                                                 </c:if>
-                                                <c:if test="${sessionScope.roleName == 'MANAGER' && audit.status == 'DRAFT'}">
+                                                <c:if test="${sessionScope.userPermissions.contains('CREATE_INVENTORY_AUDIT') && audit.status == 'DRAFT'}">
                                                     <a class="mr-3" href="EditInventoryAudit?id=${audit.id}">
                                                         <img src="assets/img/icons/edit.svg" alt="img">
                                                     </a>
                                                 </c:if>
-                                                <c:if test="${sessionScope.roleName == 'MANAGER' && audit.status == 'PENDING'}">
+                                                <c:if test="${sessionScope.userPermissions.contains('APPROVE_INVENTORY_AUDIT') && audit.status == 'PENDING'}">
                                                     <a class="mr-3" href="ReviewInventoryAudit?id=${audit.id}" title="Review Audit">
                                                         <img src="assets/img/icons/edit.svg" alt="Review">
                                                     </a>
                                                 </c:if>
-                                                <c:if test="${sessionScope.roleName == 'MANAGER' && (audit.status == 'DRAFT' || audit.status == 'SUBMITTED')}">
+                                                <c:if test="${sessionScope.userPermissions.contains('CREATE_INVENTORY_AUDIT') && (audit.status == 'DRAFT' || audit.status == 'SUBMITTED')}">
                                                     <a class="mr-3 cancel-audit" href="javascript:void(0);" data-id="${audit.id}" data-status="${audit.status}">
                                                         <img src="assets/img/icons/delete.svg" alt="img">
                                                     </a>

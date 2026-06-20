@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "InventoryAuditDetail", urlPatterns = {"/InventoryAuditDetail"})
+@WebServlet(name = "InventoryAuditDetail", urlPatterns = { "/InventoryAuditDetail" })
 public class InventoryAuditDetail extends HttpServlet {
     private InventoryAuditDAO inventoryAuditDAO;
 
@@ -23,7 +23,8 @@ public class InventoryAuditDetail extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_INVENTORY_AUDIT, "You are not authorized to view this inventory audit.")) {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_INVENTORY_AUDIT,
+                "You are not authorized to view this inventory audit.")) {
             return;
         }
 

@@ -20,45 +20,64 @@ public class CategoryList extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession();
         CategoryDAO categoryDAO = new CategoryDAO();
         List<Category> searchedCategoryList = new ArrayList<>();
-        List<Category> allCategoryList = categoryDAO.getAllCategory();
-
-        String categoryIdRaw = request.getParameter("categoryId");
-        String activeRaw = request.getParameter("active");
+        String keyword = request.getParameter("keyword");
+        String isActiveRaw = request.getParameter("isActive");
         String sortBy = request.getParameter("sortBy");
-        if (categoryIdRaw == null
-                && activeRaw == null
-                && sortBy == null) {
-            searchedCategoryList = categoryDAO.getAllCategory();
-        } else {
-            int categoryId = -1;
-            int brandId = -1;
+        String pageSizeRaw = request.getParameter("pageSize");
+        String pageRaw = request.getParameter("page");
 
-            if (categoryIdRaw != null && !categoryIdRaw.trim().isEmpty()) {
-                try {
-                    categoryId = Integer.parseInt(categoryIdRaw.trim());
-                } catch (NumberFormatException e) {
-                    categoryId = -1;
+        int isActive = -1;
+        int pageSize = 10;
+        int page = 1;
+
+        if (isActiveRaw != null && !isActiveRaw.trim().isEmpty()) {
+            try {
+                int parsedStatus = Integer.parseInt(isActiveRaw.trim());
+                if (parsedStatus == 0 || parsedStatus == 1) {
+                    isActive = parsedStatus;
                 }
+            } catch (NumberFormatException e) {
+                isActive = -1;
             }
-
-            if (activeRaw != null && !activeRaw.trim().isEmpty()) {
-                try {
-                    brandId = Integer.parseInt(activeRaw.trim());
-                } catch (NumberFormatException e) {
-                    brandId = -1;
-                }
-            }
-            searchedCategoryList = categoryDAO.searchCategory(categoryId, brandId, sortBy);
-
         }
 
+        if (pageSizeRaw != null && !pageSizeRaw.trim().isEmpty()) {
+            try {
+                int parsedPageSize = Integer.parseInt(pageSizeRaw.trim());
+                if (parsedPageSize > 0 && parsedPageSize <= 100) {
+                    pageSize = parsedPageSize;
+                }
+            } catch (NumberFormatException ignored) {
+                pageSize = 10;
+            }
+        }
+
+        if (pageRaw != null && !pageRaw.trim().isEmpty()) {
+            try {
+                page = Math.max(1, Integer.parseInt(pageRaw.trim()));
+            } catch (NumberFormatException ignored) {
+                page = 1;
+            }
+        }
+
+        int totalCategories = categoryDAO.countCategories(keyword, isActive);
+        int totalPages = Math.max(1, (int) Math.ceil((double) totalCategories / pageSize));
+        page = Math.min(page, totalPages);
+
+        searchedCategoryList = categoryDAO.searchCategory(
+                keyword, isActive, sortBy, pageSize, page
+        );
 
         session.setAttribute("searchedCategoryList", searchedCategoryList);
-        session.setAttribute("allCategoryList", allCategoryList);
-
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("page", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("focusTable",
+                keyword != null || isActiveRaw != null
+                        || sortBy != null || pageSizeRaw != null || pageRaw != null);
         request.getRequestDispatcher("WEB-INF/view/category/categoryList.jsp").forward(request, response);
     }
 
@@ -73,5 +92,3 @@ public class CategoryList extends HttpServlet {
     }
 
 }
-
-

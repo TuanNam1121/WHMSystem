@@ -1,11 +1,13 @@
 package com.swp.whmsystem.utils;
 
 public class InputValidationUtil {
-    private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
+    private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@gmail\\.com$";
 
-    private static final String PHONE_REGEX = "^(0)+([0-9]{9})$";
+    private static final String PHONE_REGEX = "^0[0-9]{9}$";
 
-    private static final String NAME_REGEX = "^[\\p{L}\\s]+$";
+    private static final String FIRST_NAME_REGEX = "^[\\p{L}]+(?:\\s+[\\p{L}]+)*$";
+
+    private static final String LAST_NAME_REGEX = "^[\\p{L}]+$";
 
     public static boolean isValidPassword(String password) {
 
@@ -42,14 +44,18 @@ public class InputValidationUtil {
     public static boolean isPhone(String phone) {
         if (phone == null || phone.trim().isEmpty()) return false;
 
-        String cleanPhone = phone.replaceAll("[\\s.-]", "");
-        return cleanPhone.matches(PHONE_REGEX);
+        return phone.trim().matches(PHONE_REGEX);
     }
 
-    public static boolean isName(String name) {
-        if (name == null || name.trim().isEmpty()) return false;
+    public static boolean isFirstName(String firstName) {
+        if (firstName == null || firstName.trim().isEmpty()) return false;
 
-        return name.trim().matches(NAME_REGEX);
+        return firstName.trim().matches(FIRST_NAME_REGEX);
+    }
+
+    public static boolean isLastName(String lastName) {
+        if (lastName == null || lastName.trim().isEmpty()) return false;
+
+        return lastName.trim().matches(LAST_NAME_REGEX);
     }
 }
-

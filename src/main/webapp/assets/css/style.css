@@ -5494,11 +5494,39 @@ span.select2-container.select2-container--default.select2-container--open {
 }
 
 .product-list-card #filter_inputs {
-    display: block
+    display: block !important
 }
 
 .product-list-card .dataTables_filter {
-    display: none
+    display: none !important
+}
+
+.product-table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 15px
+}
+
+.product-table-footer .dataTables_length,
+.product-table-footer .dataTables_paginate {
+    margin-top: 0 !important
+}
+
+.product-table-footer .dataTables_length label {
+    margin-bottom: 0
+}
+
+.product-table-footer #product-pagination {
+    margin-left: auto
+}
+
+@media (max-width: 575px) {
+    .product-table-footer {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px
+    }
 }
 
 .dash-widget {
@@ -7477,40 +7505,86 @@ span.select2-container.select2-container--default.select2-container--open {
     }
 }
 
-.profile-set .profile-top .profile-contentimg {
+.profile-set .profile-top .profile-avatar-wrapper {
     margin-top: -40px;
     width: 130px;
+    height: 130px;
+    min-width: 130px;
+    flex: 0 0 130px;
+    position: relative;
+    overflow: visible
+}
+
+.profile-set .profile-top .profile-contentimg,
+.profile-set .profile-top .profile-avatar-frame {
+    margin-top: 0;
+    width: 130px;
+    height: 130px;
+    min-width: 130px;
+    min-height: 130px;
+    max-width: 130px;
+    max-height: 130px;
+    flex: 0 0 130px;
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
     position: relative;
     border: 10px solid #fff;
-    border-radius: 50%;
-    box-shadow: 0 4px 4px 0 #00000040
+    border-radius: 50% !important;
+    box-shadow: 0 4px 4px 0 #00000040;
+    overflow: hidden;
+    background: #fff
 }
 
-.profile-set .profile-top .profile-contentimg img {
-    border-radius: 50px
+.profile-set .profile-top .profile-contentimg > img,
+.profile-set .profile-top .profile-avatar-image {
+    display: block;
+    width: 110px !important;
+    height: 110px !important;
+    min-width: 110px;
+    min-height: 110px;
+    max-width: 110px;
+    max-height: 110px;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    object-position: center
 }
 
-.profile-set .profile-top .profileupload input[type=file] {
+.profile-set .profile-top .profile-avatar-wrapper .profile-avatar-edit {
+    width: 34px;
+    height: 34px;
+    position: absolute !important;
+    right: -4px !important;
+    bottom: -4px !important;
+    left: auto !important;
+    top: auto !important;
+    z-index: 20
+}
+
+.profile-set .profile-top .profile-avatar-edit input[type=file] {
     opacity: 0;
     width: 34px;
     height: 34px;
     display: block;
     z-index: 9;
     cursor: pointer;
-    position: absolute;
-    bottom: 10px;
-    left: 42px
+    position: absolute !important;
+    inset: 0 !important
 }
 
-.profile-set .profile-top .profileupload a {
+.profile-set .profile-top .profile-avatar-edit a {
     background: #ff9f43;
     width: 34px;
     height: 34px;
     z-index: 1;
     border-radius: 50px;
-    position: absolute;
-    bottom: 10px;
-    left: 41px
+    position: absolute !important;
+    inset: 0 !important
+}
+
+.profile-set .profile-top .profile-avatar-edit a img {
+    width: 16px;
+    height: 16px;
+    max-width: 16px
 }
 
 .profile-set .profile-top .profile-contentname {

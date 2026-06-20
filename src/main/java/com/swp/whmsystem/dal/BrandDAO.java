@@ -139,43 +139,46 @@ public class BrandDAO {
         return b;
     }
 
-    public List<Brand> searchBrand(String name, String des, String sortBy) {
+    public List<Brand> searchBrand(String keyword, String sortBy, int pageSize, int page) {
         List<Brand> brandList = new ArrayList<>();
-        List<String> parameter = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-                "select * from brands " +
-                        "where 1=1");
-        if (name != null && !name.trim().isEmpty()) {
-            sql.append(" and name like ?");
-            parameter.add("%" + name.trim() + "%");
-        }
-        if (des != null && !des.trim().isEmpty()) {
-            sql.append(" and description like ?");
-            parameter.add("%" + des.trim() + "%");
+                "select b.* from brands b "
+                        + "where 1=1"
+        );
+        List<Object> parameter = new ArrayList<>();
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" and (b.name like ? or b.description like ?)");
+            parameter.add("%" + keyword.trim() + "%");
+            parameter.add("%" + keyword.trim() + "%");
         }
 
         if (sortBy != null && !sortBy.trim().isEmpty()) {
             switch (sortBy) {
                 case "nameAZ":
-                    sql.append(" order by name asc");
+                    sql.append(" order by b.name asc");
                     break;
                 case "nameZA":
-                    sql.append(" order by name desc");
+                    sql.append(" order by b.name desc");
                     break;
-                case "desAZ":
-                    sql.append(" order by description asc");
+                case "descriptionAZ":
+                    sql.append(" order by b.description asc");
                     break;
-                case "desZA":
-                    sql.append(" order by description desc");
+                case "descriptionZA":
+                    sql.append(" order by b.description desc");
                     break;
             }
+        } else {
+            sql.append(" order by b.brandid asc");
         }
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-            // for debug
-//            System.out.println("====== sql thuc te: " + sql.toString());
-//            System.out.println("====== params: " + parameter.toString());
+        int offset = (page - 1) * pageSize;
+        sql.append(" limit ? offset ?");
+        parameter.add(pageSize);
+        parameter.add(offset);
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString());) {
+            System.out.println(sql.toString());
             for (int i = 0; i < parameter.size(); i++) {
                 ps.setObject(i + 1, parameter.get(i));
             }
@@ -190,12 +193,42 @@ public class BrandDAO {
         return brandList;
     }
 
+    public int countBrands(String keyword) {
+        StringBuilder sql = new StringBuilder(
+                "select count(*) from brands b "
+                        + "where 1=1"
+        );
+        List<Object> parameters = new ArrayList<>();
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String searchValue = "%" + keyword.trim() + "%";
+            sql.append(" and (b.name like ? or b.description like ?)");
+            parameters.add(searchValue);
+            parameters.add(searchValue);
+        }
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < parameters.size(); i++) {
+                ps.setObject(i + 1, parameters.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return 0;
+    }
+
     public static void main(String[] args) {
 
         BrandDAO dao = new BrandDAO();
 
         List<Brand> list = dao.getAllBrand();
-        List<Brand> search = dao.searchBrand(null, null, null);
+        List<Brand> search = dao.searchBrand(null, null, 10, 1);
         Brand b = new Brand();
 
         b.setId(1);

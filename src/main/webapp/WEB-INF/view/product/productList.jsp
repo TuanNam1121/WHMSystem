@@ -169,7 +169,7 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Id</th>
+                                    <th>No</th>
                                     <th>Product</th>
                                     <th>SKU</th>
                                     <th>Category</th>
@@ -181,9 +181,9 @@
                                 </thead>
                                 <tbody>
 
-                                <c:forEach items="${sessionScope.productList}" var="p">
+                                <c:forEach items="${sessionScope.productList}" var="p" varStatus="v">
                                     <tr>
-                                        <td>${p.productId}</td>
+                                        <td>${v.index + 1}</td>
                                         <td class="productimgname">
                                             <a href="javascript:void(0);" class="product-img">
                                                 <img src="${p.imgUrl}" alt="product">

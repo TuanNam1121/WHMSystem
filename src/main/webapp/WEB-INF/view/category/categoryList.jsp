@@ -40,7 +40,7 @@
         <div class="content">
             <div class="page-header">
                 <div class="page-title">
-                    <h4>Product Category list</h4>
+                    <h4>Category list</h4>
                     <h6>View/Search product Category</h6>
                 </div>
                 <div class="page-btn">
@@ -52,35 +52,7 @@
 
             <div class="card">
                 <div class="card-body">
-                    <div class="table-top">
-                        <div class="search-set">
-                            <div class="search-path">
-                                <a class="btn btn-filter" id="filter_search">
-                                    <img src="assets/img/icons/filter.svg" alt="img">
-                                    <span><img src="assets/img/icons/closes.svg" alt="img"></span>
-                                </a>
-                            </div>
-                            <div class="search-input">
-                                <a class="btn btn-searchset"><img src="assets/img/icons/search-white.svg" alt="img"></a>
-                            </div>
-                        </div>
-                        <div class="wordset">
-                            <ul>
-                                <li>
-                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img
-                                            src="assets/img/icons/pdf.svg" alt="img"></a>
-                                </li>
-                                <li>
-                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img
-                                            src="assets/img/icons/excel.svg" alt="img"></a>
-                                </li>
-                                <li>
-                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img
-                                            src="assets/img/icons/printer.svg" alt="img"></a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+
 
                     <c:if test="${not empty sessionScope.error}">
                         <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -90,57 +62,67 @@
                         <% session.removeAttribute("error"); %>
                     </c:if>
                     <form action="categoryList" method="get">
-                        <div class="card" id="filter_inputs">
+                        <div class="card mb-0" id="filter_inputs" style="display: block !important;">
                             <div class="card-body pb-0">
                                 <div class="row">
-                                    <div class="col-lg-2 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <select class="select" name="categoryId">
-                                                <option>Choose Category</option>
-                                                <c:forEach items="${sessionScope.allCategoryList}" var="c">
-                                                    <option value="${c.categoryId}">${c.name}</option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-2 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <select class="select" name="active">
-                                                <option value="">Choose Status</option>
-                                                <option value="1">Active</option>
-                                                <option value="0">Inactive</option>
-                                            </select>
-                                        </div>
-                                    </div>
+                                    <div class="col-lg-12 col-sm-12">
+                                        <div class="row">
 
-                                    <div class="col-lg-2 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <select class="select" name="sortBy">
-                                                <option value="">Sort By</option>
-                                                <option value="nameAZ">Category A-Z</option>
-                                                <option value="nameZA">Category Z-A</option>
-                                                <option value="active">Active</option>
-                                                <option value="inactive">Inactive</option>
-                                            </select>
-                                        </div>
-                                    </div>
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <input type="text" name="keyword" value="${param.keyword}"
+                                                           placeholder="Search category name / description...">
+                                                </div>
+                                            </div>
 
-                                    <div class="col-lg-1 col-sm-6 col-12 ms-auto">
-                                        <div class="form-group">
-                                            <button type="submit" class="btn btn-filters ms-auto">
-                                                <img src="assets/img/icons/search-whites.svg" alt="img">
-                                            </button>
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <select class="select" name="isActive">
+                                                        <option value="">Choose Status</option>
+                                                        <option value="1" ${param.isActive == '1' ? 'selected' : ''}>Active</option>
+                                                        <option value="0" ${param.isActive == '0' ? 'selected' : ''}>Inactive</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <select class="select" name="sortBy">
+                                                        <option value="">Sort By</option>
+                                                        <option value="nameAZ" ${param.sortBy == 'nameAZ' ? 'selected' : ''}>
+                                                            Name A-Z
+                                                        </option>
+                                                        <option value="nameZA" ${param.sortBy == 'nameZA' ? 'selected' : ''}>
+                                                            Name Z-A
+                                                        </option>
+                                                        <option value="active" ${param.sortBy == 'active' ? 'selected' : ''}>
+                                                            Active first
+                                                        </option>
+                                                        <option value="inactive" ${param.sortBy == 'inactive' ? 'selected' : ''}>
+                                                            Inactive first
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-1 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <button type="submit" class="btn btn-filters ms-auto"
+                                                            style="border: none; padding: 0;">
+                                                        <img src="assets/img/icons/search-whites.svg" alt="img">
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                    </form>
-                    <div class="table-responsive">
-                        <table class="table  datanew">
+                        <div class="table-responsive" id="category-table" tabindex="-1">
+                            <table class="table">
                             <thead>
                             <tr>
+                                <th>No</th>
                                 <th>Category name</th>
                                 <th>Description</th>
                                 <th>Active</th>
@@ -149,8 +131,9 @@
                             </thead>
                             <tbody>
 
-                            <c:forEach items="${sessionScope.searchedCategoryList}" var="c">
+                            <c:forEach items="${sessionScope.searchedCategoryList}" var="c" varStatus="v">
                                 <tr>
+                                    <td>${v.index + 1}</td>
                                     <td>
                                         <a href="javascript:void(0);">${c.name}</a>
                                     </td>
@@ -164,8 +147,10 @@
                                 </tr>
                             </c:forEach>
                             </tbody>
-                        </table>
-                    </div>
+                            </table>
+                        </div>
+                        <jsp:include page="/WEB-INF/common/pagination.jsp"/>
+                    </form>
                 </div>
             </div>
 
@@ -191,5 +176,14 @@
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
 <script src="assets/js/script.js"></script>
+<c:if test="${focusTable}">
+    <script>
+        window.addEventListener("load", function () {
+            const table = document.getElementById("category-table");
+            table.scrollIntoView({behavior: "smooth", block: "start"});
+            table.focus({preventScroll: true});
+        });
+    </script>
+</c:if>
 </body>
 </html>

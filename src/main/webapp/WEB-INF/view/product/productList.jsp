@@ -1,3 +1,4 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,12 +20,10 @@
 
     <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
 
-    <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
-
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
 
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=20260620-product-pagination">
 
     <style>
         .product-list-card .table-top {
@@ -35,9 +34,6 @@
             display: block !important;
         }
 
-        .product-list-card .dataTables_filter {
-            display: none !important;
-        }
     </style>
 </head>
 <body>
@@ -143,7 +139,7 @@
                         </div>
                     </form>
                     <div class="table-responsive">
-                        <table class="table  datanew">
+                        <table class="table">
                             <thead>
                             <tr>
                                 <th>Id</th>
@@ -187,6 +183,130 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="product-table-footer d-flex align-items-center justify-content-between w-100">
+                        <form action="productlist" method="get" class="product-page-size flex-shrink-0">
+                            <input type="hidden" name="productName" value="${param.productName}">
+                            <input type="hidden" name="isActive" value="${param.isActive}">
+                            <input type="hidden" name="categoryId" value="${param.categoryId}">
+                            <input type="hidden" name="brandId" value="${param.brandId}">
+                            <input type="hidden" name="sortBy" value="${param.sortBy}">
+                            <input type="hidden" name="page" value="1">
+                            <label for="pageSize">Show per page:</label>
+                            <select id="pageSize" name="pageSize"
+                                    class="form-select form-select-sm product-page-size-select"
+                                    onchange="this.form.submit()">
+                                <option value="10" ${pageSize == 10 ? "selected" : ""}>10</option>
+                                <option value="25" ${pageSize == 25 ? "selected" : ""}>25</option>
+                                <option value="50" ${pageSize == 50 ? "selected" : ""}>50</option>
+                                <option value="100" ${pageSize == 100 ? "selected" : ""}>100</option>
+                            </select>
+                        </form>
+
+                        <div class="product-pagination ms-auto">
+                            <c:url var="previousPageUrl" value="productlist">
+                                <c:param name="productName" value="${param.productName}"/>
+                                <c:param name="isActive" value="${param.isActive}"/>
+                                <c:param name="categoryId" value="${param.categoryId}"/>
+                                <c:param name="brandId" value="${param.brandId}"/>
+                                <c:param name="sortBy" value="${param.sortBy}"/>
+                                <c:param name="pageSize" value="${pageSize}"/>
+                                <c:param name="page" value="${page - 1}"/>
+                            </c:url>
+                            <c:url var="nextPageUrl" value="productlist">
+                                <c:param name="productName" value="${param.productName}"/>
+                                <c:param name="isActive" value="${param.isActive}"/>
+                                <c:param name="categoryId" value="${param.categoryId}"/>
+                                <c:param name="brandId" value="${param.brandId}"/>
+                                <c:param name="sortBy" value="${param.sortBy}"/>
+                                <c:param name="pageSize" value="${pageSize}"/>
+                                <c:param name="page" value="${page + 1}"/>
+                            </c:url>
+                            <ul class="pagination mb-4">
+                                <li class="page-item ${page == 1 ? 'disabled' : ''}">
+                                    <a class="page-link"
+                                       href="${page == 1 ? 'javascript:void(0);' : previousPageUrl}"
+                                       tabindex="${page == 1 ? '-1' : '0'}">«</a>
+                                </li>
+
+                                <c:forEach begin="1" end="${totalPages < 3 ? totalPages : 3}" var="pageNumber">
+                                    <c:url var="pageUrl" value="productlist">
+                                        <c:param name="productName" value="${param.productName}"/>
+                                        <c:param name="isActive" value="${param.isActive}"/>
+                                        <c:param name="categoryId" value="${param.categoryId}"/>
+                                        <c:param name="brandId" value="${param.brandId}"/>
+                                        <c:param name="sortBy" value="${param.sortBy}"/>
+                                        <c:param name="pageSize" value="${pageSize}"/>
+                                        <c:param name="page" value="${pageNumber}"/>
+                                    </c:url>
+                                    <li class="page-item ${page == pageNumber ? 'active' : ''}">
+                                        <a class="page-link" href="${pageUrl}">${pageNumber}</a>
+                                    </li>
+                                </c:forEach>
+
+                                <c:if test="${totalPages > 3}">
+                                    <c:choose>
+                                        <c:when test="${page == 4 && page < totalPages}">
+                                            <c:url var="currentPageUrl" value="productlist">
+                                                <c:param name="productName" value="${param.productName}"/>
+                                                <c:param name="isActive" value="${param.isActive}"/>
+                                                <c:param name="categoryId" value="${param.categoryId}"/>
+                                                <c:param name="brandId" value="${param.brandId}"/>
+                                                <c:param name="sortBy" value="${param.sortBy}"/>
+                                                <c:param name="pageSize" value="${pageSize}"/>
+                                                <c:param name="page" value="${page}"/>
+                                            </c:url>
+                                            <li class="page-item active">
+                                                <a class="page-link" href="${currentPageUrl}">${page}</a>
+                                            </li>
+                                            <c:if test="${totalPages > 5}">
+                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                            </c:if>
+                                        </c:when>
+                                        <c:when test="${page > 4 && page < totalPages}">
+                                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                                            <c:url var="currentPageUrl" value="productlist">
+                                                <c:param name="productName" value="${param.productName}"/>
+                                                <c:param name="isActive" value="${param.isActive}"/>
+                                                <c:param name="categoryId" value="${param.categoryId}"/>
+                                                <c:param name="brandId" value="${param.brandId}"/>
+                                                <c:param name="sortBy" value="${param.sortBy}"/>
+                                                <c:param name="pageSize" value="${pageSize}"/>
+                                                <c:param name="page" value="${page}"/>
+                                            </c:url>
+                                            <li class="page-item active">
+                                                <a class="page-link" href="${currentPageUrl}">${page}</a>
+                                            </li>
+                                            <c:if test="${page < totalPages - 1}">
+                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                            </c:if>
+                                        </c:when>
+                                        <c:when test="${totalPages > 4}">
+                                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                                        </c:when>
+                                    </c:choose>
+
+                                    <c:url var="lastPageUrl" value="productlist">
+                                        <c:param name="productName" value="${param.productName}"/>
+                                        <c:param name="isActive" value="${param.isActive}"/>
+                                        <c:param name="categoryId" value="${param.categoryId}"/>
+                                        <c:param name="brandId" value="${param.brandId}"/>
+                                        <c:param name="sortBy" value="${param.sortBy}"/>
+                                        <c:param name="pageSize" value="${pageSize}"/>
+                                        <c:param name="page" value="${totalPages}"/>
+                                    </c:url>
+                                    <li class="page-item ${page == totalPages ? 'active' : ''}">
+                                        <a class="page-link" href="${lastPageUrl}">${totalPages}</a>
+                                    </li>
+                                </c:if>
+
+                                <li class="page-item ${page == totalPages ? 'disabled' : ''}">
+                                    <a class="page-link"
+                                       href="${page == totalPages ? 'javascript:void(0);' : nextPageUrl}"
+                                       tabindex="${page == totalPages ? '-1' : '0'}">»</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -200,9 +320,6 @@
 <script src="assets/js/feather.min.js"></script>
 
 <script src="assets/js/jquery.slimscroll.min.js"></script>
-
-<script src="assets/js/jquery.dataTables.min.js"></script>
-<script src="assets/js/dataTables.bootstrap4.min.js"></script>
 
 <script src="assets/js/bootstrap.bundle.min.js"></script>
 

@@ -34,6 +34,69 @@
                 <div class="whirly-loader"></div>
             </div>
 
+            <div class="card product-list-card">
+                <div class="card-body">
+
+                    <form action="productlist" method="get">
+                        <div class="card mb-0" id="filter_inputs" style="display: block !important;">
+                            <div class="card-body pb-0">
+                                <div class="row">
+                                    <div class="col-lg-12 col-sm-12">
+                                        <div class="row">
+
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <input type="text" name="productName" placeholder="Search...">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <select class="select" name="isActive">
+                                                        <option value="">Choose Status</option>
+                                                        <option value="1">Active</option>
+                                                        <option value="0">Inactive</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <select class="select" name="categoryId">
+                                                        <option value="">Choose Category</option>
+                                                        <c:forEach items="${sessionScope.categoryList}" var="c">
+                                                            <option value="${c.categoryId}">${c.name}</option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <select class="select" name="brandId">
+                                                        <option value="">Choose Brand</option>
+                                                        <c:forEach items="${sessionScope.brandList}" var="b">
+                                                            <option value="${b.id}">${b.name}</option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <select class="select" name="sortBy">
+                                                        <option value="">Sort By</option>
+                                                        <option value="nameAZ">Name A-Z</option>
+                                                        <option value="nameZA">Name Z-A</option>
+                                                        <option value="skuAZ">SKU A-Z</option>
+                                                        <option value="skuZA">SKU Z-A</option>
+                                                        <option value="cateAZ">Category A-Z</option>
+                                                        <option value="cateZA">Category Z-A</option>
+                                                        <option value="brandAZ">Brand A-Z</option>
+                                                        <option value="brandZA">Brand Z-A</option>
+                                                    </select>
+                                                </div>
+                                            </div>
             <div class="main-wrapper">
 
 

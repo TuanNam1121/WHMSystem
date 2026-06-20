@@ -32,19 +32,20 @@ public class ProductList extends HttpServlet {
         CategoryDAO categoryDAO = new CategoryDAO();
         List<Product> productList = new ArrayList<>();
         String productName = request.getParameter("productName");
-        String productSku = request.getParameter("productSku");
         String categoryIdRaw = request.getParameter("categoryId");
         String brandIdRaw = request.getParameter("brandId");
+        String isActiveRaw = request.getParameter("isActive");
         String sortBy = request.getParameter("sortBy");
         if (productName == null
-                && productSku == null
                 && categoryIdRaw == null
                 && brandIdRaw == null
+                && isActiveRaw == null
                 && sortBy == null) {
             productList = productDAO.getProductList();
         } else {
             int categoryId = -1;
             int brandId = -1;
+            int isActive = -1;
 
             if (categoryIdRaw != null && !categoryIdRaw.trim().isEmpty()) {
                 try {
@@ -61,8 +62,19 @@ public class ProductList extends HttpServlet {
                     brandId = -1;
                 }
             }
-            productList = productDAO.searchProduct(productName, productSku, categoryId, brandId, sortBy);
 
+            if (isActiveRaw != null && !isActiveRaw.trim().isEmpty()) {
+                try {
+                    int parsedStatus = Integer.parseInt(isActiveRaw.trim());
+                    if (parsedStatus == 0 || parsedStatus == 1) {
+                        isActive = parsedStatus;
+                    }
+                } catch (NumberFormatException e) {
+                    isActive = -1;
+                }
+            }
+
+            productList = productDAO.searchProduct(productName, categoryId, brandId, isActive, sortBy);
         }
         List<Category> categoryList = categoryDAO.getAllCategory();
         List<Brand> brandList = brandDAO.getAllBrand();
@@ -85,4 +97,3 @@ public class ProductList extends HttpServlet {
     }
 
 }
-

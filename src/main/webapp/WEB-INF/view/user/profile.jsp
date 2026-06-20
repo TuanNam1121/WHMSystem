@@ -11,7 +11,7 @@
           content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Dreams Pos admin template</title>
+    <title>Profile</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
 
@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
 
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=20260620-avatar-edit">
 </head>
 <body>
 <div id="global-loader">
@@ -59,9 +59,16 @@
                             </div>
                             <div class="profile-top">
                                 <div class="profile-content">
-                                    <div class="profile-contentimg">
-                                        <img src="assets/img/customer/customer5.jpg" alt="img" id="blah">
-                                        <div class="profileupload">
+                                    <div class="profile-avatar-wrapper">
+                                        <div class="profile-contentimg profile-avatar-frame">
+                                            <img src="assets/img/profiles/jb.jpg"
+                                                 alt="Avatar"
+                                                 id="blah"
+                                                 class="profile-avatar-image"
+                                                 width="110"
+                                                 height="110">
+                                        </div>
+                                        <div class="profileupload profile-avatar-edit">
                                             <input type="file" id="imgInp">
                                             <a href="javascript:void(0);"><img src="assets/img/icons/edit-set.svg"
                                                                                alt="img"></a>
@@ -80,13 +87,15 @@
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>First Name</label>
-                                    <input type="text" name="firstname" placeholder= ${sessionScope.user.firstname}>
+                                    <input type="text" name="firstname"
+                                           placeholder="${sessionScope.user.firstname}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Last Name</label>
-                                    <input type="text" name="lastname" placeholder=" ${sessionScope.user.lastname}">
+                                    <input type="text" name="lastname"
+                                           placeholder="${sessionScope.user.lastname}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-12">

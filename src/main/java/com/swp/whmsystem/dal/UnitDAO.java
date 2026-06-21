@@ -179,6 +179,20 @@ public class UnitDAO {
         unit.setActive(rs.getBoolean("isactive"));
         return unit;
     }
+
+    public boolean isUnitUsed(int unitId) {
+        String sql = "SELECT COUNT(*) FROM products WHERE unitid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, unitId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
     
     public static void main(String[] args) {
         UnitDAO dao = new UnitDAO();

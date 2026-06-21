@@ -27,7 +27,11 @@ public class UpdateRamStatus extends HttpServlet {
         boolean active = Boolean.parseBoolean(request.getParameter("active"));
         String status = request.getParameter("status");
 
-        ramDao.updateRamStatus(id, active);
+        if (!active && ramDao.isRamUsed(id)) {
+            request.getSession().setAttribute("error", "Cannot disable this RAM because it is currently used by a product.");
+        } else {
+            ramDao.updateRamStatus(id, active);
+        }
 
         String target = request.getContextPath() + "/RamList";
         if (status != null && !status.isEmpty()) {

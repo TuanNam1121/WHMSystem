@@ -183,4 +183,18 @@ public class ChipDAO {
         return null;
     }
 
+    public boolean isChipUsed(int chipId) {
+        String sql = "SELECT COUNT(*) FROM products WHERE chipid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, chipId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
 }

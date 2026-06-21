@@ -119,6 +119,17 @@ public class RolePermissionDAO {
 
         return null;
     }
+    
+    public boolean havePermission(User user, String permisisonName){
+        List<Permission> permissions = getPermissionByRole(user.getRoleId());
+        
+        for(Permission p:permissions){
+            if(p.getPermissionName().equals(permisisonName)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     private RolePermission mapResultSetToRequest(ResultSet rs) throws SQLException {
         RolePermission i = new RolePermission();

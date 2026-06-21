@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package com.swp.whmsystem.controller.sale;
+package com.swp.whmsystem.controller.sale2;
 
 import com.swp.whmsystem.dal.CustomerDAO;
 import com.swp.whmsystem.dal.OrderDAO;
@@ -28,8 +28,8 @@ import java.sql.Timestamp;
  *
  * @author LENOVO
  */
-@WebServlet(name = "CreateOder", urlPatterns = {"/CreateOder"})
-public class CreateOder extends HttpServlet {
+@WebServlet(name = "CreateOrder2", urlPatterns = {"/CreateOrder2"})
+public class CreateOrder2 extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -89,7 +89,7 @@ public class CreateOder extends HttpServlet {
         
         ProductDAO pd = new ProductDAO();
         request.setAttribute("products", pd.getProductList());
-        request.getRequestDispatcher("WEB-INF/view/sale/createOrder.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/sale2/createOrder.jsp").forward(request, response);
     }
 
     /**
@@ -137,6 +137,7 @@ public class CreateOder extends HttpServlet {
         String[] productIds = request.getParameterValues("productId");
         ProductDAO pd = new ProductDAO();
         
+        
         Order createdOrder = od.insertOrder(order);
         double total = 0;
 
@@ -168,7 +169,8 @@ public class CreateOder extends HttpServlet {
         
         createdOrder.setTotalPrice(total);
         od.updateOrderPrice(createdOrder);
-        response.sendRedirect("OrderList");
+        session.removeAttribute("selectedProducts");
+        response.sendRedirect("OrderList2");
     }
 
     /**

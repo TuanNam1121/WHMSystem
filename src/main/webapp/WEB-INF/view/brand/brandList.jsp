@@ -130,9 +130,6 @@
                                                href="${pageContext.request.contextPath}/BrandDetail?id=${b.id}">
                                                 <img src="assets/img/icons/edit.svg" alt="img">
                                             </a>
-                                            <a class="me-3 confirm-text" href="javascript:void(0);">
-                                                <img src="assets/img/icons/delete.svg" alt="img">
-                                            </a>
                                         </td>
                                     </tr>
                                 </c:forEach>

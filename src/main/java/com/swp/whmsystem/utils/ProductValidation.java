@@ -4,14 +4,21 @@
  */
 package com.swp.whmsystem.utils;
 
+import com.swp.whmsystem.dal.ProductItemDAO;
 import com.swp.whmsystem.model.Product;
+import jakarta.servlet.http.Part;
+import java.util.Set;
 
 /**
  *
  * @author Admin
  */
 public class ProductValidation {
-    public static String isProductValid(Product p){
+    private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
+            "image/jpeg", "image/jpg", "image/pjpeg", "image/png", "image/gif", "image/webp"
+    );
+
+    public static String isProductValid(Product p, Part filePart){
         if(p.getSku()== null || p.getSku().isBlank()) return "Product must have SKU";
         if(p.getName() == null || p.getName().isBlank()) return "Product Name can't be empty";
         if(p.getCategory() == null) return "Product must be have category";
@@ -42,6 +49,10 @@ public class ProductValidation {
             if (p.getChip() != null) return "ROM product must not have Chip";
             if (p.getModel() != null) return "ROM product must not have Model";
         }
+        String imageValid = validateImage(filePart);
+        if(imageValid != null){
+            return imageValid;
+        }
         return "true";
     }
     
@@ -57,9 +68,25 @@ public class ProductValidation {
         }
     }
     
-    public static boolean isCategoryCheckRequired(Product p){
-        if(p.getCategory() == null) return false;
-        String name = p.getCategory().getName();
-        return name.contains("Laptop") || name.equals("RAM") || name.equals("ROM");
+    public static String validateImage(Part filePart){
+        if(filePart == null || filePart.getSize() == 0) return null;
+        String ct = lower(filePart.getContentType());
+        if (!ALLOWED_CONTENT_TYPES.contains(ct)) {
+            return "Only JPG/PNG/GIF/WEBP are allowed";
+        }
+        return null;
+    }
+    
+    private static String lower(String s) {
+        return s == null ? "" : s.toLowerCase();
+    }
+    
+    public static boolean existTransaction(int productId){
+        ProductItemDAO dao = new ProductItemDAO();
+        return !dao.getAllProductItemByProductId(productId).isEmpty();
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(existTransaction(8));
     }
 }

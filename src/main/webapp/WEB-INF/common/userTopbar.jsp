@@ -7,10 +7,6 @@
         <input class="form-control" type="search" name="keyword" value="${param.keyword}" placeholder="Search...">
     </form>
     <div class="topbar-actions">
-        <c:if test="${sessionScope.user.roleId == 1}">
-            <a class="admin-dashboard-btn" href="${pageContext.request.contextPath}/AdminDashBoard">Admin Dashboard</a>
-        </c:if>
-        <a class="notification-btn" href="${pageContext.request.contextPath}/home">Notification</a>
         <div class="dropdown">
             <button class="user-menu-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <span class="user-avatar"></span>
@@ -18,7 +14,6 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-end user-dropdown">
                 <li class="dropdown-header">
-                    <span class="user-avatar small"></span>
                     <span>${displayName}</span>
                 </li>
                 <li>

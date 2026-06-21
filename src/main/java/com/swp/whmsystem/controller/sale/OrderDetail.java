@@ -71,6 +71,18 @@ public class OrderDetail extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+//        HttpSession session = request.getSession();
+//        User user = (User) session.getAttribute("user");
+//        if (user == null) {
+//            response.sendRedirect("login");
+//            return;
+//        }
+//        RolePermissionDAO rpd = new RolePermissionDAO();
+//        if(!rpd.havePermission(user, "CreateOder")){
+//            response.sendRedirect("NoPermission");
+//            return;
+//        }
         String id = request.getParameter("id");
         String action = request.getParameter("action");
         request.setAttribute("action", action);
@@ -81,18 +93,18 @@ public class OrderDetail extends HttpServlet {
         request.setAttribute("order", order);
         CustomerDAO cd = new CustomerDAO();
         request.setAttribute("customers", cd.getAllCustomer());
-        
+
         //VIEW
         if (action.equals("view")) {
             if (order.getStatus().equals("NEW")) {
                 OrderItemDAO oid = new OrderItemDAO();
-                
+
                 ProductDAO pd = new ProductDAO();
                 request.setAttribute("orderItems", oid.getOrderItemByOrderId(orderId));
                 request.getRequestDispatcher("WEB-INF/view/sale/viewOrder.jsp").forward(request, response);
                 return;
             } else {
-//                ProductItemDAO pid = new ProductItemDAO();
+
                 ExportItemDAO exportItemDAO = new ExportItemDAO();
                 List<ExportDetailItemDTO> detailList = exportItemDAO.getExportedItemsByOrderId(orderId);
                 request.setAttribute("itemList", detailList);
@@ -102,7 +114,6 @@ public class OrderDetail extends HttpServlet {
 
         }
 
-        
         //UPDATE
         if (order.getStatus().equals("NEW")) {
             ProductDAO pd = new ProductDAO();
@@ -112,12 +123,15 @@ public class OrderDetail extends HttpServlet {
 
             request.getRequestDispatcher("WEB-INF/view/sale/orderDetail.jsp").forward(request, response);
             return;
-        } else {
+        } else if (order.getStatus().equals("DOING")) {
             ExportItemDAO exportItemDAO = new ExportItemDAO();
-                List<ExportDetailItemDTO> detailList = exportItemDAO.getExportedItemsByOrderId(orderId);
-                request.setAttribute("itemList", detailList);
-                request.getRequestDispatcher("WEB-INF/view/sale/orderDetail.jsp").forward(request, response);
-                return;
+            List<ExportDetailItemDTO> detailList = exportItemDAO.getExportedItemsByOrderId(orderId);
+            request.setAttribute("itemList", detailList);
+            request.getRequestDispatcher("WEB-INF/view/sale/orderDetail.jsp").forward(request, response);
+            return;
+        } else {
+            response.sendRedirect("NoPermission");
+            return;
         }
 
     }

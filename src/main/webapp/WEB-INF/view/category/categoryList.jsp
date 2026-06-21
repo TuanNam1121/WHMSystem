@@ -52,8 +52,6 @@
 
             <div class="card">
                 <div class="card-body">
-
-
                     <c:if test="${not empty sessionScope.error}">
                         <div class="alert alert-warning alert-dismissible fade show" role="alert">
                             <strong>${sessionScope.error}</strong>

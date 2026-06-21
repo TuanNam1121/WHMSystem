@@ -30,10 +30,6 @@
                             class="menu-arrow"></span></a>
                     <ul>
                         <li><a href="OrderList">Sales List</a></li>
-                        <li><a href="pos.html">POS</a></li>
-                        <li><a href="pos.html">New Sales</a></li>
-                        <li><a href="salesreturnlists.html">Sales Return List</a></li>
-                        <li><a href="createsalesreturns.html">New Sales Return</a></li>
                     </ul>
                 </li>
                 <li class="submenu">
@@ -71,33 +67,13 @@
                     </ul>
                 </li>
                 <li class="submenu">
-                    <a href="javascript:void(0);"><img src="assets/img/icons/quotation1.svg"
-                                                       alt="img"><span> Quotation</span>
-                        <span class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="quotationList.html">Quotation List</a></li>
-                        <li><a href="addquotation.jsp">Add Quotation</a></li>
-                    </ul>
-                </li>
-                <li class="submenu">
                     <a href="javascript:void(0);"><img src="assets/img/icons/transfer1.svg"
-                                                       alt="img"><span> Transfer</span>
+                                                       alt="img"><span> Export</span>
                         <span class="menu-arrow"></span></a>
                     <ul>
                         <li><a href="toExportList">Export Product</a></li>
                         <li><a href="exportHistory">Export History</a></li>
 
-                    </ul>
-                </li>
-                <li class="submenu">
-                    <a href="javascript:void(0);"><img src="assets/img/icons/return1.svg"
-                                                       alt="img"><span> Return</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="salesreturnlist.html">Sales Return List</a></li>
-                        <li><a href="createsalesreturn.html">Add Sales Return </a></li>
-                        <li><a href="purchasereturnlist.html">Purchase Return List</a></li>
-                        <li><a href="createpurchasereturn.html">Add Purchase Return </a></li>
                     </ul>
                 </li>
                 <li class="submenu">
@@ -119,27 +95,9 @@
                                                        alt="img"><span> Report</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="purchaseorderreport.html">Purchase order report</a></li>
                         <li><a href="inventoryreport.html">Inventory Report</a></li>
                         <li><a href="salesreport.html">Sales Report</a></li>
-                        <li><a href="invoicereport.html">Invoice Report</a></li>
                         <li><a href="purchasereport.html">Purchase Report</a></li>
-                        <li><a href="supplierreport.html">Supplier Report</a></li>
-                        <li><a href="customerreport.html">Customer Report</a></li>
-                    </ul>
-                </li>
-
-                <li class="submenu">
-                    <a href="javascript:void(0);"><img src="assets/img/icons/settings.svg"
-                                                       alt="img"><span> Settings</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="generalsettings.html">General Settings</a></li>
-                        <li><a href="emailsettings.html">Email Settings</a></li>
-                        <li><a href="paymentsettings.html">Payment Settings</a></li>
-                        <li><a href="currencysettings.html">Currency Settings</a></li>
-                        <li><a href="grouppermissions.html">Group Permissions</a></li>
-                        <li><a href="taxrates.html">Tax Rates</a></li>
                     </ul>
                 </li>
             </ul>

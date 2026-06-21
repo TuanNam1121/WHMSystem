@@ -181,4 +181,18 @@ public class RamDAO {
             throw new RuntimeException(e);
         }
     }
+
+    public boolean isRamUsed(int ramId) {
+        String sql = "SELECT COUNT(*) FROM products WHERE ramid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, ramId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
 }

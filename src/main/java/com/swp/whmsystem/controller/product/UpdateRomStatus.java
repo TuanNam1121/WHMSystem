@@ -27,7 +27,11 @@ public class UpdateRomStatus extends HttpServlet {
         boolean active = Boolean.parseBoolean(request.getParameter("active"));
         String status = request.getParameter("status");
 
-        romDao.updateRomStatus(id, active);
+        if (!active && romDao.isRomUsed(id)) {
+            request.getSession().setAttribute("error", "Cannot disable this Storage (ROM) because it is currently used by a product.");
+        } else {
+            romDao.updateRomStatus(id, active);
+        }
 
         String target = request.getContextPath() + "/StorageList";
         if (status != null && !status.isEmpty()) {

@@ -27,7 +27,11 @@ public class UpdateUnitStatus extends HttpServlet {
         boolean active = Boolean.parseBoolean(request.getParameter("active"));
         String status = request.getParameter("status");
 
-        unitDao.updateUnitStatus(id, active);
+        if (!active && unitDao.isUnitUsed(id)) {
+            request.getSession().setAttribute("error", "Cannot disable this Unit because it is currently used by a product.");
+        } else {
+            unitDao.updateUnitStatus(id, active);
+        }
 
         String target = request.getContextPath() + "/UnitList";
         if (status != null && !status.isEmpty()) {

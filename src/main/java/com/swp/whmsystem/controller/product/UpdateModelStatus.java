@@ -28,7 +28,11 @@ public class UpdateModelStatus extends HttpServlet {
         String status = request.getParameter("status");
         String brandId = request.getParameter("brandId");
 
-        modelDao.updateModelStatus(id, active);
+        if (!active && modelDao.isModelUsed(id)) {
+            request.getSession().setAttribute("error", "Cannot disable this Model because it is currently used by a product.");
+        } else {
+            modelDao.updateModelStatus(id, active);
+        }
 
         String target = request.getContextPath() + "/ModelList";
         boolean hasQuery = false;

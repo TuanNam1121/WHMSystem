@@ -254,6 +254,20 @@ public class ModelDAO {
         }
     }
 
+    public boolean isModelUsed(int modelId) {
+        String sql = "SELECT COUNT(*) FROM products WHERE modelid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, modelId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         ModelDAO dao = new ModelDAO();
         for(Model i : dao.getAll()){

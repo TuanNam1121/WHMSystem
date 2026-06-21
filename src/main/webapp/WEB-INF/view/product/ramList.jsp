@@ -51,6 +51,12 @@
                 </div>
             </div>
 
+            <c:if test="${not empty sessionScope.error}">
+                <div class="alert alert-danger">${sessionScope.error}</div>
+                <c:remove var="error" scope="session"/>
+            </c:if>
+
+
             <div class="card">
                 <div class="card-body">
                     <form id="filterForm" action="RamList" method="GET">

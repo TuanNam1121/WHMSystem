@@ -27,7 +27,11 @@ public class UpdateChipStatus extends HttpServlet {
         boolean active = Boolean.parseBoolean(request.getParameter("active"));
         String status = request.getParameter("status");
 
-        chipDao.updateChipStatus(id, active);
+        if (!active && chipDao.isChipUsed(id)) {
+            request.getSession().setAttribute("error", "Cannot disable this Chip because it is currently used by a product.");
+        } else {
+            chipDao.updateChipStatus(id, active);
+        }
 
         String target = request.getContextPath() + "/ChipList";
         if (status != null && !status.isEmpty()) {

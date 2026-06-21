@@ -109,26 +109,9 @@ public class ManagerPurchaseRequestDetail extends HttpServlet {
             purchaseRequestDAO.updatePurchaseRequest(purchaseRequest);
             response.sendRedirect("managerPurchaseRequestList");
         } else {
-            String warehouseStaffIdStr = request.getParameter("staffId");
-            if (warehouseStaffIdStr == null || warehouseStaffIdStr.isBlank()) {
-                warehouseStaffIdStr = request.getParameter("warehouseStaffId");
-            }
-            int warehouseStaffId = Integer.parseInt(warehouseStaffIdStr);
-            String managerNote = request.getParameter("managerNote");
-
             purchaseRequest.setApprovedBy(user.getId());
             purchaseRequest.setStatus("APPROVED");
             purchaseRequestDAO.updatePurchaseRequest(purchaseRequest);
-
-            GoodReceipt g = new GoodReceipt();
-            g.setPurchaseRequestId(purchaseRequest.getId());
-            g.setProcessedBy(warehouseStaffId);
-            g.setNote(managerNote);
-            g.setStatus("NEW");
-
-            GoodReceiptDAO grDao = new GoodReceiptDAO();
-            grDao.insertGoodReceipt(g);
-
             response.sendRedirect("managerPurchaseRequestList");
         }
     }

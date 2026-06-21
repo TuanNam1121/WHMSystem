@@ -82,6 +82,7 @@
                                     <c:if test="${order.status=='NEW'}">
                                         <div class="table-responsive flex-grow-1"
                                              style="max-height: 400px; overflow-y: auto;">
+                                            <input id="product-search" type="text" placeholder="Search">
                                             <table class="table table-hover table-nowrap mb-0">
                                                 <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
                                                     <tr>
@@ -224,13 +225,9 @@
             let selectedItems = [
             <c:forEach items="${orderItems}" var="oi" varStatus="status">
             {
-                <c:forEach items="${products}" var="p">
-                    <c:if test="${p.productId == oi.productId}">
-            id: ${p.productId},
-                    name: "${p.name}",
-                    stock: ${p.totalQuantity},
-                    </c:if>
-                </c:forEach>
+            id: ${oi.productId},
+                    name: "${oi.productName}",
+                    stock: ${oi.inStock},
             quantity: ${oi.quantity},
                     price: ${oi.price}
             }<c:if test="${!status.last}">,</c:if>

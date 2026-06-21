@@ -115,6 +115,7 @@
                                                         <option ${searchStatus=='COMPLETED'?'selected':''} value="COMPLETED">Completed</option>
                                                         <option ${searchStatus=='CANCELLED'?'selected':''} value="CANCELLED">Cancelled</option>
                                                     </select>
+                                                    
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-sm-6 col-12">
@@ -156,19 +157,35 @@
                                                 <td style="max-width: 200px; overflow-x: auto">${o.note}</td>
                                                 <td>${o.orderDate}</td>
                                                 <td>${o.creater}</td>
-                                                <td>${o.status}</td>
+                                                <td><c:choose>
+                                                        <c:when
+                                                            test="${o.status == 'NEW' || o.status == 'New'}">
+                                                            <span class="badges bg-lightyellow">${o.status}</span>
+                                                        </c:when>
+                                                        <c:when
+                                                            test="${o.status == 'DOING' || o.status == 'Doing'}">
+                                                            <span class="badges bg-lightpurple">${o.status}</span>
+                                                        </c:when>
+                                                        <c:when
+                                                            test="${o.status == 'COMPLETED' || o.status== 'Completed'}">
+                                                            <span class="badges bg-lightgreen">${o.status}</span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span class="badges bg-lightgrey">${o.status}</span>
+                                                        </c:otherwise>
+                                                    </c:choose></td>
                                                 <td>
                                                     <a class="me-3"
                                                        href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=view">
                                                         <img src="assets/img/icons/eye.svg" alt="img">
                                                     </a>
                                                     <c:if test="${o.status != 'COMPLETED'}">
-                                                    <c:if test="${o.status != 'CANCELLED'}">
-                                                        <a class="me-3"
-                                                           href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=update">
-                                                            <img src="assets/img/icons/edit.svg" alt="img">
-                                                        </a>
-                                                    </c:if>
+                                                        <c:if test="${o.status != 'CANCELLED'}">
+                                                            <a class="me-3"
+                                                               href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=update">
+                                                                <img src="assets/img/icons/edit.svg" alt="img">
+                                                            </a>
+                                                        </c:if>
                                                     </c:if>
                                                 </td>
                                             </tr>

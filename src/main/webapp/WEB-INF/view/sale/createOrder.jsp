@@ -75,6 +75,7 @@
 
                                     <div class="table-responsive flex-grow-1"
                                              style="max-height: 400px; overflow-y: auto;">
+                                        <input id="product-search" type="text" placeholder="Search">
                                             <table class="table table-hover table-nowrap mb-0">
                                                 <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
                                                 <tr>

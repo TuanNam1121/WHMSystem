@@ -42,6 +42,53 @@ public class InventoryAuditDAO {
         return list;
     }
 
+    public List<InventoryAudit> getInventoryAuditsByFilter(String keyword, int offset, int limit) {
+        String sql = "SELECT * FROM inventory_audit JOIN users ON inventory_audit.createdby = users.userid WHERE 1=1";
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += " AND users.fullname LIKE ?";
+        }
+        sql += " ORDER BY inventory_audit.createdat DESC LIMIT ? OFFSET ?";
+
+        List<InventoryAudit> list = new ArrayList<>();
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            int paramIndex = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                ps.setString(paramIndex++, "%" + keyword.trim() + "%");
+            }
+            ps.setInt(paramIndex++, limit);
+            ps.setInt(paramIndex, offset);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(mapInventoryAudit(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
+
+    public int countInventoryAuditsByFilter(String keyword) {
+        String sql = "SELECT COUNT(*) FROM inventory_audit JOIN users ON inventory_audit.createdby = users.userid WHERE 1=1";
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += " AND users.fullname LIKE ?";
+        }
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                ps.setString(1, "%" + keyword.trim() + "%");
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
+
     public InventoryAudit getInventoryAuditById(int id) {
         String sql = """
                 SELECT * FROM inventory_audit join users on inventory_audit.createdby = users.userid
@@ -85,6 +132,10 @@ public class InventoryAuditDAO {
                     item.setProductName(rs.getString("productname"));
                     item.setProductSku(rs.getString("productsku"));
                     item.setCategoryName(rs.getString("categoryname"));
+
+                    InventoryAuditItemSerialDAO serialDAO = new InventoryAuditItemSerialDAO();
+                    item.setSerials(serialDAO.getSerialsByAuditItemId(item.getId()));
+
                     list.add(item);
                 }
             }
@@ -97,7 +148,7 @@ public class InventoryAuditDAO {
     public int insertInventoryAudit(InventoryAudit audit) {
         String sql = "INSERT INTO inventory_audit (createdby, status, createdat, updatedat) VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
         try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, audit.getUserId());
             ps.setString(2, audit.getStatus().name());
             int affectedRows = ps.executeUpdate();
@@ -158,7 +209,6 @@ public class InventoryAuditDAO {
                 ps.executeUpdate();
             }
 
-
             String deleteAuditSql = "DELETE FROM inventory_audit WHERE id = ?";
             try (PreparedStatement ps = conn.prepareStatement(deleteAuditSql)) {
                 ps.setInt(1, auditId);
@@ -180,7 +230,24 @@ public class InventoryAuditDAO {
                 ps.executeUpdate();
             }
 
+            String updateItemSql = "UPDATE inventory_audit_items SET physicalquantity = ?, reasons = ? WHERE id = ?";
+            try (PreparedStatement ps = conn.prepareStatement(updateItemSql)) {
+                for (InventoryAuditItem item : items) {
+                    ps.setInt(1, item.getPhysicalQuantity());
+                    ps.setString(2, item.getReason());
+                    ps.setInt(3, item.getId());
+                    ps.addBatch();
+                }
+                ps.executeBatch();
+            }
+            return true;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    public boolean updateAuditItems(List<InventoryAuditItem> items) {
+        try (Connection conn = DBContext.getConnection()) {
             String updateItemSql = "UPDATE inventory_audit_items SET physicalquantity = ?, reasons = ? WHERE id = ?";
             try (PreparedStatement ps = conn.prepareStatement(updateItemSql)) {
                 for (InventoryAuditItem item : items) {
@@ -199,14 +266,12 @@ public class InventoryAuditDAO {
 
     public boolean approveInventoryAudit(int auditId, List<InventoryAuditItem> items) {
         try (Connection conn = DBContext.getConnection()) {
-
             String updateAuditSql = "UPDATE inventory_audit SET status = ?, updatedat = CURRENT_TIMESTAMP WHERE id = ?";
             try (PreparedStatement ps = conn.prepareStatement(updateAuditSql)) {
                 ps.setString(1, InventoryAuditStatus.COMPLETED.name());
                 ps.setInt(2, auditId);
                 ps.executeUpdate();
             }
-
 
             String updateProductSql = "UPDATE products SET total_quantity = ? WHERE productid = ?";
             try (PreparedStatement ps = conn.prepareStatement(updateProductSql)) {
@@ -217,17 +282,54 @@ public class InventoryAuditDAO {
                 }
                 ps.executeBatch();
             }
+
+            for (InventoryAuditItem item : items) {
+                if (item.getPhysicalQuantity() != item.getSystemQuantity()) {
+                    String getSerialsSql = "SELECT * FROM inventory_audit_item_serials WHERE audit_item_id = ?";
+                    List<com.swp.whmsystem.model.InventoryAuditItemSerial> serials = new ArrayList<>();
+                    try (PreparedStatement ps = conn.prepareStatement(getSerialsSql)) {
+                        ps.setInt(1, item.getId());
+                        try (ResultSet rs = ps.executeQuery()) {
+                            while (rs.next()) {
+                                com.swp.whmsystem.model.InventoryAuditItemSerial s = new com.swp.whmsystem.model.InventoryAuditItemSerial();
+                                s.setSerial(rs.getString("serial"));
+                                s.setType(rs.getString("type"));
+                                serials.add(s);
+                            }
+                        }
+                    }
+
+                    for (com.swp.whmsystem.model.InventoryAuditItemSerial s : serials) {
+                        if ("ADD".equals(s.getType())) {
+                            String insertSerialSql = "INSERT INTO product_items (serial, product_id, imported_price, status) VALUES (?, ?, ?, 'AVAILABLE')";
+                            try (PreparedStatement ps = conn.prepareStatement(insertSerialSql)) {
+                                ps.setString(1, s.getSerial());
+                                ps.setInt(2, item.getProductId());
+                                ps.setInt(3, 0);
+                                ps.executeUpdate();
+                            }
+                        } else if ("DELETE".equals(s.getType())) {
+                            String updateSerialSql = "UPDATE product_items SET status = 'UNAVAILABLE' WHERE serial = ? AND product_id = ?";
+                            try (PreparedStatement ps = conn.prepareStatement(updateSerialSql)) {
+                                ps.setString(1, s.getSerial());
+                                ps.setInt(2, item.getProductId());
+                                ps.executeUpdate();
+                            }
+                        }
+                    }
+                }
+            }
             return true;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     public boolean refreshSystemQuantities(int auditId) {
         String sql = "UPDATE inventory_audit_items i " +
-                     "JOIN products p ON i.productid = p.productid " +
-                     "SET i.systemquantity = p.total_quantity " +
-                     "WHERE i.auditid = ?";
+                "JOIN products p ON i.productid = p.productid " +
+                "SET i.systemquantity = p.total_quantity " +
+                "WHERE i.auditid = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, auditId);
             return ps.executeUpdate() > 0;
@@ -236,10 +338,11 @@ public class InventoryAuditDAO {
         }
     }
 
-    public boolean hasSubmittedAudit() {
-        String sql = "SELECT COUNT(*) FROM inventory_audit WHERE status = ?";
+    public boolean hasActiveAudit() {
+        String sql = "SELECT COUNT(*) FROM inventory_audit WHERE status IN (?, ?)";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, InventoryAuditStatus.SUBMITTED.name());
+            ps.setString(2, InventoryAuditStatus.PENDING.name());
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;

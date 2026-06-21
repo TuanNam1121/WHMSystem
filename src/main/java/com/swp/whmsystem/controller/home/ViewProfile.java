@@ -39,22 +39,26 @@ public class ViewProfile extends HttpServlet {
 
         int id = user.getId();
         String firstname = request.getParameter("firstname");
-        // Nếu để trống ô này -> Giữ nguyên tên cũ
+        // neu de empty thi giu ten cu
         if (firstname == null || firstname.trim().isEmpty()) {
             firstname = user.getFirstname();
-        } else if (!InputValidationUtil.isName(firstname)) { // Nếu có nhập thì mới check format
+        } else if (!InputValidationUtil.isFirstName(firstname)) { // co nhap thi check format
             session.setAttribute("error", "Firstname is not valid");
             request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
             return;
+        } else {
+            firstname = firstname.trim().replaceAll("\\s+", " ");
         }
 
         String lastname = request.getParameter("lastname");
         if (lastname == null || lastname.trim().isEmpty()) {
             lastname = user.getLastname();
-        } else if (!InputValidationUtil.isName(lastname)) {
+        } else if (!InputValidationUtil.isLastName(lastname)) {
             session.setAttribute("error", "Lastname is not valid");
             request.getRequestDispatcher("/WEB-INF/view/user/profile.jsp").forward(request, response);
             return;
+        } else {
+            lastname = lastname.trim();
         }
 
         String email = request.getParameter("email");
@@ -102,4 +106,3 @@ public class ViewProfile extends HttpServlet {
     }
 
 }
-

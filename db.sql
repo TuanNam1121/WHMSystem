@@ -229,6 +229,23 @@ INSERT INTO `inventory_audit_items` VALUES (1,1,1,9,8,-1,'Thiáº¿u laptop khi kiá
 UNLOCK TABLES;
 
 --
+-- Table structure for table `inventory_audit_item_serials`
+--
+
+DROP TABLE IF EXISTS `inventory_audit_item_serials`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `inventory_audit_item_serials` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `audit_item_id` int(11) NOT NULL,
+  `serial` varchar(100) NOT NULL,
+  `type` enum('ADD','DELETE') NOT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_audit_item_serials_item` FOREIGN KEY (`audit_item_id`) REFERENCES `inventory_audit_items` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `models`
 --
 
@@ -837,8 +854,8 @@ CREATE TABLE `users` (
   `email` varchar(100) DEFAULT NULL,
   `gender` enum('MALE','FEMALE','OTHER') DEFAULT NULL,
   `isactive` tinyint(1) DEFAULT '1',
-  `firstname` varchar(100) DEFAULT NULL,
-  `lastname` varchar(100) DEFAULT NULL,
+  `firstname` varchar(50) NOT NULL,
+  `lastname` varchar(50) NOT NULL,
   PRIMARY KEY (`userid`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `phone` (`phone`),

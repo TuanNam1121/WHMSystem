@@ -145,98 +145,55 @@ public class CategoryDAO {
 //        return false;
 //    }
 
-    public int getTotalCategory(int categoryId, int active, String keyword) {
-        StringBuilder sql = new StringBuilder(
-                "select count(*) from categories c " +
-                        "where 1=1"
-        );
-        List<String> parameter = new ArrayList<>();
-
-        if (categoryId != -1) {
-            sql.append(" and categoryid = ?");
-            parameter.add(String.valueOf(categoryId));
-        }
-
-        if (active != -1) {
-            sql.append(" and isactive = ?");
-            parameter.add(String.valueOf(active));
-        }
-
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            sql.append(" and name like ?");
-            parameter.add("%" + keyword.trim() + "%");
-        }
-
-        try (Connection conn = DBContext.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
-            for (int i = 0; i < parameter.size(); i++) {
-                ps.setObject(i + 1, parameter.get(i));
-            }
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
-        }
-        return 0;
-    }
-
-    public List<Category> searchCategory(int categoryId, int active, String keyword, String sortBy, int offset, int limit) {
+    public List<Category> searchCategory(String keyword, int isActive, String sortBy,
+                                         int pageSize, int page) {
         List<Category> categoryList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-                "select * from categories c " +
-                        "where 1=1"
+                "select c.* from categories c "
+                        + "where 1=1"
         );
-        List<String> parameter = new ArrayList<>();
-
-
-        if (categoryId != -1) {
-            sql.append(" and categoryid = ?");
-            parameter.add(String.valueOf(categoryId));
-
-        }
-
-        if (active != -1) {
-            sql.append(" and isactive = ?");
-            parameter.add(String.valueOf(active));
-        }
+        List<Object> parameter = new ArrayList<>();
 
         if (keyword != null && !keyword.trim().isEmpty()) {
-            sql.append(" and name like ?");
+            sql.append(" and (c.name like ? or c.description like ?)");
             parameter.add("%" + keyword.trim() + "%");
+            parameter.add("%" + keyword.trim() + "%");
+        }
+
+        if (isActive != -1) {
+            sql.append(" and c.isactive = ?");
+            parameter.add(isActive);
         }
 
         if (sortBy != null && !sortBy.trim().isEmpty()) {
             switch (sortBy) {
                 case "nameAZ":
-                    sql.append(" order by name asc");
+                    sql.append(" order by c.name asc");
                     break;
                 case "nameZA":
-                    sql.append(" order by name desc");
+                    sql.append(" order by c.name desc");
                     break;
                 case "active":
-                    sql.append(" order by isactive desc");
+                    sql.append(" order by c.isactive desc");
                     break;
                 case "inactive":
-                    sql.append(" order by isactive asc");
-
+                    sql.append(" order by c.isactive asc");
                     break;
             }
+        } else {
+            sql.append(" order by c.categoryid asc");
         }
 
+        int offset = (page - 1) * pageSize;
         sql.append(" limit ? offset ?");
+        parameter.add(pageSize);
+        parameter.add(offset);
 
-        try (Connection conn = DBContext.getConnection()
-        ) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString());) {
             System.out.println(sql.toString());
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
-            int i = 0;
-            for (; i < parameter.size(); i++) {
+            for (int i = 0; i < parameter.size(); i++) {
                 ps.setObject(i + 1, parameter.get(i));
             }
-            ps.setInt(i + 1, limit);
-            ps.setInt(i + 2, offset);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 categoryList.add(mapResultSetToCategory(rs));
@@ -245,7 +202,41 @@ public class CategoryDAO {
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
-        return null;
+        return categoryList;
+    }
+
+    public int countCategories(String keyword, int isActive) {
+        StringBuilder sql = new StringBuilder(
+                "select count(*) from categories c "
+                        + "where 1=1"
+        );
+        List<Object> parameters = new ArrayList<>();
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String searchValue = "%" + keyword.trim() + "%";
+            sql.append(" and (c.name like ? or c.description like ?)");
+            parameters.add(searchValue);
+            parameters.add(searchValue);
+        }
+        if (isActive != -1) {
+            sql.append(" and c.isactive = ?");
+            parameters.add(isActive);
+        }
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < parameters.size(); i++) {
+                ps.setObject(i + 1, parameters.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return 0;
     }
 
     public static void main(String[] args) {

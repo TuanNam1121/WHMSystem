@@ -94,13 +94,10 @@ public class CreatePurchaseRequest extends HttpServlet {
             }
             i++;
         }
+
         request.getSession().setAttribute("message", "Create a purchase request successfully! Wait for the confirmation by manager!");
         response.sendRedirect("purchaseRequestList");
     }
 
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }
 }
 

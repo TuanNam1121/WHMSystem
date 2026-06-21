@@ -72,7 +72,7 @@ public class UpdateProduct extends HttpServlet {
         ProductDAO productDao = new ProductDAO();
         try {
             Product product = productDao.getProductFromId(Integer.parseInt(productIdr));
-            if (product.getTotalQuantity() != 0) {
+            if (ProductValidation.existTransaction(product.getProductId())) {
                 request.setAttribute("transactionExist", "v");
             }
             request.setAttribute("mode", "update");
@@ -115,11 +115,6 @@ public class UpdateProduct extends HttpServlet {
         String description = request.getParameter("description");
         Part part = request.getPart("image");
         String imgUrl = "";
-        if (part != null && part.getSize() > 0) {
-            imgUrl = FileUtils.saveFile(part, request);
-        }
-
-        String cautioned = request.getParameter("cautioned");
 
         RamDAO ramDao = new RamDAO();
         RomDAO romDao = new RomDAO();
@@ -239,8 +234,8 @@ public class UpdateProduct extends HttpServlet {
 
         request.setAttribute("mode", "update");
         request.setAttribute("product", product);
-        if (product.getTotalQuantity() != 0) {
-            request.setAttribute("transactionExist", "v");
+        if (ProductValidation.existTransaction(product.getProductId())) {
+                request.setAttribute("transactionExist", "v");
         }
 
         Product skuExistedProduct = productDao.getProductFromSKU(sku);
@@ -250,33 +245,19 @@ public class UpdateProduct extends HttpServlet {
             return;
         }
 
-        String error = ProductValidation.isProductValid(product);
+        String error = ProductValidation.isProductValid(product, part);
         if (!"true".equals(error)) {
             request.setAttribute("message", error);
             request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);
             return;
         }
-
-        Product sameSpecProduct = productDao.getProductWithSpecification(product);
-        if (ProductValidation.isCategoryCheckRequired(product)
-                && sameSpecProduct != null
-                && sameSpecProduct.getProductId() != product.getProductId()) {
-            if (cautioned == null) {
-                request.setAttribute("product", product);
-                request.setAttribute("cautioned", "yes");
-                request.setAttribute("message", "This product have a same product having same specification. Do you want to update this product ?");
-                request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);
-            } else {
-                if (productDao.updateProduct(product)) {
-                    response.sendRedirect("productlist");
-                }
-            }
-            return;
+        imgUrl = FileUtils.saveFile(part, request);
+        product.setImgUrl(imgUrl);
+        if(!productDao.updateProduct(product)){
+            request.setAttribute("message", error);
+            request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);
         }
-
-        if (productDao.updateProduct(product)) {
-            response.sendRedirect("productlist");
-        }
+        else response.sendRedirect("productlist");
     }
 
     /**

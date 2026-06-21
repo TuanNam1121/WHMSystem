@@ -144,35 +144,43 @@ public class ModelDAO {
         return null;
     }
 
-    public List<Model> getModelsByFilter(Integer brandId, String status) {
+    public List<Model> getModelsByFilter(Integer brandId, String status, String keyword, int offset, int limit) {
         List<Model> list = new ArrayList<>();
 
 
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT m.modelid, m.name, m.isactive, ")
                 .append("b.brandid, b.name AS brand_name, b.description, b.createdat, b.updatedat ")
-                .append("FROM models m JOIN brands b ON m.brandid = b.brandid");
-        boolean hasWhere = false;
+                .append("FROM models m JOIN brands b ON m.brandid = b.brandid WHERE 1=1");
 
         if (brandId != null) {
-            sql.append(" WHERE m.brandid = ?");
-            hasWhere = true;
+            sql.append(" AND m.brandid = ?");
         }
 
         if ("active".equalsIgnoreCase(status)) {
-            sql.append(hasWhere ? " AND" : " WHERE");
-            sql.append(" m.isactive = 1");
+            sql.append(" AND m.isactive = 1");
         } else if ("inactive".equalsIgnoreCase(status)) {
-            sql.append(hasWhere ? " AND" : " WHERE");
-            sql.append(" m.isactive = 0");
+            sql.append(" AND m.isactive = 0");
+        }
+        
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND m.name LIKE ?");
         }
 
-        sql.append(" ORDER BY m.modelid");
+        sql.append(" ORDER BY m.modelid LIMIT ? OFFSET ?");
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
             if (brandId != null) {
-                ps.setInt(1, brandId);
+                ps.setInt(paramIndex++, brandId);
             }
+            
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                ps.setString(paramIndex++, "%" + keyword.trim() + "%");
+            }
+            
+            ps.setInt(paramIndex++, limit);
+            ps.setInt(paramIndex, offset);
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -183,6 +191,43 @@ public class ModelDAO {
         }
 
         return list;
+    }
+
+    public int countModelsByFilter(Integer brandId, String status, String keyword) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM models m WHERE 1=1");
+
+        if (brandId != null) {
+            sql.append(" AND m.brandid = ?");
+        }
+
+        if ("active".equalsIgnoreCase(status)) {
+            sql.append(" AND m.isactive = 1");
+        } else if ("inactive".equalsIgnoreCase(status)) {
+            sql.append(" AND m.isactive = 0");
+        }
+        
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND m.name LIKE ?");
+        }
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            if (brandId != null) {
+                ps.setInt(paramIndex++, brandId);
+            }
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                ps.setString(paramIndex++, "%" + keyword.trim() + "%");
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return 0;
     }
 
     public int count() {
@@ -207,6 +252,20 @@ public class ModelDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean isModelUsed(int modelId) {
+        String sql = "SELECT COUNT(*) FROM products WHERE modelid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, modelId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
     }
 
     public static void main(String[] args) {

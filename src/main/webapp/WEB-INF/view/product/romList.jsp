@@ -53,27 +53,17 @@
                             </div>
                         </div>
 
+                        <c:if test="${not empty sessionScope.error}">
+                            <div class="alert alert-danger">${sessionScope.error}</div>
+                            <c:remove var="error" scope="session"/>
+                        </c:if>
+
+
                         <div class="card">
                             <div class="card-body">
-                                <div class="table-top">
-                                    <div class="search-set">
-                                        <div class="search-path">
-                                            <a class="btn btn-filter" id="filter_search">
-                                                <img src="assets/img/icons/filter.svg" alt="img">
-                                                <span><img src="assets/img/icons/closes.svg" alt="img"></span>
-                                            </a>
-                                        </div>
-                                        <div class="search-input">
-                                            <a class="btn btn-searchset"><img src="assets/img/icons/search-whites.svg"
-                                                    alt="img"></a>
-                                        </div>
-                                    </div>
-
-                                </div>
-
                                 <form id="filterForm" action="StorageList" method="GET">
-                                    <div class="card mb-0" id="filter_inputs">
-                                        <div class="card-body pb-0">
+                                    <div class="mb-0">
+                                        <div class="pb-0">
                                             <div class="row">
                                                 <div class="col-lg-12 col-sm-12">
                                                     <div class="row">
@@ -88,6 +78,11 @@
                                                                         test="${param.status == 'inactive'}">selected
                                                                         </c:if>>Inactive</option>
                                                                 </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg col-sm-6 col-12">
+                                                            <div class="form-group">
+                                                                <input type="text" name="search" class="form-control" placeholder="Search by size" value="${param.search}">
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-1 col-sm-6 col-12">
@@ -107,7 +102,7 @@
 
 
                                 <div class="table-responsive">
-                                    <table class="table datanew">
+                                    <table class="table">
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
@@ -149,6 +144,23 @@
                                             </c:forEach>
                                         </tbody>
                                     </table>
+                                    <c:if test="${totalPages > 1}">
+                                        <div class="d-flex justify-content-center mt-4">
+                                            <ul class="pagination">
+                                                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                                                    <a class="page-link" href="?page=${currentPage - 1}">Previous</a>
+                                                </li>
+                                                <c:forEach begin="1" end="${totalPages}" var="i">
+                                                    <li class="page-item ${currentPage == i ? 'active' : ''}">
+                                                        <a class="page-link" href="?page=${i}">${i}</a>
+                                                    </li>
+                                                </c:forEach>
+                                                <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                                                    <a class="page-link" href="?page=${currentPage + 1}">Next</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </c:if>
                                 </div>
                             </div>
                         </div>

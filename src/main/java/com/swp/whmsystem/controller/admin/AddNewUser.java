@@ -43,7 +43,7 @@ public class AddNewUser extends HttpServlet {
             throws ServletException, IOException {
         UserDAO userDao = new UserDAO();
         RoleDAO roleDao = new RoleDAO();
-        List<Role> list = roleDao.getAllRole();
+        List<Role> list = roleDao.getAllRoleToAssign();
         String action = "new";
         request.setAttribute("act", action);
         request.setAttribute("roleDao", roleDao);

@@ -17,7 +17,7 @@ public class ExportItemDAO {
                 "(SELECT current_price FROM product_items pi WHERE pi.product_id = p.productid LIMIT 1) AS price " +
                 "FROM products p " +
                 "WHERE p.sku = ? AND p.isactive = 1";
-
+        
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 

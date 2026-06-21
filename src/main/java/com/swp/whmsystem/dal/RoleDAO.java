@@ -158,24 +158,31 @@ public class RoleDAO {
         }
     }
 
-    public List<Role> findRoleByFilter(String keyword, String sortBy) {
+    public List<Role> findRoleByFilter(String keyword, String sortBy, int offset, int limit) {
         try {
             Connection con = DBContext.getConnection();
             String sql = "select * from roles";
-            if (keyword != null) {
+            if (keyword != null && !keyword.trim().isEmpty()) {
                 sql += " where rolename like ?";
             }
             if (sortBy != null && sortBy.equals("rolename")) {
                 sql += " order by rolename";
-            }
-            if (sortBy != null && sortBy.equals("isactive")) {
+            } else if (sortBy != null && sortBy.equals("isactive")) {
                 sql += " order by isactive";
+            } else {
+                sql += " order by roleid";
             }
+            
+            sql += " limit ? offset ?";
 
             PreparedStatement rt = con.prepareStatement(sql);
-            if (keyword != null) {
-                rt.setString(1, "%" + keyword + "%");
+            int paramIndex = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                rt.setString(paramIndex++, "%" + keyword.trim() + "%");
             }
+            rt.setInt(paramIndex++, limit);
+            rt.setInt(paramIndex, offset);
+            
             ResultSet result = rt.executeQuery();
             List<Role> roles = new ArrayList<>();
             while (result.next()) {
@@ -187,6 +194,29 @@ public class RoleDAO {
             System.out.println(e.getMessage());
         }
         return new ArrayList<>();
+    }
+
+    public int countRoleByFilter(String keyword) {
+        try {
+            Connection con = DBContext.getConnection();
+            String sql = "select count(*) from roles";
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql += " where rolename like ?";
+            }
+
+            PreparedStatement rt = con.prepareStatement(sql);
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                rt.setString(1, "%" + keyword.trim() + "%");
+            }
+            ResultSet result = rt.executeQuery();
+            if (result.next()) {
+                return result.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
     }
 
     public static void main(String[] args) {

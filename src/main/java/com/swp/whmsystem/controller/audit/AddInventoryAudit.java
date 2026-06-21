@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "AddInventoryAudit", urlPatterns = {"/AddInventoryAudit"})
+@WebServlet(name = "AddInventoryAudit", urlPatterns = { "/AddInventoryAudit" })
 public class AddInventoryAudit extends HttpServlet {
     private ProductDAO productDAO;
     private InventoryAuditDAO inventoryAuditDAO;
@@ -33,7 +33,13 @@ public class AddInventoryAudit extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_INVENTORY_AUDIT, "Only managers with create audit permission are authorized to create inventory audits.")) {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_INVENTORY_AUDIT,
+                "Only managers with create audit permission are authorized to create inventory audits.")) {
+            return;
+        }
+
+        if (inventoryAuditDAO.hasActiveAudit()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "An active audit is already in progress. Please complete or cancel it before starting a new one.");
             return;
         }
 
@@ -45,7 +51,8 @@ public class AddInventoryAudit extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_INVENTORY_AUDIT, "Only managers with create audit permission are authorized to create inventory audits.")) {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_INVENTORY_AUDIT,
+                "Only managers with create audit permission are authorized to create inventory audits.")) {
             return;
         }
 
@@ -62,7 +69,16 @@ public class AddInventoryAudit extends HttpServlet {
         }
 
         String action = request.getParameter("action");
-        InventoryAuditStatus status = "submit".equalsIgnoreCase(action) ? InventoryAuditStatus.SUBMITTED : InventoryAuditStatus.DRAFT;
+        InventoryAuditStatus status = "submit".equalsIgnoreCase(action) ? InventoryAuditStatus.SUBMITTED
+                : InventoryAuditStatus.DRAFT;
+
+        if (status == InventoryAuditStatus.SUBMITTED && inventoryAuditDAO.hasActiveAudit()) {
+            request.setAttribute("message", "There is already an active inventory audit in progress. You cannot submit a new one until the current one is completed or cancelled.");
+            List<Product> products = productDAO.getProductList();
+            request.setAttribute("products", products);
+            request.getRequestDispatcher("/WEB-INF/view/audit/addInventoryAudit.jsp").forward(request, response);
+            return;
+        }
 
         InventoryAudit audit = new InventoryAudit();
         audit.setUserId(user.getId());
@@ -91,7 +107,8 @@ public class AddInventoryAudit extends HttpServlet {
                 item.setReason("");
 
                 inventoryAuditDAO.insertInventoryAuditItem(item);
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
         }
 
         response.sendRedirect("InventoryAuditList");

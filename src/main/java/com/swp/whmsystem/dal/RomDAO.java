@@ -91,24 +91,30 @@ public class RomDAO {
         return null;
     }
 
-    public List<Rom> getRomsByFilter(String status) {
+    public List<Rom> getRomsByFilter(String status, String keyword, int offset, int limit) {
         List<Rom> list = new ArrayList<>();
 
-        StringBuilder sql = new StringBuilder("SELECT id, size, isactive FROM roms");
-        boolean hasWhere = false;
+        StringBuilder sql = new StringBuilder("SELECT id, size, isactive FROM roms WHERE 1=1");
 
         if ("active".equalsIgnoreCase(status)) {
-            sql.append(hasWhere ? " AND" : " WHERE");
-            sql.append(" isactive = 1");
-            hasWhere = true;
+            sql.append(" AND isactive = 1");
         } else if ("inactive".equalsIgnoreCase(status)) {
-            sql.append(hasWhere ? " AND" : " WHERE");
-            sql.append(" isactive = 0");
-            hasWhere = true;
+            sql.append(" AND isactive = 0");
         }
-        sql.append(" ORDER BY id");
+        
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND size LIKE ?");
+        }
+
+        sql.append(" ORDER BY id LIMIT ? OFFSET ?");
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                ps.setString(paramIndex++, "%" + keyword.trim() + "%");
+            }
+            ps.setInt(paramIndex++, limit);
+            ps.setInt(paramIndex, offset);
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -119,6 +125,35 @@ public class RomDAO {
         }
 
         return list;
+    }
+    
+    public int countRomsByFilter(String status, String keyword) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM roms WHERE 1=1");
+
+        if ("active".equalsIgnoreCase(status)) {
+            sql.append(" AND isactive = 1");
+        } else if ("inactive".equalsIgnoreCase(status)) {
+            sql.append(" AND isactive = 0");
+        }
+        
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND size LIKE ?");
+        }
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                ps.setString(1, "%" + keyword.trim() + "%");
+            }
+            
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return 0;
     }
 
     public int count() {
@@ -144,6 +179,21 @@ public class RomDAO {
             throw new RuntimeException(e);
         }
     }
+
+    public boolean isRomUsed(int romId) {
+        String sql = "SELECT COUNT(*) FROM products WHERE romid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, romId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
     }
 }

@@ -8,6 +8,7 @@ import com.swp.whmsystem.dal.CustomerDAO;
 import com.swp.whmsystem.dal.OrderDAO;
 import com.swp.whmsystem.dal.OrderItemDAO;
 import com.swp.whmsystem.dal.ProductDAO;
+import com.swp.whmsystem.dal.RolePermissionDAO;
 import com.swp.whmsystem.model.Customer;
 import com.swp.whmsystem.model.Order;
 import com.swp.whmsystem.model.OrderItem;
@@ -68,6 +69,19 @@ public class CreateOder extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+//        HttpSession session = request.getSession();
+//        User user = (User) session.getAttribute("user");
+//        if (user == null) {
+//            response.sendRedirect("login");
+//            return;
+//        }
+//        RolePermissionDAO rpd = new RolePermissionDAO();
+//        if(!rpd.havePermission(user, "CreateOder")){
+//            response.sendRedirect("NoPermission");
+//            return;
+//        }
+        
         String customerIdStr = request.getParameter("id");
         int customerId = Integer.parseInt(customerIdStr);
         CustomerDAO cd = new CustomerDAO();

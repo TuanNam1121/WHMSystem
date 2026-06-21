@@ -1,9 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="activeMenu" value="roles" scope="request" />
-<c:set var="pageTitle" value="Role Management" scope="request" />
+<c:set var="activeMenu" value="roles" scope="request"/>
+<c:set var="pageTitle" value="Role Management" scope="request"/>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,11 +12,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="assests/css/wms-theme.css" rel="stylesheet">
 </head>
+
 <body>
 <div class="wrapper">
-    <jsp:include page="/WEB-INF/common/adminSidebar.jsp" />
+    <jsp:include page="/WEB-INF/common/adminSidebar.jsp"/>
     <main class="main-content">
-        <jsp:include page="/WEB-INF/common/userTopbar.jsp" />
+        <jsp:include page="/WEB-INF/common/userTopbar.jsp"/>
         <c:if test="${not empty message}">
             <div class="alert-success">${message}</div>
         </c:if>
@@ -23,30 +25,22 @@
             <div class="table-header">
                 <h2>Role List</h2>
                 <div class="header-actions">
-                    <form action="${pageContext.request.contextPath}/ViewRoleList" method="get">
+                    <form action="${pageContext.request.contextPath}/ViewRoleList"
+                          method="get">
 
                         <!-- Search name -->
-                        <input
-                                id="keyword"
-                                type="text"
-                                name="keyword"
-                                class="filter-input"
-                                placeholder="Search by rolename"
-                                value="${param.keyword}"
-                        >
+                        <input id="keyword" type="text" name="keyword" class="filter-input"
+                               placeholder="Search by rolename" value="${param.keyword}">
 
                         <select name="sortBy" class="filter-select" id="sortBy">
                             <option value>Sort</option>
-                            <option value="rolename"
-                            ${param.sortBy == 'rolename' ? 'selected' : ''}>
+                            <option value="rolename" ${param.sortBy=='rolename' ? 'selected' : '' }>
                                 Role Name
                             </option>
-                            <option value="isactive"
-                            ${param.sortBy == 'isactive' ? 'selected' : ''}>
+                            <option value="isactive" ${param.sortBy=='isactive' ? 'selected' : '' }>
                                 Active
                             </option>
                         </select>
-
 
 
                         <!-- Search button -->
@@ -62,30 +56,49 @@
             </div>
             <table>
                 <thead>
-                    <tr>
-                        <th>RoleId</th>
-                        <th>RoleName</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
+                <tr>
+                    <th>RoleId</th>
+                    <th>RoleName</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <c:forEach items="${rolelist}" var="r">
-                        <tr>
-                            <td>${r.roleId}</td>
-                            <td>${r.roleName}</td>
-                            <td><input type="checkbox" ${r.isActive ? 'checked' : ''} disabled></td>
-                            <td>
-                                <a href="${pageContext.request.contextPath}/UpdateRole?id=${r.roleId}">Edit</a>
-                            </td>
-                        </tr>
-                    </c:forEach>
+                <c:forEach items="${rolelist}" var="r">
+                    <tr>
+                        <td>${r.roleId}</td>
+                        <td>${r.roleName}</td>
+                        <td><input type="checkbox" ${r.isActive ? 'checked' : '' } disabled></td>
+                        <td>
+                            <a
+                                    href="${pageContext.request.contextPath}/UpdateRole?id=${r.roleId}">Edit</a>
+                        </td>
+                    </tr>
+                </c:forEach>
                 </tbody>
             </table>
+
+            <c:if test="${totalPages > 1}">
+                <div class="d-flex justify-content-center mt-4">
+                    <ul class="pagination">
+                        <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                            <a class="page-link" href="?page=${currentPage - 1}">Previous</a>
+                        </li>
+                        <c:forEach begin="1" end="${totalPages}" var="i">
+                            <li class="page-item ${currentPage == i ? 'active' : ''}">
+                                <a class="page-link" href="?page=${i}">${i}</a>
+                            </li>
+                        </c:forEach>
+                        <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                            <a class="page-link" href="?page=${currentPage + 1}">Next</a>
+                        </li>
+                    </ul>
+                </div>
+            </c:if>
         </section>
     </main>
-     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</div>               
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</div>
 </body>
-</html>
 
+</html>

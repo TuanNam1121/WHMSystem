@@ -12,7 +12,6 @@ import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.dal.RamDAO;
 import com.swp.whmsystem.dal.RomDAO;
 import com.swp.whmsystem.dal.UnitDAO;
-import com.swp.whmsystem.dal.UserDAO;
 import com.swp.whmsystem.model.Brand;
 import com.swp.whmsystem.model.Category;
 import com.swp.whmsystem.model.Chip;
@@ -24,18 +23,15 @@ import com.swp.whmsystem.model.Unit;
 import com.swp.whmsystem.utils.FileUtils;
 import com.swp.whmsystem.utils.ProductValidation;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
-import java.util.UUID;
 
 /**
  *
@@ -56,6 +52,7 @@ public class AddProduct extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
         RamDAO ram = new RamDAO();
         RomDAO rom = new RomDAO();
         ChipDAO chip = new ChipDAO();
@@ -71,13 +68,13 @@ public class AddProduct extends HttpServlet {
         List<Brand> brandList = brand.getAllBrand();
         List<Unit> unitList = unit.getAllUnitToAssign();
         List<Category> categoryList = category.getAllCategoryToAssign();
-        request.setAttribute("ramList", ramList);
-        request.setAttribute("romList", romList);
-        request.setAttribute("chipList", chipList);
-        request.setAttribute("modelList", modelList);
-        request.setAttribute("brandList", brandList);
-        request.setAttribute("unitList", unitList);
-        request.setAttribute("categoryList", categoryList);
+        session.setAttribute("ramList", ramList);
+        session.setAttribute("romList", romList);
+        session.setAttribute("chipList", chipList);
+        session.setAttribute("modelList", modelList);
+        session.setAttribute("brandList", brandList);
+        session.setAttribute("unitList", unitList);
+        session.setAttribute("categoryList", categoryList);
         request.setAttribute("mode", "add");
         request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);
     }
@@ -93,6 +90,7 @@ public class AddProduct extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
         String sku = request.getParameter("sku");
         String productName = request.getParameter("productName");
         String categoryId = request.getParameter("category");
@@ -105,12 +103,6 @@ public class AddProduct extends HttpServlet {
         String isActive = request.getParameter("isActive");
         String description = request.getParameter("description");
         Part part = request.getPart("image");
-        String imgUrl = "";
-        if (part != null) {
-            imgUrl = FileUtils.saveFile(part, request);
-        }
-
-        String cautioned = request.getParameter("cautioned");
 
         RamDAO ramDao = new RamDAO();
         RomDAO romDao = new RomDAO();
@@ -135,22 +127,8 @@ public class AddProduct extends HttpServlet {
         Category category = categoryIdInt != null ? categoryDao.getCategoryById(categoryIdInt) : null;
         Unit unit = unitIdInt != null ? unitDao.getUnitById(unitIdInt) : null;
         Brand brand = brandIdInt != null ? brandDao.getBrandById(brandIdInt) : null;
-
-        List<Ram> ramList = ramDao.getAllRamToAssign();
-        List<Rom> romList = romDao.getAllRomToAssign();
-        List<Chip> chipList = chipDao.getAllChipToAssign();
-        List<Model> modelList = modelDao.getAllModelToAssign();
-        List<Brand> brandList = brandDao.getAllBrand();
-        List<Unit> unitList = unitDao.getAllUnitToAssign();
-        List<Category> categoryList = categoryDao.getAllCategoryToAssign();
-        request.setAttribute("ramList", ramList);
-        request.setAttribute("romList", romList);
-        request.setAttribute("chipList", chipList);
-        request.setAttribute("modelList", modelList);
-        request.setAttribute("brandList", brandList);
-        request.setAttribute("unitList", unitList);
-        request.setAttribute("categoryList", categoryList);
-
+        String imgUrl = "";
+        
         ProductDAO productDao = new ProductDAO();
         Product product = new Product(0, productName, description, sku.toUpperCase(), imgUrl, 0, true, ram, rom, unit, chip, model, category, brand);
         request.setAttribute("mode", "add");
@@ -163,27 +141,23 @@ public class AddProduct extends HttpServlet {
             return;
         }
         
-        String error = ProductValidation.isProductValid(product);
+        String error = ProductValidation.isProductValid(product, part);
         if (!"true".equals(error)) {
             request.setAttribute("message", error);
             request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);
             return;
         }
-
-        if (ProductValidation.isCategoryCheckRequired(product) && productDao.getProductWithSpecification(product) != null) {
-            if (cautioned == null) {
-                request.setAttribute("cautioned", "yes");
-                request.setAttribute("message", "This product have a same product having same specification. Do you want to add this product ?");
-                request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);
-            } else {
-                if (productDao.addProduct(product)) {
-                    response.sendRedirect("productlist");
-                }
-            }
-            return;
-        }
-
+        
+        imgUrl = FileUtils.saveFile(part, request);
+        product.setImgUrl(imgUrl);
+        
         if (productDao.addProduct(product)) {
+            session.removeAttribute("ramList");
+            session.removeAttribute("chipList");
+            session.removeAttribute("modelList");
+            session.removeAttribute("brandList");
+            session.removeAttribute("unitList");
+            session.removeAttribute("categoryList");
             response.sendRedirect("productlist");
         }
         else{

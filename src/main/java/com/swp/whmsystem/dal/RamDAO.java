@@ -92,25 +92,31 @@ public class RamDAO {
         return null;
     }
 
-    public List<Ram> getRamsByFilter(String status) {
+    public List<Ram> getRamsByFilter(String status, String keyword, int offset, int limit) {
         List<Ram> list = new ArrayList<>();
 
-        StringBuilder sql = new StringBuilder("SELECT id, size, isactive FROM rams");
-        boolean hasWhere = false;
+        StringBuilder sql = new StringBuilder("SELECT id, size, isactive FROM rams WHERE 1=1");
 
         if ("active".equalsIgnoreCase(status)) {
-            sql.append(hasWhere ? " AND" : " WHERE");
-            sql.append(" isactive = 1");
-            hasWhere = true;
+            sql.append(" AND isactive = 1");
         } else if ("inactive".equalsIgnoreCase(status)) {
-            sql.append(hasWhere ? " AND" : " WHERE");
-            sql.append(" isactive = 0");
-            hasWhere = true;
+            sql.append(" AND isactive = 0");
         }
-        sql.append(" ORDER BY id");
+        
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND size LIKE ?");
+        }
+
+        sql.append(" ORDER BY id LIMIT ? OFFSET ?");
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-
+            int paramIndex = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                ps.setString(paramIndex++, "%" + keyword.trim() + "%");
+            }
+            ps.setInt(paramIndex++, limit);
+            ps.setInt(paramIndex, offset);
+            
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 list.add(mapRam(rs));
@@ -120,6 +126,35 @@ public class RamDAO {
         }
 
         return list;
+    }
+    
+    public int countRamsByFilter(String status, String keyword) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM rams WHERE 1=1");
+
+        if ("active".equalsIgnoreCase(status)) {
+            sql.append(" AND isactive = 1");
+        } else if ("inactive".equalsIgnoreCase(status)) {
+            sql.append(" AND isactive = 0");
+        }
+        
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND size LIKE ?");
+        }
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                ps.setString(1, "%" + keyword.trim() + "%");
+            }
+            
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return 0;
     }
 
 
@@ -145,5 +180,19 @@ public class RamDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean isRamUsed(int ramId) {
+        String sql = "SELECT COUNT(*) FROM products WHERE ramid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, ramId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
     }
 }

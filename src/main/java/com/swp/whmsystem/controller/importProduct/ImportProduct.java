@@ -11,6 +11,7 @@ import com.swp.whmsystem.dal.ProductItemDAO;
 import com.swp.whmsystem.dal.PurchaseItemDAO;
 import com.swp.whmsystem.dal.PurchaseRequestDAO;
 import com.swp.whmsystem.dal.StockMovementDAO;
+import com.swp.whmsystem.dal.SupplierDAO;
 import com.swp.whmsystem.dal.UserDAO;
 import com.swp.whmsystem.dto.ProductItemRowDTO;
 import com.swp.whmsystem.model.GoodReceipt;
@@ -50,87 +51,71 @@ public class ImportProduct extends HttpServlet {
         PurchaseRequestDAO pr = new PurchaseRequestDAO();
         PurchaseItemDAO pi = new PurchaseItemDAO();
         ProductDAO product = new ProductDAO();
-        UserDAO user = new UserDAO();
+        UserDAO userDAO = new UserDAO();
+        SupplierDAO supplierDAO = new SupplierDAO();
+        User user = (User) session.getAttribute("user");
 
-        String goodReceiptId_raw = request.getParameter("id");
-        int goodReceiptId = -1;
+        String purchaseRequestIdraw = request.getParameter("prId"); // tí sửa thành prId
+        int purchaseRequestId = -1;
         try {
-            goodReceiptId = Integer.parseInt(goodReceiptId_raw);
-            GoodReceipt goodReceipt = gr.getGoodReceiptByGoodReceipId(goodReceiptId);
-            PurchaseRequest purchaseRequest = pr.getPurchaseRequestById(goodReceipt.getPurchaseRequestId());
-            int prCode = purchaseRequest.getId();
+            purchaseRequestId = Integer.parseInt(purchaseRequestIdraw);
+            PurchaseRequest purchaseRequest = pr.getPurchaseRequestById(purchaseRequestId);
+
             Timestamp approvedAt = purchaseRequest.getCreatedAt();
-            String handler = user.getUserNameById(goodReceipt.getProcessedBy());
-            String creator = user.getUserNameById(purchaseRequest.getCreatedBy());
+            String creator = userDAO.getUserNameById(purchaseRequest.getCreatedBy());
+            String supplierName = supplierDAO.getSupplierById(purchaseRequest.getSupplierId()).getSupplierName();
             int totalItem = 0;
-            List<PurchaseItem> purchaseList = pi.getItemsByPurchaseRequestId(prCode);
+            List<PurchaseItem> purchaseList = pi.getItemsByPurchaseRequestId(purchaseRequestId);
             List<List<ProductItemRowDTO>> nestedList = new ArrayList<>();
-            for (PurchaseItem i : purchaseList) {
-                int productId = i.getProductId();
-                int quantity = i.getRequiredQty();
-                int price = i.getPrice();
-                List<ProductItemRowDTO> a = new ArrayList<>();
-                for (int j = 0; j < quantity; ++j) {
-                    Product p = product.getProductFromId(productId);
-                    ProductItemRowDTO dto = new ProductItemRowDTO(productId, p.getName(), "", p.getUnit().getName(),
-                            price);
-                    a.add(dto);
-                }
-                nestedList.add(a);
-                totalItem += quantity;
-            }
-
-            String status = goodReceipt.getStatus();
-            if ("INCOMPLETED".equals(status)) {
-                // Lấy danh sách các item đã import từ good_receipt_item
-                GoodReceiptItemDAO griDAO = new GoodReceiptItemDAO();
-                List<GoodReceiptItem> importedItems = griDAO.getItemsByGoodReceiptId(goodReceiptId);
-
-                // Tạo Map<productId, actualQuantity> để biết mỗi product đã nhận bao nhiêu
-                Map<Integer, Integer> importedMap = new HashMap<>();
-                for (GoodReceiptItem item : importedItems) {
-                    importedMap.put(item.getProductId(),
-                            importedMap.getOrDefault(item.getProductId(), 0) + item.getActualQuantity());
-                }
-
-                // Trừ đi số lượng đã import từ nestedList
-                // Reset lại totalItem và rebuild nestedList chỉ với phần còn lại
-                totalItem = 0;
-                List<List<ProductItemRowDTO>> remainingList = new ArrayList<>();
-                for (List<ProductItemRowDTO> productGroup : nestedList) {
-                    if (productGroup.isEmpty()) {
-                        continue;
+            String status = purchaseRequest.getStatus();
+            if (status.equals("APPROVED")) {
+                for (PurchaseItem i : purchaseList) {
+                    int productId = i.getProductId();
+                    int quantity = i.getRequiredQty();
+                    int price = i.getPrice();
+                    List<ProductItemRowDTO> a = new ArrayList<>();
+                    for (int j = 0; j < quantity; ++j) {
+                        Product p = product.getProductFromId(productId);
+                        ProductItemRowDTO dto = new ProductItemRowDTO(productId, p.getName(), "", p.getUnit().getName(),
+                                price);
+                        a.add(dto);
                     }
-                    int productId = productGroup.get(0).getProductId();
-                    int alreadyImported = importedMap.getOrDefault(productId, 0);
-                    int remaining = productGroup.size() - alreadyImported;
-
-                    if (remaining > 0) {
-                        // Chỉ giữ lại "remaining" dòng (bỏ bớt phần đã import)
-                        List<ProductItemRowDTO> remainingGroup = new ArrayList<>(
-                                productGroup.subList(0, remaining)
-                        );
-                        remainingList.add(remainingGroup);
-                        totalItem += remaining;
-                    }
-                    // Nếu remaining <= 0 → product này đã import đủ, không thêm vào
+                    nestedList.add(a);
+                    totalItem += quantity;
                 }
-                nestedList = remainingList;
+            } else if ("INCOMPLETED".equals(status)) {
+                GoodReceiptItemDAO griDao = new GoodReceiptItemDAO();
+                Map<Integer, Integer> importedProductQuantity = griDao.getReceivedQuantityByPurchaseRequestId(purchaseRequestId);
+                for (PurchaseItem i : purchaseList) {
+                    int productId = i.getProductId();
+                    int quantity = i.getRequiredQty();
+                    int price = i.getPrice();
+                    List<ProductItemRowDTO> a = new ArrayList<>();
+                    for (int j = 0; j < quantity - importedProductQuantity.get(productId); ++j) {
+                        Product p = product.getProductFromId(productId);
+                        ProductItemRowDTO dto = new ProductItemRowDTO(productId, p.getName(), "", p.getUnit().getName(),
+                                price);
+                        a.add(dto);
+                    }
+                    nestedList.add(a);
+                    totalItem += quantity;
+                }
             }
 
             List<ProductItemRowDTO> list = new ArrayList<>();
             for (List<ProductItemRowDTO> i : nestedList) {
                 list.addAll(i);
             }
-            session.setAttribute("prCode", prCode);
+            session.setAttribute("prCode", purchaseRequestId);
             session.setAttribute("approvedAt", approvedAt);
-            session.setAttribute("handler", handler);
+            session.setAttribute("handler", user.getFullName());
+            session.setAttribute("supplierName", supplierName);
             session.setAttribute("creator", creator);
             session.setAttribute("totalItem", totalItem);
             session.setAttribute("list", list);
 
             List<List<ProductItemRowDTO>> importItems = nestedList;
-            request.setAttribute("goodReceiptId", goodReceiptId);
+            request.setAttribute("prCode", purchaseRequestId);
             request.setAttribute("importItems", importItems);
         } catch (NumberFormatException ex) {
             String message = ex.getMessage();
@@ -150,49 +135,47 @@ public class ImportProduct extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         HttpSession session = request.getSession();
-
-        User user = (User) session.getAttribute("user");
-
-        String goodReceiptIdRaw = request.getParameter("goodReceiptId");
-        int goodReceiptId = -1;
         try {
-            goodReceiptId = Integer.parseInt(goodReceiptIdRaw);
-        } catch (NumberFormatException ex) {
-            session.setAttribute("message", "Invalid Good Receipt ID.");
-            session.setAttribute("messageType", "danger");
-            response.sendRedirect(request.getContextPath() + "/importRequestList");
-            return;
-        }
+            User user = (User) session.getAttribute("user");
+            int handler = user.getId();
+            String purchaseRequestId_raw = request.getParameter("purchaseRequestId");
+            int purchaseRequestId = -1;
+            try {
+                purchaseRequestId = Integer.parseInt(purchaseRequestId_raw);
+            } catch (NumberFormatException ex) {
+                session.setAttribute("message", "Invalid Good Receipt ID.");
+                session.setAttribute("messageType", "danger");
+                response.sendRedirect(request.getContextPath() + "/importRequestList");
+                return;
+            }
 
-        // read arrays directly from form submission
-        String supplierName = request.getParameter("supplierName");
-        String invoiceNumber = request.getParameter("invoiceNumber");
-        String[] productIds = request.getParameterValues("productId");
-        String[] serials = request.getParameterValues("serial");
-        String[] itemPrices = request.getParameterValues("itemPrice");
+            // read arrays directly from form submission
+            String invoiceNumber = request.getParameter("invoiceNumber");
+            String[] productIds = request.getParameterValues("productId");
+            String[] serials = request.getParameterValues("serial");
+            String[] itemPrices = request.getParameterValues("itemPrice");
 
-        if (productIds == null || serials == null || itemPrices == null || productIds.length == 0) {
-            session.setAttribute("message", "No valid item data submitted.");
-            session.setAttribute("messageType", "danger");
-            response.sendRedirect(request.getContextPath() + "/ImportProduct?id=" + goodReceiptId);
-            return;
-        }
-        try {
+            if (productIds == null || serials == null || itemPrices == null || productIds.length == 0) {
+                session.setAttribute("message", "No valid item data submitted.");
+                session.setAttribute("messageType", "danger");
+                response.sendRedirect(request.getContextPath() + "/ImportProduct?id=" + purchaseRequestId);
+                return;
+            }
+
             List<ProductItemRowDTO> importItems = (List<ProductItemRowDTO>) session.getAttribute("list");
             List<ProductItemRowDTO> filledList = filledSerial(productIds, serials, itemPrices);
             String valid = ProductItemValidation.validateProductItem(filledList);
 
             if (!"true".equals(valid)) {
                 List<List<ProductItemRowDTO>> filledReturnedList = returnListDTO(importItems, serials);
-                request.setAttribute("goodReceiptId", goodReceiptId);
+                request.setAttribute("purchaseRequestId", purchaseRequestId);
                 request.setAttribute("importItems", filledReturnedList);
                 request.setAttribute("message", valid);
                 request.getRequestDispatcher("WEB-INF/view/import/importProduct.jsp").forward(request, response);
                 return;
             } else {
-                handleImport(goodReceiptId, supplierName, invoiceNumber, filledList);
+                handleImport(purchaseRequestId, handler, invoiceNumber, filledList);
             }
             // clear
             session.removeAttribute("list");
@@ -208,11 +191,11 @@ public class ImportProduct extends HttpServlet {
         } catch (Exception ex) {
             session.setAttribute("message", "Error saving import: " + ex.getMessage());
             session.setAttribute("messageType", "danger");
-            response.sendRedirect(request.getContextPath() + "/ImportProduct?id=" + goodReceiptId);
+            request.getRequestDispatcher("WEB-INF/view/import/importProduct.jsp").forward(request, response);
         }
     }
 
-    private void handleImport(int goodReceiptId, String supplierName, String invoiceNumber, List<ProductItemRowDTO> productItemList) {
+    private void handleImport(Integer prId, int handler, String invoiceNumber, List<ProductItemRowDTO> productItemList) {
         PurchaseRequestDAO pr = new PurchaseRequestDAO();
         PurchaseItemDAO purchaseItemDAO = new PurchaseItemDAO();
         GoodReceiptDAO gr = new GoodReceiptDAO();
@@ -220,6 +203,14 @@ public class ImportProduct extends HttpServlet {
         ProductItemDAO pi = new ProductItemDAO();
         ProductDAO productDAO = new ProductDAO();
         StockMovementDAO stockMovementDAO = new StockMovementDAO();
+
+        // tạo good receipt trước
+        GoodReceipt goodReceipt = new GoodReceipt();
+        goodReceipt.setPurchaseRequestId(prId);
+        goodReceipt.setProcessedBy(handler);
+        goodReceipt.setStatus("COMPLETED");
+        goodReceipt.setInvoiceNumber(invoiceNumber);
+        int goodReceiptId = gr.insertGoodReceiptAndGetId(goodReceipt);
 
         Map<Integer, List<ProductItemRowDTO>> a = new HashMap<>();
         // set thành từng list product serial để insert vào cùng good_receipt_item
@@ -263,44 +254,37 @@ public class ImportProduct extends HttpServlet {
             stockMovement.setQuantity(val.size());
             stockMovement.setType("INCREASED");
             stockMovement.setReference_type("IMPORT");
+            // thêm reference link : 
             stockMovementDAO.insertStockMovement(stockMovement);
         }
 
-        // update good_receipt
-        GoodReceipt goodReceipt = gr.getGoodReceiptByGoodReceipId(goodReceiptId);
-        goodReceipt.setSupplierName(supplierName);
-        goodReceipt.setInvoiceNumber(invoiceNumber);
-        String status = goodReceipt.getStatus();
+        // update purchase request
+        PurchaseRequest purchaseRequest = pr.getPurchaseRequestById(prId);
+        String status = purchaseRequest.getStatus();
 
-        PurchaseRequest purchaseRequest = pr.getPurchaseRequestById(goodReceipt.getPurchaseRequestId());
-        List<PurchaseItem> purchaseItems = purchaseItemDAO.getItemsByPurchaseRequestId(purchaseRequest.getId());
-        List<GoodReceiptItem> goodReceiptItems = gri.getItemsByGoodReceiptId(goodReceiptId);
+        List<PurchaseItem> purchaseItems = purchaseItemDAO.getItemsByPurchaseRequestId(prId);
+        Map<Integer, Integer> goodReceiptItems = gri.getReceivedQuantityByPurchaseRequestId(prId);
         if (status.equals("NEW")) {
             if (isCompleted(purchaseItems, goodReceiptItems)) {
-                goodReceipt.setStatus("COMPLETED");
+                purchaseRequest.setStatus("COMPLETED");
             } else {
-                goodReceipt.setStatus("INCOMPLETED");
+                purchaseRequest.setStatus("INCOMPLETED");
             }
         } else {
             if (isCompleted(purchaseItems, goodReceiptItems)) {
-                goodReceipt.setStatus("COMPLETED");
+                purchaseRequest.setStatus("COMPLETED");
             }
         }
-        gr.updateGoodReceipt(goodReceipt);
-
+        pr.updatePurchaseRequest(purchaseRequest);
     }
 
-    private boolean isCompleted(List<PurchaseItem> purchaseItems, List<GoodReceiptItem> goodReceiptItems) {
-        int purchaseQuantity = 0;
-        int goodReceiptQuantity = 0;
-
+    private boolean isCompleted(List<PurchaseItem> purchaseItems, Map<Integer, Integer> goodReceiptItems) {
         for (PurchaseItem i : purchaseItems) {
-            purchaseQuantity += i.getRequiredQty();
+            if (i.getRequiredQty() > goodReceiptItems.get(i.getProductId())) {
+                return false;
+            }
         }
-        for (GoodReceiptItem i : goodReceiptItems) {
-            goodReceiptQuantity += i.getActualQuantity();
-        }
-        return purchaseQuantity == goodReceiptQuantity;
+        return true;
     }
 
     private List<ProductItemRowDTO> filledSerial(String[] productIds, String[] serials, String[] itemPrices) {

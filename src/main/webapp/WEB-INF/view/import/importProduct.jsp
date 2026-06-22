@@ -46,9 +46,9 @@
                             </a>
                         </div>
                     </div>
-                <c:if test="${not empty sessionScope.message}">
+                <c:if test="${not empty message}">
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        <strong>${sessionScope.message}</strong>
+                        <strong>${message}</strong>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     <% session.removeAttribute("message"); %>
@@ -63,7 +63,7 @@
 
                 <!-- Main Card -->
                 <form action="ImportProduct" method="POST" id="import-form">
-                    <input type="hidden" name="goodReceiptId" value="${requestScope.goodReceiptId}">
+                    <input type="hidden" name="purchaseRequestId" value="${requestScope.prCode}">
                     <div class="card">
                         <div class="card-body">
 
@@ -87,6 +87,13 @@
                                 </div>
                                 <div class="col-lg-3 col-md-6 col-sm-6 col-12 mb-3">
                                     <div class="import-info-box">
+                                        <span class="info-box-label">Supplier</span>
+                                        <div class="info-box-value" id="info-purchase-request">
+                                            ${sessionScope.supplierName}</div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-6 col-12 mb-3">
+                                    <div class="import-info-box">
                                         <span class="info-box-label">Handled By</span>
                                         <div class="info-box-value" id="info-handled-by">${sessionScope.handler
                                                                                            !=
@@ -105,19 +112,11 @@
 
                             <!-- Supplier -->
                             <div class="supplier-field">
-                                <label>Supplier</label>
-                                <input type="text" value="FPT Supplier HCM" id="import-supplier"
-                                       class="form-control" name="supplierName"
-                                       style="border: 1px solid #dee2e6; border-radius: 6px;">
-                            </div>
-
-                            <div class="supplier-field">
                                 <label>Invoice Number</label>
                                 <input type="text" value="AC123" id="import-supplier-invoice"
                                        class="form-control" name="invoiceNumber"
                                        style="border: 1px solid #dee2e6; border-radius: 6px;">
                             </div>
-
 
                             <!-- Summary Row: Total Items, Serials Filled, Total Payment -->
                             <div class="row mb-4" id="import-summary-row">
@@ -132,12 +131,6 @@
                                     <div class="summary-box">
                                         <span class="summary-label">Serials Filled</span>
                                         <div class="summary-value" id="summary-serials-filled">0</div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3">
-                                    <div class="summary-box">
-                                        <span class="summary-label">Total Payment</span>
-                                        <div class="summary-value" id="summary-total-payment">0 đ</div>
                                     </div>
                                 </div>
                             </div>
@@ -214,7 +207,7 @@
                                 </button>
                             </div>
                             </form>
-                           
+
                         </div>
                     </div>
             </div>

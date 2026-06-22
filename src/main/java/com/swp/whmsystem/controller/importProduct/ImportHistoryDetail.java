@@ -9,6 +9,8 @@ import com.swp.whmsystem.dal.GoodReceiptDAO;
 import com.swp.whmsystem.dal.GoodReceiptItemDAO;
 import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.dal.ProductItemDAO;
+import com.swp.whmsystem.dal.PurchaseRequestDAO;
+import com.swp.whmsystem.dal.SupplierDAO;
 import com.swp.whmsystem.dal.UserDAO;
 import com.swp.whmsystem.dto.ImportHistoryDTO;
 import com.swp.whmsystem.dto.ProductItemRowDTO;
@@ -16,6 +18,7 @@ import com.swp.whmsystem.model.GoodReceipt;
 import com.swp.whmsystem.model.GoodReceiptItem;
 import com.swp.whmsystem.model.Product;
 import com.swp.whmsystem.model.ProductItem;
+import com.swp.whmsystem.model.PurchaseRequest;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -81,23 +84,26 @@ public class ImportHistoryDetail extends HttpServlet {
 
     private ImportHistoryDTO toImportHistory(GoodReceipt gr){
         UserDAO userDao = new UserDAO();
+        PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
         GoodReceiptItemDAO griDao = new GoodReceiptItemDAO();
         ProductItemDAO piDao = new ProductItemDAO();
-                
+        SupplierDAO supplierDao = new SupplierDAO();
+        
+        PurchaseRequest purchaseRequest = purchaseRequestDAO.getPurchaseRequestById(gr.getPurchaseRequestId());
         List<GoodReceiptItem> gri = griDao.getItemsByGoodReceiptId(gr.getId());
         int item = 0;
         int total = 0;
         
         for(GoodReceiptItem i : gri){
             item += i.getActualQuantity();
-            List<ProductItem> pi = piDao.getAllProductItemByGoodReceiptID(i.getId());
+            List<ProductItem> pi = piDao.getAllProductItemByGoodReceiptItemId(i.getId());
             for(ProductItem p : pi) total += p.getImportPrice();
         }
         
         ImportHistoryDTO i = new ImportHistoryDTO();
         i.setReceiptId(gr.getId());
         i.setPurchaseRequestId(gr.getPurchaseRequestId());
-        i.setSupplier(gr.getSupplierName());
+        i.setSupplier(supplierDao.getSupplierById(purchaseRequest.getSupplierId()).getSupplierName());
         i.setStatus(gr.getStatus());
         i.setImportBy(userDao.getUserNameById(gr.getProcessedBy()));
         i.setCompletedAt(gr.getCreatedAt());

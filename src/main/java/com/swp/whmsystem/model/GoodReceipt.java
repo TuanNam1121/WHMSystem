@@ -10,19 +10,9 @@ public class GoodReceipt {
     private String status;
     private Timestamp createdAt;
     private String note;
-    private String supplierName;
     private String invoiceNumber;
-    private int supplierId;
 
     public GoodReceipt() {
-    }
-
-    public int getSupplierId() {
-        return supplierId;
-    }
-
-    public void setSupplierId(int supplierId) {
-        this.supplierId = supplierId;
     }
 
     public String getInvoiceNumber() {
@@ -31,14 +21,6 @@ public class GoodReceipt {
 
     public void setInvoiceNumber(String invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
-    }
-    
-    public String getSupplierName() {
-        return supplierName;
-    }
-
-    public void setSupplierName(String supplierName) {
-        this.supplierName = supplierName;
     }
 
     public int getId() {

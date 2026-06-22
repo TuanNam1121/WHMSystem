@@ -8,11 +8,14 @@ package com.swp.whmsystem.controller.importProduct;
 import com.swp.whmsystem.dal.GoodReceiptDAO;
 import com.swp.whmsystem.dal.GoodReceiptItemDAO;
 import com.swp.whmsystem.dal.ProductItemDAO;
+import com.swp.whmsystem.dal.PurchaseRequestDAO;
+import com.swp.whmsystem.dal.SupplierDAO;
 import com.swp.whmsystem.dal.UserDAO;
 import com.swp.whmsystem.dto.ImportHistoryDTO;
 import com.swp.whmsystem.model.GoodReceipt;
 import com.swp.whmsystem.model.GoodReceiptItem;
 import com.swp.whmsystem.model.ProductItem;
+import com.swp.whmsystem.model.PurchaseRequest;
 import com.swp.whmsystem.model.User;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -42,20 +45,21 @@ public class ImportHistory extends HttpServlet {
     throws ServletException, IOException {        
         String rawReceiptId = request.getParameter("receiptid");
         String rawPurchaseId = request.getParameter("purchaseid");
-        String supplier = request.getParameter("supplier");
+        String rawSupplierId = request.getParameter("supplier_id");
         String rawProcessedBy = request.getParameter("processedby");
         String sortBy = request.getParameter("sortBy");
         
         int receiptId = (rawReceiptId == null || rawReceiptId.isBlank()) ? -1 : Integer.parseInt(rawReceiptId);
         int purchaseid = (rawPurchaseId == null ||rawPurchaseId.isBlank()) ? -1 : Integer.parseInt(rawPurchaseId);
         int processedBy = (rawProcessedBy == null || rawProcessedBy.isBlank()) ? -1 : Integer.parseInt(rawProcessedBy);
+        int supplierId = (rawSupplierId == null || rawSupplierId.isBlank()) ? -1 : Integer.parseInt(rawSupplierId);
         
         GoodReceiptDAO gr = new GoodReceiptDAO();
         UserDAO user = new UserDAO();
         
         HttpSession session = request.getSession();
         List<User> warehouseList = user.searchUser(null, "3", null);
-        List<GoodReceipt> list = gr.searchProduct(receiptId, purchaseid, supplier, processedBy, sortBy);
+        List<GoodReceipt> list = gr.searchProduct(receiptId, purchaseid, supplierId, processedBy, sortBy);
         List<ImportHistoryDTO> returnedList = new ArrayList<>();
         for(GoodReceipt i : list){
             returnedList.add(toImportHistory(i));
@@ -80,9 +84,12 @@ public class ImportHistory extends HttpServlet {
 
     private ImportHistoryDTO toImportHistory(GoodReceipt gr){
         UserDAO userDao = new UserDAO();
+        PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
         GoodReceiptItemDAO griDao = new GoodReceiptItemDAO();
         ProductItemDAO piDao = new ProductItemDAO();
-                
+        SupplierDAO supplierDao = new SupplierDAO();
+        
+        PurchaseRequest purchaseRequest = purchaseRequestDAO.getPurchaseRequestById(gr.getPurchaseRequestId());
         List<GoodReceiptItem> gri = griDao.getItemsByGoodReceiptId(gr.getId());
         int item = 0;
         int total = 0;
@@ -96,7 +103,7 @@ public class ImportHistory extends HttpServlet {
         ImportHistoryDTO i = new ImportHistoryDTO();
         i.setReceiptId(gr.getId());
         i.setPurchaseRequestId(gr.getPurchaseRequestId());
-        i.setSupplier(gr.getSupplierName());
+        i.setSupplier(supplierDao.getSupplierById(purchaseRequest.getSupplierId()).getSupplierName());
         i.setStatus(gr.getStatus());
         i.setImportBy(userDao.getUserNameById(gr.getProcessedBy()));
         i.setCompletedAt(gr.getCreatedAt());

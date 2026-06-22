@@ -3,6 +3,7 @@ package com.swp.whmsystem.dal;
 import com.swp.whmsystem.enums.InventoryAuditStatus;
 import com.swp.whmsystem.model.InventoryAudit;
 import com.swp.whmsystem.model.InventoryAuditItem;
+import com.swp.whmsystem.model.InventoryAuditItemSerial;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -286,12 +287,12 @@ public class InventoryAuditDAO {
             for (InventoryAuditItem item : items) {
                 if (item.getPhysicalQuantity() != item.getSystemQuantity()) {
                     String getSerialsSql = "SELECT * FROM inventory_audit_item_serials WHERE audit_item_id = ?";
-                    List<com.swp.whmsystem.model.InventoryAuditItemSerial> serials = new ArrayList<>();
+                    List<InventoryAuditItemSerial> serials = new ArrayList<>();
                     try (PreparedStatement ps = conn.prepareStatement(getSerialsSql)) {
                         ps.setInt(1, item.getId());
                         try (ResultSet rs = ps.executeQuery()) {
                             while (rs.next()) {
-                                com.swp.whmsystem.model.InventoryAuditItemSerial s = new com.swp.whmsystem.model.InventoryAuditItemSerial();
+                                InventoryAuditItemSerial s = new InventoryAuditItemSerial();
                                 s.setSerial(rs.getString("serial"));
                                 s.setType(rs.getString("type"));
                                 serials.add(s);
@@ -299,7 +300,7 @@ public class InventoryAuditDAO {
                         }
                     }
 
-                    for (com.swp.whmsystem.model.InventoryAuditItemSerial s : serials) {
+                    for (InventoryAuditItemSerial s : serials) {
                         if ("ADD".equals(s.getType())) {
                             String insertSerialSql = "INSERT INTO product_items (serial, product_id, imported_price, status) VALUES (?, ?, ?, 'AVAILABLE')";
                             try (PreparedStatement ps = conn.prepareStatement(insertSerialSql)) {

@@ -30,7 +30,7 @@ public class PurchaseRequestDAO {
         String sql = "SELECT pr.*, u.username AS createdByUsername, s.suppliername FROM purchase_requests pr " +
                 "LEFT JOIN users u ON pr.createdby = u.userid " +
                 "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid " +
-                "where pr.isDeleted = 0 and pr.status in ('APPROVED','INCOMPLETED') ORDER BY pr.id DESC";
+                "where pr.isDeleted = 0 and pr.status in ('APPROVED','PROCESSING') ORDER BY pr.id DESC";
         List<PurchaseRequest> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);

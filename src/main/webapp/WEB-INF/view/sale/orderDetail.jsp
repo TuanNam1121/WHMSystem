@@ -134,6 +134,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="selected-product-list" >
+                                                    
                                                     <c:forEach items="${sessionScope.orderItems}" var="oi">
                                                     <tr>
                                                         <input type="hidden" value="${oi.productId}" name="productId">
@@ -142,7 +143,7 @@
                                                         <td>
                                                             <input required type="number" name="quantity_${oi.productId}" min="1" max="${oi.inStock}" value="${oi.quantity!=null?oi.quantity:''}"></td>
                                                         
-                                                        <td><input required type="number" name="price_${oi.productId}" min="1" value="${oi.price!=null?oi.price:''}" ></td>
+                                                        <td><input required type="text" name="price_${oi.productId}" min="1" value="<fmt:formatNumber value='${oi.price}' pattern='#,###'/>" ></td>
                                                         <td>
                                                             <a class="btn btn-sm btn-outline-primary add-product-btn"
                                                                href="UpdateRemoveItem?id=${oi.productId}&orderId=${order.id}">

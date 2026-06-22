@@ -7,7 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GoodReceiptItemDAO {
     public List<GoodReceiptItem> getAllGoodReceiptItems() {
@@ -53,17 +55,25 @@ public class GoodReceiptItemDAO {
         return item;
     }
 
-    public boolean insertGoodReceiptItem(GoodReceiptItem item) {
-        String sql = "insert into good_receipts_items (goodreceiptid, product_id, actual_quantity) values (?, ?, ?)";
+    public Map<Integer, Integer> getReceivedQuantityByPurchaseRequestId(int purchaseRequestId) {
+        String sql = "SELECT gri.product_id, SUM(gri.actual_quantity) AS total " +
+                "FROM good_receipts_items gri " +
+                "JOIN good_receipts gr ON gri.goodreceiptid = gr.id " +
+                "WHERE gr.purchaserequestid = ? " +
+                "GROUP BY gri.product_id";
+        Map<Integer, Integer> result = new HashMap<>();
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, item.getGoodReceiptId());
-            preparedStatement.setInt(2, item.getProductId());
-            preparedStatement.setInt(3, item.getActualQuantity());
-            return preparedStatement.executeUpdate() > 0;
+            preparedStatement.setInt(1, purchaseRequestId);
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                while (rs.next()) {
+                    result.put(rs.getInt("product_id"), rs.getInt("total"));
+                }
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return result;
     }
 
     public int insertGoodReceiptItemAndGetId(GoodReceiptItem item) {

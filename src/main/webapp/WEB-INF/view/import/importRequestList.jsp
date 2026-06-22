@@ -102,7 +102,7 @@
                                         <select class="select" id="filter-status">
                                             <option>Choose Status</option>
                                             <option>New</option>
-                                            <option>Doing</option>
+                                            <option>INCOMPLETED</option>
                                             <option>Completed</option>
                                         </select>
                                     </div>
@@ -128,42 +128,43 @@
                             <thead>
                             <tr>
                                 <th>Request Code</th>
+                                <th>Supplier</th>
                                 <th>Note</th>
                                 <th>Status</th>
                                 <th>Created At</th>
+                                <th>Total Item</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
                             <c:forEach items="${importRequests}" var="ir">
                                 <tr>
-                                    <td class="text-bolds"><a href="managerPurchaseRequestDetail?id=${ir.id}">
-                                            <fmt:formatNumber value='${ir.id}' pattern='000'/></a>
+                                    <td class="text-bolds"><a href="managerPurchaseRequestDetail?id=${ir.purchaseRequestId}">
+                                            PR-${ir.purchaseRequestId}</a>
                                     </td>
+                                    <td>${ir.supplier}</td>
                                     <td>${not empty ir.note ? ir.note : 'No note provided'}</td>
                                     <td>
                                         <c:choose>
                                             <c:when
-                                                    test="${ir.status == 'NEW' || ir.status == 'New'}">
+                                                    test="${ir.status == 'APPROVED'}">
                                                 <span class="badges bg-lightyellow">${ir.status}</span>
                                             </c:when>
                                             <c:when
-                                                    test="${ir.status == 'COMPLETED' || ir.status == 'Completed'}">
-                                                <span class="badges bg-lightgreen">${ir.status}</span>
-                                            </c:when>
-                                            <c:otherwise>
+                                                    test="${ir.status == 'INCOMPLETED'}">
                                                 <span class="badges bg-lightgrey">${ir.status}</span>
-                                            </c:otherwise>
+                                            </c:when>
                                         </c:choose>
                                     </td>
                                     <td>
                                         <fmt:formatDate value='${ir.createdAt}'
                                                         pattern='dd MMM yyyy'/>
                                     </td>
+                                    <td>${ir.totalItem}</td>
                                     <td>
                                         <a class="btn btn-sm btn-outline-primary"
-                                           href="ImportProduct?id=${ir.id}">
-                                            <i class="fas fa-eye me-1"></i> Import
+                                           href="ImportProduct?prId=${ir.purchaseRequestId}">
+                                            <i class="fas fa-eye me-1"></i>Import
                                         </a>
                                     </td>
                                 </tr>

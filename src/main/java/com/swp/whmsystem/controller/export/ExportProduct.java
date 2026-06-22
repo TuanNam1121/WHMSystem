@@ -78,15 +78,18 @@ public class ExportProduct extends HttpServlet {
         HttpSession session = request.getSession();
         ExportItemDAO exportItemDAO = new ExportItemDAO();
         String sku = request.getParameter("sku");
+        Order order = (Order) session.getAttribute("order");
 
         List<ExportItemDTO> scannedList = (List<ExportItemDTO>) session.getAttribute("scannedList");
         if (scannedList == null) {
             scannedList = new ArrayList<>();
         }
 
-        if (sku != null && !sku.trim().isEmpty()) {
+        if (order == null) {
+            session.setAttribute("error", "Cannot identify the order being exported.");
+        } else if (sku != null && !sku.trim().isEmpty()) {
             sku = sku.trim();
-            ExportItemDTO productFromDB = exportItemDAO.getItemBySKU(sku);
+            ExportItemDTO productFromDB = exportItemDAO.getItemBySKU(sku, order.getId());
 
             if (productFromDB != null) {
                 int currentScannedQty = 0;
@@ -114,7 +117,7 @@ public class ExportProduct extends HttpServlet {
                     scannedList.add(0, newItem);
                 }
             } else {
-                session.setAttribute("error", "Cannot find product with SKU: " + sku);
+                session.setAttribute("error", "Cannot find SKU [" + sku + "] in this order.");
             }
         }
         session.setAttribute("scannedList", scannedList);
@@ -127,4 +130,3 @@ public class ExportProduct extends HttpServlet {
     }
 
 }
-

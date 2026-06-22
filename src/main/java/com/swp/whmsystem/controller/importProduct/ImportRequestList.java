@@ -20,6 +20,8 @@ import java.util.List;
 import com.swp.whmsystem.model.User;
 import com.swp.whmsystem.model.GoodReceipt;
 import com.swp.whmsystem.dal.GoodReceiptDAO;
+import com.swp.whmsystem.dal.SupplierDAO;
+import com.swp.whmsystem.dto.PurchaseRequestDTO;
 
 import java.util.ArrayList;
 
@@ -36,8 +38,11 @@ public class ImportRequestList extends HttpServlet {
                 response.sendRedirect("login");
                 return;
             }
-            GoodReceiptDAO goodReceiptDAO = new GoodReceiptDAO();
-            List<GoodReceipt> importRequests = goodReceiptDAO.getNewAndImcompletedGoodReceiptForProcessor(user.getId());
+            PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
+            
+            List<PurchaseRequest> purchaseRequests = purchaseRequestDAO.getApprovedAndIncompletedPurchaseRequest();
+            List<PurchaseRequestDTO> importRequests = new ArrayList<>();
+            for(PurchaseRequest i : purchaseRequests) importRequests.add(toPurchaseDTO(i));
             request.setAttribute("importRequests", importRequests);
         } catch (Exception ex) {
             request.setAttribute("message", ex.getMessage());
@@ -50,6 +55,22 @@ public class ImportRequestList extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+    }
+    
+    private PurchaseRequestDTO toPurchaseDTO(PurchaseRequest pr){
+        SupplierDAO supplierDao = new SupplierDAO();
+        PurchaseItemDAO purchaseItemDAO = new PurchaseItemDAO();
+        PurchaseRequestDTO dto = new PurchaseRequestDTO();
+        dto.setPurchaseRequestId(pr.getId());
+        dto.setCreatedAt(pr.getCreatedAt());
+        dto.setNote(pr.getNote());
+        dto.setStatus(pr.getStatus());
+        dto.setSupplier(supplierDao.getSupplierById(pr.getSupplierId()).getSupplierName());
+        int total = 0;
+        List<PurchaseItem> purchaseItems = purchaseItemDAO.getItemsByPurchaseRequestId(pr.getId());
+        for(PurchaseItem i : purchaseItems) total += i.getRequiredQty();
+        dto.setTotalItem(total);
+        return dto;
     }
     
 }

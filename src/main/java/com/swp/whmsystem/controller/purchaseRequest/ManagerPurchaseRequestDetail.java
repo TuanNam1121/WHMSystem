@@ -62,23 +62,10 @@ public class ManagerPurchaseRequestDetail extends HttpServlet {
             }
         }
 
-        List<User> warehouseStaffs = userDao.searchUser(null, "3", null);
-
-        if (!"NEW".equalsIgnoreCase(pr.getStatus())) {
-            GoodReceiptDAO grDao = new GoodReceiptDAO();
-            GoodReceipt gr = grDao.getGoodReceiptByPurchaseRequestId(id);
-            if (gr != null) {
-                User assignedStaff = userDao.getUserFromId(gr.getProcessedBy());
-                request.setAttribute("assignedStaff", assignedStaff);
-                request.setAttribute("managerNote", gr.getNote());
-            }
-        }
-
         request.setAttribute("purchaseRequest", pr);
         request.setAttribute("salesman", salesman);
         request.setAttribute("purchaseItems", items);
         request.setAttribute("productMap", productMap);
-        request.setAttribute("warehouseStaffs", warehouseStaffs);
 
         request.getRequestDispatcher("WEB-INF/view/purchaseRequest/managerPurchaseRequestDetail.jsp").forward(request,
                 response);

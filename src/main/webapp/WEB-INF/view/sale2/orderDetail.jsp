@@ -200,7 +200,7 @@
                                                     <input type="radio" name="orderStatus" value="CANCELLED">CANCELLED
                                             <div class="col-lg-12">
                                         <input class="btn btn-submit me-2" type="submit" value="UPDATE">
-                                        <a href="${pageContext.request.contextPath}/OrderList" class="btn btn-cancel">${action=='update'?'RETURN':'CANCEL'}</a>
+                                         <a href="${pageContext.request.contextPath}/OrderCancel" class="btn btn-cancel">CANCEL</a>
                                     </div>
                                                 </div>
                                                 </div>

@@ -155,7 +155,8 @@
                                             </table>
                                         </div>
                                         <div class="col-lg-12">
-                                        <input class="btn btn-submit me-2" type="submit" value="UPDATE">
+                                        <c:if test="${not empty sessionScope.orderItems}">
+                                        <input class="btn btn-submit me-2" type="submit" value="UPDATE"></c:if>
                                         <a href="${pageContext.request.contextPath}/OrderCancel" class="btn btn-cancel">CANCEL</a>
                                     </div>
                                     

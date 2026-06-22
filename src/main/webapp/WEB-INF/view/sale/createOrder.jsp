@@ -147,7 +147,7 @@
                                         </table>
                                     </div>
                                     <div class="col-lg-12">
-                                        <c:if test="${sessionScope.selectedProducts != null}">
+                                        <c:if test="${not empty sessionScope.selectedProducts}">
                                         <input class="btn btn-submit me-2" type="submit" value="CREATE"></c:if>
                                         <a href="${pageContext.request.contextPath}/OrderCancel" class="btn btn-cancel">CANCEL</a>
                                     </div>

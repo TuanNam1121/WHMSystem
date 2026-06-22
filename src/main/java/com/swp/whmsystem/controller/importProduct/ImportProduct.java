@@ -83,15 +83,15 @@ public class ImportProduct extends HttpServlet {
                     nestedList.add(a);
                     totalItem += quantity;
                 }
-            } else if ("INCOMPLETED".equals(status)) {
+            } else if ("PROCESSING".equals(status)) {
                 GoodReceiptItemDAO griDao = new GoodReceiptItemDAO();
-                Map<Integer, Integer> importedProductQuantity = griDao.getReceivedQuantityByPurchaseRequestId(purchaseRequestId);
+                Map<Integer, Integer> importedProductQuantity = griDao.getReceivedQuantityByPurchaseRequestId(purchaseRequest.getId());
                 for (PurchaseItem i : purchaseList) {
                     int productId = i.getProductId();
-                    int quantity = i.getRequiredQty();
+                    int quantity = i.getRequiredQty() - importedProductQuantity.getOrDefault(productId, 0);
                     int price = i.getPrice();
                     List<ProductItemRowDTO> a = new ArrayList<>();
-                    for (int j = 0; j < quantity - importedProductQuantity.get(productId); ++j) {
+                    for (int j = 0; j < quantity; ++j) {
                         Product p = product.getProductFromId(productId);
                         ProductItemRowDTO dto = new ProductItemRowDTO(productId, p.getName(), "", p.getUnit().getName(),
                                 price);
@@ -101,6 +101,7 @@ public class ImportProduct extends HttpServlet {
                     totalItem += quantity;
                 }
             }
+            // thêm xử lý nếu ko tồn tại purchase request đó hoặc chưa được approved và completed
 
             List<ProductItemRowDTO> list = new ArrayList<>();
             for (List<ProductItemRowDTO> i : nestedList) {
@@ -117,7 +118,7 @@ public class ImportProduct extends HttpServlet {
             List<List<ProductItemRowDTO>> importItems = nestedList;
             request.setAttribute("prCode", purchaseRequestId);
             request.setAttribute("importItems", importItems);
-        } catch (NumberFormatException ex) {
+        } catch (Exception ex) {
             String message = ex.getMessage();
             request.setAttribute("message", message);
         }
@@ -144,7 +145,7 @@ public class ImportProduct extends HttpServlet {
             try {
                 purchaseRequestId = Integer.parseInt(purchaseRequestId_raw);
             } catch (NumberFormatException ex) {
-                session.setAttribute("message", "Invalid Good Receipt ID.");
+                session.setAttribute("message", "Invalid Purchase Request ID." + purchaseRequestId_raw);
                 session.setAttribute("messageType", "danger");
                 response.sendRedirect(request.getContextPath() + "/importRequestList");
                 return;
@@ -268,7 +269,7 @@ public class ImportProduct extends HttpServlet {
             if (isCompleted(purchaseItems, goodReceiptItems)) {
                 purchaseRequest.setStatus("COMPLETED");
             } else {
-                purchaseRequest.setStatus("INCOMPLETED");
+                purchaseRequest.setStatus("PROCESSING");
             }
         } else {
             if (isCompleted(purchaseItems, goodReceiptItems)) {

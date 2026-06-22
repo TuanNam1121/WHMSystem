@@ -1,10 +1,14 @@
 package com.swp.whmsystem.dal;
 
 import com.swp.whmsystem.dto.ImportHistoryDTO;
+import com.swp.whmsystem.dto.ProductItemRowDTO;
 import com.swp.whmsystem.model.GoodReceipt;
 import com.swp.whmsystem.model.GoodReceiptItem;
 import com.swp.whmsystem.model.Product;
 import com.swp.whmsystem.model.ProductItem;
+import com.swp.whmsystem.model.PurchaseItem;
+import com.swp.whmsystem.model.PurchaseRequest;
+import java.awt.BorderLayout;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class GoodReceiptDAO {
 
@@ -89,7 +94,9 @@ public class GoodReceiptDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, purchaseRequestId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next())  list.add(mapResultSetToGoodReceipt(resultSet));
+            while (resultSet.next()) {
+                list.add(mapResultSetToGoodReceipt(resultSet));
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -148,7 +155,7 @@ public class GoodReceiptDAO {
         return c;
     }
 
-     // luôn trả về ID để insert good_receipts_items ngay sau đó
+    // luôn trả về ID để insert good_receipts_items ngay sau đó
     public int insertGoodReceiptAndGetId(GoodReceipt receipt) {
         String sql = "insert into good_receipts (purchaserequestid, processedby, status, note, invoice_number) values (?, ?, ?, ?, ?)";
         try (Connection connection = DBContext.getConnection()) {
@@ -226,9 +233,70 @@ public class GoodReceiptDAO {
         return goodReceipts;
     }
 
+    private boolean isCompleted(List<PurchaseItem> purchaseItems, Map<Integer, Integer> goodReceiptItems) {
+        for (Map.Entry<Integer, Integer> entry : goodReceiptItems.entrySet()) {
+            Integer key = entry.getKey();
+            Integer value = entry.getValue();
+            System.out.println(key + " " + value);
+        }
+        for (PurchaseItem i : purchaseItems) {
+            System.out.println(i);
+            if (i.getRequiredQty() > goodReceiptItems.get(i.getProductId())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static void main(String[] args) {
         GoodReceiptDAO gr = new GoodReceiptDAO();
+        PurchaseItemDAO pi = new PurchaseItemDAO();
         GoodReceiptItemDAO gri = new GoodReceiptItemDAO();
-        System.out.println(gr.getGoodReceiptById(3));
+        PurchaseRequestDAO pr = new PurchaseRequestDAO();
+        ProductDAO product = new ProductDAO();
+        int totalItem = 0;
+        List<PurchaseItem> purchaseList = pi.getItemsByPurchaseRequestId(4);
+        for (PurchaseItem i : purchaseList) {
+            System.out.println(i);
+        }
+        PurchaseRequest purchaseRequest = pr.getPurchaseRequestById(4);
+        String status = purchaseRequest.getStatus();
+        if (status.equals("APPROVED")) {
+            for (PurchaseItem i : purchaseList) {
+                int productId = i.getProductId();
+                int quantity = i.getRequiredQty();
+                int price = i.getPrice();
+                List<ProductItemRowDTO> a = new ArrayList<>();
+                for (int j = 0; j < quantity; ++j) {
+                    Product p = product.getProductFromId(productId);
+                    ProductItemRowDTO dto = new ProductItemRowDTO(productId, p.getName(), "", p.getUnit().getName(),
+                            price);
+                    a.add(dto);
+                }
+                for (ProductItemRowDTO dto : a) {
+                    System.out.println(dto);
+                }
+                totalItem += quantity;
+            }
+        } else if ("PROCESSING".equals(status)) {
+            GoodReceiptItemDAO griDao = new GoodReceiptItemDAO();
+            Map<Integer, Integer> importedProductQuantity = griDao.getReceivedQuantityByPurchaseRequestId(purchaseRequest.getId());
+            for (PurchaseItem i : purchaseList) {
+                int productId = i.getProductId();
+                int quantity = i.getRequiredQty();
+                int price = i.getPrice();
+                List<ProductItemRowDTO> a = new ArrayList<>();
+                for (int j = 0; j < quantity - importedProductQuantity.getOrDefault(productId, 0); ++j) {
+                    Product p = product.getProductFromId(productId);
+                    ProductItemRowDTO dto = new ProductItemRowDTO(productId, p.getName(), "", p.getUnit().getName(),
+                            price);
+                    a.add(dto);
+                }
+                for (ProductItemRowDTO dto : a) {
+                    System.out.println(dto);
+                }
+                totalItem += quantity;
+            }
+        }
     }
 }

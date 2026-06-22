@@ -7,7 +7,6 @@ package com.swp.whmsystem.controller.authentication;
 
 import com.swp.whmsystem.dal.*;
 import com.swp.whmsystem.model.*;
-import com.swp.whmsystem.utils.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,7 +14,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;  
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name="forgetPassword", urlPatterns={"/forgetPassword"})
 public class ForgetPassword extends HttpServlet {

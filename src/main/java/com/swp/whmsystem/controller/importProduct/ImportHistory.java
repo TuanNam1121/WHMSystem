@@ -58,13 +58,13 @@ public class ImportHistory extends HttpServlet {
         UserDAO user = new UserDAO();
         
         HttpSession session = request.getSession();
-        List<User> warehouseList = user.searchUser(null, "3", null);
+        List<User> userImporterList = user.getAllUsersHandleGoodReceipt();
         List<GoodReceipt> list = gr.searchProduct(receiptId, purchaseid, supplierId, processedBy, sortBy);
         List<ImportHistoryDTO> returnedList = new ArrayList<>();
         for(GoodReceipt i : list){
             returnedList.add(toImportHistory(i));
         }
-        session.setAttribute("userList", warehouseList);
+        session.setAttribute("userList", userImporterList);
         request.setAttribute("list", returnedList);
         request.getRequestDispatcher("WEB-INF/view/import/importHistory.jsp").forward(request, response);
     } 

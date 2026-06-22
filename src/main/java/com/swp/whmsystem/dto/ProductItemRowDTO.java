@@ -8,13 +8,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  *
  * @author Admin
  */
 @Getter @Setter 
-@AllArgsConstructor @NoArgsConstructor
+@AllArgsConstructor @NoArgsConstructor @ToString
 public class ProductItemRowDTO {
     private int productId;
     private String productName;

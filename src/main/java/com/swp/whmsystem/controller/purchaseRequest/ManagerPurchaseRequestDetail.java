@@ -29,6 +29,10 @@ public class ManagerPurchaseRequestDetail extends HttpServlet {
             response.sendRedirect("login");
             return;
         }
+        if (user.getRoleId() != 2) {
+            response.sendRedirect("home");
+            return;
+        }
 
         String idStr = request.getParameter("id");
         if (idStr == null) {

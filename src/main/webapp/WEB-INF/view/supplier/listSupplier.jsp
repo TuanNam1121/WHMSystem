@@ -167,9 +167,7 @@
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 <script src="assets/js/script.js"></script>
 <script>
-    $(document).ready(function () {
-        // DataTables removed for server-side pagination
-    });
+
 </script>
 </body>
 

@@ -234,10 +234,12 @@
                             <td>\${item.sku}</td>
                             <td>\${item.category}</td>
                             <td>
-                                <input name="selectedPrice\${index}" type="number" min=1000 class="form-control form-control-sm price-input" data-id="\${item.id}" value="\${item.price}" style="width: 100px;" required>
+                                <input name="selectedPrice\${index}" type="number" min=1000 class="form-control form-control-sm price-input" 
+                                data-id="\${item.id}" value="\${item.price}" style="width: 100px;" required>
                             </td>
                             <td>
-                                <input name="selectedQty\${index}" type="number" min=1 class="form-control form-control-sm qty-input" data-id="\${item.id}" value="\${item.reqQty}" style="width: 100px;">
+                                <input name="selectedQty\${index}" type="number" min=1 class="form-control form-control-sm qty-input" 
+                                data-id="\${item.id}" value="\${item.reqQty}" style="width: 100px;">
                             </td>
                             <td>
                                 <a class="delete-set remove-item-btn" href="javascript:void(0);" data-id="\${item.id}">
@@ -284,7 +286,7 @@
                     category: category,
                     stock: stock,
                     reqQty: 1,
-                    price: ''
+                    price: 1000
                 });
             }
             renderSelectedItems();

@@ -36,7 +36,6 @@ public class PurchaseRequestList extends HttpServlet {
             try {
                 code = Integer.parseInt(codeStr.trim());
             } catch (NumberFormatException e) {
-                // ignore or handle error
             }
         }
         

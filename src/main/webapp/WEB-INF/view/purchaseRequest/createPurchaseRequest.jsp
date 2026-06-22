@@ -42,9 +42,9 @@
                 </div>
             </div>
 
-            <c:if test="${not empty message}">
+            <c:if test="${not empty error}">
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <strong>${message}</strong>
+                    <strong>${error}</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             </c:if>
@@ -163,7 +163,7 @@
                                                 <label>Note</label>
                                                 <textarea class="form-control" rows="2" name="note"
                                                           placeholder="Enter note for this purchase request..."
-                                                          id="request-note" required></textarea>
+                                                          id="request-note"></textarea>
                                             </div>
 
                                             <div class="text-end">
@@ -213,10 +213,10 @@
                             <td>\${item.sku}</td>
                             <td>\${item.category}</td>
                             <td>
-                                <input name="selectedPrice\${index}" type="number" class="form-control form-control-sm price-input" data-id="\${item.id}" value="\${item.price}" min="1000000" style="width: 100px;" required>
+                                <input name="selectedPrice\${index}" type="number" min=1000 class="form-control form-control-sm price-input" data-id="\${item.id}" value="\${item.price}" style="width: 100px;" required>
                             </td>
                             <td>
-                                <input name="selectedQty\${index}" type="number" class="form-control form-control-sm qty-input" data-id="\${item.id}" value="\${item.reqQty}" min="1" style="width: 100px;">
+                                <input name="selectedQty\${index}" type="number" min=1 class="form-control form-control-sm qty-input" data-id="\${item.id}" value="\${item.reqQty}" style="width: 100px;">
                             </td>
                             <td>
                                 <a class="delete-set remove-item-btn" href="javascript:void(0);" data-id="\${item.id}">
@@ -295,21 +295,21 @@
             const id = $(this).data('id');
             const newPrice = parseInt($(this).val());
             const item = selectedItems.find(i => i.id === id);
-            if (item) {
-                if (isNaN(newPrice) || newPrice < 1000000) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Invalid Price',
-                        text: 'Price must be at least 1,000,000.',
-                        confirmButtonColor: '#FF9F43'
-                    });
-                    item.price = '';
-                    $(this).val('');
-                } else {
-                    item.price = newPrice;
-                    $(this).val(item.price);
-                }
-            }
+            // if (item) {
+            //     if (isNaN(newPrice) || newPrice < 1000000) {
+            //         Swal.fire({
+            //             icon: 'error',
+            //             title: 'Invalid Price',
+            //             text: 'Price must be at least 1,000,000.',
+            //             confirmButtonColor: '#FF9F43'
+            //         });
+            //         item.price = '';
+            //         $(this).val('');
+            //     } else {
+            item.price = newPrice;
+            $(this).val(item.price);
+            //     }
+            // }
         });
 
         // Update Qty
@@ -317,60 +317,60 @@
             const id = $(this).data('id');
             const newQty = parseInt($(this).val());
             const item = selectedItems.find(i => i.id === id);
-            if (item) {
-                if (newQty < 1) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Invalid Quantity',
-                        text: 'Quantity must be at least 1.',
-                        confirmButtonColor: '#FF9F43'
-                    });
-                    item.reqQty = 1;
-                    $(this).val(1);
-                } else {
-                    item.reqQty = newQty;
-                    $(this).val(item.reqQty);
-                }
-            }
+            // if (item) {
+            //     if (newQty < 1) {
+            //         Swal.fire({
+            //             icon: 'error',
+            //             title: 'Invalid Quantity',
+            //             text: 'Quantity must be at least 1.',
+            //             confirmButtonColor: '#FF9F43'
+            //         });
+            //         item.reqQty = 1;
+            //         $(this).val(1);
+            //     } else {
+            item.reqQty = newQty;
+            $(this).val(item.reqQty);
+            //     }
+            // }
         });
 
         // Send Request Validation
-        $('form').on('submit', function (e) {
-            if (selectedItems.length === 0) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validation Error',
-                    text: 'Please select at least one product!',
-                    confirmButtonColor: '#FF9F43'
-                });
-                return false;
-            }
+        // $('form').on('submit', function (e) {
+        //     if (selectedItems.length === 0) {
+        //         e.preventDefault();
+        //         Swal.fire({
+        //             icon: 'error',
+        //             title: 'Validation Error',
+        //             text: 'Please select at least one product!',
+        //             confirmButtonColor: '#FF9F43'
+        //         });
+        //         return false;
+        //     }
 
-            const invalidItem = selectedItems.find(i => i.reqQty < 1);
-            if (invalidItem) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Quantity',
-                    text: 'Quantity for ' + invalidItem.name + ' must be at least 1.',
-                    confirmButtonColor: '#FF9F43'
-                });
-                return false;
-            }
+        // const invalidItem = selectedItems.find(i => i.reqQty < 1);
+        // if (invalidItem) {
+        //     e.preventDefault();
+        //     Swal.fire({
+        //         icon: 'error',
+        //         title: 'Invalid Quantity',
+        //         text: 'Quantity for ' + invalidItem.name + ' must be at least 1.',
+        //         confirmButtonColor: '#FF9F43'
+        //     });
+        //     return false;
+        // }
 
-            const invalidPriceItem = selectedItems.find(i => i.price === '' || isNaN(i.price) || i.price < 1000000);
-            if (invalidPriceItem) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Price',
-                    text: 'Price for ' + invalidPriceItem.name + ' must be at least 1,000,000 and is required.',
-                    confirmButtonColor: '#FF9F43'
-                });
-                return false;
-            }
-        });
+        // const invalidPriceItem = selectedItems.find(i => i.price === '' || isNaN(i.price) || i.price < 1000000);
+        // if (invalidPriceItem) {
+        //     e.preventDefault();
+        //     Swal.fire({
+        //         icon: 'error',
+        //         title: 'Invalid Price',
+        //         text: 'Price for ' + invalidPriceItem.name + ' must be at least 1,000,000 and is required.',
+        //         confirmButtonColor: '#FF9F43'
+        //     });
+        //     return false;
+        // }
+        //     });
     });
 </script>
 </body>

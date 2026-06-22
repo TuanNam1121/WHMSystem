@@ -9,6 +9,7 @@ public class PurchaseRequest {
     private String status;
     private String note;
     private Timestamp createdAt;
+    private Timestamp updatedAt;
     private String createdByUsername;
     private boolean isDeleted;
     private int supplierId;
@@ -63,6 +64,14 @@ public class PurchaseRequest {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public String getCreatedByUsername() {

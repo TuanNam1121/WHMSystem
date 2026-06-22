@@ -91,8 +91,11 @@ public class PurchaseRequestDAO {
         c.setStatus(rs.getString("status"));
         c.setNote(rs.getString("note"));
         c.setSupplierId(rs.getInt("supplierid"));
+        c.setDeleted(rs.getBoolean("isDeleted"));
         Timestamp ts = rs.getTimestamp("createdat");
         c.setCreatedAt(ts);
+        Timestamp updatedTs = rs.getTimestamp("updatedat");
+        c.setUpdatedAt(updatedTs);
         try {
             c.setCreatedByUsername(rs.getString("createdByUsername"));
             c.setSupplierName(rs.getString("suppliername"));

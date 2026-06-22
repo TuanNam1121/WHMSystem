@@ -57,6 +57,41 @@ public class CreatePurchaseRequest extends HttpServlet {
             return;
         }
 
+        // Validate items first
+        int i = 0;
+        while (true) {
+            String productIdStr = request.getParameter("selectedId" + i);
+            String qtyStr = request.getParameter("selectedQty" + i);
+            String priceStr = request.getParameter("selectedPrice" + i);
+            if (productIdStr == null || qtyStr == null || priceStr == null) {
+                if (i == 0) {
+                    request.setAttribute("error", "Please select at least one product!");
+                    doGet(request, response);
+                    return;
+                }
+                break;
+            }
+            try {
+                int quantity = Integer.parseInt(qtyStr);
+                int price = Integer.parseInt(priceStr);
+                if (quantity < 1) {
+                    request.setAttribute("error", "Quantity for product must be at least 1!");
+                    doGet(request, response);
+                    return;
+                }
+                if (price < 1000) {
+                    request.setAttribute("error", "Price for product must be at least 1000 VND!");
+                    doGet(request, response);
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                request.setAttribute("error", "Error occured!");
+                request.getRequestDispatcher("WEB-INF/view/purchaseRequest/createPurchaseRequest.jsp").forward(request, response);
+                return;
+            }
+            i++;
+        }
+
         PurchaseRequest p = new PurchaseRequest();
         p.setCreatedBy(salesmanId);
         p.setNote(note);
@@ -66,7 +101,8 @@ public class CreatePurchaseRequest extends HttpServlet {
         purchaseRequestDAO.insertPurchaseRequest(p);
         p = purchaseRequestDAO.getLatestPurchaseRequestBySalemanId(salesmanId);
 
-        int i = 0;
+        i = 0;
+        PurchaseItemDAO purchaseItemDAO = new PurchaseItemDAO();
         while (true) {
             String productIdStr = request.getParameter("selectedId" + i);
             String qtyStr = request.getParameter("selectedQty" + i);
@@ -85,12 +121,9 @@ public class CreatePurchaseRequest extends HttpServlet {
                 purchaseItem.setRequiredQty(quantity);
                 purchaseItem.setPrice(price);
 
-                PurchaseItemDAO purchaseItemDAO = new PurchaseItemDAO();
                 purchaseItemDAO.insertPurchaseItem(purchaseItem);
             } catch (NumberFormatException e) {
-                request.setAttribute("error", "Quantity error!");
-                request.getRequestDispatcher("createPurchaseRequest").forward(request, response);
-                return;
+                System.out.println(e.getMessage());
             }
             i++;
         }

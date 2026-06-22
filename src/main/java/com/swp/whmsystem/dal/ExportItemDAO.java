@@ -10,18 +10,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class ExportItemDAO {
-    public ExportItemDTO getItemBySKU(String sku) {
+    public ExportItemDTO getItemBySKU(String sku, int orderId) {
         ExportItemDTO dto = null;
 
-        String sql = "SELECT p.sku, p.name, p.img_url, p.total_quantity, " +
-                "(SELECT current_price FROM product_items pi WHERE pi.product_id = p.productid LIMIT 1) AS price " +
-                "FROM products p " +
-                "WHERE p.sku = ? AND p.isactive = 1";
+        String sql = "SELECT p.sku, p.name, p.img_url, p.total_quantity, oi.price " +
+                "FROM order_items oi " +
+                "JOIN products p ON oi.productid = p.productid " +
+                "WHERE p.sku = ? AND oi.orderid = ? AND p.isactive = 1";
         
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, sku);
+            ps.setInt(2, orderId);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -188,7 +189,7 @@ public class ExportItemDAO {
 
     public static void main(String[] args) {
         ExportItemDAO exportItemDAO = new ExportItemDAO();
-        ExportItemDTO dto = exportItemDAO.getItemBySKU("D15-23");
+        ExportItemDTO dto = exportItemDAO.getItemBySKU("B12-423", 4);
         System.out.println(dto);
 
         List<ExportDetailItemDTO> list = exportItemDAO.getExportedItemsByOrderId(4);

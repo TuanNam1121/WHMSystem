@@ -119,7 +119,10 @@ public class OrderDetail extends HttpServlet {
             ProductDAO pd = new ProductDAO();
             request.setAttribute("products", pd.getProductList());
             OrderItemDAO oid = new OrderItemDAO();
-            request.setAttribute("orderItems", oid.getOrderItemByOrderId(orderId));
+            
+            
+            HttpSession session = request.getSession();
+            session.setAttribute("orderItems", oid.getOrderItemByOrderId(orderId));
 
             request.getRequestDispatcher("WEB-INF/view/sale/orderDetail.jsp").forward(request, response);
             return;
@@ -190,6 +193,9 @@ public class OrderDetail extends HttpServlet {
         order.setTotalPrice(total);
         od.updateOrderPrice(order);
         od.updateOrderNote(order);
+        HttpSession session = request.getSession();
+        session.removeAttribute("orderItems");
+        System.out.println("order item session removed");
         response.sendRedirect("OrderList");
     }
 

@@ -3,15 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package com.swp.whmsystem.controller.sale2;
+package com.swp.whmsystem.controller.sale;
 
 import com.swp.whmsystem.dal.CustomerDAO;
 import com.swp.whmsystem.dal.OrderDAO;
-import com.swp.whmsystem.dal.OrderItemDAO;
-import com.swp.whmsystem.dal.ProductDAO;
-import com.swp.whmsystem.model.Order;
-import com.swp.whmsystem.model.OrderItem;
-import com.swp.whmsystem.model.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -20,14 +15,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.List;
 
 /**
  *
  * @author LENOVO
  */
-@WebServlet(name="UpdateRemoveItem", urlPatterns={"/UpdateRemoveItem"})
-public class UpdateRemoveItem extends HttpServlet {
+@WebServlet(name="OrderCancel", urlPatterns={"/OrderCancel"})
+public class OrderCancel extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -44,10 +38,10 @@ public class UpdateRemoveItem extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet UpdateRemoveItem</title>");  
+            out.println("<title>Servlet OrderCancel</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet UpdateRemoveItem at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet OrderCancel at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,40 +58,12 @@ public class UpdateRemoveItem extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        String idStr = request.getParameter("id");
-        int id = Integer.parseInt(idStr);
-        
-        String orderIdStr = request.getParameter("orderId");
-        OrderDAO od = new OrderDAO();
-        int orderId = Integer.parseInt(orderIdStr);
-        Order order = od.getOrderById(orderId);
-        request.setAttribute("order", order);
-        CustomerDAO cd = new CustomerDAO();
-        request.setAttribute("customers", cd.getAllCustomer());
         HttpSession session = request.getSession();
-        
-
-        List<OrderItem> orderItems = (List<OrderItem>) session.getAttribute("orderItems");
-        ProductDAO pd = new ProductDAO();
-            request.setAttribute("products", pd.getProductList());
-            OrderItemDAO oid = new OrderItemDAO();
-            
-          int count = 0;
-         boolean exist = false;
-         for(OrderItem check:orderItems){
-             if(check.getProductId()==id){
-                 exist = true;
-                 break;
-             }
-             count++;
-         }
-         if(exist){
-         orderItems.remove(orderItems.get(count));
-             
-         }
-        session.setAttribute("orderItems", orderItems);
-            
-            request.getRequestDispatcher("WEB-INF/view/sale2/orderDetail.jsp").forward(request, response);
+        session.removeAttribute("selectedProducts");
+        System.out.println("selected item session removed");
+        session.removeAttribute("orderItems");
+        System.out.println("order item session removed");
+        response.sendRedirect("OrderList");
     } 
 
     /** 

@@ -211,6 +211,7 @@
 
             <c:if test="${purchaseRequest.status == 'New' || purchaseRequest.status == 'NEW'}">
                 <form id="action-form" action="managerPurchaseRequestDetail" method="POST">
+                    <input type="hidden" name="purchaseRequestId" value="${purchaseRequest.id}">
                     <div class="row mt-3">
                         <div class="col-lg-12 d-flex justify-content-between">
                             <a href="managerPurchaseRequestList" class="btn btn-cancel"
@@ -249,32 +250,6 @@
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 <script src="assets/js/script.js"></script>
 
-<script>
-    $(document).ready(function () {
-        // === ACCEPT REQUEST ===
-        $('#btn-accept-request').on('click', function (e) {
-            e.preventDefault();
-            var assignedStaff = $('#assign-warehouse-staff').val();
 
-            if (!assignedStaff || assignedStaff === '') {
-                alert('Please assign a Warehouse Staff before approving the request.');
-                $('#assign-warehouse-staff').focus();
-                return;
-            }
-
-            $('#hiddenWarehouseStaffId').val(assignedStaff);
-            $('#actionType').val('Accept');
-            $('#action-form').submit();
-        });
-
-        // === REJECT REQUEST ===
-        $('#btn-reject-request').on('click', function (e) {
-            e.preventDefault();
-            $('#actionType').val('Reject');
-            $('#action-form').submit();
-        });
-    });
-</script>
 </body>
-
 </html>

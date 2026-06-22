@@ -71,38 +71,9 @@
 
             <div class="card">
                 <div class="card-body">
-                    <div class="table-top">
-                        <div class="search-set">
-                            <div class="search-path">
-                                <a class="btn btn-filter" id="filter_search">
-                                    <img src="assets/img/icons/filter.svg" alt="img">
-                                    <span><img src="assets/img/icons/closes.svg" alt="img"></span>
-                                </a>
-                            </div>
-                            <div class="search-input">
-                                <a class="btn btn-searchset"><img src="assets/img/icons/search-white.svg" alt="img"></a>
-                            </div>
-                        </div>
-                        <div class="wordset">
-                            <ul>
-                                <li>
-                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img
-                                            src="assets/img/icons/pdf.svg" alt="img"></a>
-                                </li>
-                                <li>
-                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img
-                                            src="assets/img/icons/excel.svg" alt="img"></a>
-                                </li>
-                                <li>
-                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img
-                                            src="assets/img/icons/printer.svg" alt="img"></a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
 
                     <form action="purchaseRequestList" method="get">
-                        <div class="card" id="filter_inputs">
+                        <div class="card" id="filter_inputs" style="display: block;">
                             <div class="card-body pb-0">
                                 <div class="row">
                                     <div class="col-lg-2 col-sm-6 col-12">
@@ -153,7 +124,7 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-2 col-sm-6 col-12">
-                                        <div class="form-group">
+                                        <div class="form-group d-flex justify-content-end">
                                             <button type="submit" class="btn btn-filters ms-auto"
                                                     id="btn-apply-filter" style="border: none;">
                                                 <img src="assets/img/icons/search-whites.svg" alt="img">

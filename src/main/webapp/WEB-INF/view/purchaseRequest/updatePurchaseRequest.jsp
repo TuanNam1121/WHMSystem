@@ -82,10 +82,6 @@
 
             <div class="card">
                 <div class="card-body">
-                    <form action="updatePurchaseRequest" method="post">
-                        <input type="hidden" id="salesman-id" name="salesmanId" value="${sessionScope.user.id}">
-                        <input type="hidden" name="requestId" value="${purchaseRequest.id}">
-
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="form-group">
@@ -97,6 +93,9 @@
                             </div>
                         </div>
 
+                        <form action="updatePurchaseRequest" method="get">
+                            <input type="hidden" name="requestId" value="${purchaseRequest.id}">
+
                         <div class="row align-items-stretch">
                             <div class="col-lg-12 col-md-12 d-flex mb-4">
                                 <div class="card bg-light w-100 d-flex flex-column mb-0">
@@ -104,10 +103,13 @@
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                             <h5 class="mb-0" style="font-weight: 600;">Products</h5>
                                             <div class="search-set m-0">
-                                                <div class="search-input">
-                                                    <input type="text" id="product-search"
-                                                           class="form-control form-control-sm"
-                                                           placeholder="Search product...">
+                                                <div class="input-group input-group-sm">
+                                                    <input type="text" id="product-search" name="productSearch"
+                                                           class="form-control" placeholder="Search product name..."
+                                                           value="${param.productSearch}">
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="fas fa-search"></i> Search
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -155,6 +157,11 @@
                                     </div>
                                 </div>
                             </div>
+                        </form>
+
+                        <form action="updatePurchaseRequest" method="post">
+                            <input type="hidden" id="salesman-id" name="salesmanId" value="${sessionScope.user.id}">
+                            <input type="hidden" name="requestId" value="${purchaseRequest.id}">
 
                             <div class="col-lg-12 col-md-12 d-flex mb-4">
                                 <div class="card bg-light w-100 d-flex flex-column mb-0">
@@ -268,20 +275,6 @@
         // Initial render
         renderSelectedItems();
 
-        // Search Product directly in DOM
-        $('#product-search').on('input', function () {
-            const searchTerm = $(this).val().toLowerCase();
-            $('.product-item').each(function () {
-                const name = $(this).find('.product-name').text().toLowerCase();
-                const sku = $(this).find('.product-sku').text().toLowerCase();
-                if (name.includes(searchTerm) || sku.includes(searchTerm)) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
-        });
-
         // Add Product
         $(document).on('click', '.add-product-btn', function () {
             const isActive = $(this).data('active');
@@ -311,7 +304,7 @@
                     sku: sku,
                     category: category,
                     stock: stock,
-                    reqQty: 50,
+                    reqQty: 1,
                     price: 0
                 });
             }
@@ -330,21 +323,8 @@
             const id = $(this).data('id');
             const newQty = parseInt($(this).val());
             const item = selectedItems.find(i => i.id === id);
-            // if (item) {
-            //     if (newQty < 50) {
-            //         Swal.fire({
-            //             icon: 'error',
-            //             title: 'Invalid Quantity',
-            //             text: 'Quantity must be at least 50.',
-            //             confirmButtonColor: '#FF9F43'
-            //         });
-            //         item.reqQty = 50;
-            //         $(this).val(50);
-            //     } else {
             item.reqQty = newQty;
             $(this).val(item.reqQty);
-            //     }
-            // }
         });
 
         // Update Price
@@ -352,48 +332,11 @@
             const id = $(this).data('id');
             const newPrice = parseInt($(this).val());
             const item = selectedItems.find(i => i.id === id);
-            // if (item) {
-            //     if (newPrice < 0 || isNaN(newPrice)) {
-            //         Swal.fire({
-            //             icon: 'error',
-            //             title: 'Invalid Price',
-            //             text: 'Price must be a non-negative number.',
-            //             confirmButtonColor: '#FF9F43'
-            //         });
-            //         item.price = 0;
-            //         $(this).val(0);
-            //     } else {
             item.price = newPrice;
             $(this).val(item.price);
-            //     }
-            // }
         });
 
-        // Send Request Validation
-        // $('form').on('submit', function (e) {
-        //     if (selectedItems.length === 0) {
-        //         e.preventDefault();
-        //         Swal.fire({
-        //             icon: 'error',
-        //             title: 'Validation Error',
-        //             text: 'Please select at least one product!',
-        //             confirmButtonColor: '#FF9F43'
-        //         });
-        //         return false;
-        //     }
-        //
-        //     const invalidItem = selectedItems.find(i => i.reqQty < 50);
-        //     if (invalidItem) {
-        //         e.preventDefault();
-        //         Swal.fire({
-        //             icon: 'error',
-        //             title: 'Invalid Quantity',
-        //             text: 'Quantity for ' + invalidItem.name + ' must be at least 50.',
-        //             confirmButtonColor: '#FF9F43'
-        //         });
-        //         return false;
-        //     }
-        // });
+
     });
 </script>
 </body>

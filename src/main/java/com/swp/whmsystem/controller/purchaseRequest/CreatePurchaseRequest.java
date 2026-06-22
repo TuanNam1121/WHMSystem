@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "CreatePurchaseRequest", urlPatterns = {"/createPurchaseRequest"})
@@ -33,8 +34,16 @@ public class CreatePurchaseRequest extends HttpServlet {
             response.sendRedirect("home");
         }
 
+        String productSearch = request.getParameter("productSearch");
+
         ProductDAO productDAO = new ProductDAO();
-        List<Product> productList = productDAO.getProductList();
+        List<Product> productList = new ArrayList<>();
+        if (productSearch == null || productSearch.isEmpty()) {
+            productList = productDAO.getProductList();
+        } else {
+            productList = productDAO.searchProductByName(productSearch);
+        }
+
         request.setAttribute("productListForPurchase", productList);
 
         SupplierDAO supplierDAO = new SupplierDAO();

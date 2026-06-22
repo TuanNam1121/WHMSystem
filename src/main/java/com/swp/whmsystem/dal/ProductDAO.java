@@ -266,6 +266,19 @@ public class ProductDAO {
         return false;
     }
 
+    public boolean increaseQuantity(Product p) throws SQLException {
+        String sql = "UPDATE products SET total_quantity = ? WHERE productid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+            ps.setInt(1, p.getTotalQuantity());
+            ps.setInt(2 , p.getProductId());
+            System.out.println(sql);
+            return ps.executeUpdate() != 0;
+        }catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
     public boolean updateProduct(Product p) {
         if (p.getCategory().getName().contains("Laptop")) {
             String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, ramid = ?, romid = ?, chipid = ?, unitid = ? , categoryid = ? , brandid = ?, modelid = ?, sku = ? WHERE productid = ?";
@@ -425,13 +438,13 @@ public class ProductDAO {
     }
 
     public List<Product> searchProduct(String name, int categoryId, int brandId, int isActive,
-                                       String sortBy, int pageSize, int page) {
+            String sortBy, int pageSize, int page) {
         List<Product> productList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "select p.* from products p "
-                        + "left join categories c ON p.categoryid = c.categoryid "
-                        + "left join brands b ON p.brandid = b.brandid "
-                        + "where 1=1"
+                + "left join categories c ON p.categoryid = c.categoryid "
+                + "left join brands b ON p.brandid = b.brandid "
+                + "where 1=1"
         );
         List<Object> parameter = new ArrayList<>();
         if (name != null && !name.trim().isEmpty()) {
@@ -512,9 +525,9 @@ public class ProductDAO {
     public int countProducts(String name, int categoryId, int brandId, int isActive) {
         StringBuilder sql = new StringBuilder(
                 "select count(*) from products p "
-                        + "left join categories c ON p.categoryid = c.categoryid "
-                        + "left join brands b ON p.brandid = b.brandid "
-                        + "where 1=1"
+                + "left join categories c ON p.categoryid = c.categoryid "
+                + "left join brands b ON p.brandid = b.brandid "
+                + "where 1=1"
         );
         List<Object> parameters = new ArrayList<>();
 
@@ -539,8 +552,7 @@ public class ProductDAO {
             parameters.add(isActive);
         }
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             for (int i = 0; i < parameters.size(); i++) {
                 ps.setObject(i + 1, parameters.get(i));
             }
@@ -571,11 +583,10 @@ public class ProductDAO {
 
     public List<ProductItem> getProductItems(int productId) {
         List<ProductItem> productItemList = new ArrayList<>();
-        String sql = "select * from product_items pi " +
-                "join products p on pi.product_id = p.productid" +
-                " where p.productid = ?";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "select * from product_items pi "
+                + "join products p on pi.product_id = p.productid"
+                + " where p.productid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, productId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -589,11 +600,11 @@ public class ProductDAO {
     }
 
     public List<ProductItem> searchProductItems(int productId, String serial, String date,
-                                                String status, String sortBy, int pageSize, int page) {
+            String status, String sortBy, int pageSize, int page) {
         List<ProductItem> productItemList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "select pi.* from product_items pi "
-                        + "where pi.product_id = ?"
+                + "where pi.product_id = ?"
         );
         List<Object> parameter = new ArrayList<>();
         parameter.add(productId);
@@ -668,7 +679,7 @@ public class ProductDAO {
     public int countProductItems(int productId, String serial, String date, String status) {
         StringBuilder sql = new StringBuilder(
                 "select count(*) from product_items pi "
-                        + "where pi.product_id = ?"
+                + "where pi.product_id = ?"
         );
         List<Object> parameters = new ArrayList<>();
         parameters.add(productId);
@@ -685,8 +696,7 @@ public class ProductDAO {
             sql.append(" and pi.status = ?");
             parameters.add(status);
         }
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             for (int i = 0; i < parameters.size(); i++) {
                 ps.setObject(i + 1, parameters.get(i));
             }
@@ -704,8 +714,7 @@ public class ProductDAO {
     public String getSKUFromId(int id) {
         String SKU = "";
         String sql = "select sku from products where productid = ?";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {

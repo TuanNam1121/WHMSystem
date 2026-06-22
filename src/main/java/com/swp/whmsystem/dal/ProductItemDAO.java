@@ -146,12 +146,11 @@ public class ProductItemDAO {
         }
     }
     
-    public ProductItem existedSerial(int productId, String serial){
-        String sql = "SELECT * FROM wms.product_items where serial = ? and product_id = ?";
+    public ProductItem existedSerial(String serial){
+        String sql = "SELECT * FROM wms.product_items where serial = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, serial);
-            preparedStatement.setInt(2, productId);
             ResultSet rs = preparedStatement.executeQuery();
             if(rs.next()){
                 return mapResultsetToProductItem(rs);
@@ -164,7 +163,8 @@ public class ProductItemDAO {
 
     public static void main(String[] args) {
         ProductItemDAO dao = new ProductItemDAO();
-        for(ProductItem i : dao.getAllProductItemByProductId(5)){
+        ProductDAO product = new ProductDAO();
+        for(ProductItem i : product.searchProductItems(36, null, null, null, null, 0, 0)){
             System.out.println(i);
         }
     }

@@ -158,7 +158,7 @@
                                                 <span class="badges bg-lightyellow">${pr.status}</span>
                                             </c:when>
                                             <c:when test="${pr.status == 'Approved' || pr.status == 'APPROVED'}">
-                                                <span class="badges bg-lightgreen">${pr.status}</span>
+                                                <span class="badges bg-blue">${pr.status}</span>
                                             </c:when>
                                             <c:when test="${pr.status == 'Rejected' || pr.status == 'REJECTED'}">
                                                 <span class="badges bg-lightred">${pr.status}</span>

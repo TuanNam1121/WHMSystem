@@ -155,7 +155,7 @@ public class AdjustInventoryAuditStock extends HttpServlet {
 
                 for (String serial : validSerials) {
                     if ("DELETE".equals(type)) {
-                        ProductItem pi = productItemDAO.existedSerial(item.getProductId(), serial);
+                        ProductItem pi = productItemDAO.existedSerial(serial);
                         if (pi == null || !"AVAILABLE".equals(pi.getStatus())) {
                             hasError = true;
                             errorMessage = "Serial " + serial + " for " + item.getProductName()

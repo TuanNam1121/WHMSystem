@@ -101,9 +101,8 @@
                                     <div class="form-group">
                                         <select class="select" id="filter-status">
                                             <option>Choose Status</option>
-                                            <option>New</option>
-                                            <option>INCOMPLETED</option>
-                                            <option>Completed</option>
+                                            <option>Approved</option>
+                                            <option>Processing</option>
                                         </select>
                                     </div>
                                 </div>
@@ -139,7 +138,7 @@
                             <tbody>
                             <c:forEach items="${importRequests}" var="ir">
                                 <tr>
-                                    <td class="text-bolds"><a href="managerPurchaseRequestDetail?id=${ir.purchaseRequestId}">
+                                    <td class="text-bolds"><a href="ImportRequestDetail?id=${ir.purchaseRequestId}">
                                             PR-${ir.purchaseRequestId}</a>
                                     </td>
                                     <td>${ir.supplier}</td>

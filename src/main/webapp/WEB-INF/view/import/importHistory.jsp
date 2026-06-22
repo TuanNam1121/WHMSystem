@@ -85,7 +85,8 @@
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <select class="select" name="sortBy">
-                                                        <option value="">Date Sort</option>                                                        <option value="skuZA">SKU Z-A</option>
+                                                        <option value="">Date Sort</option>                                                        
+                                                        <option value="skuZA">SKU Z-A</option>
                                                         <option value="date_latest">Latest</option>
                                                         <option value="date_earliest">Earliest</option>
                                                     </select>

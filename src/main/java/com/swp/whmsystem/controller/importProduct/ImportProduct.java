@@ -30,6 +30,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,7 +98,9 @@ public class ImportProduct extends HttpServlet {
                                 price);
                         a.add(dto);
                     }
-                    nestedList.add(a);
+                    if (!a.isEmpty()) {
+                        nestedList.add(a);
+                    }
                     totalItem += quantity;
                 }
             }
@@ -160,12 +163,18 @@ public class ImportProduct extends HttpServlet {
             if (productIds == null || serials == null || itemPrices == null || productIds.length == 0) {
                 session.setAttribute("message", "No valid item data submitted.");
                 session.setAttribute("messageType", "danger");
-                response.sendRedirect(request.getContextPath() + "/ImportProduct?id=" + purchaseRequestId);
+                response.sendRedirect(request.getContextPath() + "/ImportProduct?prId=" + purchaseRequestId);
                 return;
             }
 
             List<ProductItemRowDTO> importItems = (List<ProductItemRowDTO>) session.getAttribute("list");
             List<ProductItemRowDTO> filledList = filledSerial(productIds, serials, itemPrices);
+            if (filledList.isEmpty()) {
+                request.setAttribute("message", "Please enter at least one serial to import.");
+                request.setAttribute("importItems", returnListDTO(importItems, serials));
+                request.getRequestDispatcher("WEB-INF/view/import/importProduct.jsp").forward(request, response);
+                return;
+            }
             String valid = ProductItemValidation.validateProductItem(filledList);
 
             if (!"true".equals(valid)) {
@@ -188,7 +197,7 @@ public class ImportProduct extends HttpServlet {
 
             session.setAttribute("message", "Import saved successfully! Inventory has been updated.");
             session.setAttribute("messageType", "success");
-            request.getRequestDispatcher("WEB-INF/view/import/importProduct.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/importRequestList");
         } catch (Exception ex) {
             session.setAttribute("message", "Error saving import: " + ex.getMessage());
             session.setAttribute("messageType", "danger");
@@ -196,7 +205,7 @@ public class ImportProduct extends HttpServlet {
         }
     }
 
-    private void handleImport(Integer prId, int handler, String invoiceNumber, List<ProductItemRowDTO> productItemList) {
+    private void handleImport(Integer prId, int handler, String invoiceNumber, List<ProductItemRowDTO> productItemList) throws SQLException {
         PurchaseRequestDAO pr = new PurchaseRequestDAO();
         PurchaseItemDAO purchaseItemDAO = new PurchaseItemDAO();
         GoodReceiptDAO gr = new GoodReceiptDAO();
@@ -230,7 +239,7 @@ public class ImportProduct extends HttpServlet {
             List<ProductItemRowDTO> val = entry.getValue();
             Product product = productDAO.getProductFromId(key);
             product.setTotalQuantity(product.getTotalQuantity() + val.size());
-            productDAO.updateProduct(product);
+            productDAO.increaseQuantity(product);
             GoodReceiptItem goodReceiptItem = new GoodReceiptItem();
             goodReceiptItem.setGoodReceiptId(goodReceiptId);
             goodReceiptItem.setProductId(key);
@@ -265,23 +274,17 @@ public class ImportProduct extends HttpServlet {
 
         List<PurchaseItem> purchaseItems = purchaseItemDAO.getItemsByPurchaseRequestId(prId);
         Map<Integer, Integer> goodReceiptItems = gri.getReceivedQuantityByPurchaseRequestId(prId);
-        if (status.equals("NEW")) {
-            if (isCompleted(purchaseItems, goodReceiptItems)) {
-                purchaseRequest.setStatus("COMPLETED");
-            } else {
-                purchaseRequest.setStatus("PROCESSING");
-            }
+        if (isCompleted(purchaseItems, goodReceiptItems)) {
+            purchaseRequest.setStatus("COMPLETED");
         } else {
-            if (isCompleted(purchaseItems, goodReceiptItems)) {
-                purchaseRequest.setStatus("COMPLETED");
-            }
+            purchaseRequest.setStatus("PROCESSING");
         }
         pr.updatePurchaseRequest(purchaseRequest);
     }
 
     private boolean isCompleted(List<PurchaseItem> purchaseItems, Map<Integer, Integer> goodReceiptItems) {
         for (PurchaseItem i : purchaseItems) {
-            if (i.getRequiredQty() > goodReceiptItems.get(i.getProductId())) {
+            if (i.getRequiredQty() > goodReceiptItems.getOrDefault(i.getProductId(), 0)) {
                 return false;
             }
         }
@@ -297,7 +300,7 @@ public class ImportProduct extends HttpServlet {
 
             int productId = Integer.parseInt(productId_raw);
             int itemPrice = Integer.parseInt(itemPrice_raw);
-            if (!"".equals(serial)) {
+            if (!serial.isBlank()) {
                 ProductItemRowDTO dto = new ProductItemRowDTO();
                 dto.setProductId(productId);
                 dto.setSerial(serial.trim());

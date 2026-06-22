@@ -20,28 +20,20 @@ import java.util.Set;
  */
 public class ProductItemValidation {
     public static String validateProductItem(List<ProductItemRowDTO> list) {
-        Map<Integer, Set<String>> seenSerials = new HashMap<>();
-        
+        Set<String> seenSerials = new HashSet<>();
         for(ProductItemRowDTO i : list){
-            int productId = i.getProductId();
-            String serial = i.getSerial();
-            if(seenSerials.containsKey(productId)){
-                Set<String> s = seenSerials.get(productId);
-                if(s.contains(serial)) return "Serial: " + serial + " is dupplicated";
-                s.add(serial);
+            //int productId = i.getProductId();
+            String serial = i.getSerial().trim();
+            if(seenSerials.contains(serial)){
+                return "Serial: " + serial + " is dupplicated";
             }
-            else{
-                Set<String> set = new HashSet<>();
-                set.add(serial);
-                seenSerials.put(productId, set);
-                
-            }
+            seenSerials.add(serial);
         }
       
         ProductDAO p = new ProductDAO();
         ProductItemDAO pi = new ProductItemDAO();
         for(ProductItemRowDTO i : list){
-            ProductItem existed = pi.existedSerial(i.getProductId(), i.getSerial());
+            ProductItem existed = pi.existedSerial(i.getSerial());
             if(existed != null) return "Product " + p.getProductNameById(existed.getProductId()) + " Serial : " + existed.getSerial() + " is existed in System";
         }
         return "true";

@@ -170,7 +170,7 @@
                             <thead>
                             <tr>
                                 <th>Request Code</th>
-                                <th>Note</th>
+                                <th>Supplier</th>
                                 <th>Status</th>
                                 <th>Created At</th>
                                 <th>Action</th>
@@ -181,7 +181,7 @@
                                 <tr>
                                     <td class="text-bolds"><fmt:formatNumber value="${pr.id}" pattern="000"/></td>
                                     <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                                        title="<c:out value='${pr.note}'/>">${pr.note}</td>
+                                        title="<c:out value='${pr.supplierName}'/>">${pr.supplierName}</td>
                                     <td>
                                         <c:choose>
                                             <c:when test="${pr.status == 'New' || pr.status == 'NEW'}">

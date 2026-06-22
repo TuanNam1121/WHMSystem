@@ -50,10 +50,12 @@
                 </div>
             </c:if>
 
-            <div class="alert alert-warning d-flex align-items-center mb-3" role="alert" id="status-banner" style="border-radius: 8px;">
+            <div class="alert alert-warning d-flex align-items-center mb-3" role="alert" id="status-banner"
+                 style="border-radius: 8px;">
                 <i class="fas fa-info-circle me-2" style="font-size: 18px;"></i>
                 <div>
-                    <strong>Request Code: <fmt:formatNumber value="${purchaseRequest.id}" pattern="000"/></strong> &nbsp;|&nbsp; Status: 
+                    <strong>Request Code: <fmt:formatNumber value="${purchaseRequest.id}" pattern="000"/></strong>
+                    &nbsp;|&nbsp; Status:
                     <c:choose>
                         <c:when test="${purchaseRequest.status == 'New' || purchaseRequest.status == 'NEW'}">
                             <span class="badges bg-lightyellow">${purchaseRequest.status}</span>
@@ -169,6 +171,7 @@
                                                     <th>Category</th>
                                                     <th>In Stock</th>
                                                     <th style="width: 150px;">Required Quantity</th>
+                                                    <th style="width: 150px;">Price</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
@@ -182,7 +185,7 @@
                                                 <label>Note</label>
                                                 <textarea class="form-control" rows="2" name="note"
                                                           placeholder="Enter note for this purchase request..."
-                                                          id="request-note" required>${purchaseRequest.note}</textarea>
+                                                          id="request-note">${purchaseRequest.note}</textarea>
                                             </div>
 
                                             <div class="text-end">
@@ -225,7 +228,8 @@
                 sku: "${productMap[item.productId].sku}",
                 category: "${productMap[item.productId].category.name}",
                 stock: ${productMap[item.productId].totalQuantity},
-                reqQty: ${item.requiredQty}
+                reqQty: ${item.requiredQty},
+                price: ${item.price}
             }${!loop.last ? ',' : ''}
             </c:forEach>
         ];
@@ -244,7 +248,10 @@
                             <td>\${item.category}</td>
                             <td>\${item.stock}</td>
                             <td>
-                                <input name="selectedQty\${index}" type="number" class="form-control form-control-sm qty-input" data-id="\${item.id}" value="\${item.reqQty}" min="50" style="width: 100px;">
+                                <input name="selectedQty\${index}" type="number" class="form-control form-control-sm qty-input" data-id="\${item.id}" value="\${item.reqQty}" min="1" style="width: 100px;">
+                            </td>
+                            <td>
+                                <input name="selectedPrice\${index}" type="number" class="form-control form-control-sm price-input" data-id="\${item.id}" value="\${item.price}" min="1000" style="width: 130px;">
                             </td>
                             <td>
                                 <a class="delete-set remove-item-btn" href="javascript:void(0);" data-id="\${item.id}">
@@ -304,7 +311,8 @@
                     sku: sku,
                     category: category,
                     stock: stock,
-                    reqQty: 50
+                    reqQty: 50,
+                    price: 0
                 });
             }
             renderSelectedItems();
@@ -322,48 +330,70 @@
             const id = $(this).data('id');
             const newQty = parseInt($(this).val());
             const item = selectedItems.find(i => i.id === id);
-            if (item) {
-                if (newQty < 50) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Invalid Quantity',
-                        text: 'Quantity must be at least 50.',
-                        confirmButtonColor: '#FF9F43'
-                    });
-                    item.reqQty = 50;
-                    $(this).val(50);
-                } else {
-                    item.reqQty = newQty;
-                    $(this).val(item.reqQty);
-                }
-            }
+            // if (item) {
+            //     if (newQty < 50) {
+            //         Swal.fire({
+            //             icon: 'error',
+            //             title: 'Invalid Quantity',
+            //             text: 'Quantity must be at least 50.',
+            //             confirmButtonColor: '#FF9F43'
+            //         });
+            //         item.reqQty = 50;
+            //         $(this).val(50);
+            //     } else {
+            item.reqQty = newQty;
+            $(this).val(item.reqQty);
+            //     }
+            // }
+        });
+
+        // Update Price
+        $(document).on('change', '.price-input', function () {
+            const id = $(this).data('id');
+            const newPrice = parseInt($(this).val());
+            const item = selectedItems.find(i => i.id === id);
+            // if (item) {
+            //     if (newPrice < 0 || isNaN(newPrice)) {
+            //         Swal.fire({
+            //             icon: 'error',
+            //             title: 'Invalid Price',
+            //             text: 'Price must be a non-negative number.',
+            //             confirmButtonColor: '#FF9F43'
+            //         });
+            //         item.price = 0;
+            //         $(this).val(0);
+            //     } else {
+            item.price = newPrice;
+            $(this).val(item.price);
+            //     }
+            // }
         });
 
         // Send Request Validation
-        $('form').on('submit', function (e) {
-            if (selectedItems.length === 0) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validation Error',
-                    text: 'Please select at least one product!',
-                    confirmButtonColor: '#FF9F43'
-                });
-                return false;
-            }
-
-            const invalidItem = selectedItems.find(i => i.reqQty < 50);
-            if (invalidItem) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Quantity',
-                    text: 'Quantity for ' + invalidItem.name + ' must be at least 50.',
-                    confirmButtonColor: '#FF9F43'
-                });
-                return false;
-            }
-        });
+        // $('form').on('submit', function (e) {
+        //     if (selectedItems.length === 0) {
+        //         e.preventDefault();
+        //         Swal.fire({
+        //             icon: 'error',
+        //             title: 'Validation Error',
+        //             text: 'Please select at least one product!',
+        //             confirmButtonColor: '#FF9F43'
+        //         });
+        //         return false;
+        //     }
+        //
+        //     const invalidItem = selectedItems.find(i => i.reqQty < 50);
+        //     if (invalidItem) {
+        //         e.preventDefault();
+        //         Swal.fire({
+        //             icon: 'error',
+        //             title: 'Invalid Quantity',
+        //             text: 'Quantity for ' + invalidItem.name + ' must be at least 50.',
+        //             confirmButtonColor: '#FF9F43'
+        //         });
+        //         return false;
+        //     }
+        // });
     });
 </script>
 </body>

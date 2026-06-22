@@ -32,9 +32,13 @@ public class UpdatePurchaseRequest extends HttpServlet {
         }
         if (user.getRoleId() != 4) {
             response.sendRedirect("home");
+            return;
         }
 
         String idStr = request.getParameter("id");
+        if (idStr == null) {
+            idStr = request.getParameter("requestId");
+        }
         if (idStr == null) {
             response.sendRedirect("purchaseRequestList");
             return;
@@ -56,16 +60,16 @@ public class UpdatePurchaseRequest extends HttpServlet {
             ProductDAO productDAO = new ProductDAO();
             List<Product> productList = productDAO.getProductList();
             
-            Map<Integer, Product> productMap = new HashMap<>();
+            java.util.Map<Integer, Product> productMap = new java.util.HashMap<>();
             for (Product p : productList) {
                 productMap.put(p.getProductId(), p);
             }
-
+            
             request.setAttribute("purchaseRequest", pr);
             request.setAttribute("purchaseItems", items);
             request.setAttribute("productListForPurchase", productList);
             request.setAttribute("productMap", productMap);
-            
+
             request.getRequestDispatcher("WEB-INF/view/purchaseRequest/updatePurchaseRequest.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             response.sendRedirect("purchaseRequestList");
@@ -86,27 +90,65 @@ public class UpdatePurchaseRequest extends HttpServlet {
                 pr.setNote(note);
                 prDAO.updatePurchaseRequest(pr);
 
-                PurchaseItemDAO piDAO = new PurchaseItemDAO();
-                List<PurchaseItem> existingItems = piDAO.getItemsByPurchaseRequestId(requestId);
-                for (PurchaseItem pi : existingItems) {
-                    piDAO.deletePurchaseItem(pi.getId());
-                }
-
+                // Validate items first before deleting existing ones
                 int i = 0;
+                boolean hasItems = false;
                 while (true) {
                     String productIdStr = request.getParameter("selectedId" + i);
                     String qtyStr = request.getParameter("selectedQty" + i);
-                    if (productIdStr == null || qtyStr == null) {
+                    String priceStr = request.getParameter("selectedPrice" + i);
+                    if (productIdStr == null || qtyStr == null || priceStr == null) {
+                        if (i == 0) {
+                            request.setAttribute("error", "Please select at least one product!");
+                            doGet(request, response);
+                            return;
+                        }
+                        break;
+                    }
+                    try {
+                        int quantity = Integer.parseInt(qtyStr);
+                        int price = Integer.parseInt(priceStr);
+                        if (quantity < 1) {
+                            request.setAttribute("error", "Quantity for product must be at least 1!");
+                            doGet(request, response);
+                            return;
+                        }
+                        if (price < 1000) {
+                            request.setAttribute("error", "Price for product must be at least 1000 VND!");
+                            doGet(request, response);
+                            return;
+                        }
+                    } catch (NumberFormatException e) {
+                        request.setAttribute("error", "Invalid number format!");
+                        doGet(request, response);
+                        return;
+                    }
+                    hasItems = true;
+                    i++;
+                }
+
+                // Delete existing items and insert new ones
+                PurchaseItemDAO piDAO = new PurchaseItemDAO();
+                piDAO.deletePurchaseItemByRequestId(requestId);
+
+                i = 0;
+                while (true) {
+                    String productIdStr = request.getParameter("selectedId" + i);
+                    String qtyStr = request.getParameter("selectedQty" + i);
+                    String priceStr = request.getParameter("selectedPrice" + i);
+                    if (productIdStr == null || qtyStr == null || priceStr == null) {
                         break;
                     }
                     try {
                         int productId = Integer.parseInt(productIdStr);
                         int quantity = Integer.parseInt(qtyStr);
+                        int price = Integer.parseInt(priceStr);
 
                         PurchaseItem purchaseItem = new PurchaseItem();
                         purchaseItem.setPurchaseRequestId(pr.getId());
                         purchaseItem.setProductId(productId);
                         purchaseItem.setRequiredQty(quantity);
+                        purchaseItem.setPrice(price);
                         piDAO.insertPurchaseItem(purchaseItem);
                     } catch (NumberFormatException e) {
                         System.out.println(e.getMessage());
@@ -116,9 +158,13 @@ public class UpdatePurchaseRequest extends HttpServlet {
                 request.getSession().setAttribute("message", "Purchase request updated successfully!");
             } else {
                 request.getSession().setAttribute("error", "Cannot update this purchase request.");
+                doGet(request, response);
+                return;
             }
         } catch (Exception e) {
             request.getSession().setAttribute("error", "Error updating purchase request.");
+            doGet(request, response);
+            return;
         }
         response.sendRedirect("purchaseRequestList");
     }

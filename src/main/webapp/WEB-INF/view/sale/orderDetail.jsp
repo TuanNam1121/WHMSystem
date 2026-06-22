@@ -143,7 +143,7 @@
                                                         <td>
                                                             <input required type="number" name="quantity_${oi.productId}" min="1" max="${oi.inStock}" value="${oi.quantity!=null?oi.quantity:''}"></td>
                                                         
-                                                        <td><input required type="text" name="price_${oi.productId}" min="1" value="<fmt:formatNumber value='${oi.price}' pattern='#,###'/>" ></td>
+                                                        <td><input required type="text" name="price_${oi.productId}" value="<fmt:formatNumber value='${oi.price}' pattern='#,###'/>" ></td>
                                                         <td>
                                                             <a class="btn btn-sm btn-outline-primary add-product-btn"
                                                                href="UpdateRemoveItem?id=${oi.productId}&orderId=${order.id}">

@@ -185,13 +185,13 @@ public class OrderDetail extends HttpServlet {
             String priceStr = request.getParameter("price_" + productId);
             try {
                 double price = Double.parseDouble(priceStr);
-                if (price <= 0) {
+                if (price <= (double)0) {
                     CustomerDAO cd = new CustomerDAO();
                     request.setAttribute("customers", cd.getAllCustomer());
                     request.setAttribute("order", order);
                     session.setAttribute("orderItems", oid.getOrderItemByOrderId(order.getId()));
                     request.setAttribute("products", pd.getProductList());
-                    request.setAttribute("message", "price can only contain number");
+                    request.setAttribute("message", "price must bigger than 0");
                     request.getRequestDispatcher("WEB-INF/view/sale/orderDetail.jsp").forward(request, response);
                     return;
                 }

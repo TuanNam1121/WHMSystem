@@ -68,14 +68,14 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-lg-3 col-sm-6 col-12">
+                        <div class="col-lg-6 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Processor</label>
                                 <input type="text" class="form-control" value="${sessionScope.user.fullName}"
                                        readonly="readonly">
                             </div>
                         </div>
-                        <div class="col-lg-3 col-sm-6 col-12">
+                        <div class="col-lg-6 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Customer</label>
                                 <input type="text" class="form-control" value="${sessionScope.order.customer}"
@@ -87,23 +87,9 @@
                             <h6>Export Items</h6>
                             <br>
                         </div>
-                        <div class="table-top">
-                            <div class="search-set">
-                                <div class="search-path">
-                                    <a class="btn btn-filter" id="filter_search">
-                                        <img src="assets/img/icons/filter.svg" alt="img">
-                                        <span><img src="assets/img/icons/closes.svg" alt="img"></span>
-                                    </a>
-                                </div>
-                                <div class="search-input">
-                                    <a class="btn btn-searchset">
-                                        <img src="assets/img/icons/search-white.svg" alt="img">
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+
                         <div class="table-responsive">
-                            <table class="table  datanew">
+                            <table class="table">
                                 <thead>
                                 <tr>
                                     <th>No</th>
@@ -165,7 +151,6 @@
                                         <th>QTY</th>
                                         <th>Price</th>
                                         <th>Stock</th>
-                                        <th>Total Cost ($)</th>
                                         <th></th>
                                     </tr>
                                     </thead>
@@ -189,9 +174,6 @@
                                             </td>
                                             <td>${s.stock}</td>
                                             <td>
-                                                <fmt:formatNumber value="${s.totalCost}" pattern="#,###"/>
-                                            </td>
-                                            <td>
                                                 <a href="removeItem?tempId=${s.tempId}" class="delete-set">
                                                     <img src="assets/img/icons/delete.svg" alt="svg">
                                                 </a>
@@ -209,7 +191,7 @@
                                         <li class="total">
                                             <h4>Grand Total</h4>
                                             <h5><fmt:formatNumber value="${requestScope.grandTotal}"
-                                                                  pattern="#,##"/></h5>
+                                                                  pattern="#,###"/></h5>
                                         </li>
                                     </ul>
                                 </div>

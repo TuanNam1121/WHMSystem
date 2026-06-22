@@ -137,6 +137,7 @@ public class CreateOder extends HttpServlet {
         String[] productIds = request.getParameterValues("productId");
         ProductDAO pd = new ProductDAO();
         
+        
         Order createdOrder = od.insertOrder(order);
         double total = 0;
 
@@ -168,6 +169,7 @@ public class CreateOder extends HttpServlet {
         
         createdOrder.setTotalPrice(total);
         od.updateOrderPrice(createdOrder);
+        session.removeAttribute("selectedProducts");
         response.sendRedirect("OrderList");
     }
 

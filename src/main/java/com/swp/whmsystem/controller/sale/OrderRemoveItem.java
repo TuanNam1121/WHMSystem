@@ -3,10 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package com.swp.whmsystem.controller.sale2;
+package com.swp.whmsystem.controller.sale;
 
 import com.swp.whmsystem.dal.CustomerDAO;
-import com.swp.whmsystem.dal.OrderDAO;
+import com.swp.whmsystem.dal.ProductDAO;
+import com.swp.whmsystem.model.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,13 +16,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author LENOVO
  */
-@WebServlet(name="OrderCancel", urlPatterns={"/OrderCancel"})
-public class OrderCancel extends HttpServlet {
+@WebServlet(name="OrderRemoveItem", urlPatterns={"/OrderRemoveItem"})
+public class OrderRemoveItem extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -38,10 +41,10 @@ public class OrderCancel extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet OrderCancel</title>");  
+            out.println("<title>Servlet OrderRemoveItem</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet OrderCancel at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet OrderRemoveItem at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,9 +61,40 @@ public class OrderCancel extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        session.removeAttribute("selectedProducts");
-        response.sendRedirect("OrderList2");
+        String idStr = request.getParameter("id");
+        int id = Integer.parseInt(idStr);
+         HttpSession session = request.getSession();
+         
+         List<Product> selectedProducts;
+         selectedProducts = (List<Product>) session.getAttribute("selectedProducts");
+         
+         
+         ProductDAO pd = new ProductDAO();
+//         Product p = pd.getProductFromId(id);
+         int count = 0;
+         boolean exist = false;
+         for(Product check:selectedProducts){
+             if(check.getProductId()==id){
+                 exist = true;
+                 break;
+             }
+             count++;
+         }
+         if(exist){
+         selectedProducts.remove(selectedProducts.get(count));
+             
+         }
+         session.setAttribute("selectedProducts", selectedProducts);
+         
+         
+         String customerIdStr = request.getParameter("customerId");
+        int customerId = Integer.parseInt(customerIdStr);
+        CustomerDAO cd = new CustomerDAO();
+        request.setAttribute("customer", cd.getCustomerById(customerId));
+        
+        
+        request.setAttribute("products", pd.getProductList());
+        request.getRequestDispatcher("WEB-INF/view/sale/createOrder.jsp").forward(request, response);
     } 
 
     /** 

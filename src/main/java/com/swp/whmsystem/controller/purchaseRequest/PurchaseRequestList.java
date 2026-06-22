@@ -43,9 +43,40 @@ public class PurchaseRequestList extends HttpServlet {
         String status = request.getParameter("status");
         String dateStr = request.getParameter("date");
         String sort = request.getParameter("sort");
+        String pageSizeRaw = request.getParameter("pageSize");
+        String pageRaw = request.getParameter("page");
 
-        List<PurchaseRequest> purchaseRequests = purchaseRequestDAO.searchPurchaseItem(user.getId(), code, status, dateStr, sort);
+        int pageSize = 10;
+        int page = 1;
 
+        if (pageSizeRaw != null && !pageSizeRaw.trim().isEmpty()) {
+            try {
+                int parsedPageSize = Integer.parseInt(pageSizeRaw.trim());
+                if (parsedPageSize > 0 && parsedPageSize <= 100) {
+                    pageSize = parsedPageSize;
+                }
+            } catch (NumberFormatException ignored) {
+                pageSize = 10;
+            }
+        }
+
+        if (pageRaw != null && !pageRaw.trim().isEmpty()) {
+            try {
+                page = Math.max(1, Integer.parseInt(pageRaw.trim()));
+            } catch (NumberFormatException ignored) {
+                page = 1;
+            }
+        }
+
+        int totalRequests = purchaseRequestDAO.countPurchaseItem(user.getId(), code, status, dateStr);
+        int totalPages = Math.max(1, (int) Math.ceil((double) totalRequests / pageSize));
+        page = Math.min(page, totalPages);
+
+        List<PurchaseRequest> purchaseRequests = purchaseRequestDAO.searchPurchaseItem(user.getId(), code, status, dateStr, sort, pageSize, page);
+
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("page", page);
+        request.setAttribute("totalPages", totalPages);
         request.setAttribute("purchaseList", purchaseRequests);
         request.getRequestDispatcher("WEB-INF/view/purchaseRequest/purchaseRequestList.jsp").forward(request, response);
     }

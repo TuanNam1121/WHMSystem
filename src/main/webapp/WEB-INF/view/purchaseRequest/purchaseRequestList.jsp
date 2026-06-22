@@ -163,10 +163,9 @@
                                 </div>
                             </div>
                         </div>
-                    </form>
 
                     <div class="table-responsive">
-                        <table class="table custom-datanew" id="purchase-request-table">
+                        <table class="table" id="purchase-request-table">
                             <thead>
                             <tr>
                                 <th>Request Code</th>
@@ -236,6 +235,8 @@
                             </tbody>
                         </table>
                     </div>
+                    <jsp:include page="/WEB-INF/common/pagination.jsp"/>
+                    </form>
                 </div>
             </div>
         </div>
@@ -265,25 +266,6 @@
 <script src="assets/js/script.js"></script>
 <script>
     $(document).ready(function () {
-        if ($('.custom-datanew').length > 0) {
-            $('.custom-datanew').DataTable({
-                "bFilter": true,
-                "sDom": 'fBtlpi',
-                'pagingType': 'numbers',
-                "ordering": true,
-                "order": [],
-                "language": {
-                    search: ' ',
-                    sLengthMenu: '_MENU_',
-                    searchPlaceholder: "Search...",
-                    info: "_START_ - _END_ of _TOTAL_ items",
-                },
-                initComplete: (settings, json) => {
-                    $('.dataTables_filter').appendTo('#tableSearch');
-                    $('.dataTables_filter').appendTo('.search-input');
-                },
-            });
-        }
         
         $(document).on('click', '.btn-delete-submit', function (e) {
             e.preventDefault();

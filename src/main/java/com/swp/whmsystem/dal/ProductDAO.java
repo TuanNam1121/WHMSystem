@@ -213,6 +213,22 @@ public class ProductDAO {
         return productList;
     }
 
+    public List<Product> searchProductByName(String name) {
+        List<Product> productList = new ArrayList<>();
+        String sql = "select * from products where name like ? order by isActive desc";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + name + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                productList.add(mapFromResultSetToProduct(rs));
+            }
+            return productList;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return productList;
+    }
+
     public void changeProductQuantity(int newQuantity, int id) {
         String sql = "update products set total_quantity = ? where productid = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {

@@ -106,19 +106,11 @@
                             <h4 class="mb-0" style="font-size: 22px; font-weight: 700; color: #333;">Import History Detail</h4>
                         </div>
                         <div class="page-btn">
-                        <c:choose>
-                            <c:when test="${i.status == 'NEW'}">
-                                <span class="badges bg-lightyellow">${detail.status}</span>
-                            </c:when>
-                            <c:when test="${i.status == 'COMPLETED'}">
-                                <span class="badges bg-lightgreen">${detail.status}</span>
-                            </c:when>
-                            <c:otherwise>
-                                <span class="badges bg-lightgrey">${detail.status}</span>
-                            </c:otherwise>
-                        </c:choose>
+                            <a href="ImportHistory" class="btn btn-cancel" id="btn-back-to-list">
+                                <i class="fas fa-arrow-left me-2"></i>Back to List
+                            </a>
+                        </div>
                     </div>
-                </div>
 
                 <c:if test="${not empty message}">
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -165,6 +157,14 @@
                             <div class="card-body">
                                 <span class="info-label">Processed By</span>
                                 <h5 class="info-value">${detail.importBy}</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                        <div class="card info-card h-100">
+                            <div class="card-body">
+                                <span class="info-label">Invoice Number</span>
+                                <h5 class="info-value">${detail.invoiceNumber}</h5>
                             </div>
                         </div>
                     </div>

@@ -92,10 +92,9 @@ public class ProductItemDAO {
     public List<ProductItem> getAllProductItemByOrderId(int orderId) {
         List<ProductItem> list = new ArrayList<>();
         String sql = "select p.* from product_items p "
-                + "join export_receipt_serials ers on p.id = ers.product_item_id "
-                + "join export_receipt_details erd on ers.export_receipt_detail_id = erd.id "
-                + "join export_receipts er on erd.export_receipt_id = er.id "
-                + "where er.order_id = ?";
+                + "join order_items_product_items op on p.id = op.productitemid "
+                + "join order_items oi on op.orderitemid = oi.id "
+                + "where oi.orderid = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, orderId);
@@ -205,14 +204,16 @@ public class ProductItemDAO {
     }
 
     public int getExportPriceWithSoldStatus(int productItemId) {
-        String sql = "select export_price from product_items "
-                + "where status = 'SOLD' and id = ?";
+        String sql = "select price from product_items pi \n"
+                + "left join order_items_product_items oipi on pi.id = oipi.productitemid \n"
+                + "join order_items oi on oipi.orderitemid = oi.id\n"
+                + "where pi.status = 'SOLD' and pi.id = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, productItemId);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
-                return rs.getInt("export_price");
+                return rs.getInt("price");
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

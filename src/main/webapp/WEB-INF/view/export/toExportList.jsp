@@ -89,6 +89,9 @@
                                                     <select class="select" name="status">
                                                         <option value="">Choose Status</option>
                                                         <option value="NEW" ${param.status == 'NEW' ? 'selected' : ''}>New</option>
+                                                        <option value="DOING" ${param.status == 'DOING' ? 'selected' : ''}>Doing</option>
+                                                        <option value="COMPLETED" ${param.status == 'COMPLETED' ? 'selected' : ''}>Completed</option>
+                                                        <option value="CANCELLED" ${param.status == 'CANCELLED' ? 'selected' : ''}>Cancelled</option>
                                                     </select>
                                                 </div>
                                             </div>

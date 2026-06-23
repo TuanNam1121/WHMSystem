@@ -9,9 +9,8 @@ import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 
-public class ExportDAO {
+public class ExportItemDAO {
     public ExportItemDTO getItemBySKU(String sku, int orderId) {
         ExportItemDTO dto = null;
 
@@ -52,83 +51,48 @@ public class ExportDAO {
         return dto;
     }
 
-    public String processExportTransaction(int orderId, int userId, List<ExportItemDTO> exportList) {
+    public String processExportTransaction(int orderId, List<ExportItemDTO> exportList) {
         try (Connection conn = DBContext.getConnection()) {
             conn.setAutoCommit(false);
 
             try {
+                String updateOrderStatusSql =
+                        "UPDATE orders SET status = 'COMPLETED', "
+                                + "updatedat = CURRENT_TIMESTAMP, "
+                                + "completedat = CURRENT_TIMESTAMP WHERE id = ?";
+
+                try (PreparedStatement updateOrderStatus =
+                             conn.prepareStatement(updateOrderStatusSql)) {
+                    updateOrderStatus.setInt(1, orderId);
+                    updateOrderStatus.executeUpdate();
+                }
+
                 String findProductItemSql =
                         "SELECT pi.id, pi.product_id, pi.status, oi.id AS order_item_id, oi.price "
                                 + "FROM product_items pi "
                                 + "JOIN products p ON pi.product_id = p.productid "
                                 + "JOIN order_items oi ON pi.product_id = oi.productid "
                                 + "WHERE pi.serial = ? AND p.sku = ? AND oi.orderid = ?";
-                String updateOrderStatusSql =
-                        "UPDATE orders SET status = 'COMPLETED', processedby = ?, "
-                                + "updatedat = CURRENT_TIMESTAMP, completedat = CURRENT_TIMESTAMP "
-                                + "WHERE id = ?";
-                String insertExportReceiptSql =
-                        "INSERT INTO export_receipts(code, order_id, status, created_by, exported_by, exported_at) "
-                                + "VALUES (?, ?, 'COMPLETED', ?, ?, CURRENT_TIMESTAMP)";
-                String insertExportReceiptDetailSql =
-                        "INSERT INTO export_receipt_details(export_receipt_id, order_item_id, product_id, quantity, unit_price) "
-                                + "VALUES (?, ?, ?, ?, ?)";
-                String insertExportReceiptSerialSql =
-                        "INSERT INTO export_receipt_serials(export_receipt_detail_id, product_item_id) "
-                                + "VALUES (?, ?)";
+                String insertOrderProductItemSql =
+                        "INSERT INTO order_items_product_items(orderitemid, productitemid) VALUES (?, ?)";
                 String updateProductItemSql =
                         "UPDATE product_items SET status = 'SOLD', export_price = ? WHERE id = ?";
                 String decreaseProductQuantitySql =
                         "UPDATE products SET total_quantity = total_quantity - ?, "
                                 + "updatedat = CURRENT_TIMESTAMP WHERE productid = ?";
                 String insertStockMovementSql =
-                        "INSERT INTO stock_movement(productid, quantity, type, reference_type, reference_id) "
-                                + "VALUES (?, ?, 'DECREASED', 'EXPORT', ?)";
+                        "INSERT INTO stock_movement(productid, quantity, reference_type, type) "
+                                + "VALUES (?, ?, 'EXPORT', 'DECREASED')";
 
-                int exportReceiptId;
-                String exportReceiptCode = "PX-" + orderId + "-" + System.currentTimeMillis();
-
-                try (PreparedStatement updateOrderStatus =
-                             conn.prepareStatement(updateOrderStatusSql)) {
-                    updateOrderStatus.setInt(1, userId);
-                    updateOrderStatus.setInt(2, orderId);
-                    updateOrderStatus.executeUpdate();
-                }
-
-                try (PreparedStatement insertExportReceipt =
-                             conn.prepareStatement(insertExportReceiptSql, Statement.RETURN_GENERATED_KEYS)) {
-                    insertExportReceipt.setString(1, exportReceiptCode);
-                    insertExportReceipt.setInt(2, orderId);
-                    insertExportReceipt.setInt(3, userId);
-                    insertExportReceipt.setInt(4, userId);
-                    insertExportReceipt.executeUpdate();
-
-                    try (ResultSet rs = insertExportReceipt.getGeneratedKeys()) {
-                        if (!rs.next()) {
-                            throw new SQLException("Cannot create export receipt.");
-                        }
-                        exportReceiptId = rs.getInt(1);
-                    }
-                }
-
-                List<Integer> productItemIds = new ArrayList<>();
-                List<Integer> itemOrderItemIds = new ArrayList<>();
                 List<Integer> productIds = new ArrayList<>();
                 List<Integer> quantities = new ArrayList<>();
-                List<Integer> detailOrderItemIds = new ArrayList<>();
-                List<Integer> detailProductIds = new ArrayList<>();
-                List<Integer> detailQuantities = new ArrayList<>();
-                List<Double> detailPrices = new ArrayList<>();
-                List<Integer> detailIds = new ArrayList<>();
 
                 try (PreparedStatement findProductItem =
                              conn.prepareStatement(findProductItemSql);
+                     PreparedStatement insertOrderProductItem =
+                             conn.prepareStatement(insertOrderProductItemSql);
                      PreparedStatement updateProductItem =
                              conn.prepareStatement(updateProductItemSql);
-                     PreparedStatement insertExportReceiptDetail =
-                             conn.prepareStatement(insertExportReceiptDetailSql, Statement.RETURN_GENERATED_KEYS);
-                     PreparedStatement insertExportReceiptSerial =
-                             conn.prepareStatement(insertExportReceiptSerialSql);
                      PreparedStatement decreaseProductQuantity =
                              conn.prepareStatement(decreaseProductQuantitySql);
                      PreparedStatement insertStockMovement =
@@ -161,12 +125,13 @@ public class ExportDAO {
                             price = rs.getDouble("price");
                         }
 
+                        insertOrderProductItem.setInt(1, orderItemId);
+                        insertOrderProductItem.setInt(2, productItemId);
+                        insertOrderProductItem.executeUpdate();
+
                         updateProductItem.setDouble(1, price);
                         updateProductItem.setInt(2, productItemId);
                         updateProductItem.executeUpdate();
-
-                        productItemIds.add(productItemId);
-                        itemOrderItemIds.add(orderItemId);
 
                         int index = productIds.indexOf(productId);
                         if (index == -1) {
@@ -175,41 +140,6 @@ public class ExportDAO {
                         } else {
                             quantities.set(index, quantities.get(index) + 1);
                         }
-
-                        int detailIndex = detailOrderItemIds.indexOf(orderItemId);
-                        if (detailIndex == -1) {
-                            detailOrderItemIds.add(orderItemId);
-                            detailProductIds.add(productId);
-                            detailQuantities.add(1);
-                            detailPrices.add(price);
-                        } else {
-                            detailQuantities.set(detailIndex,
-                                    detailQuantities.get(detailIndex) + 1);
-                        }
-                    }
-
-                    for (int i = 0; i < detailOrderItemIds.size(); i++) {
-                        insertExportReceiptDetail.setInt(1, exportReceiptId);
-                        insertExportReceiptDetail.setInt(2, detailOrderItemIds.get(i));
-                        insertExportReceiptDetail.setInt(3, detailProductIds.get(i));
-                        insertExportReceiptDetail.setInt(4, detailQuantities.get(i));
-                        insertExportReceiptDetail.setDouble(5, detailPrices.get(i));
-                        insertExportReceiptDetail.executeUpdate();
-
-                        try (ResultSet rs = insertExportReceiptDetail.getGeneratedKeys()) {
-                            if (!rs.next()) {
-                                throw new SQLException("Cannot create export receipt detail.");
-                            }
-                            detailIds.add(rs.getInt(1));
-                        }
-                    }
-
-                    for (int i = 0; i < productItemIds.size(); i++) {
-                        int detailIndex = detailOrderItemIds.indexOf(itemOrderItemIds.get(i));
-
-                        insertExportReceiptSerial.setInt(1, detailIds.get(detailIndex));
-                        insertExportReceiptSerial.setInt(2, productItemIds.get(i));
-                        insertExportReceiptSerial.executeUpdate();
                     }
 
                     for (int i = 0; i < productIds.size(); i++) {
@@ -219,7 +149,6 @@ public class ExportDAO {
 
                         insertStockMovement.setInt(1, productIds.get(i));
                         insertStockMovement.setInt(2, quantities.get(i));
-                        insertStockMovement.setInt(3, exportReceiptId);
                         insertStockMovement.executeUpdate();
                     }
                 }
@@ -246,13 +175,12 @@ public class ExportDAO {
     public List<ExportDetailItemDTO> getExportedItemsByOrderId(int orderId) {
         List<ExportDetailItemDTO> list = new ArrayList<>();
 
-        String sql = "SELECT p.name, p.img_url, p.sku, pi.serial, erd.unit_price AS price " +
-                "FROM export_receipts er " +
-                "JOIN export_receipt_details erd ON er.id = erd.export_receipt_id " +
-                "JOIN export_receipt_serials ers ON erd.id = ers.export_receipt_detail_id " +
-                "JOIN products p ON erd.product_id = p.productid " +
-                "JOIN product_items pi ON ers.product_item_id = pi.id " +
-                "WHERE er.order_id = ?";
+        String sql = "SELECT p.name, p.img_url, p.sku, pi.serial, oi.price " +
+                "FROM order_items oi " +
+                "JOIN products p ON oi.productid = p.productid " +
+                "JOIN order_items_product_items oipi ON oi.id = oipi.orderitemid " +
+                "JOIN product_items pi ON oipi.productitemid = pi.id " +
+                "WHERE oi.orderid = ?";
 
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -278,32 +206,12 @@ public class ExportDAO {
         return list;
     }
 
-    public String getExportReceiptStatusByOrderId(int orderId) {
-        String sql = "SELECT status FROM export_receipts WHERE order_id = ?";
-
-        try (Connection conn = new DBContext().getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, orderId);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getString("status");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
     public static void main(String[] args) {
-        ExportDAO exportDAO = new ExportDAO();
-        ExportItemDTO dto = exportDAO.getItemBySKU("B12-423", 4);
+        ExportItemDAO exportItemDAO = new ExportItemDAO();
+        ExportItemDTO dto = exportItemDAO.getItemBySKU("B12-423", 4);
         System.out.println(dto);
 
-        List<ExportDetailItemDTO> list = exportDAO.getExportedItemsByOrderId(4);
+        List<ExportDetailItemDTO> list = exportItemDAO.getExportedItemsByOrderId(4);
         for (ExportDetailItemDTO e : list) {
             System.out.println(e);
         }

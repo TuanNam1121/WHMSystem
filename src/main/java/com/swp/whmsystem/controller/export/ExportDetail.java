@@ -1,6 +1,6 @@
 package com.swp.whmsystem.controller.export;
 
-import com.swp.whmsystem.dal.ExportDAO;
+import com.swp.whmsystem.dal.ExportItemDAO;
 import com.swp.whmsystem.dal.OrderDAO;
 import com.swp.whmsystem.dto.ExportDetailItemDTO;
 import com.swp.whmsystem.model.Order;
@@ -30,12 +30,10 @@ public class ExportDetail extends HttpServlet {
                 OrderDAO orderDAO = new OrderDAO();
                 Order order = orderDAO.getOrderById(orderId);
 
-                ExportDAO exportDAO = new ExportDAO();
-                List<ExportDetailItemDTO> detailList = exportDAO.getExportedItemsByOrderId(orderId);
-                String exportReceiptStatus = exportDAO.getExportReceiptStatusByOrderId(orderId);
+                ExportItemDAO exportItemDAO = new ExportItemDAO();
+                List<ExportDetailItemDTO> detailList = exportItemDAO.getExportedItemsByOrderId(orderId);
 
-                if (order != null && exportReceiptStatus != null) {
-                    order.setStatus(exportReceiptStatus);
+                if (order != null) {
                     double grandTotal = 0.0;
                     for (ExportDetailItemDTO item : detailList) {
                         grandTotal += item.getPrice();

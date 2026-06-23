@@ -125,12 +125,6 @@ public class OrderDetail extends HttpServlet {
 
             request.getRequestDispatcher("WEB-INF/view/sale/orderDetail.jsp").forward(request, response);
             return;
-        } else if (order.getStatus().equals("DOING")) {
-            ExportItemDAO exportItemDAO = new ExportItemDAO();
-            List<ExportDetailItemDTO> detailList = exportItemDAO.getExportedItemsByOrderId(orderId);
-            request.setAttribute("itemList", detailList);
-            request.getRequestDispatcher("WEB-INF/view/sale/orderDetail.jsp").forward(request, response);
-            return;
         } else {
             response.sendRedirect("NoPermission");
             return;

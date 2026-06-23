@@ -51,22 +51,19 @@ public class ExportItemDAO {
         return dto;
     }
 
-    public String processExportTransaction(int orderId, List<ExportItemDTO> exportList, String status) {
+    public String processExportTransaction(int orderId, List<ExportItemDTO> exportList) {
         try (Connection conn = DBContext.getConnection()) {
             conn.setAutoCommit(false);
 
             try {
                 String updateOrderStatusSql =
-                        "UPDATE orders SET status = ?, updatedat = CURRENT_TIMESTAMP WHERE id = ?";
-                if ("COMPLETED".equalsIgnoreCase(status)) {
-                    updateOrderStatusSql = "UPDATE orders SET status = ?, updatedat = CURRENT_TIMESTAMP, "
-                            + "completedat = CURRENT_TIMESTAMP WHERE id = ?";
-                }
+                        "UPDATE orders SET status = 'COMPLETED', "
+                                + "updatedat = CURRENT_TIMESTAMP, "
+                                + "completedat = CURRENT_TIMESTAMP WHERE id = ?";
 
                 try (PreparedStatement updateOrderStatus =
                              conn.prepareStatement(updateOrderStatusSql)) {
-                    updateOrderStatus.setString(1, status.toUpperCase());
-                    updateOrderStatus.setInt(2, orderId);
+                    updateOrderStatus.setInt(1, orderId);
                     updateOrderStatus.executeUpdate();
                 }
 

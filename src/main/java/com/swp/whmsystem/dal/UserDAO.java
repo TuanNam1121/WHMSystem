@@ -63,6 +63,56 @@ public class UserDAO {
         }
         return list;
     }
+
+    public List<User> searchUserPaginated(String keyword, String roleId, String sortBy, int offset, int limit) {
+        List<String> acceptedSortField = new ArrayList<>(List.of("roleid", "username", "isactive"));
+        String sql = "Select * from users where roleid != 1";
+        List<User> list = new ArrayList<>();
+        try (Connection conn = DBContext.getConnection()) {
+            if (keyword != null && !keyword.isBlank()) sql += " AND fullname like '%" + keyword + "%' ";
+            if (roleId != null && !roleId.isBlank()) {
+                int roleIdParse = Integer.parseInt(roleId);
+                sql += " AND roleid = " + roleIdParse + " ";
+            }
+            if (sortBy != null && acceptedSortField.contains(sortBy)) {
+                sql += " ORDER BY " + sortBy;
+                if (sortBy.equals("isactive")) sql += " DESC";
+            }
+            sql += " LIMIT ? OFFSET ?";
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, limit);
+            ps.setInt(2, offset);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User i = mapResultSetToUser(rs);
+                list.add(i);
+            }
+            return list;
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        return list;
+    }
+
+    public int countUsers(String keyword, String roleId) {
+        String sql = "Select count(*) from users where roleid != 1";
+        try (Connection conn = DBContext.getConnection()) {
+            if (keyword != null && !keyword.isBlank()) sql += " AND fullname like '%" + keyword + "%' ";
+            if (roleId != null && !roleId.isBlank()) {
+                int roleIdParse = Integer.parseInt(roleId);
+                sql += " AND roleid = " + roleIdParse + " ";
+            }
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        return 0;
+    }
     
     public List<User> getAllUsersHandleGoodReceipt() {
         String sql = "select u.* from good_receipts gr join users u on gr.processedby = u.userid group by u.userid";

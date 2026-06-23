@@ -248,8 +248,6 @@ public class PurchaseRequestDAO {
 
     public int countPurchaseItem(int salemanId, int id, String status, String dateStr) {
         StringBuilder sql = new StringBuilder("SELECT count(*) FROM purchase_requests pr " +
-                "LEFT JOIN users u ON pr.createdby = u.userid " +
-                "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid " +
                 "where pr.isDeleted = 0") ;
         List<Object> parameter = new ArrayList<>();
         if (salemanId != 0) {

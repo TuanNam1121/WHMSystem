@@ -46,7 +46,7 @@ public class ViewRoleList extends HttpServlet {
         request.setAttribute("rolelist", roleList);
         request.setAttribute("keyword", keyword);
         request.setAttribute("sortBy", sortBy);
-        request.setAttribute("currentPage", page);
+        request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("pageSize", pageSize);
         request.getRequestDispatcher("WEB-INF/view/admin/viewRoleList.jsp").forward(request, response);

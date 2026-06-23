@@ -1,115 +1,158 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="activeMenu" value="users" scope="request"/>
-<c:set var="pageTitle" value="User Management" scope="request"/>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <title>User Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assests/css/wms-theme.css" rel="stylesheet">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/animate.css">
+    <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-<div class="wrapper">
-    <jsp:include page="/WEB-INF/common/adminSidebar.jsp"/>
-    <main class="main-content">
-        <jsp:include page="/WEB-INF/common/userTopbar.jsp"/>
-        <c:if test="${not empty message}">
-            <div class="alert-success">${message}</div>
-        </c:if>
-        <section class="table-container">
-            <div class="table-header">
-                <h2>User List</h2>
-                <button class="add-btn">
-                    <a href="${pageContext.request.contextPath}/AddNewUser">Add new user</a>
-                </button>
-            </div>
-            <div class="filter-bar">
-                <form action="${pageContext.request.contextPath}/ViewUserList" method="get">
-
-                    <!-- Search name -->
-                    <input
-                            id="keyword"
-                            type="text"
-                            name="keyword"
-                            class="filter-input"
-                            placeholder="Search by name"
-                            value="${param.keyword}"
-                    >
-
-                    <select name="sortBy" class="filter-select" id="sortBy">
-                        <option value="">Sort</option>
-                        <option value="role"
-                        ${param.sortBy == 'userid' ? 'selected' : ''}>
-                            Role
-                        </option>
-                        <option value="username"
-                        ${param.sortBy == 'username' ? 'selected' : ''}>
-                            User Name
-                        </option>
-                        <option value="isactive"
-                        ${param.sortBy == 'isactive' ? 'selected' : ''}>
-                            Active
-                        </option>
-                    </select>
-
-                    <!-- Role filter -->
-                    <select name="roleId" class="filter-select" id="roleId">
-                        <option value="">Role</option>
-
-                        <c:forEach items="${roleList}" var="r">
-                            <option
-                                    value="${r.roleId}"
-                                ${param.roleId == r.roleId.toString() ? 'selected' : ''}>
-                                    ${r.roleName}
-                            </option>
-                        </c:forEach>
-                    </select>
-
-                    <!-- Search button -->
-                    <button type="submit" class="search-btn">
-                        Search
-                    </button>
-                </form>
-            </div>
-            <table>
-                <thead>
-                <tr>
-                    <th>UserId</th>
-                    <th>UserName</th>
-                    <th>FullName</th>
-                    <th>RoleName</th>
-                    <th>Gender</th>
-                    <th>Phone</th>
-                    <th>Email</th>
-                    <th>Active</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <c:forEach items="${userlist}" var="u">
-                    <tr>
-                        <td>${u.id}</td>
-                        <td>${u.userName}</td>
-                        <td>${u.fullName}</td>
-                        <td>${roleDao.getRoleNamFromRoleID(u.roleId)}</td>
-                        <td>${u.gender}</td>
-                        <td>${u.phone}</td>
-                        <td>${u.email}</td>
-                        <td><input type="checkbox" ${u.isActive ? 'checked' : ''} disabled></td>
-                        <td>
-                            <a href="${pageContext.request.contextPath}/UpdateUserInformation?id=${u.id}">Details</a>
-                        </td>
-                    </tr>
-                </c:forEach>
-                </tbody>
-            </table>
-        </section>
-    </main>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<div id="global-loader">
+    <div class="whirly-loader"></div>
 </div>
+<div class="main-wrapper">
+    <jsp:include page="/WEB-INF/common/header.jsp"></jsp:include>
+    <jsp:include page="/WEB-INF/common/sidebar.jsp"></jsp:include>
+    <div class="page-wrapper">
+        <div class="content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h4>User List</h4>
+                    <h6>Manage Users</h6>
+                </div>
+                <div class="page-btn">
+                    <a href="${pageContext.request.contextPath}/AddNewUser" class="btn btn-added">
+                        <img src="assets/img/icons/plus.svg" alt="img" class="me-1">Add new user
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <c:if test="${not empty message}">
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>${message}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    </c:if>
+
+                    <form action="${pageContext.request.contextPath}/ViewUserList" method="get">
+                        <div class="card mb-0" id="filter_inputs" style="display: block !important;">
+                            <div class="card-body pb-0">
+                                <div class="row">
+                                    <div class="col-lg-12 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <input type="text" name="keyword" value="${param.keyword}" placeholder="Search by name">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <select name="sortBy" class="select">
+                                                        <option value="">Sort</option>
+                                                        <option value="role" ${param.sortBy == 'userid' ? 'selected' : ''}>Role</option>
+                                                        <option value="username" ${param.sortBy == 'username' ? 'selected' : ''}>User Name</option>
+                                                        <option value="isactive" ${param.sortBy == 'isactive' ? 'selected' : ''}>Active</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <select name="roleId" class="select">
+                                                        <option value="">Role</option>
+                                                        <c:forEach items="${roleList}" var="r">
+                                                            <option value="${r.roleId}" ${param.roleId == r.roleId.toString() ? 'selected' : ''}>${r.roleName}</option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-1 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <button type="submit" class="btn btn-filters ms-auto" style="border: none; padding: 0;">
+                                                        <img src="assets/img/icons/search-whites.svg" alt="img">
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive mt-4">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>UserId</th>
+                                    <th>UserName</th>
+                                    <th>FullName</th>
+                                    <th>RoleName</th>
+                                    <th>Gender</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Active</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <c:forEach items="${userlist}" var="u">
+                                    <tr>
+                                        <td>${u.id}</td>
+                                        <td>${u.userName}</td>
+                                        <td>${u.fullName}</td>
+                                        <td style="text-transform: capitalize;">${fn:replace(fn:toLowerCase(roleDao.getRoleNamFromRoleID(u.roleId)), '_', ' ')}</td>
+                                        <td style="text-transform: capitalize;">${fn:toLowerCase(u.gender)}</td>
+                                        <td>${u.phone}</td>
+                                        <td>${u.email}</td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${u.isActive}">
+                                                    <span class="badges bg-lightgreen">Active</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="badges bg-lightred">Inactive</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <a class="me-3" href="${pageContext.request.contextPath}/UpdateUserInformation?id=${u.id}">
+                                                <img src="assets/img/icons/edit.svg" alt="img">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+                        <jsp:include page="/WEB-INF/common/pagination.jsp"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="assets/js/jquery-3.6.0.min.js"></script>
+<script src="assets/js/feather.min.js"></script>
+<script src="assets/js/jquery.slimscroll.min.js"></script>
+<script src="assets/js/jquery.dataTables.min.js"></script>
+<script src="assets/js/dataTables.bootstrap4.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/plugins/select2/js/select2.min.js"></script>
+<script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+<script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
+<script src="assets/js/script.js"></script>
 </body>
 </html>
-

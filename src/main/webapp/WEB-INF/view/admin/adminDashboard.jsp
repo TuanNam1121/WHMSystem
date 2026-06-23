@@ -4,50 +4,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta name="description" content="POS - Bootstrap Admin Template">
+    <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
+    <meta name="author" content="Dreamguys - Bootstrap Admin Template">
+    <meta name="robots" content="noindex, nofollow">
     <title>Admin Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="assests/css/wms-theme.css">
+
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/animate.css">
+    <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-<div class="wrapper">
-    <jsp:include page="/WEB-INF/common/adminSidebar.jsp"/>
-    <main class="main-content">
-        <jsp:include page="/WEB-INF/common/userTopbar.jsp"/>
-        <c:if test="${not empty message}">
-            <div class="alert-success">${message}</div>
-        </c:if>
-        <section class="content-box">
-            <h2>Reset Password Request From Staff</h2>
-            <table>
-                <thead>
-                <tr>
-                    <th>User Id</th>
-                    <th>Created At</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <c:forEach items="${requestlist}" var="r">
-                    <tr>
-                        <td>${r.userId}</td>
-                        <td>${r.createdAt}</td>
-                        <td>${r.status}</td>
-                        <td>
-                            <c:if test="${r.status == 'NEW'}">
-                                <a href="solverequest?type=${r.message}&userid=${r.userId}">Solve</a>
-                            </c:if>
-                        </td>
-                    </tr>
-                </c:forEach>
-                </tbody>
-            </table>
-        </section>
-    </main>
+<div id="global-loader">
+    <div class="whirly-loader"></div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<div class="main-wrapper">
+    <jsp:include page="/WEB-INF/common/header.jsp"></jsp:include>
+    <jsp:include page="/WEB-INF/common/sidebar.jsp"></jsp:include>
+
+    <div class="page-wrapper">
+        <div class="content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h4>Admin Dashboard</h4>
+                    <h6>Reset Password Request From Staff</h6>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <c:if test="${not empty message}">
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>${message}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    </c:if>
+
+                    <form action="AdminDashBoard" method="GET">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>User Id</th>
+                                    <th>Created At</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <c:forEach items="${requestlist}" var="r">
+                                    <tr>
+                                        <td>${r.userId}</td>
+                                        <td>${r.createdAt}</td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${r.status == 'NEW'}">
+                                                    <span class="badges bg-lightgreen">${r.status}</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="badges bg-lightgrey">${r.status}</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <c:if test="${r.status == 'NEW'}">
+                                                <a class="me-3" href="solverequest?type=${r.message}&userid=${r.userId}">
+                                                    <img src="assets/img/icons/edit.svg" alt="img"> Solve
+                                                </a>
+                                            </c:if>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+                        <jsp:include page="/WEB-INF/common/pagination.jsp"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="assets/js/jquery-3.6.0.min.js"></script>
+<script src="assets/js/feather.min.js"></script>
+<script src="assets/js/jquery.slimscroll.min.js"></script>
+<script src="assets/js/jquery.dataTables.min.js"></script>
+<script src="assets/js/dataTables.bootstrap4.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/plugins/select2/js/select2.min.js"></script>
+<script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+<script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
+<script src="assets/js/script.js"></script>
 </body>
 </html>
 

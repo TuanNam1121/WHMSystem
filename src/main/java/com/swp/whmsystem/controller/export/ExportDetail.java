@@ -32,8 +32,10 @@ public class ExportDetail extends HttpServlet {
 
                 ExportItemDAO exportItemDAO = new ExportItemDAO();
                 List<ExportDetailItemDTO> detailList = exportItemDAO.getExportedItemsByOrderId(orderId);
+                String exportReceiptStatus = exportItemDAO.getExportReceiptStatusByOrderId(orderId);
 
-                if (order != null) {
+                if (order != null && exportReceiptStatus != null) {
+                    order.setStatus(exportReceiptStatus);
                     double grandTotal = 0.0;
                     for (ExportDetailItemDTO item : detailList) {
                         grandTotal += item.getPrice();

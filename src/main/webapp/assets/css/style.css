@@ -583,8 +583,31 @@ strong {
     color: #fff
 }
 
+.btn-draft {
+    min-width: 120px;
+    background: #fff3cd;
+    color: #ff9f43;
+    border: 1px solid #ffdf9e;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 14px 10px;
+    -webkit-transition: all .2s ease;
+    -ms-transition: all .2s ease;
+    transition: all .2s ease
+}
+
+.btn-draft:hover {
+    background: #ffe8ad;
+    color: #fe820e
+}
+
 @media (max-width: 991px) {
     .btn-submit {
+        min-width: auto;
+        padding: 5px 7px
+    }
+
+    .btn-draft {
         min-width: auto;
         padding: 5px 7px
     }

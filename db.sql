@@ -396,9 +396,6 @@ CREATE TABLE `inventory_audit`
 LOCK
 TABLES `inventory_audit` WRITE;
 /*!40000 ALTER TABLE `inventory_audit` DISABLE KEYS */;
-INSERT INTO `inventory_audit`
-VALUES (1, 14, 'COMPLETED', '2026-06-22 22:13:11', '2026-06-22 22:13:57'),
-       (2, 14, 'COMPLETED', '2026-06-22 22:14:16', '2026-06-22 22:18:53');
 /*!40000 ALTER TABLE `inventory_audit` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -414,11 +411,13 @@ CREATE TABLE `inventory_audit_item_serials`
 (
     `id`            int          NOT NULL AUTO_INCREMENT,
     `audit_item_id` int          NOT NULL,
-    `serial`        varchar(100) NOT NULL,
+    `product_item_id` int          NOT NULL,
     `type`          enum('ADD','DELETE') NOT NULL,
     PRIMARY KEY (`id`),
     KEY             `fk_audit_item_serials_item` (`audit_item_id`),
-    CONSTRAINT `fk_audit_item_serials_item` FOREIGN KEY (`audit_item_id`) REFERENCES `inventory_audit_items` (`id`) ON DELETE CASCADE
+    KEY             `fk_audit_item_serials_product_item` (`product_item_id`),
+    CONSTRAINT `fk_audit_item_serials_item` FOREIGN KEY (`audit_item_id`) REFERENCES `inventory_audit_items` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_audit_item_serials_product_item` FOREIGN KEY (`product_item_id`) REFERENCES `product_items` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -429,9 +428,6 @@ CREATE TABLE `inventory_audit_item_serials`
 LOCK
 TABLES `inventory_audit_item_serials` WRITE;
 /*!40000 ALTER TABLE `inventory_audit_item_serials` DISABLE KEYS */;
-INSERT INTO `inventory_audit_item_serials`
-VALUES (1, 4, 'M3R8V6N2Q5', 'DELETE'),
-       (2, 5, 'X7K9M2Q4ZT', 'ADD');
 /*!40000 ALTER TABLE `inventory_audit_item_serials` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -467,12 +463,6 @@ CREATE TABLE `inventory_audit_items`
 LOCK
 TABLES `inventory_audit_items` WRITE;
 /*!40000 ALTER TABLE `inventory_audit_items` DISABLE KEYS */;
-INSERT INTO `inventory_audit_items`
-VALUES (1, 1, 36, 7, 7, NULL, ''),
-       (2, 2, 2, 4, 4, NULL, ''),
-       (3, 2, 3, 3, 3, NULL, ''),
-       (4, 2, 36, 7, 6, NULL, 'Nhà sản xuất thu hồi lại vì lỗi'),
-       (5, 2, 37, 3, 4, NULL, 'Thừa từ những đợt import trước khi có hệ thống');
 /*!40000 ALTER TABLE `inventory_audit_items` ENABLE KEYS */;
 UNLOCK
 TABLES;

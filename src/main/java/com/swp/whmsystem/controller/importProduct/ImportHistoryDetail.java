@@ -46,7 +46,6 @@ public class ImportHistoryDetail extends HttpServlet {
     throws ServletException, IOException {
         String raw_receiptId = request.getParameter("receiptId");
         int receipId = 0;
-        String es = "";
         try{
             receipId = Integer.parseInt(raw_receiptId);
        
@@ -55,7 +54,6 @@ public class ImportHistoryDetail extends HttpServlet {
         
         ImportHistoryDTO importDetail = toImportHistory(gr.getGoodReceiptByGoodReceipId(receipId));
         List<ProductItem> productItemList = pi.getAllProductItemByGoodReceiptID(receipId);
-        for(ProductItem i : productItemList) es += i.toString();
         List<ProductItemRowDTO> returnedList = new ArrayList<>();
         for(ProductItem i : productItemList) returnedList.add(toProductItemRowDTO(i));
         
@@ -63,7 +61,7 @@ public class ImportHistoryDetail extends HttpServlet {
         request.setAttribute("detail", importDetail);
         }
         catch(Exception ex){
-            request.setAttribute("error", ex.getMessage() + es);
+            request.setAttribute("error", ex.getMessage());
             request.getRequestDispatcher("WEB-INF/view/import/ImportHistoryDetail.jsp").forward(request, response);
             return;
         }

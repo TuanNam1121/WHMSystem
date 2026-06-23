@@ -23,6 +23,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  *
@@ -103,6 +104,7 @@ public class CreateOder extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String customerId = request.getParameter("customerId");
         String customerName = request.getParameter("customerName");
         String customerPhone = request.getParameter("customerPhone");
         String note = request.getParameter("note");
@@ -134,8 +136,21 @@ public class CreateOder extends HttpServlet {
         order.setCustomerId(customer.getId());
 
 
+        
+        
+        List<Product> selectedProducts = (List<Product>) session.getAttribute("selectedProducts");
+        if(selectedProducts.isEmpty()){
+            request.setAttribute("customer", cd.getCustomerById(Integer.parseInt(customerId)));
+            ProductDAO pd = new ProductDAO();
+        request.setAttribute("products", pd.getProductList());
+            request.setAttribute("message", "order must contain at least 1 product");
+            request.getRequestDispatcher("WEB-INF/view/sale/createOrder.jsp").forward(request, response);
+            return;
+        }
+        
         String[] productIds = request.getParameterValues("productId");
         ProductDAO pd = new ProductDAO();
+        
         
         Order createdOrder = od.insertOrder(order);
         double total = 0;
@@ -168,6 +183,7 @@ public class CreateOder extends HttpServlet {
         
         createdOrder.setTotalPrice(total);
         od.updateOrderPrice(createdOrder);
+        session.removeAttribute("selectedProducts");
         response.sendRedirect("OrderList");
     }
 

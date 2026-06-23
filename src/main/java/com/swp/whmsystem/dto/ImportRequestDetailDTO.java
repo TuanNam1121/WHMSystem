@@ -4,22 +4,21 @@
  */
 package com.swp.whmsystem.dto;
 
+import java.sql.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 /**
  *
  * @author Admin
  */
-@Getter @Setter 
-@AllArgsConstructor @NoArgsConstructor @ToString
-public class ProductItemRowDTO {
-    private int productId;
-    private String productName;
-    private String serial;
-    private String unit;
-    private int importedPrice;
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+public class ImportRequestDetailDTO {
+    private int purchaseRequestId;
+    private Timestamp createdAt;
+    private String createdBy;
+    private String supplierName;
+    private int supplierId;
 }

@@ -4,6 +4,7 @@
  */
 package com.swp.whmsystem.utils;
 
+import com.swp.whmsystem.dal.GoodReceiptDAO;
 import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.dal.ProductItemDAO;
 import com.swp.whmsystem.dto.ProductItemRowDTO;
@@ -20,30 +21,29 @@ import java.util.Set;
  */
 public class ProductItemValidation {
     public static String validateProductItem(List<ProductItemRowDTO> list) {
-        Map<Integer, Set<String>> seenSerials = new HashMap<>();
-        
+        Set<String> seenSerials = new HashSet<>();
         for(ProductItemRowDTO i : list){
-            int productId = i.getProductId();
-            String serial = i.getSerial();
-            if(seenSerials.containsKey(productId)){
-                Set<String> s = seenSerials.get(productId);
-                if(s.contains(serial)) return "Serial: " + serial + " is dupplicated";
-                s.add(serial);
+            //int productId = i.getProductId();
+            String serial = i.getSerial().trim();
+            if(seenSerials.contains(serial)){
+                return "Serial: " + serial + " is dupplicated";
             }
-            else{
-                Set<String> set = new HashSet<>();
-                set.add(serial);
-                seenSerials.put(productId, set);
-                
-            }
+            seenSerials.add(serial);
         }
       
         ProductDAO p = new ProductDAO();
         ProductItemDAO pi = new ProductItemDAO();
         for(ProductItemRowDTO i : list){
-            ProductItem existed = pi.existedSerial(i.getProductId(), i.getSerial());
+            ProductItem existed = pi.existedSerial(i.getSerial());
             if(existed != null) return "Product " + p.getProductNameById(existed.getProductId()) + " Serial : " + existed.getSerial() + " is existed in System";
         }
+        return "true";
+    }
+    
+    public static String validateInvoiceNumber(String invoiceNumber){
+        if(invoiceNumber == null || invoiceNumber.isBlank()) return "Must be input Invoice Number of this good receipts";
+        GoodReceiptDAO gr = new GoodReceiptDAO();
+        if(gr.existInvoiceNumber(invoiceNumber)) return "Exist " + invoiceNumber + " in Good Receipts before";
         return "true";
     }
 }

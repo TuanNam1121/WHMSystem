@@ -64,6 +64,24 @@ public class UserDAO {
         return list;
     }
     
+    public List<User> getAllUsersHandleGoodReceipt() {
+        String sql = "select u.* from good_receipts gr join users u on gr.processedby = u.userid group by u.userid";
+        List<User> list = new ArrayList<>();
+        try (Connection conn = DBContext.getConnection()) {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User i = mapResultSetToUser(rs);
+                list.add(i);
+            }
+            return list;
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return null;
+    }
+    
+    
     public String getUserNameById(int userId) {
         String sql = "Select fullname from users where userid = ?";
         try (Connection conn = DBContext.getConnection()) {

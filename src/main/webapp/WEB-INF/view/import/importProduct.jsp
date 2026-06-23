@@ -63,7 +63,7 @@
 
                 <!-- Main Card -->
                 <form action="ImportProduct" method="POST" id="import-form">
-                    <input type="hidden" name="purchaseRequestId" value="${requestScope.prCode}">
+                    <input type="hidden" name="purchaseRequestId" value="${sessionScope.prCode}">
                     <div class="card">
                         <div class="card-body">
 

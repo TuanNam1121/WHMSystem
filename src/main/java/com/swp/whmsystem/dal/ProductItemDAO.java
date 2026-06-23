@@ -18,7 +18,8 @@ import java.util.List;
  * @author Admin
  */
 public class ProductItemDAO {
-    public List<ProductItem> getAllProductItem(){
+
+    public List<ProductItem> getAllProductItem() {
         List<ProductItem> list = new ArrayList<>();
         String sql = "select * from product_items order by imported_at desc";
         try (Connection connection = DBContext.getConnection()) {
@@ -33,8 +34,8 @@ public class ProductItemDAO {
             throw new RuntimeException(e);
         }
     }
-    
-    public List<ProductItem> getAllProductItemByGoodReceiptItemId(int goodReceiptItemId){
+
+    public List<ProductItem> getAllProductItemByGoodReceiptItemId(int goodReceiptItemId) {
         List<ProductItem> list = new ArrayList<>();
         String sql = "select * from product_items where goodreceiptsitemid = ? order by imported_at desc";
         try (Connection connection = DBContext.getConnection()) {
@@ -50,11 +51,11 @@ public class ProductItemDAO {
             throw new RuntimeException(e);
         }
     }
-    
-    public List<ProductItem> getAllProductItemByGoodReceiptID(int grId){
+
+    public List<ProductItem> getAllProductItemByGoodReceiptID(int grId) {
         List<ProductItem> list = new ArrayList<>();
         String sql = """
-                     select pi.id, pi.serial, pi.imported_price, pi.current_price, pi.isactive, pi.imported_at, pi.product_id, pi.goodreceiptsitemid, pi.status 
+                     select pi.id, pi.serial, pi.imported_price, pi.export_price, pi.isactive, pi.imported_at, pi.product_id, pi.goodreceiptsitemid, pi.status 
                      from product_items pi join good_receipts_items gri on pi.goodreceiptsitemid = gri.id where gri.goodreceiptid = ? order by imported_at desc""";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -69,8 +70,8 @@ public class ProductItemDAO {
             throw new RuntimeException(e);
         }
     }
-    
-    public List<ProductItem> getAllProductItemByProductId(int prId){
+
+    public List<ProductItem> getAllProductItemByProductId(int prId) {
         List<ProductItem> list = new ArrayList<>();
         String sql = "select * from product_items where product_id = ? order by imported_at desc";
         try (Connection connection = DBContext.getConnection()) {
@@ -86,8 +87,8 @@ public class ProductItemDAO {
             throw new RuntimeException(e);
         }
     }
-    
-    public List<ProductItem> getAllProductItemByOrderId(int orderId){
+
+    public List<ProductItem> getAllProductItemByOrderId(int orderId) {
         List<ProductItem> list = new ArrayList<>();
         String sql = "select p.* from product_items p "
                 + "join order_items_product_items op on p.id = op.productitemid "
@@ -106,31 +107,32 @@ public class ProductItemDAO {
             throw new RuntimeException(e);
         }
     }
-    
-    public void updateProductItemStatus(ProductItem pi){
+
+    public void updateProductItemStatus(ProductItem pi) {
         String sql = "update product_items set status = ? where id = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setString(1, pi.getStatus());
             ps.setInt(2, pi.getId());
             ps.executeUpdate();
-            
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
-    
-    public ProductItem mapResultsetToProductItem(ResultSet rs) throws SQLException{
+
+    public ProductItem mapResultsetToProductItem(ResultSet rs) throws SQLException {
         ProductItem i = new ProductItem();
         i.setId(rs.getInt("id"));
         i.setSerial(rs.getString("serial"));
         i.setProductId(rs.getInt("product_id"));
         i.setImportPrice(rs.getInt("imported_price"));
+        i.setExportPrice(rs.getInt("export_price"));
         i.setStatus(rs.getString("status"));
         i.setGoodReceiptItemId(rs.getInt("goodreceiptsitemid"));
         i.setImportAt(rs.getTimestamp("imported_at"));
         return i;
     }
-    
+
     public boolean insertProductItem(ProductItem item) {
         String sql = "INSERT INTO product_items (serial, product_id, imported_price, goodreceiptsitemid, status) VALUES (?, ?, ?, ?, ?)";
         try (Connection connection = DBContext.getConnection()) {
@@ -145,15 +147,14 @@ public class ProductItemDAO {
             throw new RuntimeException(e);
         }
     }
-    
-    public ProductItem existedSerial(int productId, String serial){
-        String sql = "SELECT * FROM wms.product_items where serial = ? and product_id = ?";
+
+    public ProductItem existedSerial(String serial) {
+        String sql = "SELECT * FROM wms.product_items where serial = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, serial);
-            preparedStatement.setInt(2, productId);
             ResultSet rs = preparedStatement.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return mapResultsetToProductItem(rs);
             }
         } catch (SQLException e) {
@@ -162,11 +163,27 @@ public class ProductItemDAO {
         return null;
     }
 
+    public int getExportPriceWithSoldStatus(int productItemId) {
+        String sql = "select price from product_items pi \n"
+                + "left join order_items_product_items oipi on pi.id = oipi.productitemid \n"
+                + "join order_items oi on oipi.orderitemid = oi.id\n"
+                + "where pi.status = 'SOLD' and pi.id = ?";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, productItemId);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("price");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
+
     public static void main(String[] args) {
         ProductItemDAO dao = new ProductItemDAO();
-        for(ProductItem i : dao.getAllProductItemByProductId(5)){
-            System.out.println(i);
-        }
+        System.out.println(dao.getExportPriceWithSoldStatus(6));
     }
-    
+
 }

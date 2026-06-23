@@ -101,9 +101,8 @@
                                     <div class="form-group">
                                         <select class="select" id="filter-status">
                                             <option>Choose Status</option>
-                                            <option>New</option>
-                                            <option>INCOMPLETED</option>
-                                            <option>Completed</option>
+                                            <option>Approved</option>
+                                            <option>Processing</option>
                                         </select>
                                     </div>
                                 </div>
@@ -139,7 +138,7 @@
                             <tbody>
                             <c:forEach items="${importRequests}" var="ir">
                                 <tr>
-                                    <td class="text-bolds"><a href="managerPurchaseRequestDetail?id=${ir.purchaseRequestId}">
+                                    <td class="text-bolds"><a href="ImportRequestDetail?id=${ir.purchaseRequestId}">
                                             PR-${ir.purchaseRequestId}</a>
                                     </td>
                                     <td>${ir.supplier}</td>
@@ -151,8 +150,8 @@
                                                 <span class="badges bg-lightyellow">${ir.status}</span>
                                             </c:when>
                                             <c:when
-                                                    test="${ir.status == 'INCOMPLETED'}">
-                                                <span class="badges bg-lightgrey">${ir.status}</span>
+                                                    test="${ir.status == 'PROCESSING'}">
+                                                <span class="badges bg-lightgreen">${ir.status}</span>
                                             </c:when>
                                         </c:choose>
                                     </td>

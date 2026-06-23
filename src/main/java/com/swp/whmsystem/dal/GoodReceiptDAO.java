@@ -1,10 +1,14 @@
 package com.swp.whmsystem.dal;
 
 import com.swp.whmsystem.dto.ImportHistoryDTO;
+import com.swp.whmsystem.dto.ProductItemRowDTO;
 import com.swp.whmsystem.model.GoodReceipt;
 import com.swp.whmsystem.model.GoodReceiptItem;
 import com.swp.whmsystem.model.Product;
 import com.swp.whmsystem.model.ProductItem;
+import com.swp.whmsystem.model.PurchaseItem;
+import com.swp.whmsystem.model.PurchaseRequest;
+import java.awt.BorderLayout;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class GoodReceiptDAO {
 
@@ -89,7 +94,9 @@ public class GoodReceiptDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, purchaseRequestId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next())  list.add(mapResultSetToGoodReceipt(resultSet));
+            while (resultSet.next()) {
+                list.add(mapResultSetToGoodReceipt(resultSet));
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -148,7 +155,7 @@ public class GoodReceiptDAO {
         return c;
     }
 
-     // luôn trả về ID để insert good_receipts_items ngay sau đó
+    // luôn trả về ID để insert good_receipts_items ngay sau đó
     public int insertGoodReceiptAndGetId(GoodReceipt receipt) {
         String sql = "insert into good_receipts (purchaserequestid, processedby, status, note, invoice_number) values (?, ?, ?, ?, ?)";
         try (Connection connection = DBContext.getConnection()) {
@@ -159,15 +166,30 @@ public class GoodReceiptDAO {
             preparedStatement.setString(4, receipt.getNote());
             preparedStatement.setString(5, receipt.getInvoiceNumber());
             preparedStatement.executeUpdate();
-            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1);
+            try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return -1;
+    }
+
+    public boolean existInvoiceNumber(String invoiceNumber){
+        String sql = "select * from good_receipts where invoice_number = ?";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, invoiceNumber);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
     }
 
     public List<GoodReceipt> searchProduct(int receiptId, int purchaseid, int supplierId, int processedby, String sortBy) {
@@ -228,7 +250,6 @@ public class GoodReceiptDAO {
 
     public static void main(String[] args) {
         GoodReceiptDAO gr = new GoodReceiptDAO();
-        GoodReceiptItemDAO gri = new GoodReceiptItemDAO();
-        System.out.println(gr.getGoodReceiptById(3));
+        System.out.println(gr.existInvoiceNumber(""));
     }
 }

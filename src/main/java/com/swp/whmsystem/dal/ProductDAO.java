@@ -213,6 +213,22 @@ public class ProductDAO {
         return productList;
     }
 
+    public List<Product> searchProductByName(String name) {
+        List<Product> productList = new ArrayList<>();
+        String sql = "select * from products where name like ? order by isActive desc";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + name + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                productList.add(mapFromResultSetToProduct(rs));
+            }
+            return productList;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return productList;
+    }
+
     public void changeProductQuantity(int newQuantity, int id) {
         String sql = "update products set total_quantity = ? where productid = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
@@ -246,6 +262,19 @@ public class ProductDAO {
             return ps.executeUpdate() != 0;
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean increaseQuantity(Product p) throws SQLException {
+        String sql = "UPDATE products SET total_quantity = ? WHERE productid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+            ps.setInt(1, p.getTotalQuantity());
+            ps.setInt(2 , p.getProductId());
+            System.out.println(sql);
+            return ps.executeUpdate() != 0;
+        }catch (Exception ex) {
+            ex.printStackTrace();
         }
         return false;
     }
@@ -409,13 +438,13 @@ public class ProductDAO {
     }
 
     public List<Product> searchProduct(String name, int categoryId, int brandId, int isActive,
-                                       String sortBy, int pageSize, int page) {
+            String sortBy, int pageSize, int page) {
         List<Product> productList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "select p.* from products p "
-                        + "left join categories c ON p.categoryid = c.categoryid "
-                        + "left join brands b ON p.brandid = b.brandid "
-                        + "where 1=1"
+                + "left join categories c ON p.categoryid = c.categoryid "
+                + "left join brands b ON p.brandid = b.brandid "
+                + "where 1=1"
         );
         List<Object> parameter = new ArrayList<>();
         if (name != null && !name.trim().isEmpty()) {
@@ -443,35 +472,19 @@ public class ProductDAO {
 
         if (sortBy != null && !sortBy.trim().isEmpty()) {
             switch (sortBy) {
-                case "nameAZ":
-                    sql.append(" order by p.name asc");
-                    break;
-                case "nameZA":
-                    sql.append(" order by p.name desc");
-                    break;
-                case "skuAZ":
-                    sql.append(" order by p.sku asc");
-                    break;
-                case "skuZA":
-                    sql.append(" order by p.sku desc");
-                    break;
-                case "cateAZ":
-                    sql.append(" order by c.name asc");
-                    break;
-                case "cateZA":
-                    sql.append(" order by c.name desc");
-                    break;
-                case "brandAZ":
-                    sql.append(" order by b.name asc");
-                    break;
-                case "brandZA":
-                    sql.append(" order by b.name desc");
-                    break;
+                case "nameAZ" -> sql.append(" order by p.name asc, p.total_quantity desc ");
+                case "nameZA" -> sql.append(" order by p.name desc, p.total_quantity desc");
+                case "skuAZ" -> sql.append(" order by p.sku asc, p.total_quantity desc");
+                case "skuZA" -> sql.append(" order by p.sku desc, p.total_quantity desc");
+                case "cateAZ" -> sql.append(" order by c.name asc, p.total_quantity desc");
+                case "cateZA" -> sql.append(" order by c.name desc, p.total_quantity desc");
+                case "brandAZ" -> sql.append(" order by b.name asc, p.total_quantity desc");
+                case "brandZA" -> sql.append(" order by b.name desc, p.total_quantity desc");
             }
         } else {
-            sql.append(" order by p.productid asc");
+            sql.append(" order by p.total_quantity desc");
         }
-
+        
         int offset = (page - 1) * pageSize;
         sql.append(" limit ? offset ?");
         parameter.add(pageSize);
@@ -496,9 +509,9 @@ public class ProductDAO {
     public int countProducts(String name, int categoryId, int brandId, int isActive) {
         StringBuilder sql = new StringBuilder(
                 "select count(*) from products p "
-                        + "left join categories c ON p.categoryid = c.categoryid "
-                        + "left join brands b ON p.brandid = b.brandid "
-                        + "where 1=1"
+                + "left join categories c ON p.categoryid = c.categoryid "
+                + "left join brands b ON p.brandid = b.brandid "
+                + "where 1=1"
         );
         List<Object> parameters = new ArrayList<>();
 
@@ -523,8 +536,7 @@ public class ProductDAO {
             parameters.add(isActive);
         }
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             for (int i = 0; i < parameters.size(); i++) {
                 ps.setObject(i + 1, parameters.get(i));
             }
@@ -555,11 +567,10 @@ public class ProductDAO {
 
     public List<ProductItem> getProductItems(int productId) {
         List<ProductItem> productItemList = new ArrayList<>();
-        String sql = "select * from product_items pi " +
-                "join products p on pi.product_id = p.productid" +
-                " where p.productid = ?";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "select * from product_items pi "
+                + "join products p on pi.product_id = p.productid"
+                + " where p.productid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, productId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -573,11 +584,11 @@ public class ProductDAO {
     }
 
     public List<ProductItem> searchProductItems(int productId, String serial, String date,
-                                                String status, String sortBy, int pageSize, int page) {
+            String status, String sortBy, int pageSize, int page) {
         List<ProductItem> productItemList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "select pi.* from product_items pi "
-                        + "where pi.product_id = ?"
+                + "where pi.product_id = ?"
         );
         List<Object> parameter = new ArrayList<>();
         parameter.add(productId);
@@ -652,7 +663,7 @@ public class ProductDAO {
     public int countProductItems(int productId, String serial, String date, String status) {
         StringBuilder sql = new StringBuilder(
                 "select count(*) from product_items pi "
-                        + "where pi.product_id = ?"
+                + "where pi.product_id = ?"
         );
         List<Object> parameters = new ArrayList<>();
         parameters.add(productId);
@@ -669,8 +680,7 @@ public class ProductDAO {
             sql.append(" and pi.status = ?");
             parameters.add(status);
         }
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             for (int i = 0; i < parameters.size(); i++) {
                 ps.setObject(i + 1, parameters.get(i));
             }
@@ -688,8 +698,7 @@ public class ProductDAO {
     public String getSKUFromId(int id) {
         String SKU = "";
         String sql = "select sku from products where productid = ?";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {

@@ -472,35 +472,19 @@ public class ProductDAO {
 
         if (sortBy != null && !sortBy.trim().isEmpty()) {
             switch (sortBy) {
-                case "nameAZ":
-                    sql.append(" order by p.name asc");
-                    break;
-                case "nameZA":
-                    sql.append(" order by p.name desc");
-                    break;
-                case "skuAZ":
-                    sql.append(" order by p.sku asc");
-                    break;
-                case "skuZA":
-                    sql.append(" order by p.sku desc");
-                    break;
-                case "cateAZ":
-                    sql.append(" order by c.name asc");
-                    break;
-                case "cateZA":
-                    sql.append(" order by c.name desc");
-                    break;
-                case "brandAZ":
-                    sql.append(" order by b.name asc");
-                    break;
-                case "brandZA":
-                    sql.append(" order by b.name desc");
-                    break;
+                case "nameAZ" -> sql.append(" order by p.name asc, p.total_quantity desc ");
+                case "nameZA" -> sql.append(" order by p.name desc, p.total_quantity desc");
+                case "skuAZ" -> sql.append(" order by p.sku asc, p.total_quantity desc");
+                case "skuZA" -> sql.append(" order by p.sku desc, p.total_quantity desc");
+                case "cateAZ" -> sql.append(" order by c.name asc, p.total_quantity desc");
+                case "cateZA" -> sql.append(" order by c.name desc, p.total_quantity desc");
+                case "brandAZ" -> sql.append(" order by b.name asc, p.total_quantity desc");
+                case "brandZA" -> sql.append(" order by b.name desc, p.total_quantity desc");
             }
         } else {
-            sql.append(" order by p.productid asc");
+            sql.append(" order by p.total_quantity desc");
         }
-
+        
         int offset = (page - 1) * pageSize;
         sql.append(" limit ? offset ?");
         parameter.add(pageSize);

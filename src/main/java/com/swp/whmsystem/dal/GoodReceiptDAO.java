@@ -166,15 +166,30 @@ public class GoodReceiptDAO {
             preparedStatement.setString(4, receipt.getNote());
             preparedStatement.setString(5, receipt.getInvoiceNumber());
             preparedStatement.executeUpdate();
-            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1);
+            try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return -1;
+    }
+
+    public boolean existInvoiceNumber(String invoiceNumber){
+        String sql = "select * from good_receipts where invoice_number = ?";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, invoiceNumber);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
     }
 
     public List<GoodReceipt> searchProduct(int receiptId, int purchaseid, int supplierId, int processedby, String sortBy) {
@@ -233,70 +248,8 @@ public class GoodReceiptDAO {
         return goodReceipts;
     }
 
-    private boolean isCompleted(List<PurchaseItem> purchaseItems, Map<Integer, Integer> goodReceiptItems) {
-        for (Map.Entry<Integer, Integer> entry : goodReceiptItems.entrySet()) {
-            Integer key = entry.getKey();
-            Integer value = entry.getValue();
-            System.out.println(key + " " + value);
-        }
-        for (PurchaseItem i : purchaseItems) {
-            System.out.println(i);
-            if (i.getRequiredQty() > goodReceiptItems.get(i.getProductId())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public static void main(String[] args) {
         GoodReceiptDAO gr = new GoodReceiptDAO();
-        PurchaseItemDAO pi = new PurchaseItemDAO();
-        GoodReceiptItemDAO gri = new GoodReceiptItemDAO();
-        PurchaseRequestDAO pr = new PurchaseRequestDAO();
-        ProductDAO product = new ProductDAO();
-        int totalItem = 0;
-        List<PurchaseItem> purchaseList = pi.getItemsByPurchaseRequestId(4);
-        for (PurchaseItem i : purchaseList) {
-            System.out.println(i);
-        }
-        PurchaseRequest purchaseRequest = pr.getPurchaseRequestById(4);
-        String status = purchaseRequest.getStatus();
-        if (status.equals("APPROVED")) {
-            for (PurchaseItem i : purchaseList) {
-                int productId = i.getProductId();
-                int quantity = i.getRequiredQty();
-                int price = i.getPrice();
-                List<ProductItemRowDTO> a = new ArrayList<>();
-                for (int j = 0; j < quantity; ++j) {
-                    Product p = product.getProductFromId(productId);
-                    ProductItemRowDTO dto = new ProductItemRowDTO(productId, p.getName(), "", p.getUnit().getName(),
-                            price);
-                    a.add(dto);
-                }
-                for (ProductItemRowDTO dto : a) {
-                    System.out.println(dto);
-                }
-                totalItem += quantity;
-            }
-        } else if ("PROCESSING".equals(status)) {
-            GoodReceiptItemDAO griDao = new GoodReceiptItemDAO();
-            Map<Integer, Integer> importedProductQuantity = griDao.getReceivedQuantityByPurchaseRequestId(purchaseRequest.getId());
-            for (PurchaseItem i : purchaseList) {
-                int productId = i.getProductId();
-                int quantity = i.getRequiredQty();
-                int price = i.getPrice();
-                List<ProductItemRowDTO> a = new ArrayList<>();
-                for (int j = 0; j < quantity - importedProductQuantity.getOrDefault(productId, 0); ++j) {
-                    Product p = product.getProductFromId(productId);
-                    ProductItemRowDTO dto = new ProductItemRowDTO(productId, p.getName(), "", p.getUnit().getName(),
-                            price);
-                    a.add(dto);
-                }
-                for (ProductItemRowDTO dto : a) {
-                    System.out.println(dto);
-                }
-                totalItem += quantity;
-            }
-        }
+        System.out.println(gr.existInvoiceNumber(""));
     }
 }

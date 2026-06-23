@@ -1,6 +1,8 @@
 package com.swp.whmsystem.controller.product;
 
+import com.swp.whmsystem.dal.OrderItemDAO;
 import com.swp.whmsystem.dal.ProductDAO;
+import com.swp.whmsystem.dal.ProductItemDAO;
 import com.swp.whmsystem.model.Product;
 import com.swp.whmsystem.model.ProductItem;
 import jakarta.servlet.ServletException;
@@ -69,6 +71,14 @@ public class ProductDetails extends HttpServlet {
                 productId, serial, date, status, sortBy, pageSize, page
         );
 
+        ProductItemDAO piDao = new ProductItemDAO();
+        for(ProductItem i : productItemList){
+            if("SOLD".equals(i.getStatus())){
+                int exportPrice = piDao.getExportPriceWithSoldStatus(i.getId());
+                i.setExportPrice(exportPrice);
+            }
+        }
+        
         Product product = productDAO.getProductFromId(productId);
 
         session.setAttribute("product", product);

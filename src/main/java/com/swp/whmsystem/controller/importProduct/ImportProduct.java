@@ -175,16 +175,19 @@ public class ImportProduct extends HttpServlet {
                 request.getRequestDispatcher("WEB-INF/view/import/importProduct.jsp").forward(request, response);
                 return;
             }
+            String validInvoiceNumber = ProductItemValidation.validateInvoiceNumber(invoiceNumber);
             String valid = ProductItemValidation.validateProductItem(filledList);
-
-            if (!"true".equals(valid)) {
+            
+            if (!"true".equals(valid) || !"true".equals(validInvoiceNumber)) {
                 List<List<ProductItemRowDTO>> filledReturnedList = returnListDTO(importItems, serials);
                 request.setAttribute("purchaseRequestId", purchaseRequestId);
                 request.setAttribute("importItems", filledReturnedList);
-                request.setAttribute("message", valid);
+                if(!"true".equals(valid)) request.setAttribute("message", valid);
+                else request.setAttribute("message", validInvoiceNumber);
                 request.getRequestDispatcher("WEB-INF/view/import/importProduct.jsp").forward(request, response);
                 return;
-            } else {
+            }
+            else {
                 handleImport(purchaseRequestId, handler, invoiceNumber, filledList);
             }
             // clear

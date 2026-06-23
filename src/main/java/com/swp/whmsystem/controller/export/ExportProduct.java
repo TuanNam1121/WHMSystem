@@ -3,6 +3,7 @@ package com.swp.whmsystem.controller.export;
 import java.io.IOException;
 import java.util.*;
 
+import com.google.gson.JsonObject;
 import com.swp.whmsystem.dal.*;
 import com.swp.whmsystem.dto.ExportItemDTO;
 import com.swp.whmsystem.dto.OrderItemDetailDTO;
@@ -65,26 +66,111 @@ public class ExportProduct extends HttpServlet {
         request.getRequestDispatcher("WEB-INF/view/export/exportProduct.jsp").forward(request, response);
     }
 
+    /*
+     * CODE CŨ: Xử lý bằng backend và reload lại trang sau mỗi lần quét SKU.
+     *
+     * @Override
+     * protected void doPost(HttpServletRequest request, HttpServletResponse response)
+     *         throws ServletException, IOException {
+     *     HttpSession session = request.getSession();
+     *     ExportItemDAO exportItemDAO = new ExportItemDAO();
+     *     int orderId;
+     *     String sku = request.getParameter("sku");
+     *     String orderIdRaw = request.getParameter("orderId");
+     *
+     *     if (orderIdRaw == null || orderIdRaw.trim().isEmpty()) {
+     *         response.sendRedirect("toExportList");
+     *         return;
+     *     }
+     *
+     *     try {
+     *         orderId = Integer.parseInt(orderIdRaw.trim());
+     *     } catch (NumberFormatException e) {
+     *         response.sendRedirect("toExportList");
+     *         return;
+     *     }
+     *
+     *     synchronized (session) {
+     *         List<ExportItemDTO> scannedList =
+     *                 (List<ExportItemDTO>) session.getAttribute("scannedList");
+     *         if (scannedList == null) {
+     *             scannedList = new ArrayList<>();
+     *         } else {
+     *             scannedList = new ArrayList<>(scannedList);
+     *         }
+     *
+     *         if (sku != null && !sku.trim().isEmpty()) {
+     *             sku = sku.trim();
+     *             ExportItemDTO productFromDB =
+     *                     exportItemDAO.getItemBySKU(sku, orderId);
+     *
+     *             if (productFromDB != null) {
+     *                 int currentScannedQty = 0;
+     *                 for (ExportItemDTO item : scannedList) {
+     *                     if (item.getSku().equalsIgnoreCase(sku)) {
+     *                         currentScannedQty += item.getQty();
+     *                     }
+     *                 }
+     *
+     *                 if (productFromDB.getStock() <= 0) {
+     *                     session.setAttribute("error",
+     *                             productFromDB.getName()
+     *                                     + " is currently out of stock.");
+     *                 } else if (currentScannedQty >= productFromDB.getStock()) {
+     *                     session.setAttribute("error",
+     *                             "Cannot add more " + productFromDB.getName()
+     *                                     + ". Available stock: "
+     *                                     + productFromDB.getStock() + ".");
+     *                 } else {
+     *                     ExportItemDTO newItem = new ExportItemDTO();
+     *                     newItem.setSku(productFromDB.getSku());
+     *                     newItem.setName(productFromDB.getName());
+     *                     newItem.setImgUrl(productFromDB.getImgUrl());
+     *                     newItem.setStock(productFromDB.getStock());
+     *                     newItem.setPrice(productFromDB.getPrice());
+     *
+     *                     scannedList.add(0, newItem);
+     *                     session.removeAttribute("error");
+     *                 }
+     *             } else {
+     *                 session.setAttribute("error",
+     *                         "The product with SKU " + sku
+     *                                 + " is not included in this order.");
+     *             }
+     *         }
+     *
+     *         session.setAttribute("scannedList", scannedList);
+     *     }
+     *
+     *     response.sendRedirect("exportProduct?orderId=" + orderId);
+     * }
+     */
+
+    // CODE MỚI: Trả JSON để JavaScript thêm sản phẩm mà không reload trang.
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         ExportItemDAO exportItemDAO = new ExportItemDAO();
-        int orderId;
         String sku = request.getParameter("sku");
         String orderIdRaw = request.getParameter("orderId");
 
         if (orderIdRaw == null || orderIdRaw.trim().isEmpty()) {
-            response.sendRedirect("toExportList");
+            sendAjaxResponse(response, false, "Order ID is missing.", null, 0);
             return;
         }
 
+        int orderId;
         try {
             orderId = Integer.parseInt(orderIdRaw.trim());
         } catch (NumberFormatException e) {
-            response.sendRedirect("toExportList");
+            sendAjaxResponse(response, false, "Invalid order ID.", null, 0);
             return;
         }
+
+        ExportItemDTO addedItem = null;
+        String errorMessage = null;
+        double grandTotal = 0;
 
         synchronized (session) {
             List<ExportItemDTO> scannedList =
@@ -97,45 +183,73 @@ public class ExportProduct extends HttpServlet {
 
             if (sku != null && !sku.trim().isEmpty()) {
                 sku = sku.trim();
-                ExportItemDTO productFromDB = exportItemDAO.getItemBySKU(sku, orderId);
+                ExportItemDTO productFromDB =
+                        exportItemDAO.getItemBySKU(sku, orderId);
 
-                if (productFromDB != null) {
+                if (productFromDB == null) {
+                    errorMessage = "The product with SKU " + sku
+                            + " is not included in this order.";
+                } else {
                     int currentScannedQty = 0;
                     for (ExportItemDTO item : scannedList) {
-                        if (item.getSku().equals(sku)) {
+                        if (item.getSku().equalsIgnoreCase(sku)) {
                             currentScannedQty += item.getQty();
                         }
                     }
 
                     if (productFromDB.getStock() <= 0) {
-                        session.setAttribute("error",
-                                productFromDB.getName() + " is currently out of stock.");
-
+                        errorMessage = productFromDB.getName()
+                                + " is currently out of stock.";
                     } else if (currentScannedQty >= productFromDB.getStock()) {
-                        session.setAttribute("error",
-                                "Cannot add more " + productFromDB.getName()
-                                        + ". Available stock: " + productFromDB.getStock() + ".");
-
+                        errorMessage = "Cannot add more " + productFromDB.getName()
+                                + ". Available stock: "
+                                + productFromDB.getStock() + ".";
                     } else {
-                        ExportItemDTO newItem = new ExportItemDTO();
-
-                        newItem.setSku(productFromDB.getSku());
-                        newItem.setName(productFromDB.getName());
-                        newItem.setImgUrl(productFromDB.getImgUrl());
-                        newItem.setStock(productFromDB.getStock());
-                        newItem.setPrice(productFromDB.getPrice());
-
-                        scannedList.add(0, newItem);
-                        session.removeAttribute("error");
+                        addedItem = new ExportItemDTO();
+                        addedItem.setSku(productFromDB.getSku());
+                        addedItem.setName(productFromDB.getName());
+                        addedItem.setImgUrl(productFromDB.getImgUrl());
+                        addedItem.setStock(productFromDB.getStock());
+                        addedItem.setPrice(productFromDB.getPrice());
+                        scannedList.add(0, addedItem);
                     }
-                } else {
-                    session.setAttribute("error",
-                            "The product with SKU " + sku + " is not included in this order.");
                 }
             }
+
             session.setAttribute("scannedList", scannedList);
+
+            for (ExportItemDTO item : scannedList) {
+                grandTotal += item.getTotalCost();
+            }
         }
-        response.sendRedirect("exportProduct?orderId=" + orderId);
+
+        sendAjaxResponse(response, errorMessage == null,
+                errorMessage, addedItem, grandTotal);
+    }
+
+    private void sendAjaxResponse(HttpServletResponse response, boolean success,
+                                  String message, ExportItemDTO item,
+                                  double grandTotal) throws IOException {
+        JsonObject json = new JsonObject();
+        json.addProperty("success", success);
+        json.addProperty("message", message == null ? "" : message);
+        json.addProperty("grandTotal", grandTotal);
+
+        if (item != null) {
+            JsonObject itemJson = new JsonObject();
+            itemJson.addProperty("tempId", item.getTempId());
+            itemJson.addProperty("sku", item.getSku());
+            itemJson.addProperty("name", item.getName());
+            itemJson.addProperty("imgUrl", item.getImgUrl());
+            itemJson.addProperty("qty", item.getQty());
+            itemJson.addProperty("price", item.getPrice());
+            itemJson.addProperty("stock", item.getStock());
+            json.add("item", itemJson);
+        }
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(json.toString());
     }
 
     @Override

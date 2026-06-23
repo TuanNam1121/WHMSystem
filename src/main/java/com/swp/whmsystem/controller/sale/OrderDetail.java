@@ -4,12 +4,17 @@
  */
 package com.swp.whmsystem.controller.sale;
 
-import com.swp.whmsystem.dal.*;
-import com.swp.whmsystem.dal.ExportDAO;
+import com.swp.whmsystem.dal.CustomerDAO;
+import com.swp.whmsystem.dal.ExportItemDAO;
+import com.swp.whmsystem.dal.OrderDAO;
+import com.swp.whmsystem.dal.OrderItemDAO;
+import com.swp.whmsystem.dal.ProductDAO;
+import com.swp.whmsystem.dal.ProductItemDAO;
 import com.swp.whmsystem.dto.ExportDetailItemDTO;
+import com.swp.whmsystem.model.Customer;
 import com.swp.whmsystem.model.Order;
 import com.swp.whmsystem.model.OrderItem;
-
+import com.swp.whmsystem.model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -18,7 +23,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -100,8 +105,8 @@ public class OrderDetail extends HttpServlet {
                 return;
             } else {
 
-                ExportDAO exportDAO = new ExportDAO();
-                List<ExportDetailItemDTO> detailList = exportDAO.getExportedItemsByOrderId(orderId);
+                ExportItemDAO exportItemDAO = new ExportItemDAO();
+                List<ExportDetailItemDTO> detailList = exportItemDAO.getExportedItemsByOrderId(orderId);
                 request.setAttribute("itemList", detailList);
                 request.getRequestDispatcher("WEB-INF/view/sale/viewOrder.jsp").forward(request, response);
                 return;

@@ -58,69 +58,72 @@
 
             <div class="card">
                 <div class="card-body">
-                    <div class="card mb-0" id="filter_inputs" style="display: block !important;">
-                        <div class="card-body pb-0">
-                            <div class="row">
-                                <div class="col-lg-12 col-sm-12">
-                                    <div class="row">
+                    <form action="toExportList" method="get">
+                        <div class="card mb-0" id="filter_inputs" style="display: block !important;">
+                            <div class="card-body pb-0">
+                                <div class="row">
+                                    <div class="col-lg-12 col-sm-12">
+                                        <div class="row">
 
-                                        <div class="col-lg col-sm-6 col-12">
-                                            <div class="form-group">
-                                                <input type="text" name="keyword" value="${param.keyword}"
-                                                       placeholder="Search...">
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <input type="text" name="keyword" value="${param.keyword}"
+                                                           placeholder="Search order ID or customer...">
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="col-lg col-sm-6 col-12">
-                                            <div class="form-group">
-                                                <select class="select" name="isActive">
-                                                    <option value="">Choose Status</option>
-                                                    <option value="1" ${param.isActive == '1' ? 'selected' : ''}>
-                                                        Active
-                                                    </option>
-                                                    <option value="0" ${param.isActive == '0' ? 'selected' : ''}>
-                                                        Inactive
-                                                    </option>
-                                                </select>
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <div class="input-groupicon">
+                                                        <input type="text" name="date" value="${param.date}"
+                                                               placeholder="DD-MM-YYYY" class="datetimepicker">
+                                                        <div class="addonset">
+                                                            <img src="assets/img/icons/calendars.svg" alt="calendar">
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="col-lg col-sm-6 col-12">
-                                            <div class="form-group">
-                                                <select class="select" name="sortBy">
-                                                    <option value="">Sort By</option>
-                                                    <option value="nameAZ" ${param.sortBy == 'nameAZ' ? 'selected' : ''}>
-                                                        Name A-Z
-                                                    </option>
-                                                    <option value="nameZA" ${param.sortBy == 'nameZA' ? 'selected' : ''}>
-                                                        Name Z-A
-                                                    </option>
-                                                    <option value="active" ${param.sortBy == 'active' ? 'selected' : ''}>
-                                                        Active first
-                                                    </option>
-                                                    <option value="inactive" ${param.sortBy == 'inactive' ? 'selected' : ''}>
-                                                        Inactive first
-                                                    </option>
-                                                </select>
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <select class="select" name="status">
+                                                        <option value="">Choose Status</option>
+                                                        <option value="NEW" ${param.status == 'NEW' ? 'selected' : ''}>New</option>
+                                                        <option value="DOING" ${param.status == 'DOING' ? 'selected' : ''}>Doing</option>
+                                                        <option value="COMPLETED" ${param.status == 'COMPLETED' ? 'selected' : ''}>Completed</option>
+                                                        <option value="CANCELLED" ${param.status == 'CANCELLED' ? 'selected' : ''}>Cancelled</option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="col-lg-1 col-sm-6 col-12">
-                                            <div class="form-group">
-                                                <button type="submit" class="btn btn-filters ms-auto"
-                                                        style="border: none; padding: 0;">
-                                                    <img src="assets/img/icons/search-whites.svg" alt="img">
-                                                </button>
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <select class="select" name="sortBy">
+                                                        <option value="">Sort By</option>
+                                                        <option value="dateNewest" ${param.sortBy == 'dateNewest' ? 'selected' : ''}>Date: Newest</option>
+                                                        <option value="dateOldest" ${param.sortBy == 'dateOldest' ? 'selected' : ''}>Date: Oldest</option>
+                                                        <option value="totalLow" ${param.sortBy == 'totalLow' ? 'selected' : ''}>Total: Low to high</option>
+                                                        <option value="totalHigh" ${param.sortBy == 'totalHigh' ? 'selected' : ''}>Total: High to low</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-1 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <button type="submit" class="btn btn-filters ms-auto"
+                                                            style="border: none; padding: 0;">
+                                                        <img src="assets/img/icons/search-whites.svg" alt="img">
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="table-responsive">
-                        <table class="table">
+                        <div class="table-responsive" id="to-export-table" tabindex="-1">
+                            <table class="table">
                             <thead>
                             <tr>
                                 <th>No</th>
@@ -135,7 +138,7 @@
                             <tbody>
                             <c:forEach items="${sessionScope.orderList}" var="o" varStatus="v">
                                 <tr>
-                                    <td>${v.index + 1}</td>
+                                <td>${(page - 1) * pageSize + v.index + 1}</td>
                                     <td>
                                         <fmt:formatDate value="${o.orderDate}" pattern="dd-MM-yyyy HH:mm:ss"/>
                                     </td>
@@ -171,8 +174,10 @@
                             </c:forEach>
 
                             </tbody>
-                        </table>
-                    </div>
+                            </table>
+                        </div>
+                        <jsp:include page="/WEB-INF/common/pagination.jsp"/>
+                    </form>
                 </div>
             </div>
 
@@ -201,5 +206,14 @@
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
 <script src="assets/js/script.js"></script>
+<c:if test="${focusTable}">
+    <script>
+        window.addEventListener("load", function () {
+            const table = document.getElementById("to-export-table");
+            table.scrollIntoView({behavior: "smooth", block: "start"});
+            table.focus({preventScroll: true});
+        });
+    </script>
+</c:if>
 </body>
 </html>

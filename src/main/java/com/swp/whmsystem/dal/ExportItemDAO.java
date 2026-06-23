@@ -18,7 +18,7 @@ public class ExportItemDAO {
                 "FROM order_items oi " +
                 "JOIN products p ON oi.productid = p.productid " +
                 "WHERE p.sku = ? AND oi.orderid = ? AND p.isactive = 1";
-        
+
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -76,7 +76,7 @@ public class ExportItemDAO {
                     "WHERE pi.serial = ? AND p.sku = ? AND oi.orderid = ?";
 
             String sqlMapItem = "INSERT INTO order_items_product_items (orderitemid, productitemid) VALUES (?, ?)";
-            String sqlUpdateProductItem = "UPDATE product_items SET status = 'SOLD', current_price = ? WHERE id = ?";
+            String sqlUpdateProductItem = "UPDATE product_items SET status = 'SOLD', export_price = ? WHERE id = ?";
             String sqlUpdateProductQty = "UPDATE products SET total_quantity = total_quantity - ?, updatedat = CURRENT_TIMESTAMP WHERE productid = ?";
             String sqlStockMovement = "INSERT INTO stock_movement (productid, quantity, reference_type, type) VALUES (?, ?, 'EXPORT', 'DECREASED')";
             List<Integer> exportedProductIds = new ArrayList<>();

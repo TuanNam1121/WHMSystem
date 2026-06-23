@@ -599,7 +599,7 @@ public class ProductDAO {
         }
 
         if (date != null && !date.trim().isEmpty()) {
-            sql.append(" and date_format(pi.imported_at, '%d/%m/%Y') = ?");
+            sql.append(" and date_format(pi.imported_at, '%d-%m-%Y') = ?");
             parameter.add(date.trim());
         }
 
@@ -673,7 +673,7 @@ public class ProductDAO {
             parameters.add("%" + serial.trim() + "%");
         }
         if (date != null && !date.trim().isEmpty()) {
-            sql.append(" and date_format(pi.imported_at, '%d/%m/%Y') = ?");
+            sql.append(" and date_format(pi.imported_at, '%d-%m-%Y') = ?");
             parameters.add(date.trim());
         }
         if (status != null && !status.trim().isEmpty()) {

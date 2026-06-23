@@ -197,7 +197,7 @@ CREATE TABLE `export_receipt_details`
     CONSTRAINT `fk_export_receipt_details_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`productid`),
     CONSTRAINT `fk_export_receipt_details_receipt` FOREIGN KEY (`export_receipt_id`) REFERENCES `export_receipts` (`id`),
     CONSTRAINT `chk_export_receipt_details_quantity` CHECK ((`quantity` > 0))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -229,7 +229,7 @@ CREATE TABLE `export_receipt_serials`
     KEY                        `export_receipt_detail_id` (`export_receipt_detail_id`),
     CONSTRAINT `fk_export_receipt_serials_detail` FOREIGN KEY (`export_receipt_detail_id`) REFERENCES `export_receipt_details` (`id`),
     CONSTRAINT `fk_export_receipt_serials_product_item` FOREIGN KEY (`product_item_id`) REFERENCES `product_items` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -270,7 +270,7 @@ CREATE TABLE `export_receipts`
     CONSTRAINT `fk_export_receipts_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`userid`),
     CONSTRAINT `fk_export_receipts_exported_by` FOREIGN KEY (`exported_by`) REFERENCES `users` (`userid`),
     CONSTRAINT `fk_export_receipts_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -306,7 +306,7 @@ CREATE TABLE `good_receipts`
     KEY                 `processedby` (`processedby`),
     CONSTRAINT `good_receipts_ibfk_1` FOREIGN KEY (`purchaserequestid`) REFERENCES `purchase_requests` (`id`),
     CONSTRAINT `good_receipts_ibfk_2` FOREIGN KEY (`processedby`) REFERENCES `users` (`userid`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -316,12 +316,6 @@ CREATE TABLE `good_receipts`
 LOCK
 TABLES `good_receipts` WRITE;
 /*!40000 ALTER TABLE `good_receipts` DISABLE KEYS */;
-INSERT INTO `good_receipts`
-VALUES (1, 1, 15, 'COMPLETED', '2026-06-22 16:56:50', '2026-06-22 16:56:50', NULL, '0262206'),
-       (3, 3, 15, 'COMPLETED', '2026-06-22 17:07:43', '2026-06-22 17:07:43', NULL, '0234234'),
-       (4, 3, 15, 'COMPLETED', '2026-06-22 20:50:00', '2026-06-22 20:50:00', NULL, '0234343'),
-       (5, 5, 14, 'COMPLETED', '2026-06-22 22:24:09', '2026-06-22 22:24:09', NULL, 'AC123'),
-       (6, 2, 14, 'COMPLETED', '2026-06-22 22:25:41', '2026-06-22 22:25:41', NULL, '');
 /*!40000 ALTER TABLE `good_receipts` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -345,7 +339,7 @@ CREATE TABLE `good_receipts_items`
     KEY               `product_id` (`product_id`),
     CONSTRAINT `good_receipts_items_ibfk_1` FOREIGN KEY (`goodreceiptid`) REFERENCES `good_receipts` (`id`),
     CONSTRAINT `good_receipts_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`productid`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -355,16 +349,6 @@ CREATE TABLE `good_receipts_items`
 LOCK
 TABLES `good_receipts_items` WRITE;
 /*!40000 ALTER TABLE `good_receipts_items` DISABLE KEYS */;
-INSERT INTO `good_receipts_items`
-VALUES (1, 1, 2, 5, '2026-06-22 16:56:50'),
-       (2, 1, 3, 5, '2026-06-22 16:56:50'),
-       (4, 3, 36, 10, '2026-06-22 17:07:43'),
-       (5, 3, 37, 2, '2026-06-22 17:07:44'),
-       (6, 4, 37, 1, '2026-06-22 20:50:00'),
-       (7, 5, 4, 5, '2026-06-22 22:24:09'),
-       (8, 5, 5, 5, '2026-06-22 22:24:09'),
-       (9, 6, 17, 5, '2026-06-22 22:25:41'),
-       (10, 6, 4, 5, '2026-06-22 22:25:41');
 /*!40000 ALTER TABLE `good_receipts_items` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -386,7 +370,7 @@ CREATE TABLE `inventory_audit`
     PRIMARY KEY (`id`),
     KEY         `createdby` (`createdby`),
     CONSTRAINT `inventory_audit_ibfk_1` FOREIGN KEY (`createdby`) REFERENCES `users` (`userid`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -396,9 +380,6 @@ CREATE TABLE `inventory_audit`
 LOCK
 TABLES `inventory_audit` WRITE;
 /*!40000 ALTER TABLE `inventory_audit` DISABLE KEYS */;
-INSERT INTO `inventory_audit`
-VALUES (1, 14, 'COMPLETED', '2026-06-22 22:13:11', '2026-06-22 22:13:57'),
-       (2, 14, 'COMPLETED', '2026-06-22 22:14:16', '2026-06-22 22:18:53');
 /*!40000 ALTER TABLE `inventory_audit` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -412,14 +393,16 @@ DROP TABLE IF EXISTS `inventory_audit_item_serials`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `inventory_audit_item_serials`
 (
-    `id`            int          NOT NULL AUTO_INCREMENT,
-    `audit_item_id` int          NOT NULL,
-    `serial`        varchar(100) NOT NULL,
-    `type`          enum('ADD','DELETE') NOT NULL,
+    `id`              int NOT NULL AUTO_INCREMENT,
+    `audit_item_id`   int NOT NULL,
+    `product_item_id` int NOT NULL,
+    `type`            enum('ADD','DELETE') NOT NULL,
     PRIMARY KEY (`id`),
-    KEY             `fk_audit_item_serials_item` (`audit_item_id`),
-    CONSTRAINT `fk_audit_item_serials_item` FOREIGN KEY (`audit_item_id`) REFERENCES `inventory_audit_items` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+    KEY               `fk_audit_item_serials_item` (`audit_item_id`),
+    KEY               `fk_audit_item_serials_product_item` (`product_item_id`),
+    CONSTRAINT `fk_audit_item_serials_item` FOREIGN KEY (`audit_item_id`) REFERENCES `inventory_audit_items` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_audit_item_serials_product_item` FOREIGN KEY (`product_item_id`) REFERENCES `product_items` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -429,9 +412,6 @@ CREATE TABLE `inventory_audit_item_serials`
 LOCK
 TABLES `inventory_audit_item_serials` WRITE;
 /*!40000 ALTER TABLE `inventory_audit_item_serials` DISABLE KEYS */;
-INSERT INTO `inventory_audit_item_serials`
-VALUES (1, 4, 'M3R8V6N2Q5', 'DELETE'),
-       (2, 5, 'X7K9M2Q4ZT', 'ADD');
 /*!40000 ALTER TABLE `inventory_audit_item_serials` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -457,7 +437,7 @@ CREATE TABLE `inventory_audit_items`
     KEY                `productid` (`productid`),
     CONSTRAINT `inventory_audit_items_ibfk_1` FOREIGN KEY (`auditid`) REFERENCES `inventory_audit` (`id`),
     CONSTRAINT `inventory_audit_items_ibfk_2` FOREIGN KEY (`productid`) REFERENCES `products` (`productid`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -467,12 +447,6 @@ CREATE TABLE `inventory_audit_items`
 LOCK
 TABLES `inventory_audit_items` WRITE;
 /*!40000 ALTER TABLE `inventory_audit_items` DISABLE KEYS */;
-INSERT INTO `inventory_audit_items`
-VALUES (1, 1, 36, 7, 7, NULL, ''),
-       (2, 2, 2, 4, 4, NULL, ''),
-       (3, 2, 3, 3, 3, NULL, ''),
-       (4, 2, 36, 7, 6, NULL, 'Nhà sản xuất thu hồi lại vì lỗi'),
-       (5, 2, 37, 3, 4, NULL, 'Thừa từ những đợt import trước khi có hệ thống');
 /*!40000 ALTER TABLE `inventory_audit_items` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -540,7 +514,7 @@ CREATE TABLE `order_items`
     KEY         `productid` (`productid`),
     CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`orderid`) REFERENCES `orders` (`id`),
     CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`productid`) REFERENCES `products` (`productid`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -550,18 +524,6 @@ CREATE TABLE `order_items`
 LOCK
 TABLES `order_items` WRITE;
 /*!40000 ALTER TABLE `order_items` DISABLE KEYS */;
-INSERT INTO `order_items`
-VALUES (5, 1, 3, 2, 32000000.00),
-       (6, 1, 36, 3, 25000000.00),
-       (7, 2, 2, 3, 27000000.00),
-       (8, 2, 3, 3, 20000001.00),
-       (9, 3, 2, 1, 19000000.00),
-       (10, 4, 2, 1, 19000000.00),
-       (11, 5, 4, 1, 2000000.00),
-       (12, 5, 37, 1, 19000000.00),
-       (13, 6, 2, 2, 15500000.00),
-       (14, 7, 2, 2, 15900000.00),
-       (15, 8, 37, 3, 15000000.00);
 /*!40000 ALTER TABLE `order_items` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -583,7 +545,7 @@ CREATE TABLE `order_items_product_items`
     KEY             `productitemid` (`productitemid`),
     CONSTRAINT `order_items_product_items_ibfk_1` FOREIGN KEY (`orderitemid`) REFERENCES `order_items` (`id`),
     CONSTRAINT `order_items_product_items_ibfk_2` FOREIGN KEY (`productitemid`) REFERENCES `product_items` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -593,27 +555,6 @@ CREATE TABLE `order_items_product_items`
 LOCK
 TABLES `order_items_product_items` WRITE;
 /*!40000 ALTER TABLE `order_items_product_items` DISABLE KEYS */;
-INSERT INTO `order_items_product_items`
-VALUES (4, 5, 6),
-       (5, 5, 7),
-       (1, 6, 12),
-       (2, 6, 13),
-       (3, 6, 14),
-       (12, 7, 1),
-       (13, 7, 2),
-       (14, 7, 3),
-       (15, 8, 8),
-       (16, 8, 9),
-       (11, 8, 10),
-       (17, 9, 1),
-       (18, 10, 1),
-       (22, 11, 27),
-       (21, 12, 24),
-       (23, 13, 3),
-       (24, 13, 4),
-       (28, 15, 22),
-       (27, 15, 23),
-       (26, 15, 25);
 /*!40000 ALTER TABLE `order_items_product_items` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -645,7 +586,7 @@ CREATE TABLE `orders`
     CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`createdby`) REFERENCES `users` (`userid`),
     CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`processedby`) REFERENCES `users` (`userid`),
     CONSTRAINT `orders_ibfk_3` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -655,23 +596,6 @@ CREATE TABLE `orders`
 LOCK
 TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
-INSERT INTO `orders`
-VALUES (1, 'COMPLETED', 139000000.00, 'customer will take this order at 8AM tomorrow', '2026-06-22 21:34:10',
-        '2026-06-22 21:34:10', '2026-06-22 21:57:24', NULL, 16, NULL, 1),
-       (2, 'CANCELLED', 141000003.00, '', '2026-06-22 21:58:35', '2026-06-22 21:58:35', '2026-06-22 22:08:45', NULL, 16,
-        NULL, 2),
-       (3, 'CANCELLED', 19000000.00, '', '2026-06-22 22:09:59', '2026-06-22 22:09:59', '2026-06-22 22:10:34', NULL, 16,
-        NULL, 2),
-       (4, 'COMPLETED', 19000000.00, '', '2026-06-22 22:10:57', '2026-06-22 22:10:57', '2026-06-22 22:11:35', NULL, 16,
-        NULL, 2),
-       (5, 'COMPLETED', 21000000.00, '', '2026-06-23 10:37:17', '2026-06-23 10:37:17', '2026-06-23 10:41:32', NULL, 17,
-        NULL, 6),
-       (6, 'COMPLETED', 31000000.00, '', '2026-06-23 10:43:44', '2026-06-23 10:43:44', '2026-06-23 10:45:20', NULL, 17,
-        NULL, 6),
-       (7, 'NEW', 31800000.00, '', '2026-06-23 10:46:46', '2026-06-23 10:46:46', '2026-06-23 10:46:46', NULL, 17, NULL,
-        6),
-       (8, 'COMPLETED', 45000000.00, '', '2026-06-23 14:44:27', '2026-06-23 14:44:27', '2026-06-23 11:07:49', NULL, 17,
-        NULL, 6);
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -693,7 +617,7 @@ CREATE TABLE `password_resets`
     PRIMARY KEY (`requestid`),
     KEY           `userid` (`userid`),
     CONSTRAINT `password_resets_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -703,16 +627,6 @@ CREATE TABLE `password_resets`
 LOCK
 TABLES `password_resets` WRITE;
 /*!40000 ALTER TABLE `password_resets` DISABLE KEYS */;
-INSERT INTO `password_resets`
-VALUES (1, 2, 'COMPLETED', '2026-05-16 22:29:21', NULL),
-       (2, 4, 'COMPLETED', '2026-05-14 22:29:21', '2026-05-16 22:29:21'),
-       (3, 5, 'COMPLETED', '2026-05-17 21:56:57', '2026-05-17 21:57:18'),
-       (4, 5, 'COMPLETED', '2026-05-18 19:19:15', '2026-05-18 19:19:53'),
-       (5, 5, 'COMPLETED', '2026-05-18 22:07:08', '2026-05-18 22:08:02'),
-       (6, 5, 'COMPLETED', '2026-05-21 09:56:32', '2026-05-21 09:57:27'),
-       (7, 5, 'COMPLETED', '2026-05-22 12:52:55', '2026-05-22 12:53:45'),
-       (8, 5, 'COMPLETED', '2026-05-29 14:19:56', '2026-05-29 14:20:57'),
-       (9, 5, 'NEW', '2026-06-02 11:21:16', NULL);
 /*!40000 ALTER TABLE `password_resets` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -787,7 +701,7 @@ CREATE TABLE `product_items`
     KEY                  `goodreceiptsitemid` (`goodreceiptsitemid`),
     CONSTRAINT `product_items_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`productid`),
     CONSTRAINT `product_items_ibfk_2` FOREIGN KEY (`goodreceiptsitemid`) REFERENCES `good_receipts_items` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -797,51 +711,6 @@ CREATE TABLE `product_items`
 LOCK
 TABLES `product_items` WRITE;
 /*!40000 ALTER TABLE `product_items` DISABLE KEYS */;
-INSERT INTO `product_items`
-VALUES (1, '7K9B2X4W1P', 15000000.00, NULL, 1, '2026-06-22 16:56:50', 2, 1, 'SOLD'),
-       (2, 'M3R8V6N2Q5', 15000000.00, NULL, 1, '2026-06-22 16:56:50', 2, 1, 'UNAVAILABLE'),
-       (3, 'Z5X1C9V7B3', 15000000.00, 15500000.00, 1, '2026-06-22 16:56:50', 2, 1, 'SOLD'),
-       (4, 'P9L2K8M4J6', 15000000.00, 15500000.00, 1, '2026-06-22 16:56:50', 2, 1, 'SOLD'),
-       (5, 'F3D7S1A9H2', 15000000.00, NULL, 1, '2026-06-22 16:56:50', 2, 1, 'AVAILABLE'),
-       (6, '9X3V7B2N', 12000000.00, NULL, 1, '2026-06-22 16:56:50', 3, 2, 'SOLD'),
-       (7, 'M4C8Z1P6', 12000000.00, NULL, 1, '2026-06-22 16:56:50', 3, 2, 'SOLD'),
-       (8, 'L2K7J3H9', 12000000.00, NULL, 1, '2026-06-22 16:56:50', 3, 2, 'AVAILABLE'),
-       (9, 'G5F1D8S4', 12000000.00, NULL, 1, '2026-06-22 16:56:50', 3, 2, 'AVAILABLE'),
-       (10, 'A9Q3W7E1', 12000000.00, NULL, 1, '2026-06-22 16:56:50', 3, 2, 'AVAILABLE'),
-       (12, 'K9B7X2W4M1', 15000000.00, NULL, 1, '2026-06-22 17:07:43', 36, 4, 'SOLD'),
-       (13, '3Z6P9R1V5Q', 15000000.00, NULL, 1, '2026-06-22 17:07:43', 36, 4, 'SOLD'),
-       (14, 'H8N2Y7L4F3', 15000000.00, NULL, 1, '2026-06-22 17:07:43', 36, 4, 'SOLD'),
-       (15, 'V5D1K8M9P2', 15000000.00, NULL, 1, '2026-06-22 17:07:43', 36, 4, 'AVAILABLE'),
-       (16, '7X3W6B2R1T', 15000000.00, NULL, 1, '2026-06-22 17:07:43', 36, 4, 'AVAILABLE'),
-       (17, 'L4F9N3S7Q8', 15000000.00, NULL, 1, '2026-06-22 17:07:44', 36, 4, 'AVAILABLE'),
-       (18, '2M5P1V8K9Z', 15000000.00, NULL, 1, '2026-06-22 17:07:44', 36, 4, 'AVAILABLE'),
-       (19, 'G7Y3H6L2F4', 15000000.00, NULL, 1, '2026-06-22 17:07:44', 36, 4, 'AVAILABLE'),
-       (20, '9R1T5W8B2X', 15000000.00, NULL, 1, '2026-06-22 17:07:44', 36, 4, 'AVAILABLE'),
-       (21, 'S4Q8N3M7P1', 15000000.00, NULL, 1, '2026-06-22 17:07:44', 36, 4, 'AVAILABLE'),
-       (22, '6V2K9Z5D1R', 16000000.00, 15000000.00, 1, '2026-06-22 17:07:44', 37, 5, 'SOLD'),
-       (23, 'F3L7H4Y2G8', 16000000.00, 15000000.00, 1, '2026-06-22 17:07:44', 37, 5, 'SOLD'),
-       (24, '8F3K-9P2D-W7X4-L1M9', 16000000.00, 19000000.00, 1, '2026-06-22 20:50:00', 37, 6, 'SOLD'),
-       (25, 'X7K9M2Q4ZT', 0.00, 15000000.00, 1, '2026-06-22 22:18:53', 37, NULL, 'SOLD'),
-       (26, 'A7K9M2Q4ZT', 500000.00, NULL, 1, '2026-06-22 22:24:09', 4, 7, 'AVAILABLE'),
-       (27, 'X3P8N5R7YW', 500000.00, 2000000.00, 1, '2026-06-22 22:24:09', 4, 7, 'SOLD'),
-       (28, 'M8Z2C7L5RP', 500000.00, NULL, 1, '2026-06-22 22:24:09', 4, 7, 'AVAILABLE'),
-       (29, 'B6T1V9K4QX', 500000.00, NULL, 1, '2026-06-22 22:24:09', 4, 7, 'AVAILABLE'),
-       (30, 'Q4W9N1T8KY', 500000.00, NULL, 1, '2026-06-22 22:24:09', 4, 7, 'UNAVAILABLE'),
-       (31, 'J5R9W2T4KP', 500000.00, NULL, 1, '2026-06-22 22:24:09', 5, 8, 'AVAILABLE'),
-       (32, 'H8V3N1Q6MY', 500000.00, NULL, 1, '2026-06-22 22:24:09', 5, 8, 'AVAILABLE'),
-       (33, 'G2T7P9K5XZ', 500000.00, NULL, 1, '2026-06-22 22:24:09', 5, 8, 'AVAILABLE'),
-       (34, 'F4Q1Y8M3RV', 500000.00, NULL, 1, '2026-06-22 22:24:09', 5, 8, 'AVAILABLE'),
-       (35, 'E9K5X2T7WN', 500000.00, NULL, 1, '2026-06-22 22:24:09', 5, 8, 'AVAILABLE'),
-       (36, 'P4X7N3W1RV', 200000.00, NULL, 1, '2026-06-22 22:25:41', 17, 9, 'AVAILABLE'),
-       (37, 'C6K9T2Y8QM', 200000.00, NULL, 1, '2026-06-22 22:25:41', 17, 9, 'AVAILABLE'),
-       (38, 'Z1V5R7P4XN', 200000.00, NULL, 1, '2026-06-22 22:25:41', 17, 9, 'AVAILABLE'),
-       (39, 'W8Q3M9K2TY', 200000.00, NULL, 1, '2026-06-22 22:25:41', 17, 9, 'AVAILABLE'),
-       (40, 'L5T1X8R6PV', 200000.00, NULL, 1, '2026-06-22 22:25:41', 17, 9, 'AVAILABLE'),
-       (41, 'H7N4Q2Y9KM', 500000.00, NULL, 1, '2026-06-22 22:25:41', 4, 10, 'AVAILABLE'),
-       (42, 'J3P8V5T1RX', 500000.00, NULL, 1, '2026-06-22 22:25:42', 4, 10, 'AVAILABLE'),
-       (43, 'D9K2W7M4QY', 500000.00, NULL, 1, '2026-06-22 22:25:42', 4, 10, 'AVAILABLE'),
-       (44, 'F1Z6T8N3PV', 500000.00, NULL, 1, '2026-06-22 22:25:42', 4, 10, 'AVAILABLE'),
-       (45, 'G4R9X2K7WM', 500000.00, NULL, 1, '2026-06-22 22:25:42', 4, 10, 'AVAILABLE');
 /*!40000 ALTER TABLE `product_items` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -987,6 +856,11 @@ VALUES (1, 'Laptop Dell 14 DC14250', 'Office ', 'assets/img/product/178033610814
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK
 TABLES;
+-- Clean stock quantity because product item/serial data is removed.
+UPDATE `products`
+SET `total_quantity` = 0
+WHERE `productid` > 0;
+
 
 --
 -- Table structure for table `purchase_request_items`
@@ -1008,7 +882,7 @@ CREATE TABLE `purchase_request_items`
     KEY                 `product_id` (`product_id`),
     CONSTRAINT `purchase_request_items_ibfk_1` FOREIGN KEY (`purchaserequestid`) REFERENCES `purchase_requests` (`id`),
     CONSTRAINT `purchase_request_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`productid`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1018,16 +892,6 @@ CREATE TABLE `purchase_request_items`
 LOCK
 TABLES `purchase_request_items` WRITE;
 /*!40000 ALTER TABLE `purchase_request_items` DISABLE KEYS */;
-INSERT INTO `purchase_request_items`
-VALUES (1, 1, 2, 5, 15000000.00, 0),
-       (2, 1, 3, 5, 12000000.00, 0),
-       (3, 2, 4, 5, 500000.00, 0),
-       (4, 2, 17, 5, 200000.00, 0),
-       (5, 3, 36, 10, 15000000.00, 0),
-       (6, 3, 37, 10, 16000000.00, 0),
-       (7, 4, 5, 10, 2500000.00, 0),
-       (8, 5, 4, 12, 500000.00, 0),
-       (9, 5, 5, 23, 500000.00, 0);
 /*!40000 ALTER TABLE `purchase_request_items` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -1057,7 +921,7 @@ CREATE TABLE `purchase_requests`
     CONSTRAINT `purchase_requests_ibfk_1` FOREIGN KEY (`createdby`) REFERENCES `users` (`userid`),
     CONSTRAINT `purchase_requests_ibfk_2` FOREIGN KEY (`approvedby`) REFERENCES `users` (`userid`),
     CONSTRAINT `purchase_requests_ibfk_3` FOREIGN KEY (`supplierid`) REFERENCES `suppliers` (`supplierid`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1067,12 +931,6 @@ CREATE TABLE `purchase_requests`
 LOCK
 TABLES `purchase_requests` WRITE;
 /*!40000 ALTER TABLE `purchase_requests` DISABLE KEYS */;
-INSERT INTO `purchase_requests`
-VALUES (1, 16, 14, 'COMPLETED', 'Đơn hàng mới cần mua', '2026-06-22 16:48:24', '2026-06-22 16:56:51', 0, 2),
-       (2, 16, 14, 'COMPLETED', 'Nhập 1 lô ram mới', '2026-06-22 16:49:31', '2026-06-22 22:25:42', 0, 2),
-       (3, 16, 14, 'PROCESSING', 'Nhập Lô Laptop Gaming', '2026-06-22 16:50:33', '2026-06-22 12:36:40', 0, 4),
-       (4, 16, NULL, 'REJECTED', 'Lô sản phẩm ROM giá rẻ', '2026-06-22 16:51:38', '2026-06-22 16:52:16', 0, 2),
-       (5, 16, 14, 'PROCESSING', 'mua đơn hàng RAM mới', '2026-06-22 22:22:11', '2026-06-22 22:24:09', 0, 2);
 /*!40000 ALTER TABLE `purchase_requests` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -1259,7 +1117,7 @@ CREATE TABLE `stock_movement`
     KEY              `productid` (`productid`),
     KEY              `idx_stock_movement_reference` (`reference_type`,`reference_id`),
     CONSTRAINT `stock_movement_ibfk_1` FOREIGN KEY (`productid`) REFERENCES `products` (`productid`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1269,33 +1127,6 @@ CREATE TABLE `stock_movement`
 LOCK
 TABLES `stock_movement` WRITE;
 /*!40000 ALTER TABLE `stock_movement` DISABLE KEYS */;
-INSERT INTO `stock_movement`
-VALUES (1, 2, 5, 'INCREASED', 'IMPORT', NULL, '2026-06-22 16:56:50'),
-       (2, 3, 5, 'INCREASED', 'IMPORT', NULL, '2026-06-22 16:56:51'),
-       (3, 36, 10, 'INCREASED', 'IMPORT', NULL, '2026-06-22 17:07:44'),
-       (4, 37, 2, 'INCREASED', 'IMPORT', NULL, '2026-06-22 17:07:44'),
-       (5, 37, 1, 'INCREASED', 'IMPORT', NULL, '2026-06-22 20:50:00'),
-       (6, 36, 1, 'DECREASED', 'EXPORT', NULL, '2026-06-22 21:56:30'),
-       (7, 36, 1, 'DECREASED', 'EXPORT', NULL, '2026-06-22 21:56:30'),
-       (8, 36, 1, 'DECREASED', 'EXPORT', NULL, '2026-06-22 21:56:30'),
-       (9, 3, 1, 'DECREASED', 'EXPORT', NULL, '2026-06-22 21:56:30'),
-       (10, 3, 1, 'DECREASED', 'EXPORT', NULL, '2026-06-22 21:56:30'),
-       (16, 3, 1, 'DECREASED', 'EXPORT', NULL, '2026-06-22 22:06:14'),
-       (17, 2, 1, 'DECREASED', 'EXPORT', NULL, '2026-06-22 22:06:14'),
-       (18, 2, 1, 'DECREASED', 'EXPORT', NULL, '2026-06-22 22:06:14'),
-       (19, 2, 1, 'DECREASED', 'EXPORT', NULL, '2026-06-22 22:06:14'),
-       (20, 3, 1, 'DECREASED', 'EXPORT', NULL, '2026-06-22 22:06:14'),
-       (21, 3, 1, 'DECREASED', 'EXPORT', NULL, '2026-06-22 22:06:14'),
-       (22, 2, 1, 'DECREASED', 'EXPORT', NULL, '2026-06-22 22:10:23'),
-       (23, 2, 1, 'DECREASED', 'EXPORT', NULL, '2026-06-22 22:11:27'),
-       (24, 4, 5, 'INCREASED', 'IMPORT', NULL, '2026-06-22 22:24:09'),
-       (25, 5, 5, 'INCREASED', 'IMPORT', NULL, '2026-06-22 22:24:09'),
-       (26, 17, 5, 'INCREASED', 'IMPORT', NULL, '2026-06-22 22:25:41'),
-       (27, 4, 5, 'INCREASED', 'IMPORT', NULL, '2026-06-22 22:25:42'),
-       (28, 37, 1, 'DECREASED', 'EXPORT', NULL, '2026-06-23 10:41:18'),
-       (29, 4, 1, 'DECREASED', 'EXPORT', NULL, '2026-06-23 10:41:18'),
-       (30, 2, 2, 'DECREASED', 'EXPORT', NULL, '2026-06-23 10:45:11'),
-       (31, 37, 3, 'DECREASED', 'EXPORT', NULL, '2026-06-23 14:58:54');
 /*!40000 ALTER TABLE `stock_movement` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -1454,5 +1285,3 @@ TABLES;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2026-06-23 19:44:34

@@ -1,10 +1,11 @@
 package com.swp.whmsystem.controller.export;
 
-import com.swp.whmsystem.dal.ExportItemDAO;
+import com.swp.whmsystem.dal.ExportDAO;
 import com.swp.whmsystem.dal.OrderDAO;
 import com.swp.whmsystem.dto.ExportItemDTO;
 import com.swp.whmsystem.dto.OrderItemDetailDTO;
 import com.swp.whmsystem.model.Order;
+import com.swp.whmsystem.model.User;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -25,10 +26,16 @@ public class SubmitExport extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
 
         String orderIdRaw = request.getParameter("orderId");
         String[] tempIds = request.getParameterValues("tempIds");
         String[] serialNumbers = request.getParameterValues("sn");
+
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
 
         if (orderIdRaw == null || orderIdRaw.trim().isEmpty()) {
             response.sendRedirect("toExportList");
@@ -72,9 +79,9 @@ public class SubmitExport extends HttpServlet {
                 return;
             }
 
-            ExportItemDAO exportItemDAO = new ExportItemDAO();
+            ExportDAO exportDAO = new ExportDAO();
             // 2. GỌI DAO VÀ HỨNG KẾT QUẢ TRẢ VỀ LÀ DẠNG STRING
-            String result = exportItemDAO.processExportTransaction(orderId, scannedList);
+            String result = exportDAO.processExportTransaction(orderId, user.getId(), scannedList);
 
             if ("SUCCESS".equals(result)) {
                 session.removeAttribute("scannedList");
@@ -82,7 +89,7 @@ public class SubmitExport extends HttpServlet {
                 // session.removeAttribute("order");
 
                 session.setAttribute("successMessage", "Export successful!");
-                response.sendRedirect("exportProduct?orderId=" + orderId);
+                response.sendRedirect("exportDetail?orderId=" + orderId);
             } else {
                 // NẾU CÓ LỖI (S/N KHÔNG AVAILABLE), NÉM CHÍNH XÁC LỖI ĐÓ LÊN MÀN HÌNH
                 session.setAttribute("error", result);

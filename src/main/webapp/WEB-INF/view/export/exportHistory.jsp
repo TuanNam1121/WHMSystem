@@ -88,7 +88,7 @@
                                                 <div class="form-group">
                                                     <select class="select" name="status">
                                                         <option value="">Choose Status</option>
-                                                        <option value="DOING" ${param.status == 'DOING' ? 'selected' : ''}>Doing</option>
+                                                        <option value="DRAFT" ${param.status == 'DRAFT' ? 'selected' : ''}>Draft</option>
                                                         <option value="COMPLETED" ${param.status == 'COMPLETED' ? 'selected' : ''}>Completed</option>
                                                         <option value="CANCELLED" ${param.status == 'CANCELLED' ? 'selected' : ''}>Cancelled</option>
                                                     </select>

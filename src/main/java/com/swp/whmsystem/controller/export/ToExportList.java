@@ -32,8 +32,7 @@ public class ToExportList extends HttpServlet {
         int page = 1;
 
         if (status != null && !status.trim().isEmpty()) {
-            if (!status.equals("NEW") && !status.equals("DOING")
-                    && !status.equals("COMPLETED") && !status.equals("CANCELLED")) {
+            if (!status.equals("NEW")) {
                 status = null;
             }
         }

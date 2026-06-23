@@ -40,6 +40,12 @@ public class ExportProduct extends HttpServlet {
                 return;
             }
 
+            ExportDAO exportDAO = new ExportDAO();
+            if (exportDAO.getExportReceiptStatusByOrderId(orderId) != null) {
+                response.sendRedirect("exportDetail?orderId=" + orderId);
+                return;
+            }
+
             Order sessionOrder = (Order) session.getAttribute("order");
             if (sessionOrder == null || sessionOrder.getId() != orderId) {
                 session.removeAttribute("scannedList");
@@ -73,7 +79,7 @@ public class ExportProduct extends HttpServlet {
      * protected void doPost(HttpServletRequest request, HttpServletResponse response)
      *         throws ServletException, IOException {
      *     HttpSession session = request.getSession();
-     *     ExportItemDAO exportItemDAO = new ExportItemDAO();
+     *     ExportDAO exportItemDAO = new ExportDAO();
      *     int orderId;
      *     String sku = request.getParameter("sku");
      *     String orderIdRaw = request.getParameter("orderId");
@@ -151,7 +157,7 @@ public class ExportProduct extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        ExportItemDAO exportItemDAO = new ExportItemDAO();
+        ExportDAO exportDAO = new ExportDAO();
         String sku = request.getParameter("sku");
         String orderIdRaw = request.getParameter("orderId");
 
@@ -165,6 +171,12 @@ public class ExportProduct extends HttpServlet {
             orderId = Integer.parseInt(orderIdRaw.trim());
         } catch (NumberFormatException e) {
             sendAjaxResponse(response, false, "Invalid order ID.", null, 0);
+            return;
+        }
+
+        if (exportDAO.getExportReceiptStatusByOrderId(orderId) != null) {
+            sendAjaxResponse(response, false,
+                    "This order has already been exported.", null, 0);
             return;
         }
 
@@ -184,7 +196,7 @@ public class ExportProduct extends HttpServlet {
             if (sku != null && !sku.trim().isEmpty()) {
                 sku = sku.trim();
                 ExportItemDTO productFromDB =
-                        exportItemDAO.getItemBySKU(sku, orderId);
+                        exportDAO.getItemBySKU(sku, orderId);
 
                 if (productFromDB == null) {
                     errorMessage = "The product with SKU " + sku

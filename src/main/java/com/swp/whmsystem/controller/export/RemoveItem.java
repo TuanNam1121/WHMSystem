@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/removeItem")
@@ -21,19 +22,16 @@ public class RemoveItem extends HttpServlet {
         HttpSession session = request.getSession();
         String tempId = request.getParameter("tempId");
 
-        List<ExportItemDTO> scannedList = (List<ExportItemDTO>) session.getAttribute("scannedList");
-        if (scannedList != null && tempId != null && !tempId.trim().isEmpty()) {
-            ExportItemDTO itemToRemove = null;
-            for (ExportItemDTO item : scannedList) {
-                if (tempId.equals(item.getTempId())) {
-                    itemToRemove = item;
-                    break;
-                }
+        synchronized (session) {
+            List<ExportItemDTO> scannedList =
+                    (List<ExportItemDTO>) session.getAttribute("scannedList");
+
+            if (scannedList != null && tempId != null && !tempId.trim().isEmpty()) {
+                List<ExportItemDTO> updatedList = new ArrayList<>(scannedList);
+                updatedList.removeIf(item -> tempId.equals(item.getTempId()));
+                session.setAttribute("scannedList", updatedList);
+                session.removeAttribute("error");
             }
-            if (itemToRemove != null) {
-                scannedList.remove(itemToRemove);
-            }
-            session.setAttribute("scannedList", scannedList);
         }
         response.sendRedirect("exportProduct");
     }

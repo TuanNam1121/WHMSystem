@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.swp.whmsystem.dal;
 
 import com.swp.whmsystem.model.StockMovement;
@@ -12,10 +8,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Admin
- */
 public class StockMovementDAO {
     public List<StockMovement> getAllStockMovement() {
         String sql = "SELECT * FROM stock_movement ORDER BY id DESC";
@@ -32,7 +24,7 @@ public class StockMovementDAO {
             throw new RuntimeException(e);
         }
     }
- 
+
     public StockMovement getStockMovementById(int id) {
         String sql = "SELECT * FROM stock_movement WHERE id = ?";
         try (Connection connection = DBContext.getConnection()) {
@@ -48,7 +40,7 @@ public class StockMovementDAO {
         }
         return null;
     }
- 
+
     public List<StockMovement> getStockMovementByProductId(int productId) {
         String sql = "SELECT * FROM stock_movement WHERE productid = ? ORDER BY id DESC";
         List<StockMovement> list = new ArrayList<>();
@@ -65,7 +57,7 @@ public class StockMovementDAO {
             throw new RuntimeException(e);
         }
     }
- 
+
     public boolean insertStockMovement(StockMovement stockMovement) {
         String sql = "INSERT INTO stock_movement (productid, quantity, type, reference_type) VALUES (?, ?, ?, ?)";
         try (Connection connection = DBContext.getConnection()) {
@@ -79,7 +71,7 @@ public class StockMovementDAO {
             throw new RuntimeException(e);
         }
     }
- 
+
     public boolean updateStockMovement(StockMovement stockMovement) {
         String sql = "UPDATE stock_movement SET productid = ?, quantity = ?, type = ?, reference_type = ? WHERE id = ?";
         try (Connection connection = DBContext.getConnection()) {
@@ -94,7 +86,7 @@ public class StockMovementDAO {
             throw new RuntimeException(e);
         }
     }
- 
+
     public boolean deleteStockMovement(int id) {
         String sql = "DELETE FROM stock_movement WHERE id = ?";
         try (Connection connection = DBContext.getConnection()) {
@@ -105,7 +97,7 @@ public class StockMovementDAO {
             throw new RuntimeException(e);
         }
     }
- 
+
     private StockMovement mapResultSetToStockMovement(ResultSet rs) throws SQLException {
         StockMovement s = new StockMovement();
         s.setId(rs.getInt("id"));

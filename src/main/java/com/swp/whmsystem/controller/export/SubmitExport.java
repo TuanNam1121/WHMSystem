@@ -5,6 +5,7 @@ import com.swp.whmsystem.dal.OrderDAO;
 import com.swp.whmsystem.dto.ExportItemDTO;
 import com.swp.whmsystem.dto.OrderItemDetailDTO;
 import com.swp.whmsystem.model.Order;
+import com.swp.whmsystem.model.User;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -25,10 +26,18 @@ public class SubmitExport extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
 
         String orderIdRaw = request.getParameter("orderId");
         String[] tempIds = request.getParameterValues("tempIds");
         String[] serialNumbers = request.getParameterValues("sn");
+        String submitAction = request.getParameter("submitAction");
+        boolean saveDraft = "DRAFT".equalsIgnoreCase(submitAction);
+
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
 
         if (orderIdRaw == null || orderIdRaw.trim().isEmpty()) {
             response.sendRedirect("toExportList");
@@ -48,23 +57,30 @@ public class SubmitExport extends HttpServlet {
         OrderDAO orderDAO = new OrderDAO();
         Order currentOrder = orderDAO.getOrderById(orderId);
 
-        if (scannedList != null && currentOrder != null &&
-                tempIds != null && serialNumbers != null && tempIds.length == serialNumbers.length) {
+        if (scannedList != null && currentOrder != null) {
 
-            for (int i = 0; i < tempIds.length; i++) {
-                String idToFind = tempIds[i];
-                String snToSet = serialNumbers[i];
+            if (tempIds != null && serialNumbers != null && tempIds.length == serialNumbers.length) {
+                for (int i = 0; i < tempIds.length; i++) {
+                    String idToFind = tempIds[i];
+                    String snToSet = serialNumbers[i];
 
-                for (ExportItemDTO item : scannedList) {
-                    if (idToFind.equals(item.getTempId())) {
-                        item.setSerial(snToSet == null ? "" : snToSet.trim());
-                        break;
+                    for (ExportItemDTO item : scannedList) {
+                        if (idToFind.equals(item.getTempId())) {
+                            item.setSerial(snToSet == null ? "" : snToSet.trim());
+                            break;
+                        }
                     }
                 }
+            } else if (!scannedList.isEmpty()) {
+                session.setAttribute("error", "Invalid data submitted. Please check again!");
+                response.sendRedirect("exportProduct?orderId=" + orderId);
+                return;
             }
 
             List<OrderItemDetailDTO> orderItems = orderDAO.getOrderItemsByOrderId(orderId);
-            String validationError = validateExport(scannedList, orderItems);
+            String validationError = saveDraft
+                    ? validateDraft(scannedList, orderItems)
+                    : validateExport(scannedList, orderItems);
 
             if (validationError != null) {
                 session.setAttribute("error", validationError);
@@ -74,15 +90,24 @@ public class SubmitExport extends HttpServlet {
 
             ExportItemDAO exportItemDAO = new ExportItemDAO();
             // 2. GỌI DAO VÀ HỨNG KẾT QUẢ TRẢ VỀ LÀ DẠNG STRING
-            String result = exportItemDAO.processExportTransaction(orderId, scannedList);
+            String result = saveDraft
+                    ? exportItemDAO.saveDraftExportReceipt(orderId, user.getId(), scannedList)
+                    : exportItemDAO.processExportTransaction(orderId, user.getId(), scannedList);
 
             if ("SUCCESS".equals(result)) {
-                session.removeAttribute("scannedList");
+                if (!saveDraft) {
+                    session.removeAttribute("scannedList");
+                }
                 // (Tùy chọn) Xóa session order nếu muốn quay về danh sách trống
                 // session.removeAttribute("order");
 
-                session.setAttribute("successMessage", "Export successful!");
-                response.sendRedirect("exportProduct?orderId=" + orderId);
+                if (saveDraft) {
+                    session.setAttribute("successMessage", "Draft saved successfully!");
+                    response.sendRedirect("exportProduct?orderId=" + orderId);
+                } else {
+                    session.setAttribute("successMessage", "Export successful!");
+                    response.sendRedirect("exportDetail?orderId=" + orderId);
+                }
             } else {
                 // NẾU CÓ LỖI (S/N KHÔNG AVAILABLE), NÉM CHÍNH XÁC LỖI ĐÓ LÊN MÀN HÌNH
                 session.setAttribute("error", result);
@@ -153,6 +178,46 @@ public class SubmitExport extends HttpServlet {
             String serial = scannedItem.getSerial();
             if (serial == null || serial.trim().isEmpty()) {
                 return "Please enter all serial numbers.";
+            }
+
+            String normalizedSerial = serial.trim().toUpperCase();
+            if (usedSerials.contains(normalizedSerial)) {
+                return "Serial number " + serial + " was entered more than once.";
+            }
+            usedSerials.add(normalizedSerial);
+        }
+
+        return null;
+    }
+
+    private String validateDraft(List<ExportItemDTO> scannedList,
+                                 List<OrderItemDetailDTO> orderItems) {
+        if (scannedList == null || scannedList.isEmpty()) {
+            return "Please scan at least one product before saving draft.";
+        }
+
+        if (orderItems == null || orderItems.isEmpty()) {
+            return "This order does not contain any products.";
+        }
+
+        List<String> orderSkus = new ArrayList<>();
+
+        for (OrderItemDetailDTO orderItem : orderItems) {
+            if (!orderSkus.contains(orderItem.getSku())) {
+                orderSkus.add(orderItem.getSku());
+            }
+        }
+
+        List<String> usedSerials = new ArrayList<>();
+
+        for (ExportItemDTO scannedItem : scannedList) {
+            if (!orderSkus.contains(scannedItem.getSku())) {
+                return scannedItem.getName() + " is not included in this order.";
+            }
+
+            String serial = scannedItem.getSerial();
+            if (serial == null || serial.trim().isEmpty()) {
+                return "Please enter all serial numbers before saving draft.";
             }
 
             String normalizedSerial = serial.trim().toUpperCase();

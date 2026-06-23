@@ -1,15 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.swp.whmsystem.model;
 
 import java.sql.Timestamp;
 
-/**
- *
- * @author Admin
- */
 public class StockMovement {
     private int id;
     private int productId;
@@ -29,8 +21,6 @@ public class StockMovement {
         this.reference_type = reference_type;
         this.createdAt = createdAt;
     }
-    
-    
 
     public int getId() {
         return id;
@@ -79,6 +69,4 @@ public class StockMovement {
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
-    
-    
 }

@@ -32,8 +32,7 @@ public class ExportHistory extends HttpServlet {
         int page = 1;
 
         if (status != null && !status.trim().isEmpty()) {
-            if (!status.equals("DOING") && !status.equals("COMPLETED")
-                    && !status.equals("CANCELLED")) {
+            if (!status.equals("DRAFT") && !status.equals("COMPLETED")) {
                 status = null;
             }
         }

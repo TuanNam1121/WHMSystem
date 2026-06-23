@@ -139,6 +139,7 @@
 
                     <form action="submitExport" method="post" id="submitExportForm">
                         <input type="hidden" name="orderId" value="${sessionScope.order.id}">
+                        <input type="hidden" name="submitAction" id="submitActionInput" value="COMPLETE">
                         <div class="row">
                             <div class="table-responsive" id="scannedProductTable" tabindex="-1">
                                 <table class="table">
@@ -209,8 +210,17 @@
                                 </div>
                             </div>
                             <div class="col-lg-12">
-                                <button type="submit" class="btn btn-submit me-2" id="btnSubmitExport">Submit</button>
-                                <a href="cancelExport" class="btn btn-cancel">Cancel</a>
+                                <button type="submit"
+                                        class="btn btn-submit me-2" id="btnSubmitExport"
+                                        onclick="document.getElementById('submitActionInput').value='COMPLETE'">
+                                    Submit
+                                </button>
+                                <button type="submit"
+                                        class="btn btn-draft me-2"
+                                        onclick="document.getElementById('submitActionInput').value='DRAFT'">
+                                    Save Draft
+                                </button>
+                                <a href="cancelExport" class="btn btn-cancel">Back</a>
                             </div>
                         </div>
                     </form>

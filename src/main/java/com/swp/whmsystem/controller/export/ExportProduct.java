@@ -80,47 +80,57 @@ public class ExportProduct extends HttpServlet {
         String sku = request.getParameter("sku");
         Order order = (Order) session.getAttribute("order");
 
-        List<ExportItemDTO> scannedList = (List<ExportItemDTO>) session.getAttribute("scannedList");
-        if (scannedList == null) {
-            scannedList = new ArrayList<>();
-        }
-
-        if (order == null) {
-            session.setAttribute("error", "Cannot identify the order being exported.");
-        } else if (sku != null && !sku.trim().isEmpty()) {
-            sku = sku.trim();
-            ExportItemDTO productFromDB = exportItemDAO.getItemBySKU(sku, order.getId());
-
-            if (productFromDB != null) {
-                int currentScannedQty = 0;
-                for (ExportItemDTO item : scannedList) {
-                    if (item.getSku().equals(sku)) {
-                        currentScannedQty++;
-                    }
-                }
-
-                if (productFromDB.getStock() <= 0) {
-                    session.setAttribute("error", "Product [" + productFromDB.getName() + "] is currently out of stock!");
-
-                } else if (currentScannedQty >= productFromDB.getStock()) {
-                    session.setAttribute("error", "Exceeds stock limit! Only " + productFromDB.getStock() + " item(s) left for SKU [" + sku + "].");
-
-                } else {
-                    ExportItemDTO newItem = new ExportItemDTO();
-
-                    newItem.setSku(productFromDB.getSku());
-                    newItem.setName(productFromDB.getName());
-                    newItem.setImgUrl(productFromDB.getImgUrl());
-                    newItem.setStock(productFromDB.getStock());
-                    newItem.setPrice(productFromDB.getPrice());
-
-                    scannedList.add(0, newItem);
-                }
+        synchronized (session) {
+            List<ExportItemDTO> scannedList =
+                    (List<ExportItemDTO>) session.getAttribute("scannedList");
+            if (scannedList == null) {
+                scannedList = new ArrayList<>();
             } else {
-                session.setAttribute("error", "Cannot find SKU [" + sku + "] in this order.");
+                scannedList = new ArrayList<>(scannedList);
             }
+
+            if (order == null) {
+                session.setAttribute("error", "Cannot identify the order being exported.");
+            } else if (sku != null && !sku.trim().isEmpty()) {
+                sku = sku.trim();
+                ExportItemDTO productFromDB = exportItemDAO.getItemBySKU(sku, order.getId());
+
+                if (productFromDB != null) {
+                    int currentScannedQty = 0;
+                    for (ExportItemDTO item : scannedList) {
+                        if (item.getSku().equalsIgnoreCase(sku)) {
+                            currentScannedQty += item.getQty();
+                        }
+                    }
+
+                    if (productFromDB.getStock() <= 0) {
+                        session.setAttribute("error",
+                                productFromDB.getName() + " is currently out of stock.");
+
+                    } else if (currentScannedQty >= productFromDB.getStock()) {
+                        session.setAttribute("error",
+                                "Cannot add more " + productFromDB.getName()
+                                        + ". Available stock: " + productFromDB.getStock() + ".");
+
+                    } else {
+                        ExportItemDTO newItem = new ExportItemDTO();
+
+                        newItem.setSku(productFromDB.getSku());
+                        newItem.setName(productFromDB.getName());
+                        newItem.setImgUrl(productFromDB.getImgUrl());
+                        newItem.setStock(productFromDB.getStock());
+                        newItem.setPrice(productFromDB.getPrice());
+
+                        scannedList.add(0, newItem);
+                        session.removeAttribute("error");
+                    }
+                } else {
+                    session.setAttribute("error",
+                            "The product with SKU " + sku + " is not included in this order.");
+                }
+            }
+            session.setAttribute("scannedList", scannedList);
         }
-        session.setAttribute("scannedList", scannedList);
         response.sendRedirect("exportProduct");
     }
 

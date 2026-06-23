@@ -4,6 +4,7 @@
  */
 package com.swp.whmsystem.utils;
 
+import com.swp.whmsystem.dal.GoodReceiptDAO;
 import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.dal.ProductItemDAO;
 import com.swp.whmsystem.dto.ProductItemRowDTO;
@@ -36,6 +37,13 @@ public class ProductItemValidation {
             ProductItem existed = pi.existedSerial(i.getSerial());
             if(existed != null) return "Product " + p.getProductNameById(existed.getProductId()) + " Serial : " + existed.getSerial() + " is existed in System";
         }
+        return "true";
+    }
+    
+    public static String validateInvoiceNumber(String invoiceNumber){
+        if(invoiceNumber == null || invoiceNumber.isBlank()) return "Must be input Invoice Number of this good receipts";
+        GoodReceiptDAO gr = new GoodReceiptDAO();
+        if(gr.existInvoiceNumber(invoiceNumber)) return "Exist " + invoiceNumber + " in Good Receipts before";
         return "true";
     }
 }

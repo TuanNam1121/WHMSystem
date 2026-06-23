@@ -71,13 +71,13 @@ public class ProductDetails extends HttpServlet {
                 productId, serial, date, status, sortBy, pageSize, page
         );
 
-        ProductItemDAO piDao = new ProductItemDAO();
-        for(ProductItem i : productItemList){
-            if("SOLD".equals(i.getStatus())){
-                int exportPrice = piDao.getExportPriceWithSoldStatus(i.getId());
-                i.setExportPrice(exportPrice);
-            }
-        }
+//        ProductItemDAO piDao = new ProductItemDAO();
+//        for(ProductItem i : productItemList){
+//            if("SOLD".equals(i.getStatus())){
+//                int exportPrice = piDao.getExportPriceWithSoldStatus(i.getId());
+//                i.setExportPrice(exportPrice);
+//            }
+//        }
         
         Product product = productDAO.getProductFromId(productId);
 

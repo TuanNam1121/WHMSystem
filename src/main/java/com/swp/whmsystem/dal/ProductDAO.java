@@ -185,12 +185,14 @@ public class ProductDAO {
     }
 
     public int getProductQuantityById(int productid) {
-        String sql = "select total_quantity from products where productid = ?";
+        String sql = "select count(*) as available_quantity "
+                + "from product_items "
+                + "where product_id = ? and status = 'AVAILABLE'";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setInt(1, productid);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return rs.getInt("total_quantity");
+                return rs.getInt("available_quantity");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -425,7 +427,7 @@ public class ProductDAO {
         product.setDescription(rs.getString("description"));
         product.setImgUrl(rs.getString("img_url"));
         product.setSku(rs.getString("sku"));
-        product.setTotalQuantity(rs.getInt("total_quantity"));
+        product.setTotalQuantity(getProductQuantityById(product.getProductId()));
         product.setIsActive(rs.getBoolean("isactive"));
         product.setRam(ram.getRamById(rs.getInt("ramid")));
         product.setRom(rom.getRomById(rs.getInt("romid")));

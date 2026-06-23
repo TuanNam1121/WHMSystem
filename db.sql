@@ -255,7 +255,7 @@ CREATE TABLE `export_receipts`
     `id`          int         NOT NULL AUTO_INCREMENT,
     `code`        varchar(50) NOT NULL,
     `order_id`    int         NOT NULL,
-    `status`      enum('DRAFT','COMPLETED','CANCELLED') NOT NULL DEFAULT 'DRAFT',
+    `status`      enum('DRAFT','COMPLETED') NOT NULL DEFAULT 'DRAFT',
     `note`        text,
     `created_by`  int         NOT NULL,
     `exported_by` int      DEFAULT NULL,

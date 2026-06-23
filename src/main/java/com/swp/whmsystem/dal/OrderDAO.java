@@ -71,6 +71,119 @@ public class OrderDAO {
         return null;
     }
 
+    public List<Order> searchOrdersToExport(String keyword, String date, String status,
+                                            String sortBy, int pageSize, int page) {
+        List<Order> orderList = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+                "select o.* from orders o "
+                        + "join customers c on o.customer_id = c.id "
+                        + "where 1=1"
+        );
+        List<Object> parameter = new ArrayList<>();
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" and (c.name like ? or o.id like ?)");
+            parameter.add("%" + keyword.trim() + "%");
+            parameter.add("%" + keyword.trim() + "%");
+        }
+
+        if (date != null && !date.trim().isEmpty()) {
+            sql.append(" and date_format(o.orderdate, '%d-%m-%Y') = ?");
+            parameter.add(date.trim());
+        }
+
+        if (status != null && !status.trim().isEmpty()) {
+            sql.append(" and o.status = ?");
+            parameter.add(status);
+        }
+
+        if (sortBy != null && !sortBy.trim().isEmpty()) {
+            switch (sortBy) {
+                case "dateNewest":
+                    sql.append(" order by o.orderdate desc");
+                    break;
+                case "dateOldest":
+                    sql.append(" order by o.orderdate asc");
+                    break;
+                case "totalLow":
+                    sql.append(" order by o.total_price asc");
+                    break;
+                case "totalHigh":
+                    sql.append(" order by o.total_price desc");
+                    break;
+            }
+        } else {
+            sql.append(" order by o.id desc");
+        }
+
+        int offset = (page - 1) * pageSize;
+        sql.append(" limit ? offset ?");
+        parameter.add(pageSize);
+        parameter.add(offset);
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < parameter.size(); i++) {
+                ps.setObject(i + 1, parameter.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Order order = mapResultSetToOrder(rs);
+                    CustomerDAO customerDAO = new CustomerDAO();
+                    OrderItemDAO orderItemDAO = new OrderItemDAO();
+                    order.setCustomer(customerDAO.getCustomerNameById(order.getCustomerId()));
+                    order.setTotalQuantity(orderItemDAO.totalQuantityByOrderId(order.getId()));
+                    orderList.add(order);
+                }
+            }
+            return orderList;
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return orderList;
+    }
+
+    public int countOrdersToExport(String keyword, String date, String status) {
+        StringBuilder sql = new StringBuilder(
+                "select count(*) from orders o "
+                        + "join customers c on o.customer_id = c.id "
+                        + "where 1=1"
+        );
+        List<Object> parameters = new ArrayList<>();
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String searchValue = "%" + keyword.trim() + "%";
+            sql.append(" and (c.name like ? or o.id like ?)");
+            parameters.add(searchValue);
+            parameters.add(searchValue);
+        }
+
+        if (date != null && !date.trim().isEmpty()) {
+            sql.append(" and date_format(o.orderdate, '%d-%m-%Y') = ?");
+            parameters.add(date.trim());
+        }
+
+        if (status != null && !status.trim().isEmpty()) {
+            sql.append(" and o.status = ?");
+            parameters.add(status);
+        }
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < parameters.size(); i++) {
+                ps.setObject(i + 1, parameters.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return 0;
+    }
+
     public Order getOrderById(int id) {
         try {
             Connection conn = DBContext.getConnection();
@@ -189,6 +302,7 @@ public class OrderDAO {
             exception.printStackTrace();
         }
     }
+
     public void updateOrderNote(Order o) {
         try {
             Connection conn = DBContext.getConnection();
@@ -201,6 +315,7 @@ public class OrderDAO {
             exception.printStackTrace();
         }
     }
+
     public void updateOrderStatus(Order o) {
         try {
             Connection conn = DBContext.getConnection();
@@ -301,6 +416,119 @@ public class OrderDAO {
             System.err.println(ex.getMessage());
         }
         return null;
+    }
+
+    public List<Order> searchExportHistory(String keyword, String date, String status,
+                                           String sortBy, int pageSize, int page) {
+        List<Order> orderList = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+                "select o.* from orders o "
+                        + "join customers c on o.customer_id = c.id "
+                        + "where o.status <> 'NEW'"
+        );
+        List<Object> parameter = new ArrayList<>();
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" and (c.name like ? or o.id like ?)");
+            parameter.add("%" + keyword.trim() + "%");
+            parameter.add("%" + keyword.trim() + "%");
+        }
+
+        if (date != null && !date.trim().isEmpty()) {
+            sql.append(" and date(o.orderdate) = str_to_date(?, '%d-%m-%Y')");
+            parameter.add(date.trim());
+        }
+
+        if (status != null && !status.trim().isEmpty()) {
+            sql.append(" and o.status = ?");
+            parameter.add(status);
+        }
+
+        if (sortBy != null && !sortBy.trim().isEmpty()) {
+            switch (sortBy) {
+                case "dateNewest":
+                    sql.append(" order by o.orderdate desc");
+                    break;
+                case "dateOldest":
+                    sql.append(" order by o.orderdate asc");
+                    break;
+                case "totalLow":
+                    sql.append(" order by o.total_price asc");
+                    break;
+                case "totalHigh":
+                    sql.append(" order by o.total_price desc");
+                    break;
+            }
+        } else {
+            sql.append(" order by o.id desc");
+        }
+
+        int offset = (page - 1) * pageSize;
+        sql.append(" limit ? offset ?");
+        parameter.add(pageSize);
+        parameter.add(offset);
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < parameter.size(); i++) {
+                ps.setObject(i + 1, parameter.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Order order = mapResultSetToOrder(rs);
+                    CustomerDAO customerDAO = new CustomerDAO();
+                    OrderItemDAO orderItemDAO = new OrderItemDAO();
+                    order.setCustomer(customerDAO.getCustomerNameById(order.getCustomerId()));
+                    order.setTotalQuantity(orderItemDAO.totalQuantityByOrderId(order.getId()));
+                    orderList.add(order);
+                }
+            }
+            return orderList;
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return orderList;
+    }
+
+    public int countExportHistory(String keyword, String date, String status) {
+        StringBuilder sql = new StringBuilder(
+                "select count(*) from orders o "
+                        + "join customers c on o.customer_id = c.id "
+                        + "where o.status <> 'NEW'"
+        );
+        List<Object> parameters = new ArrayList<>();
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String searchValue = "%" + keyword.trim() + "%";
+            sql.append(" and (c.name like ? or o.id like ?)");
+            parameters.add(searchValue);
+            parameters.add(searchValue);
+        }
+
+        if (date != null && !date.trim().isEmpty()) {
+            sql.append(" and date(o.orderdate) = str_to_date(?, '%d-%m-%Y')");
+            parameters.add(date.trim());
+        }
+
+        if (status != null && !status.trim().isEmpty()) {
+            sql.append(" and o.status = ?");
+            parameters.add(status);
+        }
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < parameters.size(); i++) {
+                ps.setObject(i + 1, parameters.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return 0;
     }
 
 

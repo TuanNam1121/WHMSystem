@@ -1,6 +1,7 @@
 package com.swp.whmsystem.controller.export;
 
 import com.swp.whmsystem.dal.ExportItemDAO;
+import com.swp.whmsystem.dal.OrderDAO;
 import com.swp.whmsystem.dto.ExportItemDTO;
 import com.swp.whmsystem.model.Order;
 
@@ -26,12 +27,26 @@ public class SubmitExport extends HttpServlet {
         // 1. ÉP CỨNG STATUS LUÔN LÀ DOING
         String status = "DOING";
 
+        String orderIdRaw = request.getParameter("orderId");
         String[] tempIds = request.getParameterValues("tempIds");
         String[] serialNumbers = request.getParameterValues("sn");
 
+        if (orderIdRaw == null || orderIdRaw.trim().isEmpty()) {
+            response.sendRedirect("toExportList");
+            return;
+        }
+
+        int orderId;
+        try {
+            orderId = Integer.parseInt(orderIdRaw.trim());
+        } catch (NumberFormatException e) {
+            response.sendRedirect("toExportList");
+            return;
+        }
+
         @SuppressWarnings("unchecked")
         List<ExportItemDTO> scannedList = (List<ExportItemDTO>) session.getAttribute("scannedList");
-        Order currentOrder = (Order) session.getAttribute("order");
+        Order currentOrder = new OrderDAO().getOrderById(orderId);
 
         if (scannedList != null && currentOrder != null &&
                 tempIds != null && serialNumbers != null && tempIds.length == serialNumbers.length) {
@@ -50,7 +65,7 @@ public class SubmitExport extends HttpServlet {
 
             ExportItemDAO exportItemDAO = new ExportItemDAO();
             // 2. GỌI DAO VÀ HỨNG KẾT QUẢ TRẢ VỀ LÀ DẠNG STRING
-            String result = exportItemDAO.processExportTransaction(currentOrder.getId(), scannedList, status);
+            String result = exportItemDAO.processExportTransaction(orderId, scannedList, status);
 
             if ("SUCCESS".equals(result)) {
                 session.removeAttribute("scannedList");
@@ -58,16 +73,16 @@ public class SubmitExport extends HttpServlet {
                 // session.removeAttribute("order");
 
                 session.setAttribute("successMessage", "Export successful!");
-                response.sendRedirect("exportProduct");
+                response.sendRedirect("exportProduct?orderId=" + orderId);
             } else {
                 // NẾU CÓ LỖI (S/N KHÔNG AVAILABLE), NÉM CHÍNH XÁC LỖI ĐÓ LÊN MÀN HÌNH
                 session.setAttribute("error", result);
-                response.sendRedirect("exportProduct");
+                response.sendRedirect("exportProduct?orderId=" + orderId);
             }
 
         } else {
             session.setAttribute("error", "Invalid data submitted. Please check again!");
-            response.sendRedirect("exportProduct");
+            response.sendRedirect("exportProduct?orderId=" + orderId);
         }
     }
 }

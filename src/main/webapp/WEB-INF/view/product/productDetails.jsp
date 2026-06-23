@@ -28,6 +28,8 @@
 
     <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
 
+    <link rel="stylesheet" href="assets/css/bootstrap-datetimepicker.min.css">
+
     <link rel="stylesheet" href="assets/plugins/owlcarousel/owl.carousel.min.css">
 
     <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
@@ -140,8 +142,13 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <input type="text" name="date" value="${param.date}"
-                                                           placeholder="Date: dd/mm/yyyy">
+                                                    <div class="input-groupicon">
+                                                        <input type="text" name="date" value="${param.date}"
+                                                               placeholder="DD-MM-YYYY" class="datetimepicker">
+                                                        <div class="addonset">
+                                                            <img src="assets/img/icons/calendars.svg" alt="calendar">
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -273,6 +280,8 @@
 <script src="assets/js/dataTables.bootstrap4.min.js"></script>
 
 <script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/moment.min.js"></script>
+<script src="assets/js/bootstrap-datetimepicker.min.js"></script>
 <script src="assets/plugins/owlcarousel/owl.carousel.min.js"></script>
 <script src="assets/plugins/select2/js/select2.min.js"></script>
 <script src="assets/js/script.js"></script>

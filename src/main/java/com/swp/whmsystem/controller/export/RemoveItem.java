@@ -21,6 +21,7 @@ public class RemoveItem extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         String tempId = request.getParameter("tempId");
+        String orderId = request.getParameter("orderId");
 
         synchronized (session) {
             List<ExportItemDTO> scannedList =
@@ -33,6 +34,10 @@ public class RemoveItem extends HttpServlet {
                 session.removeAttribute("error");
             }
         }
-        response.sendRedirect("exportProduct");
+        if (orderId == null || orderId.trim().isEmpty()) {
+            response.sendRedirect("toExportList");
+        } else {
+            response.sendRedirect("exportProduct?orderId=" + orderId);
+        }
     }
 }

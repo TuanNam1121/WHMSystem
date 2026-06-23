@@ -123,6 +123,7 @@
                         <hr>
 
                         <form action="exportProduct" method="post" id="scanBarcodeForm">
+                            <input type="hidden" name="orderId" value="${sessionScope.order.id}">
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label>Scan/Search Product (SKU)</label>
@@ -141,6 +142,7 @@
                     </div>
 
                     <form action="submitExport" method="post" id="submitExportForm">
+                        <input type="hidden" name="orderId" value="${sessionScope.order.id}">
                         <div class="row">
                             <div class="table-responsive ">
                                 <table class="table">
@@ -174,7 +176,8 @@
                                             </td>
                                             <td>${s.stock}</td>
                                             <td>
-                                                <a href="removeItem?tempId=${s.tempId}" class="delete-set">
+                                                <a href="removeItem?tempId=${s.tempId}&orderId=${sessionScope.order.id}"
+                                                   class="delete-set">
                                                     <img src="assets/img/icons/delete.svg" alt="svg">
                                                 </a>
                                             </td>

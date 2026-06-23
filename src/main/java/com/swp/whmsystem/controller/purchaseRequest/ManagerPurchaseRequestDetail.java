@@ -61,15 +61,13 @@ public class ManagerPurchaseRequestDetail extends HttpServlet {
                 if (p != null) {
                     productMap.put(item.getProductId(), p);
                 }
-                request.setAttribute("purchaseRequest", pr);
-                request.setAttribute("salesman", salesman);
-                request.setAttribute("purchaseItems", items);
-                request.setAttribute("productMap", productMap);
             }
+            request.setAttribute("purchaseRequest", pr);
+            request.setAttribute("salesman", salesman);
+            request.setAttribute("purchaseItems", items);
+            request.setAttribute("productMap", productMap);
         } catch (Exception ex) {
             request.setAttribute("message", ex.getMessage());
-            request.getRequestDispatcher("WEB-INF/view/purchaseRequest/managerPurchaseRequestDetail.jsp").forward(request,
-                    response);
         }
 
         request.getRequestDispatcher("WEB-INF/view/purchaseRequest/managerPurchaseRequestDetail.jsp").forward(request,

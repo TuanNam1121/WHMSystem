@@ -32,6 +32,7 @@ public class CreatePurchaseRequest extends HttpServlet {
         }
         if (user.getRoleId() != 4) {
             response.sendRedirect("home");
+            return;
         }
 
         String productSearch = request.getParameter("productSearch");
@@ -57,6 +58,7 @@ public class CreatePurchaseRequest extends HttpServlet {
             throws ServletException, IOException {
         int salesmanId = Integer.parseInt(request.getParameter("salesmanId"));
         String note = request.getParameter("note");
+
         int supplierId = 0;
         try {
             supplierId = Integer.parseInt(request.getParameter("supplierId"));
@@ -66,7 +68,6 @@ public class CreatePurchaseRequest extends HttpServlet {
             return;
         }
 
-        // Validate items first
         int i = 0;
         while (true) {
             String productIdStr = request.getParameter("selectedId" + i);

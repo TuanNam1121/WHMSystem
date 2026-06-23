@@ -4,7 +4,8 @@ import com.swp.whmsystem.dto.ExportDetailItemDTO;
 import com.swp.whmsystem.dto.ExportItemDTO;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -67,16 +68,19 @@ public class ExportItemDAO {
             }
 
             // BƯỚC 2: CHUẨN BỊ SQL
-            String sqlGetIds = "SELECT pi.id AS productitemid, oi.id AS orderitemid, p.productid AS product_id, pi.status " +
+            String sqlGetIds = "SELECT pi.id AS productitemid, oi.id AS orderitemid, p.productid AS product_id, " +
+                    "pi.status, oi.price AS export_price " +
                     "FROM product_items pi " +
                     "JOIN products p ON pi.product_id = p.productid " +
                     "JOIN order_items oi ON oi.productid = p.productid " +
                     "WHERE pi.serial = ? AND p.sku = ? AND oi.orderid = ?";
 
             String sqlMapItem = "INSERT INTO order_items_product_items (orderitemid, productitemid) VALUES (?, ?)";
-            String sqlUpdateProductItem = "UPDATE product_items SET status = 'SOLD' WHERE id = ?";
-            String sqlUpdateProductQty = "UPDATE products SET total_quantity = total_quantity - 1, updatedat = CURRENT_TIMESTAMP WHERE productid = ?";
-            String sqlStockMovement = "INSERT INTO stock_movement (productid, quantity, reference_type, type) VALUES (?, 1, 'EXPORT', 'DECREASED')";
+            String sqlUpdateProductItem = "UPDATE product_items SET status = 'SOLD', current_price = ? WHERE id = ?";
+            String sqlUpdateProductQty = "UPDATE products SET total_quantity = total_quantity - ?, updatedat = CURRENT_TIMESTAMP WHERE productid = ?";
+            String sqlStockMovement = "INSERT INTO stock_movement (productid, quantity, reference_type, type) VALUES (?, ?, 'EXPORT', 'DECREASED')";
+            List<Integer> exportedProductIds = new ArrayList<>();
+            List<Integer> exportedQuantities = new ArrayList<>();
 
             try (PreparedStatement psGetIds = conn.prepareStatement(sqlGetIds);
                  PreparedStatement psMapItem = conn.prepareStatement(sqlMapItem);
@@ -93,6 +97,7 @@ public class ExportItemDAO {
                     int productItemId = 0;
                     int orderItemId = 0;
                     int productId = 0;
+                    double exportPrice = 0;
 
                     try (ResultSet rs = psGetIds.executeQuery()) {
                         if (rs.next()) {
@@ -100,29 +105,52 @@ public class ExportItemDAO {
 
                             // CHỐT CHẶN VALIDATE S/N: Kiểm tra xem hàng có đang AVAILABLE không
                             if (!"AVAILABLE".equalsIgnoreCase(itemStatus)) {
-                                throw new SQLException("S/N [" + item.getSerial() + "] is currently in " + itemStatus + " status and cannot be exported!");
+                                throw new SQLException(
+                                        "Serial number " + item.getSerial()
+                                                + " is currently " + itemStatus
+                                                + " and cannot be exported.");
                             }
 
                             productItemId = rs.getInt("productitemid");
                             orderItemId = rs.getInt("orderitemid");
                             productId = rs.getInt("product_id");
+                            exportPrice = rs.getDouble("export_price");
                         } else {
-                            throw new SQLException("S/N [" + item.getSerial() + "] does not exist or SKU mismatch!");
+                            throw new SQLException(
+                                    "Serial number " + item.getSerial()
+                                            + " does not exist or does not belong to the selected product.");
                         }
                     }
 
-                    // Map dữ liệu và cập nhật DB
+                    // Lưu product item vào order và cập nhật trạng thái
                     psMapItem.setInt(1, orderItemId);
                     psMapItem.setInt(2, productItemId);
                     psMapItem.executeUpdate();
 
-                    psUpdateProductItem.setInt(1, productItemId);
+                    psUpdateProductItem.setDouble(1, exportPrice);
+                    psUpdateProductItem.setInt(2, productItemId);
                     psUpdateProductItem.executeUpdate();
 
-                    psUpdateQty.setInt(1, productId);
+                    int productIndex = exportedProductIds.indexOf(productId);
+                    if (productIndex == -1) {
+                        exportedProductIds.add(productId);
+                        exportedQuantities.add(1);
+                    } else {
+                        int currentQuantity = exportedQuantities.get(productIndex);
+                        exportedQuantities.set(productIndex, currentQuantity + 1);
+                    }
+                }
+
+                for (int i = 0; i < exportedProductIds.size(); i++) {
+                    int productId = exportedProductIds.get(i);
+                    int exportedQuantity = exportedQuantities.get(i);
+
+                    psUpdateQty.setInt(1, exportedQuantity);
+                    psUpdateQty.setInt(2, productId);
                     psUpdateQty.executeUpdate();
 
                     psMovement.setInt(1, productId);
+                    psMovement.setInt(2, exportedQuantity);
                     psMovement.executeUpdate();
                 }
             }

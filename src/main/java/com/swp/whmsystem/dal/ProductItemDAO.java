@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -147,9 +148,48 @@ public class ProductItemDAO {
             throw new RuntimeException(e);
         }
     }
+    public int insertProductItemReturnId(ProductItem item) {
+        String sql = "INSERT INTO product_items (serial, product_id, imported_price, goodreceiptsitemid, status) VALUES (?, ?, ?, ?, ?)";
+        try (Connection connection = DBContext.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql,
+                        Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, item.getSerial());
+            preparedStatement.setInt(2, item.getProductId());
+            preparedStatement.setInt(3, item.getImportPrice());
+            preparedStatement.setObject(4, item.getGoodReceiptItemId() == 0 ? null : item.getGoodReceiptItemId());
+            preparedStatement.setString(5, item.getStatus() != null ? item.getStatus() : "AVAILABLE");
+
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return -1;
+    }
 
     public ProductItem existedSerial(String serial) {
         String sql = "SELECT * FROM wms.product_items where serial = ?";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, serial);
+            ResultSet rs = preparedStatement.executeQuery();
+            if(rs.next()){
+                return mapResultsetToProductItem(rs);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public ProductItem existedSerial(int productId, String serial) {
+        String sql = "SELECT * FROM wms.product_items where serial = ? and product_id = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, serial);

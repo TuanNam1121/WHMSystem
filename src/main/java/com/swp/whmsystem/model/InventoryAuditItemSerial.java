@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class InventoryAuditItemSerial {
     private int id;
     private int auditItemId;
-    private String serial;
+    private int productItemId;
     private String type;
+    private String serialNumber;
 }

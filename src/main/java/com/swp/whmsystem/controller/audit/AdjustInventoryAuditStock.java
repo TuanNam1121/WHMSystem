@@ -57,7 +57,8 @@ public class AdjustInventoryAuditStock extends HttpServlet {
             }
 
             if (audit.getStatus() != InventoryAuditStatus.SUBMITTED) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Only submitted audits can have their stock adjusted.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                        "Only submitted audits can have their stock adjusted.");
                 return;
             }
 
@@ -105,7 +106,8 @@ public class AdjustInventoryAuditStock extends HttpServlet {
             }
 
             if (audit.getStatus() != InventoryAuditStatus.SUBMITTED) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Only submitted audits can have their stock adjusted.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                        "Only submitted audits can have their stock adjusted.");
                 return;
             }
 
@@ -154,19 +156,39 @@ public class AdjustInventoryAuditStock extends HttpServlet {
                 }
 
                 for (String serial : validSerials) {
+                    int linkedProductItemId = 0;
+                    ProductItem pi = productItemDAO.existedSerial(serial);
+
                     if ("DELETE".equals(type)) {
-                        ProductItem pi = productItemDAO.existedSerial(serial);
                         if (pi == null || !"AVAILABLE".equals(pi.getStatus())) {
                             hasError = true;
                             errorMessage = "Serial " + serial + " for " + item.getProductName()
                                     + " does not exist or is not AVAILABLE.";
                             break;
                         }
+                        linkedProductItemId = pi.getId();
+                    } else if ("ADD".equals(type)) {
+                        if (pi != null) {
+                            if ("AVAILABLE".equals(pi.getStatus())) {
+                                hasError = true;
+                                errorMessage = "Serial " + serial + " for " + item.getProductName()
+                                        + " is already AVAILABLE in system.";
+                                break;
+                            }
+                            linkedProductItemId = pi.getId();
+                        } else {
+                            ProductItem newItem = new ProductItem();
+                            newItem.setProductId(item.getProductId());
+                            newItem.setSerial(serial);
+                            newItem.setImportPrice(0);
+                            newItem.setStatus("UNAVAILABLE");
+                            linkedProductItemId = productItemDAO.insertProductItemReturnId(newItem);
+                        }
                     }
 
                     InventoryAuditItemSerial itemSerial = new InventoryAuditItemSerial();
                     itemSerial.setAuditItemId(item.getId());
-                    itemSerial.setSerial(serial);
+                    itemSerial.setProductItemId(linkedProductItemId);
                     itemSerial.setType(type);
 
                     serialsToInsert.add(itemSerial);

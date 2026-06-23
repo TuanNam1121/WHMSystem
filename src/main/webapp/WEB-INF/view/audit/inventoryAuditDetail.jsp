@@ -148,11 +148,11 @@
                                                 <c:choose>
                                                     <c:when test="${serial.type == 'ADD'}">
                                                                             <span class="badge bg-success me-1">+
-                                                                                    ${serial.serial}</span>
+                                                                                    ${serial.serialNumber}</span>
                                                     </c:when>
                                                     <c:when test="${serial.type == 'DELETE'}">
                                                                             <span class="badge bg-danger me-1">-
-                                                                                    ${serial.serial}</span>
+                                                                                    ${serial.serialNumber}</span>
                                                     </c:when>
                                                 </c:choose>
                                             </c:forEach>

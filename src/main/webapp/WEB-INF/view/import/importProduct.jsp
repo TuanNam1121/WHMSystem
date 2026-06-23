@@ -350,8 +350,6 @@
                                                                                html: '<div style="text-align:left; line-height:1.8;">' +
                                                                                        '<p>You are about to <strong style="color:#28C76F;">save</strong> this import.</p>' +
                                                                                        '<p><strong>Purchase Request:</strong> PR-${sessionScope.prCode}</p>' +
-                                                                                       '<p><strong>Supplier:</strong> ' + $('#import-supplier').val() + '</p>' +
-                                                                                       '<p><strong>Total Payment:</strong> ' + $('#summary-total-payment').text() + '</p>' +
                                                                                        '<hr>' +
                                                                                        '<p class="text-muted">Products will be added to inventory and stock will be updated.</p>' +
                                                                                        '</div>',

@@ -56,7 +56,7 @@ public class ImportProduct extends HttpServlet {
         SupplierDAO supplierDAO = new SupplierDAO();
         User user = (User) session.getAttribute("user");
 
-        String purchaseRequestIdraw = request.getParameter("prId"); // tí sửa thành prId
+        String purchaseRequestIdraw = request.getParameter("prId");
         int purchaseRequestId = -1;
         try {
             purchaseRequestId = Integer.parseInt(purchaseRequestIdraw);
@@ -273,7 +273,6 @@ public class ImportProduct extends HttpServlet {
 
         // update purchase request
         PurchaseRequest purchaseRequest = pr.getPurchaseRequestById(prId);
-        String status = purchaseRequest.getStatus();
 
         List<PurchaseItem> purchaseItems = purchaseItemDAO.getItemsByPurchaseRequestId(prId);
         Map<Integer, Integer> goodReceiptItems = gri.getReceivedQuantityByPurchaseRequestId(prId);

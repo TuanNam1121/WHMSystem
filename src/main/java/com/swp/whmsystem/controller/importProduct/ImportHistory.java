@@ -16,6 +16,7 @@ import com.swp.whmsystem.model.GoodReceipt;
 import com.swp.whmsystem.model.GoodReceiptItem;
 import com.swp.whmsystem.model.ProductItem;
 import com.swp.whmsystem.model.PurchaseRequest;
+import com.swp.whmsystem.model.Supplier;
 import com.swp.whmsystem.model.User;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -45,7 +46,7 @@ public class ImportHistory extends HttpServlet {
     throws ServletException, IOException {        
         String rawReceiptId = request.getParameter("receiptid");
         String rawPurchaseId = request.getParameter("purchaseid");
-        String rawSupplierId = request.getParameter("supplier_id");
+        String rawSupplierId = request.getParameter("supplierid");
         String rawProcessedBy = request.getParameter("processedby");
         String sortBy = request.getParameter("sortBy");
         
@@ -56,14 +57,17 @@ public class ImportHistory extends HttpServlet {
         
         GoodReceiptDAO gr = new GoodReceiptDAO();
         UserDAO user = new UserDAO();
-        
+        SupplierDAO supplierDAO = new SupplierDAO();
         HttpSession session = request.getSession();
         List<User> userImporterList = user.getAllUsersHandleGoodReceipt();
+        List<Supplier> supplier = supplierDAO.getAllSuppliers();
         List<GoodReceipt> list = gr.searchProduct(receiptId, purchaseid, supplierId, processedBy, sortBy);
+        
         List<ImportHistoryDTO> returnedList = new ArrayList<>();
         for(GoodReceipt i : list){
             returnedList.add(toImportHistory(i));
         }
+        session.setAttribute("supplier", supplier);
         session.setAttribute("userList", userImporterList);
         request.setAttribute("list", returnedList);
         request.getRequestDispatcher("WEB-INF/view/import/importHistory.jsp").forward(request, response);

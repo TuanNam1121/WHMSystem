@@ -51,7 +51,7 @@
                     <c:if test="${not empty message}">
                         <div class="alert alert-danger" role="alert">${message}</div>
                     </c:if>
-                        <form id="${order.status=='NEW'?'new-form':''}" action="${pageContext.request.contextPath}/${order.status=='NEW'?'OrderDetail':'OrderUpdateStatus'}" method="post">
+                        <form id="new-form" action="${pageContext.request.contextPath}/OrderDetail2" method="post">
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
@@ -162,49 +162,6 @@
                                     </c:if>
                                         
                                         
-                                    <c:if test="${order.status != 'NEW'}">
-                                        <div class="row">
-                                            <div class="table-responsive ">
-                                                <table class="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Product Name</th>
-                                                            <th>SKU</th>
-                                                            <th>S/N</th>
-                                                            <th>Price</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <c:forEach items="${itemList}" var="s">
-                                                            <tr class="bor-b1">
-                                                                <td class="productimgname">
-                                                                    <a class="product-img">
-                                                                        <img src="${s.imgUrl}" alt="product">
-                                                                    </a>
-                                                                    <a href="javascript:void(0);">${s.name}</a>
-                                                                </td>
-                                                                <td>${s.sku}</td>
-                                                                <td>${s.serial}</td>
-                                                                <td>
-                                                                    <fmt:formatNumber value="${s.price}" pattern="#,###"/>
-                                                                </td>
-                                                            </tr>
-                                                        </c:forEach>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-sm-6 col-12">
-                                            <div class="form-group" style="margin-top: 40px; margin-bottom: 40px;">
-                                                    <input checked type="radio" name="orderStatus" value="COMPLETED">COMPLETED
-                                                    <input type="radio" name="orderStatus" value="CANCELLED">CANCELLED
-                                            <div class="col-lg-12">
-                                        <input class="btn btn-submit me-2" type="submit" value="UPDATE">
-                                         <a href="${pageContext.request.contextPath}/OrderCancel" class="btn btn-cancel">CANCEL</a>
-                                    </div>
-                                                </div>
-                                                </div>
-                                    </c:if>
                                 </div>
                             </div>
                         </div>

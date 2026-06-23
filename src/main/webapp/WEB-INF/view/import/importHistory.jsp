@@ -65,9 +65,15 @@
                                                 </div>
                                             </div>
                                             
+                                            
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <input type="text" name="supplier" placeholder="Search Supplier Name">
+                                                    <select class="select" name="supplierid">
+                                                        <option value="">Choose Supplier</option>
+                                                        <c:forEach items="${sessionScope.supplier}" var="c">
+                                                            <option value="${c.supplierId}">${c.supplierName}</option>
+                                                        </c:forEach>
+                                                    </select>
                                                 </div>
                                             </div>
 
@@ -86,7 +92,6 @@
                                                 <div class="form-group">
                                                     <select class="select" name="sortBy">
                                                         <option value="">Date Sort</option>                                                        
-                                                        <option value="skuZA">SKU Z-A</option>
                                                         <option value="date_latest">Latest</option>
                                                         <option value="date_earliest">Earliest</option>
                                                     </select>

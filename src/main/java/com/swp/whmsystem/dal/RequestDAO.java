@@ -37,6 +37,37 @@ public class RequestDAO {
         return null;
     }
 
+    public List<Request> getRequestsByPage(int offset, int limit) {
+        String sql = "select * from password_resets order by createdat desc limit ? offset ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, limit);
+            ps.setInt(2, offset);
+            try (ResultSet rs = ps.executeQuery()) {
+                List<Request> result = new ArrayList<>();
+                while (rs.next()) {
+                    Request i = mapResultSetToRequest(rs);
+                    result.add(i);
+                }
+                return result;
+            }
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return new ArrayList<>();
+    }
+
+    public int countTotalRequests() {
+        String sql = "select count(*) from password_resets";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return 0;
+    }
+
     public Request getLatestRequestByUserId(int userId) {
         String sql = "select * from password_resets where userid = ? order by createdat desc limit 1";
 

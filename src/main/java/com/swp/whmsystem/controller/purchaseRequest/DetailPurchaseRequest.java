@@ -32,6 +32,7 @@ public class DetailPurchaseRequest extends HttpServlet {
         }
         if (user.getRoleId() != 4) {
             response.sendRedirect("home");
+            return;
         }
 
         String idStr = request.getParameter("id");

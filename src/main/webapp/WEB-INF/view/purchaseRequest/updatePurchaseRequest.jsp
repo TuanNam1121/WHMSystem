@@ -305,7 +305,7 @@
                     category: category,
                     stock: stock,
                     reqQty: 1,
-                    price: 0
+                    price: 1000
                 });
             }
             renderSelectedItems();

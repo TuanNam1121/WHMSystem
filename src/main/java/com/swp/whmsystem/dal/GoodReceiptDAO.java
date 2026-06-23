@@ -214,7 +214,7 @@ public class GoodReceiptDAO {
         }
 
         if (supplierId != -1) {
-            sql.append(" and (s.suppliername = ?)");
+            sql.append(" and (s.supplierid = ?)");
             parameter.add(String.valueOf(supplierId));
         }
 

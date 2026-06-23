@@ -27,6 +27,7 @@ public class ManagerPurchaseRequestList extends HttpServlet {
         }
         if (user.getRoleId() != 2) {
             response.sendRedirect("home");
+            return;
         }
 
         String codeStr = request.getParameter("code");
@@ -35,9 +36,7 @@ public class ManagerPurchaseRequestList extends HttpServlet {
             try {
                 code = Integer.parseInt(codeStr.trim());
             } catch (NumberFormatException e) {
-                // ignore
-            }
-        }
+            }        }
         
         String status = request.getParameter("status");
         String dateStr = request.getParameter("date");

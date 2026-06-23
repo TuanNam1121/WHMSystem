@@ -31,25 +31,46 @@ public class AdminDashBoard extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        RequestDAO requestDao = new RequestDAO();
-        List<Request> requestList = requestDao.getAllRequest();
-        request.setAttribute("requestlist", requestList);
-        request.getRequestDispatcher("WEB-INF/view/admin/adminDashboard.jsp").forward(request, response);
+        processRequest(request, response);
     } 
 
-    /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    private void processRequest(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException {
         RequestDAO requestDao = new RequestDAO();
-        List<Request> requestList = requestDao.getAllRequest();
+        
+        int page = 1;
+        int pageSize = 10;
+        
+        String pageParam = request.getParameter("page");
+        String pageSizeParam = request.getParameter("pageSize");
+        
+        if (pageParam != null) {
+            try {
+                page = Integer.parseInt(pageParam);
+            } catch (NumberFormatException ignored) {}
+        }
+        if (pageSizeParam != null) {
+            try {
+                pageSize = Integer.parseInt(pageSizeParam);
+            } catch (NumberFormatException ignored) {}
+        }
+        
+        int offset = (page - 1) * pageSize;
+        
+        List<Request> requestList = requestDao.getRequestsByPage(offset, pageSize);
+        int totalRecords = requestDao.countTotalRequests();
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+        
         request.setAttribute("requestlist", requestList);
+        request.setAttribute("page", page);
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("totalPages", totalPages);
         request.getRequestDispatcher("WEB-INF/view/admin/adminDashboard.jsp").forward(request, response);
     }
 

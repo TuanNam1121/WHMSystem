@@ -77,6 +77,96 @@ public class PermissionDAO extends DBContext {
         return null;
     }
 
+    public List<Permission> getPermissionPaginated(String permission_name, int roleid, int offset, int limit) {
+        String sql = "";
+        boolean isSearchByName = permission_name != null && !permission_name.trim().isEmpty();
+        boolean isFilterByRole = roleid != 0;
+
+        if (isSearchByName) {
+            sql = "select distinct p.permissionid, p.permissionname, p.description from permissions p "
+                + "join role_permission rp on p.permissionid = rp.permissionid "
+                + "where p.permissionname like ? ";
+            if (isFilterByRole) {
+                sql += "and rp.roleid = ? ";
+            }
+        } else if (isFilterByRole) {
+            sql = "select distinct p.permissionid, p.permissionname, p.description from permissions p "
+                + "join role_permission rp on p.permissionid = rp.permissionid "
+                + "where rp.roleid = ? ";
+        } else {
+            sql = "select * from permissions ";
+        }
+        
+        sql += "LIMIT ? OFFSET ?";
+
+        List<Permission> result = new ArrayList<>();
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            int paramIndex = 1;
+            if (isSearchByName) {
+                ps.setString(paramIndex++, "%" + permission_name + "%");
+                if (isFilterByRole) {
+                    ps.setInt(paramIndex++, roleid);
+                }
+            } else if (isFilterByRole) {
+                ps.setInt(paramIndex++, roleid);
+            }
+            
+            ps.setInt(paramIndex++, limit);
+            ps.setInt(paramIndex, offset);
+            
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Permission p = mapResultSetToPermission(rs);
+                result.add(p);
+            }
+            return result;
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return new ArrayList<>();
+    }
+
+    public int countPermission(String permission_name, int roleid) {
+        String sql = "";
+        boolean isSearchByName = permission_name != null && !permission_name.trim().isEmpty();
+        boolean isFilterByRole = roleid != 0;
+
+        if (isSearchByName) {
+            sql = "select count(distinct p.permissionid) from permissions p "
+                + "join role_permission rp on p.permissionid = rp.permissionid "
+                + "where p.permissionname like ? ";
+            if (isFilterByRole) {
+                sql += "and rp.roleid = ? ";
+            }
+        } else if (isFilterByRole) {
+            sql = "select count(distinct p.permissionid) from permissions p "
+                + "join role_permission rp on p.permissionid = rp.permissionid "
+                + "where rp.roleid = ? ";
+        } else {
+            sql = "select count(*) from permissions ";
+        }
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            int paramIndex = 1;
+            if (isSearchByName) {
+                ps.setString(paramIndex++, "%" + permission_name + "%");
+                if (isFilterByRole) {
+                    ps.setInt(paramIndex++, roleid);
+                }
+            } else if (isFilterByRole) {
+                ps.setInt(paramIndex++, roleid);
+            }
+            
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return 0;
+    }
+
     public Permission getPermission(int permission_id) {
         try {
             Connection conn = DBContext.getConnection();

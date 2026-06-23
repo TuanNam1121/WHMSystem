@@ -9,6 +9,7 @@ import com.swp.whmsystem.model.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -28,33 +29,46 @@ public class ViewPermissionList extends HttpServlet {
 
         String keyword = request.getParameter("keyword");
         String roleid = request.getParameter("roleid");
-        int role;
-        try {
-            role = Integer.parseInt(roleid);
-        } catch (Exception e) {
-            role = 0;
-        }
-
-        if (keyword != null && !keyword.trim().equals("")) {
-            if (role != 0) {
-                request.setAttribute("permissions", pd.searchPermissionByName(keyword, role));
-            } else {
-                request.setAttribute("permissions", pd.searchPermissionByName(keyword, 0));
-            }
-            request.setAttribute("roleid", role);
-            request.getRequestDispatcher("WEB-INF/view/admin/viewPermissionList.jsp").forward(request, response);
-            return;
-        } else if (keyword == null || keyword.trim().equals("")) {
-            if (role != 0) {
-                request.setAttribute("roleid", role);
-                request.setAttribute("permissions", pd.searchPermissionByName("", role));
-                request.getRequestDispatcher("WEB-INF/view/admin/viewPermissionList.jsp").forward(request, response);
-                return;
+        int role = 0;
+        if (roleid != null && !roleid.trim().isEmpty()) {
+            try {
+                role = Integer.parseInt(roleid);
+            } catch (Exception e) {
+                role = 0;
             }
         }
 
+        int page = 1;
+        int pageSize = 10;
+        
+        String pageParam = request.getParameter("page");
+        String pageSizeParam = request.getParameter("pageSize");
+        
+        if (pageParam != null) {
+            try {
+                page = Integer.parseInt(pageParam);
+            } catch (NumberFormatException ignored) {}
+        }
+        if (pageSizeParam != null) {
+            try {
+                pageSize = Integer.parseInt(pageSizeParam);
+            } catch (NumberFormatException ignored) {}
+        }
+        
+        int offset = (page - 1) * pageSize;
+        
+        List<Permission> permissions = pd.getPermissionPaginated(keyword, role, offset, pageSize);
+        int totalRecords = pd.countPermission(keyword, role);
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+
+        request.setAttribute("keyword", keyword);
         request.setAttribute("roleid", role);
-        request.setAttribute("permissions", pd.getAllPermission());
+        request.setAttribute("permissions", permissions);
+        
+        request.setAttribute("page", page);
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("totalPages", totalPages);
+
         request.getRequestDispatcher("WEB-INF/view/admin/viewPermissionList.jsp").forward(request, response);
     }
 

@@ -27,19 +27,46 @@ public class ViewUserList extends HttpServlet {
         String keyword = request.getParameter("keyword");
         String sortBy = request.getParameter("sortBy");
         String roleId = request.getParameter("roleId");
+        
+        int page = 1;
+        int pageSize = 10;
+        
+        String pageParam = request.getParameter("page");
+        String pageSizeParam = request.getParameter("pageSize");
+        
+        if (pageParam != null) {
+            try {
+                page = Integer.parseInt(pageParam);
+            } catch (NumberFormatException ignored) {}
+        }
+        if (pageSizeParam != null) {
+            try {
+                pageSize = Integer.parseInt(pageSizeParam);
+            } catch (NumberFormatException ignored) {}
+        }
+        
+        int offset = (page - 1) * pageSize;
 
         UserDAO user = new UserDAO();
         RoleDAO role = new RoleDAO();
-        List<User> userList = new ArrayList<>();
+        List<User> userList = user.searchUserPaginated(keyword, roleId, sortBy, offset, pageSize);
         List<Role> roleList = role.getAllRoleToAssign();
-        if (keyword == null && sortBy == null && roleId == null) {
-            userList = user.getAllUsers();
-        } else {
-            userList = user.searchUser(keyword, roleId, sortBy);
-        }
+        
+        int totalRecords = user.countUsers(keyword, roleId);
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+
         request.setAttribute("roleList", roleList);
         request.setAttribute("roleDao", role);
         request.setAttribute("userlist", userList);
+        
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("sortBy", sortBy);
+        request.setAttribute("roleId", roleId);
+        
+        request.setAttribute("page", page);
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("totalPages", totalPages);
+        
         request.getRequestDispatcher("WEB-INF/view/admin/viewUserList.jsp").forward(request, response);
     }
 

@@ -32,29 +32,30 @@ import java.util.List;
  *
  * @author Admin
  */
-@WebServlet(name="ImportHistory", urlPatterns={"/ImportHistory"})
+@WebServlet(name = "ImportHistory", urlPatterns = { "/ImportHistory" })
 public class ImportHistory extends HttpServlet {
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
+     * 
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {        
+            throws ServletException, IOException {
         String rawReceiptId = request.getParameter("receiptid");
         String rawPurchaseId = request.getParameter("purchaseid");
         String rawSupplierId = request.getParameter("supplierid");
         String rawProcessedBy = request.getParameter("processedby");
         String sortBy = request.getParameter("sortBy");
-        
+
         int receiptId = (rawReceiptId == null || rawReceiptId.isBlank()) ? -1 : Integer.parseInt(rawReceiptId);
-        int purchaseid = (rawPurchaseId == null ||rawPurchaseId.isBlank()) ? -1 : Integer.parseInt(rawPurchaseId);
+        int purchaseid = (rawPurchaseId == null || rawPurchaseId.isBlank()) ? -1 : Integer.parseInt(rawPurchaseId);
         int processedBy = (rawProcessedBy == null || rawProcessedBy.isBlank()) ? -1 : Integer.parseInt(rawProcessedBy);
         int supplierId = (rawSupplierId == null || rawSupplierId.isBlank()) ? -1 : Integer.parseInt(rawSupplierId);
-        
+
         GoodReceiptDAO gr = new GoodReceiptDAO();
         UserDAO user = new UserDAO();
         SupplierDAO supplierDAO = new SupplierDAO();
@@ -62,48 +63,50 @@ public class ImportHistory extends HttpServlet {
         List<User> userImporterList = user.getAllUsersHandleGoodReceipt();
         List<Supplier> supplier = supplierDAO.getAllSuppliers();
         List<GoodReceipt> list = gr.searchProduct(receiptId, purchaseid, supplierId, processedBy, sortBy);
-        
+
         List<ImportHistoryDTO> returnedList = new ArrayList<>();
-        for(GoodReceipt i : list){
+        for (GoodReceipt i : list) {
             returnedList.add(toImportHistory(i));
         }
         session.setAttribute("supplier", supplier);
         session.setAttribute("userList", userImporterList);
         request.setAttribute("list", returnedList);
         request.getRequestDispatcher("WEB-INF/view/import/importHistory.jsp").forward(request, response);
-    } 
+    }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
+     * 
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        
+            throws ServletException, IOException {
+
     }
 
-    private ImportHistoryDTO toImportHistory(GoodReceipt gr){
+    private ImportHistoryDTO toImportHistory(GoodReceipt gr) {
         UserDAO userDao = new UserDAO();
         PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
         GoodReceiptItemDAO griDao = new GoodReceiptItemDAO();
         ProductItemDAO piDao = new ProductItemDAO();
         SupplierDAO supplierDao = new SupplierDAO();
-        
+
         PurchaseRequest purchaseRequest = purchaseRequestDAO.getPurchaseRequestById(gr.getPurchaseRequestId());
         List<GoodReceiptItem> gri = griDao.getItemsByGoodReceiptId(gr.getId());
         int item = 0;
         int total = 0;
-        
-        for(GoodReceiptItem i : gri){
+
+        for (GoodReceiptItem i : gri) {
             item += i.getActualQuantity();
             List<ProductItem> pi = piDao.getAllProductItemByGoodReceiptItemId(i.getId());
-            for(ProductItem p : pi) total += p.getImportPrice();
+            for (ProductItem p : pi)
+                total += p.getImportPrice();
         }
-        
+
         ImportHistoryDTO i = new ImportHistoryDTO();
         i.setReceiptId(gr.getId());
         i.setPurchaseRequestId(gr.getPurchaseRequestId());

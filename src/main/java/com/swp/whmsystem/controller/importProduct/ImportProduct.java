@@ -128,14 +128,6 @@ public class ImportProduct extends HttpServlet {
         request.getRequestDispatcher("WEB-INF/view/import/importProduct.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -208,7 +200,7 @@ public class ImportProduct extends HttpServlet {
         }
     }
 
-    private void handleImport(Integer prId, int handler, String invoiceNumber, List<ProductItemRowDTO> productItemList) throws SQLException {
+    void handleImport(Integer prId, int handler, String invoiceNumber, List<ProductItemRowDTO> productItemList) throws SQLException {
         PurchaseRequestDAO pr = new PurchaseRequestDAO();
         PurchaseItemDAO purchaseItemDAO = new PurchaseItemDAO();
         GoodReceiptDAO gr = new GoodReceiptDAO();

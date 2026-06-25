@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,9 +92,10 @@ public class ProductItemDAO {
     public List<ProductItem> getAllProductItemByOrderId(int orderId) {
         List<ProductItem> list = new ArrayList<>();
         String sql = "select p.* from product_items p "
-                + "join order_items_product_items op on p.id = op.productitemid "
-                + "join order_items oi on op.orderitemid = oi.id "
-                + "where oi.orderid = ?";
+                + "join export_receipt_serials ers on p.id = ers.product_item_id "
+                + "join export_receipt_details erd on ers.export_receipt_detail_id = erd.id "
+                + "join export_receipts er on erd.export_receipt_id = er.id "
+                + "where er.order_id = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, orderId);
@@ -147,9 +149,48 @@ public class ProductItemDAO {
             throw new RuntimeException(e);
         }
     }
+    public int insertProductItemReturnId(ProductItem item) {
+        String sql = "INSERT INTO product_items (serial, product_id, imported_price, goodreceiptsitemid, status) VALUES (?, ?, ?, ?, ?)";
+        try (Connection connection = DBContext.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql,
+                        Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, item.getSerial());
+            preparedStatement.setInt(2, item.getProductId());
+            preparedStatement.setInt(3, item.getImportPrice());
+            preparedStatement.setObject(4, item.getGoodReceiptItemId() == 0 ? null : item.getGoodReceiptItemId());
+            preparedStatement.setString(5, item.getStatus() != null ? item.getStatus() : "AVAILABLE");
+
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return -1;
+    }
 
     public ProductItem existedSerial(String serial) {
         String sql = "SELECT * FROM wms.product_items where serial = ?";
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, serial);
+            ResultSet rs = preparedStatement.executeQuery();
+            if(rs.next()){
+                return mapResultsetToProductItem(rs);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public ProductItem existedSerial(int productId, String serial) {
+        String sql = "SELECT * FROM wms.product_items where serial = ? and product_id = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, serial);
@@ -164,16 +205,14 @@ public class ProductItemDAO {
     }
 
     public int getExportPriceWithSoldStatus(int productItemId) {
-        String sql = "select price from product_items pi \n"
-                + "left join order_items_product_items oipi on pi.id = oipi.productitemid \n"
-                + "join order_items oi on oipi.orderitemid = oi.id\n"
-                + "where pi.status = 'SOLD' and pi.id = ?";
+        String sql = "select export_price from product_items "
+                + "where status = 'SOLD' and id = ?";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, productItemId);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
-                return rs.getInt("price");
+                return rs.getInt("export_price");
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

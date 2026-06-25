@@ -40,9 +40,22 @@ public class ExportProduct extends HttpServlet {
                 return;
             }
 
+            ExportItemDAO exportItemDAO = new ExportItemDAO();
+            String exportReceiptStatus = exportItemDAO.getExportReceiptStatusByOrderId(orderId);
+            if ("COMPLETED".equalsIgnoreCase(exportReceiptStatus)) {
+                response.sendRedirect("exportDetail?orderId=" + orderId);
+                return;
+            }
+
             Order sessionOrder = (Order) session.getAttribute("order");
             if (sessionOrder == null || sessionOrder.getId() != orderId) {
                 session.removeAttribute("scannedList");
+            }
+
+            if ("DRAFT".equalsIgnoreCase(exportReceiptStatus)
+                    && session.getAttribute("scannedList") == null) {
+                session.setAttribute("scannedList",
+                        exportItemDAO.getDraftItemsByOrderId(orderId));
             }
 
             List<OrderItemDetailDTO> pickingList = orderDAO.getOrderItemsByOrderId(orderId);
@@ -165,6 +178,12 @@ public class ExportProduct extends HttpServlet {
             orderId = Integer.parseInt(orderIdRaw.trim());
         } catch (NumberFormatException e) {
             sendAjaxResponse(response, false, "Invalid order ID.", null, 0);
+            return;
+        }
+
+        if ("COMPLETED".equalsIgnoreCase(exportItemDAO.getExportReceiptStatusByOrderId(orderId))) {
+            sendAjaxResponse(response, false,
+                    "This order has already been exported.", null, 0);
             return;
         }
 

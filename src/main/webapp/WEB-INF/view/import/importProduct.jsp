@@ -40,8 +40,7 @@
                             <h6>Fill in serial numbers and pricing for imported products</h6>
                         </div>
                         <div class="page-btn">
-                            <a href="importRequestList" class="btn btn-cancel"
-                               id="btn-back-to-list">
+                            <a href="importRequestList" class="btn btn-cancel" id="btn-back-to-list">
                                 <i class="fas fa-arrow-left me-2"></i>Back to List
                             </a>
                         </div>
@@ -49,14 +48,16 @@
                 <c:if test="${not empty message}">
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
                         <strong>${message}</strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
                     </div>
                     <% session.removeAttribute("message"); %>
                 </c:if>
                 <c:if test="${not empty sessionScope.error}">
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
                         <strong>${sessionScope.error}</strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
                     </div>
                     <% session.removeAttribute("error"); %>
                 </c:if>
@@ -158,8 +159,7 @@
                                                 <span class="product-unit">${group[0].unit}</span>
                                                 <div class="product-price">
                                                     <input type="text" value="${group[0].importedPrice}"
-                                                           id="price-product-${groupIndex}"
-                                                           name="price"
+                                                           id="price-product-${groupIndex}" name="price"
                                                            onchange="recalcTotal(); syncGroupPrices(${groupIndex})">
                                                 </div>
                                                 <span class="product-currency">VND</span>
@@ -170,22 +170,20 @@
                                             <div class="serial-rows-container">
                                                 <c:forEach var="row" items="${group}" varStatus="rowStatus">
                                                     <div class="serial-row">
-                                                        <input type="hidden" name="productId" value="${row.productId}">
+                                                        <input type="hidden" name="productId"
+                                                               value="${row.productId}">
                                                         <span class="serial-index">${rowStatus.index + 1}</span>
                                                         <div class="serial-input">
                                                             <input type="text" value="${row.serial}"
-                                                                   placeholder="Enter serial / IMEI"
-                                                                   name="serial"
+                                                                   placeholder="Enter serial / IMEI" name="serial"
                                                                    class="serial-field" data-group="${groupIndex}">
                                                         </div>
                                                         <span class="serial-qty">1</span>
                                                         <span class="serial-unit">${row.unit}</span>
                                                         <div class="serial-price">
                                                             <input type="text" value="${row.importedPrice}"
-                                                                   name="itemPrice"
-                                                                   class="item-price-field"
-                                                                   data-group="${groupIndex}"
-                                                                   readonly>
+                                                                   name="itemPrice" class="item-price-field"
+                                                                   data-group="${groupIndex}" readonly>
                                                         </div>
                                                         <span class="serial-currency">VND</span>
                                                     </div>
@@ -206,12 +204,57 @@
                                     Save Import
                                 </button>
                             </div>
-                            </form>
 
+                        </div><!-- end card-body -->
+                    </div><!-- end card -->
+                </form>
+
+                <!-- Excel Import Section (separate card) -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <div class="excel-import-section">
+                            <div class="excel-import-header">
+                                <h5><i class="fas fa-file-excel me-2" style="color: #28C76F;"></i>Import from Excel</h5>
+                                <p class="text-muted mb-0">Upload an Excel file (.xlsx) with columns:
+                                    <strong>STT</strong>, <strong>SKU</strong>, <strong>Serial</strong>
+                                </p>
+                            </div>
+                            <form action="ImportExcel" method="POST" enctype="multipart/form-data"
+                                  id="excel-import-form">
+                                <input type="hidden" name="purchaseRequestId" value="${sessionScope.prCode}">
+                                <div class="excel-invoice-row mt-3">
+                                    <label>Invoice Number (for Excel Import)</label>
+                                    <input type="text" class="form-control" name="invoiceNumber"
+                                           id="excel-invoice-number" placeholder="Enter invoice number"
+                                           style="border: 1px solid #dee2e6; border-radius: 6px; max-width: 400px;">
+                                </div>
+                                <br>
+                                <div class="excel-upload-area" id="excel-upload-area">
+                                    <div class="excel-upload-content">
+                                        <input type="file" name="excelFile" id="excelFileInput"
+                                               accept=".xlsx,.xls" class="excel-file-input">
+                                    </div>
+                                    <div class="excel-file-info" id="excel-file-info" style="display: none;">
+                                        <i class="fas fa-file-excel excel-file-icon"></i>
+                                        <span class="excel-file-name" id="excel-file-name"></span>
+                                        <span class="excel-file-size" id="excel-file-size"></span>
+                                        <button type="button" class="btn-remove-file" id="btn-remove-file">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="excel-import-actions mt-3">
+                                    <button type="button" class="btn btn-save-import" id="btn-save-import">
+                                        Save Import
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-            </div>
-        </div>
+                </div>
+
+            </div><!-- end content -->
+        </div><!-- end page-wrapper -->
 
 
         <script src="assets/js/jquery-3.6.0.min.js"></script>
@@ -371,6 +414,84 @@
                                                                        // Submit the form to trigger doPost
                                                                        document.getElementById('import-form').submit();
                                                                    }
+
+                                                                   // ===== Excel Import =====
+                                                                   var uploadArea = document.getElementById('excel-upload-area');
+                                                                   var fileInput = document.getElementById('excelFileInput');
+                                                                   var fileInfo = document.getElementById('excel-file-info');
+                                                                   var uploadContent = uploadArea.querySelector('.excel-upload-content');
+
+                                                                   // Click to browse
+                                                                   uploadArea.addEventListener('click', function (e) {
+                                                                       if (e.target.closest('#btn-remove-file'))
+                                                                           return;
+                                                                       fileInput.click();
+                                                                   });
+
+                                                                   // File selected
+                                                                   fileInput.addEventListener('change', function () {
+                                                                       if (fileInput.files.length > 0) {
+                                                                           showFileInfo(fileInput.files[0]);
+                                                                       }
+                                                                   });
+
+                                                                   function showFileInfo(file) {
+                                                                       document.getElementById('excel-file-name').textContent = file.name;
+                                                                       var sizeKB = (file.size / 1024).toFixed(1);
+                                                                       document.getElementById('excel-file-size').textContent = '(' + sizeKB + ' KB)';
+                                                                       uploadContent.style.display = 'none';
+                                                                       fileInfo.style.display = 'flex';
+                                                                   }
+
+                                                                   // Remove file
+                                                                   document.getElementById('btn-remove-file').addEventListener('click', function (e) {
+                                                                       e.stopPropagation();
+                                                                       fileInput.value = '';
+                                                                       uploadContent.style.display = 'flex';
+                                                                       fileInfo.style.display = 'none';
+                                                                   });
+
+                                                                   // Excel import button
+                                                                   $('#btn-excel-import').on('click', function () {
+                                                                       if (!fileInput.files || fileInput.files.length === 0) {
+                                                                           Swal.fire({
+                                                                               title: 'No file selected',
+                                                                               text: 'Please select an Excel file to import.',
+                                                                               icon: 'warning',
+                                                                               confirmButtonColor: '#28C76F'
+                                                                           });
+                                                                           return;
+                                                                       }
+                                                                       var invoiceVal = $('#excel-invoice-number').val().trim();
+                                                                       if (!invoiceVal) {
+                                                                           Swal.fire({
+                                                                               title: 'Missing Invoice Number',
+                                                                               text: 'Please enter an invoice number for the Excel import.',
+                                                                               icon: 'warning',
+                                                                               confirmButtonColor: '#28C76F'
+                                                                           });
+                                                                           return;
+                                                                       }
+                                                                       Swal.fire({
+                                                                           title: 'Import from Excel?',
+                                                                           html: '<div style="text-align:left; line-height:1.8;">' +
+                                                                                   '<p>You are about to import products from Excel file: <strong>' + fileInput.files[0].name + '</strong></p>' +
+                                                                                   '<p><strong>Purchase Request:</strong> PR-${sessionScope.prCode}</p>' +
+                                                                                   '<hr>' +
+                                                                                   '<p class="text-muted">Products will be added to inventory and stock will be updated.</p>' +
+                                                                                   '</div>',
+                                                                           icon: 'question',
+                                                                           showCancelButton: true,
+                                                                           confirmButtonColor: '#28C76F',
+                                                                           cancelButtonColor: '#6c757d',
+                                                                           confirmButtonText: '<i class="fas fa-file-import me-1"></i> Yes, Import!',
+                                                                           cancelButtonText: 'Cancel'
+                                                                       }).then(function (result) {
+                                                                           if (result.isConfirmed) {
+                                                                               document.getElementById('excel-import-form').submit();
+                                                                           }
+                                                                       });
+                                                                   });
                                                                });
         </script>
     </body>

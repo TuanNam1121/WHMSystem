@@ -77,7 +77,7 @@ public class OrderDAO {
         StringBuilder sql = new StringBuilder(
                 "select o.* from orders o "
                         + "join customers c on o.customer_id = c.id "
-                        + "where 1=1"
+                        + "where o.status = 'NEW'"
         );
         List<Object> parameter = new ArrayList<>();
 
@@ -147,7 +147,7 @@ public class OrderDAO {
         StringBuilder sql = new StringBuilder(
                 "select count(*) from orders o "
                         + "join customers c on o.customer_id = c.id "
-                        + "where 1=1"
+                        + "where o.status = 'NEW'"
         );
         List<Object> parameters = new ArrayList<>();
 
@@ -396,7 +396,13 @@ public class OrderDAO {
     }
 
     public List<Order> getExportHistory() {
-        String sql = "select * from orders where status not like 'NEW'";
+        String sql = "select o.id, er.status, o.total_price, o.note, "
+                + "coalesce(er.exported_at, er.created_at) as orderdate, er.created_at as createdat, "
+                + "er.updated_at as updatedat, er.exported_at as completedat, "
+                + "o.createdby, er.exported_by as processedby, o.customer_id "
+                + "from export_receipts er "
+                + "join orders o on er.order_id = o.id "
+                + "order by er.id desc";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             List<Order> result = new ArrayList<>();
@@ -422,9 +428,14 @@ public class OrderDAO {
                                            String sortBy, int pageSize, int page) {
         List<Order> orderList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-                "select o.* from orders o "
+                "select o.id, er.status, o.total_price, o.note, "
+                        + "coalesce(er.exported_at, er.created_at) as orderdate, er.created_at as createdat, "
+                        + "er.updated_at as updatedat, er.exported_at as completedat, "
+                        + "o.createdby, er.exported_by as processedby, o.customer_id "
+                        + "from export_receipts er "
+                        + "join orders o on er.order_id = o.id "
                         + "join customers c on o.customer_id = c.id "
-                        + "where o.status <> 'NEW'"
+                        + "where 1=1"
         );
         List<Object> parameter = new ArrayList<>();
 
@@ -435,22 +446,22 @@ public class OrderDAO {
         }
 
         if (date != null && !date.trim().isEmpty()) {
-            sql.append(" and date(o.orderdate) = str_to_date(?, '%d-%m-%Y')");
+            sql.append(" and date_format(coalesce(er.exported_at, er.created_at), '%d-%m-%Y') = ?");
             parameter.add(date.trim());
         }
 
         if (status != null && !status.trim().isEmpty()) {
-            sql.append(" and o.status = ?");
+            sql.append(" and er.status = ?");
             parameter.add(status);
         }
 
         if (sortBy != null && !sortBy.trim().isEmpty()) {
             switch (sortBy) {
                 case "dateNewest":
-                    sql.append(" order by o.orderdate desc");
+                    sql.append(" order by coalesce(er.exported_at, er.created_at) desc");
                     break;
                 case "dateOldest":
-                    sql.append(" order by o.orderdate asc");
+                    sql.append(" order by coalesce(er.exported_at, er.created_at) asc");
                     break;
                 case "totalLow":
                     sql.append(" order by o.total_price asc");
@@ -493,8 +504,9 @@ public class OrderDAO {
     public int countExportHistory(String keyword, String date, String status) {
         StringBuilder sql = new StringBuilder(
                 "select count(*) from orders o "
+                        + "join export_receipts er on er.order_id = o.id "
                         + "join customers c on o.customer_id = c.id "
-                        + "where o.status <> 'NEW'"
+                        + "where 1=1"
         );
         List<Object> parameters = new ArrayList<>();
 
@@ -506,12 +518,12 @@ public class OrderDAO {
         }
 
         if (date != null && !date.trim().isEmpty()) {
-            sql.append(" and date(o.orderdate) = str_to_date(?, '%d-%m-%Y')");
+            sql.append(" and date_format(coalesce(er.exported_at, er.created_at), '%d-%m-%Y') = ?");
             parameters.add(date.trim());
         }
 
         if (status != null && !status.trim().isEmpty()) {
-            sql.append(" and o.status = ?");
+            sql.append(" and er.status = ?");
             parameters.add(status);
         }
 

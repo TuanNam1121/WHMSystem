@@ -203,11 +203,32 @@ public class InventoryAuditDAO {
 
     public boolean deleteInventoryAuditAndItems(int auditId) {
         try (Connection conn = DBContext.getConnection()) {
+            String getProductItemsToDelete = "SELECT s.product_item_id FROM inventory_audit_item_serials s " +
+                    "JOIN inventory_audit_items i ON s.audit_item_id = i.id " +
+                    "WHERE i.auditid = ? AND s.type = 'ADD'";
+            List<Integer> idsToDelete = new ArrayList<>();
+            try (PreparedStatement ps = conn.prepareStatement(getProductItemsToDelete)) {
+                ps.setInt(1, auditId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        idsToDelete.add(rs.getInt(1));
+                    }
+                }
+            }
 
             String deleteItemsSql = "DELETE FROM inventory_audit_items WHERE auditid = ?";
             try (PreparedStatement ps = conn.prepareStatement(deleteItemsSql)) {
                 ps.setInt(1, auditId);
                 ps.executeUpdate();
+            }
+
+            String deleteProductItems = "DELETE FROM product_items WHERE id = ?";
+            try (PreparedStatement ps = conn.prepareStatement(deleteProductItems)) {
+                for (int pid : idsToDelete) {
+                    ps.setInt(1, pid);
+                    ps.addBatch();
+                }
+                ps.executeBatch();
             }
 
             String deleteAuditSql = "DELETE FROM inventory_audit WHERE id = ?";
@@ -274,7 +295,7 @@ public class InventoryAuditDAO {
                 ps.executeUpdate();
             }
 
-            String updateProductSql = "UPDATE products SET total_quantity = ? WHERE productid = ?";
+            String updateProductSql = "UPDATE inventory SET quantity = ? WHERE product_id = ?";
             try (PreparedStatement ps = conn.prepareStatement(updateProductSql)) {
                 for (InventoryAuditItem item : items) {
                     ps.setInt(1, item.getPhysicalQuantity());
@@ -293,7 +314,7 @@ public class InventoryAuditDAO {
                         try (ResultSet rs = ps.executeQuery()) {
                             while (rs.next()) {
                                 InventoryAuditItemSerial s = new InventoryAuditItemSerial();
-                                s.setSerial(rs.getString("serial"));
+                                s.setProductItemId(rs.getInt("product_item_id"));
                                 s.setType(rs.getString("type"));
                                 serials.add(s);
                             }
@@ -302,18 +323,15 @@ public class InventoryAuditDAO {
 
                     for (InventoryAuditItemSerial s : serials) {
                         if ("ADD".equals(s.getType())) {
-                            String insertSerialSql = "INSERT INTO product_items (serial, product_id, imported_price, status) VALUES (?, ?, ?, 'AVAILABLE')";
-                            try (PreparedStatement ps = conn.prepareStatement(insertSerialSql)) {
-                                ps.setString(1, s.getSerial());
-                                ps.setInt(2, item.getProductId());
-                                ps.setInt(3, 0);
+                            String updateSerialSql = "UPDATE product_items SET status = 'AVAILABLE' WHERE id = ?";
+                            try (PreparedStatement ps = conn.prepareStatement(updateSerialSql)) {
+                                ps.setInt(1, s.getProductItemId());
                                 ps.executeUpdate();
                             }
                         } else if ("DELETE".equals(s.getType())) {
-                            String updateSerialSql = "UPDATE product_items SET status = 'UNAVAILABLE' WHERE serial = ? AND product_id = ?";
+                            String updateSerialSql = "UPDATE product_items SET status = 'UNAVAILABLE' WHERE id = ?";
                             try (PreparedStatement ps = conn.prepareStatement(updateSerialSql)) {
-                                ps.setString(1, s.getSerial());
-                                ps.setInt(2, item.getProductId());
+                                ps.setInt(1, s.getProductItemId());
                                 ps.executeUpdate();
                             }
                         }
@@ -327,10 +345,10 @@ public class InventoryAuditDAO {
     }
 
     public boolean refreshSystemQuantities(int auditId) {
-        String sql = "UPDATE inventory_audit_items i " +
-                "JOIN products p ON i.productid = p.productid " +
-                "SET i.systemquantity = p.total_quantity " +
-                "WHERE i.auditid = ?";
+        String sql = "UPDATE inventory_audit_items iai " +
+                "JOIN inventory i ON iai.productid = i.product_id " +
+                "SET iai.systemquantity = i.quantity " +
+                "WHERE iai.auditid = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, auditId);
             return ps.executeUpdate() > 0;

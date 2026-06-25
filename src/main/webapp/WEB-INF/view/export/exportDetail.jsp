@@ -57,6 +57,14 @@
                 <c:remove var="error" scope="session"/>
             </c:if>
 
+            <c:if test="${not empty sessionScope.successMessage}">
+                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                    <strong>${sessionScope.successMessage}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <c:remove var="successMessage" scope="session"/>
+            </c:if>
+
             <div class="card">
                 <div class="card-body">
                     <div class="row">

@@ -15,13 +15,16 @@ public class InventoryAuditItemSerialDAO {
         InventoryAuditItemSerial item = new InventoryAuditItemSerial();
         item.setId(rs.getInt("id"));
         item.setAuditItemId(rs.getInt("audit_item_id"));
-        item.setSerial(rs.getString("serial"));
+        item.setProductItemId(rs.getInt("product_item_id"));
         item.setType(rs.getString("type"));
+        item.setSerialNumber(rs.getString("serial_number"));
         return item;
     }
 
     public List<InventoryAuditItemSerial> getSerialsByAuditItemId(int auditItemId) {
-        String sql = "SELECT * FROM inventory_audit_item_serials WHERE audit_item_id = ?";
+        String sql = "SELECT s.*, p.serial AS serial_number FROM inventory_audit_item_serials s " +
+                     "JOIN product_items p ON s.product_item_id = p.id " +
+                     "WHERE s.audit_item_id = ?";
         List<InventoryAuditItemSerial> list = new ArrayList<>();
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, auditItemId);
@@ -37,10 +40,10 @@ public class InventoryAuditItemSerialDAO {
     }
 
     public boolean insertSerial(InventoryAuditItemSerial serial) {
-        String sql = "INSERT INTO inventory_audit_item_serials (audit_item_id, serial, type) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO inventory_audit_item_serials (audit_item_id, product_item_id, type) VALUES (?, ?, ?)";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, serial.getAuditItemId());
-            ps.setString(2, serial.getSerial());
+            ps.setInt(2, serial.getProductItemId());
             ps.setString(3, serial.getType());
 
             return ps.executeUpdate() > 0;

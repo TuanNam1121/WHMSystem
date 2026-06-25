@@ -81,8 +81,7 @@ public class ExportItemDAO {
                 String updateProductItemSql =
                         "UPDATE product_items SET status = 'SOLD', export_price = ? WHERE id = ?";
                 String decreaseProductQuantitySql =
-                        "UPDATE products SET total_quantity = total_quantity - ?, "
-                                + "updatedat = CURRENT_TIMESTAMP WHERE productid = ?";
+                        "UPDATE inventory SET quantity = quantity - ? WHERE product_id = ?";
                 String insertStockMovementSql =
                         "INSERT INTO stock_movement(productid, quantity, type, reference_type, reference_id) "
                                 + "VALUES (?, ?, 'DECREASED', 'EXPORT', ?)";

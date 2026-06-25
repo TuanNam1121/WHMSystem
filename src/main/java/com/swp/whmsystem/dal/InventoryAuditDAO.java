@@ -295,7 +295,7 @@ public class InventoryAuditDAO {
                 ps.executeUpdate();
             }
 
-            String updateProductSql = "UPDATE products SET total_quantity = ? WHERE productid = ?";
+            String updateProductSql = "UPDATE inventory SET quantity = ? WHERE product_id = ?";
             try (PreparedStatement ps = conn.prepareStatement(updateProductSql)) {
                 for (InventoryAuditItem item : items) {
                     ps.setInt(1, item.getPhysicalQuantity());
@@ -345,10 +345,10 @@ public class InventoryAuditDAO {
     }
 
     public boolean refreshSystemQuantities(int auditId) {
-        String sql = "UPDATE inventory_audit_items i " +
-                "JOIN products p ON i.productid = p.productid " +
-                "SET i.systemquantity = p.total_quantity " +
-                "WHERE i.auditid = ?";
+        String sql = "UPDATE inventory_audit_items iai " +
+                "JOIN inventory i ON iai.productid = i.product_id " +
+                "SET iai.systemquantity = i.quantity " +
+                "WHERE iai.auditid = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, auditId);
             return ps.executeUpdate() > 0;

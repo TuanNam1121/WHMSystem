@@ -69,7 +69,7 @@ public class ImportExcelServlet extends HttpServlet {
             }
 
             // Validate file extension
-            String fileName = getFileName(filePart);
+            String fileName = filePart.getSubmittedFileName();
             if (fileName == null || (!fileName.endsWith(".xlsx") && !fileName.endsWith(".xls"))) {
                 session.setAttribute("message", "Invalid file format. Please upload an Excel file (.xlsx or .xls).");
                 session.setAttribute("messageType", "danger");
@@ -216,21 +216,6 @@ public class ImportExcelServlet extends HttpServlet {
             session.setAttribute("messageType", "danger");
             response.sendRedirect(request.getContextPath() + "/importRequestList");
         }
-    }
-
-    /**
-     * Get the file name from a Part header.
-     */
-    private String getFileName(Part part) {
-        String contentDisposition = part.getHeader("content-disposition");
-        if (contentDisposition != null) {
-            for (String token : contentDisposition.split(";")) {
-                if (token.trim().startsWith("filename")) {
-                    return token.substring(token.indexOf('=') + 1).trim().replace("\"", "");
-                }
-            }
-        }
-        return null;
     }
 
     /**

@@ -232,7 +232,7 @@ public class ProductDAO {
     }
 
     public void changeProductQuantity(int newQuantity, int id) {
-        String sql = "update products set total_quantity = ? where productid = ?";
+        String sql = "update inventory set quantity = ? where product_id = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setInt(1, newQuantity);
             ps.setInt(2, id);
@@ -269,7 +269,7 @@ public class ProductDAO {
     }
 
     public boolean increaseQuantity(Product p) throws SQLException {
-        String sql = "UPDATE products SET total_quantity = ? WHERE productid = ?";
+        String sql = "UPDATE inventory SET quantity = ? WHERE product_id = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setInt(1, p.getTotalQuantity());
             ps.setInt(2 , p.getProductId());
@@ -446,6 +446,7 @@ public class ProductDAO {
                 "select p.* from products p "
                 + "left join categories c ON p.categoryid = c.categoryid "
                 + "left join brands b ON p.brandid = b.brandid "
+                + "left join inventory i ON p.productid = i.product_id "
                 + "where 1=1"
         );
         List<Object> parameter = new ArrayList<>();
@@ -474,17 +475,17 @@ public class ProductDAO {
 
         if (sortBy != null && !sortBy.trim().isEmpty()) {
             switch (sortBy) {
-                case "nameAZ" -> sql.append(" order by p.name asc, p.total_quantity desc ");
-                case "nameZA" -> sql.append(" order by p.name desc, p.total_quantity desc");
-                case "skuAZ" -> sql.append(" order by p.sku asc, p.total_quantity desc");
-                case "skuZA" -> sql.append(" order by p.sku desc, p.total_quantity desc");
-                case "cateAZ" -> sql.append(" order by c.name asc, p.total_quantity desc");
-                case "cateZA" -> sql.append(" order by c.name desc, p.total_quantity desc");
-                case "brandAZ" -> sql.append(" order by b.name asc, p.total_quantity desc");
-                case "brandZA" -> sql.append(" order by b.name desc, p.total_quantity desc");
+                case "nameAZ" -> sql.append(" order by p.name asc, i.quantity desc ");
+                case "nameZA" -> sql.append(" order by p.name desc, i.quantity desc");
+                case "skuAZ" -> sql.append(" order by p.sku asc, i.quantity desc");
+                case "skuZA" -> sql.append(" order by p.sku desc, i.quantity desc");
+                case "cateAZ" -> sql.append(" order by c.name asc, i.quantity desc");
+                case "cateZA" -> sql.append(" order by c.name desc, i.quantity desc");
+                case "brandAZ" -> sql.append(" order by b.name asc, i.quantity desc");
+                case "brandZA" -> sql.append(" order by b.name desc, i.quantity desc");
             }
         } else {
-            sql.append(" order by p.total_quantity desc");
+            sql.append(" order by i.quantity desc");
         }
         
         int offset = (page - 1) * pageSize;

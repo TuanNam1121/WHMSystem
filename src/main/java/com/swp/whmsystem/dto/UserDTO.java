@@ -1,4 +1,4 @@
-package com.swp.whmsystem.model;
+package com.swp.whmsystem.dto;
 
 public class UserDTO {
     private int id;

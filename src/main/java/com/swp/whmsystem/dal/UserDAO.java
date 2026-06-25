@@ -10,7 +10,7 @@ import java.sql.*;
 import java.sql.SQLException;
 
 import com.swp.whmsystem.model.User;
-import com.swp.whmsystem.model.UserDTO;
+import com.swp.whmsystem.dto.UserDTO;
 import com.swp.whmsystem.utils.HashPassword;
 
 /**

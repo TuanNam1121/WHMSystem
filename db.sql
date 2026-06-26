@@ -797,10 +797,6 @@ VALUES (1, 'Laptop Dell 14 DC14250', 'Office ', 'assets/img/product/178033610814
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK
 TABLES;
--- Clean stock quantity because product item/serial data is removed.
-UPDATE `products`
-SET `total_quantity` = 0
-WHERE `productid` > 0;
 
 
 --
@@ -903,10 +899,10 @@ LOCK TABLES `inventory` WRITE;
 /*!40000 ALTER TABLE `inventory` DISABLE KEYS */;
 INSERT INTO `inventory` (product_id, quantity) VALUES
 (1, 0),
-(2, 2),
-(3, 3),
-(4, 9),
-(5, 5),
+(2, 0),
+(3, 0),
+(4, 0),
+(5, 0),
 (8, 0),
 (10, 0),
 (13, 0),
@@ -929,7 +925,7 @@ INSERT INTO `inventory` (product_id, quantity) VALUES
 (33, 0),
 (34, 0),
 (35, 0),
-(36, 6),
+(36, 0),
 (37, 0);
 /*!40000 ALTER TABLE `inventory` ENABLE KEYS */;
 UNLOCK TABLES;

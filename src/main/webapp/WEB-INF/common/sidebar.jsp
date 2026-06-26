@@ -113,7 +113,7 @@
                                                        alt="img"><span> Report</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="inventoryreport.html">Inventory Report</a></li>
+                        <li><a href="InventorySummaryReport">Inventory Report</a></li>
                         <li><a href="salesreport.html">Sales Report</a></li>
                         <li><a href="purchasereport.html">Purchase Report</a></li>
                     </ul>

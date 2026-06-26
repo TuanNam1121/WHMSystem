@@ -174,7 +174,6 @@
                                     <th>SKU</th>
                                     <th>Category</th>
                                     <th>Brand</th>
-                                    <th>Qty</th>
                                     <th>Active</th>
                                     <th>Action</th>
                                 </tr>
@@ -193,7 +192,6 @@
                                         <td>${p.sku}</td>
                                         <td>${p.category.name}</td>
                                         <td>${p.brand.name}</td>
-                                        <td>${p.totalQuantity}</td>
                                         <td>${p.isActive ? "Active" : "Inactive"}</td>
                                         <td>
 

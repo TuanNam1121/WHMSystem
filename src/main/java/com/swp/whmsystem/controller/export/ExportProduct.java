@@ -165,7 +165,7 @@ public class ExportProduct extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         ExportItemDAO exportItemDAO = new ExportItemDAO();
-        String sku = request.getParameter("sku");
+        String serial = request.getParameter("serial");
         String orderIdRaw = request.getParameter("orderId");
 
         if (orderIdRaw == null || orderIdRaw.trim().isEmpty()) {
@@ -200,23 +200,29 @@ public class ExportProduct extends HttpServlet {
                 scannedList = new ArrayList<>(scannedList);
             }
 
-            if (sku != null && !sku.trim().isEmpty()) {
-                sku = sku.trim();
+            if (serial != null && !serial.trim().isEmpty()) {
+                serial = serial.trim();
                 ExportItemDTO productFromDB =
-                        exportItemDAO.getItemBySKU(sku, orderId);
+                        exportItemDAO.getItemBySerial(serial, orderId);
 
                 if (productFromDB == null) {
-                    errorMessage = "The product with SKU " + sku
-                            + " is not included in this order.";
+                    errorMessage = "Serial number " + serial
+                            + " is not available or is not included in this order.";
                 } else {
+                    boolean serialAlreadyScanned = false;
                     int currentScannedQty = 0;
                     for (ExportItemDTO item : scannedList) {
-                        if (item.getSku().equalsIgnoreCase(sku)) {
+                        if (item.getSku().equalsIgnoreCase(productFromDB.getSku())) {
                             currentScannedQty += item.getQty();
+                        }
+                        if (serial.equalsIgnoreCase(item.getSerial())) {
+                            serialAlreadyScanned = true;
                         }
                     }
 
-                    if (productFromDB.getStock() <= 0) {
+                    if (serialAlreadyScanned) {
+                        errorMessage = "Serial number " + serial + " was scanned already.";
+                    } else if (productFromDB.getStock() <= 0) {
                         errorMessage = productFromDB.getName()
                                 + " is currently out of stock.";
                     } else if (currentScannedQty >= productFromDB.getStock()) {
@@ -230,6 +236,7 @@ public class ExportProduct extends HttpServlet {
                         addedItem.setImgUrl(productFromDB.getImgUrl());
                         addedItem.setStock(productFromDB.getStock());
                         addedItem.setPrice(productFromDB.getPrice());
+                        addedItem.setSerial(productFromDB.getSerial());
                         scannedList.add(0, addedItem);
                     }
                 }
@@ -263,6 +270,7 @@ public class ExportProduct extends HttpServlet {
             itemJson.addProperty("qty", item.getQty());
             itemJson.addProperty("price", item.getPrice());
             itemJson.addProperty("stock", item.getStock());
+            itemJson.addProperty("serial", item.getSerial());
             json.add("item", itemJson);
         }
 

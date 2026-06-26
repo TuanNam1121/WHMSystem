@@ -137,7 +137,7 @@ public class CreateOder extends HttpServlet {
 
 
         
-        
+        //if list selected empty
         List<Product> selectedProducts = (List<Product>) session.getAttribute("selectedProducts");
         if(selectedProducts.isEmpty()){
             request.setAttribute("customer", cd.getCustomerById(Integer.parseInt(customerId)));
@@ -165,7 +165,7 @@ public class CreateOder extends HttpServlet {
 
             if (quantityStr != null && !quantityStr.isBlank() && priceStr != null && !priceStr.isBlank()) {
 
-                int quantity = Integer.parseInt(quantityStr);
+                int quantity = Integer.parseInt(quantityStr.trim());
                 double price = Double.parseDouble(priceStr);
                 if (quantity > 0 && price > 0) {
                     total += (price * quantity);

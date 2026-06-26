@@ -175,11 +175,11 @@ public class OrderDetail extends HttpServlet {
         for (String pid : productIds) {
             int productId = Integer.parseInt(pid);
 
-
             String priceStr = request.getParameter("price_" + productId);
             try {
+                priceStr = priceStr.replace(",", "").replace(".", "");
                 double price = Double.parseDouble(priceStr);
-                if (price <= (double)0) {
+                if (price <= (double) 0) {
                     CustomerDAO cd = new CustomerDAO();
                     request.setAttribute("customers", cd.getAllCustomer());
                     request.setAttribute("order", order);
@@ -215,6 +215,7 @@ public class OrderDetail extends HttpServlet {
 
             if (quantityStr != null && !quantityStr.isBlank() && priceStr != null && !priceStr.isBlank()) {
 
+                priceStr = priceStr.replace(",", "").replace(".", "");
                 int quantity = Integer.parseInt(quantityStr);
                 double price = Double.parseDouble(priceStr);
                 if (quantity > 0 && price > 0) {

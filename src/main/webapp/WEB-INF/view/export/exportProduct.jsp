@@ -122,10 +122,10 @@
                             <c:remove var="error" scope="session"/>
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label>Scan/Search Product (SKU)</label>
+                                    <label>Scan Serial Number</label>
                                     <div class="input-groupicon">
-                                        <input type="text" name="sku" id="skuInput"
-                                               placeholder="Scan barcode and wait..." autofocus required>
+                                        <input type="text" name="serial" id="serialInput"
+                                               placeholder="Scan serial number and wait..." autofocus required>
                                         <div class="addonset">
                                             <img src="assets/img/icons/scanners.svg" alt="img">
                                         </div>
@@ -164,10 +164,10 @@
                                             </td>
                                             <td>
                                                 <input type="hidden" name="tempIds" value="${s.tempId}">
-                                                <input type="text" name="sn" class="form-control"
+                                                <input type="hidden" name="sn"
                                                        data-temp-id="${s.tempId}"
-                                                       value="${s.serial}"
-                                                       placeholder="Enter S/N" required>
+                                                       value="${s.serial}">
+                                                ${s.serial}
                                             </td>
                                             <td>${s.qty}</td>
                                             <td>
@@ -244,41 +244,12 @@
 <script src="assets/js/script.js"></script>
 <script>
     const orderId = "${sessionScope.order.id}";
-    const storageKey = "exportSerials_" + orderId;
     const scanForm = document.getElementById("scanBarcodeForm");
-    const skuInput = document.getElementById("skuInput");
+    const serialInput = document.getElementById("serialInput");
     const scannedTable = document.getElementById("scannedProductTable");
     const scannedBody = document.getElementById("scannedProductBody");
     const scanError = document.getElementById("scanError");
     const grandTotal = document.getElementById("grandTotal");
-    let savedSerials = {};
-    const currentTempIds = [];
-
-    try {
-        savedSerials = JSON.parse(sessionStorage.getItem(storageKey) || "{}");
-    } catch (error) {
-        sessionStorage.removeItem(storageKey);
-    }
-
-    function saveSerials() {
-        sessionStorage.setItem(storageKey, JSON.stringify(savedSerials));
-    }
-
-    function setupSerialInput(input) {
-        const tempId = input.dataset.tempId;
-        currentTempIds.push(tempId);
-
-        if (input.value.trim() !== "") {
-            savedSerials[tempId] = input.value;
-        } else if (savedSerials[tempId]) {
-            input.value = savedSerials[tempId];
-        }
-
-        input.addEventListener("input", function () {
-            savedSerials[tempId] = input.value;
-            saveSerials();
-        });
-    }
 
     function setupDeleteButton(button) {
         button.addEventListener("click", function (event) {
@@ -304,13 +275,11 @@
                         return;
                     }
 
-                    delete savedSerials[tempId];
-                    saveSerials();
                     row.remove();
                     grandTotal.textContent =
                             Number(data.grandTotal).toLocaleString("en-US");
                     scanError.classList.add("d-none");
-                    skuInput.focus({preventScroll: true});
+                    serialInput.focus({preventScroll: true});
                 })
                 .catch(function () {
                     showScanError("Cannot remove product. Please try again.");
@@ -321,20 +290,7 @@
         });
     }
 
-    document.querySelectorAll("input[name='sn']").forEach(setupSerialInput);
     document.querySelectorAll(".delete-set").forEach(setupDeleteButton);
-
-    Object.keys(savedSerials).forEach(function (tempId) {
-        if (!currentTempIds.includes(tempId)) {
-            delete savedSerials[tempId];
-        }
-    });
-
-    if (currentTempIds.length === 0) {
-        sessionStorage.removeItem(storageKey);
-    } else {
-        saveSerials();
-    }
 
     function escapeHtml(value) {
         const div = document.createElement("div");
@@ -352,8 +308,9 @@
             '</td>' +
             '<td>' +
                 '<input type="hidden" name="tempIds" value="' + escapeHtml(item.tempId) + '">' +
-                '<input type="text" name="sn" class="form-control" ' +
-                    'data-temp-id="' + escapeHtml(item.tempId) + '" placeholder="Enter S/N" required>' +
+                '<input type="hidden" name="sn" data-temp-id="' + escapeHtml(item.tempId) + '" ' +
+                    'value="' + escapeHtml(item.serial) + '">' +
+                escapeHtml(item.serial) +
             '</td>' +
             '<td>' + item.qty + '</td>' +
             '<td>' + Number(item.price).toLocaleString("en-US") + '</td>' +
@@ -366,7 +323,6 @@
             '</td>';
 
         scannedBody.prepend(row);
-        setupSerialInput(row.querySelector("input[name='sn']"));
         setupDeleteButton(row.querySelector(".delete-set"));
     }
 
@@ -378,23 +334,23 @@
 
     if (!scanError.classList.contains("d-none")) {
         scanForm.scrollIntoView({behavior: "smooth", block: "center"});
-        skuInput.focus({preventScroll: true});
+        serialInput.focus({preventScroll: true});
     }
 
     scanForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
-        const sku = skuInput.value.trim();
-        if (sku === "") {
-            skuInput.focus();
+        const serial = serialInput.value.trim();
+        if (serial === "") {
+            serialInput.focus();
             return;
         }
 
         const formData = new URLSearchParams();
         formData.append("orderId", orderId);
-        formData.append("sku", sku);
+        formData.append("serial", serial);
         formData.append("ajax", "true");
-        skuInput.disabled = true;
+        serialInput.disabled = true;
 
         fetch("exportProduct", {
             method: "POST",
@@ -407,28 +363,28 @@
         .then(function (data) {
             if (!data.success) {
                 showScanError(data.message);
-                skuInput.select();
+                serialInput.select();
                 return;
             }
 
             scanError.classList.add("d-none");
             addProductToTable(data.item);
             grandTotal.textContent = Number(data.grandTotal).toLocaleString("en-US");
-            skuInput.value = "";
+            serialInput.value = "";
 
             scannedTable.scrollIntoView({behavior: "smooth", block: "center"});
             scannedTable.focus({preventScroll: true});
 
             setTimeout(function () {
-                skuInput.focus({preventScroll: true});
+                serialInput.focus({preventScroll: true});
             }, 400);
         })
         .catch(function () {
             showScanError("Cannot add product. Please try again.");
         })
         .finally(function () {
-            skuInput.disabled = false;
-            skuInput.focus({preventScroll: true});
+            serialInput.disabled = false;
+            serialInput.focus({preventScroll: true});
         });
     });
 </script>

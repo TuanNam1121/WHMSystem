@@ -83,18 +83,27 @@
                         <li><a href="listSupplier">Supplier List</a></li>
                     </ul>
                 </li>
+
+                <li>
+                    <a href="inventory"><img src="assets/img/icons/product.svg"><span> Inventory</span></a>
+                </li>
+
+
                 <li>
                     <a href="InventoryAuditList"><i data-feather="layers"></i><span> Inventory Audit List</span> </a>
                 </li>
 
                 <c:if test="${sessionScope.user.roleId == 1}">
                     <li class="submenu">
-                        <a href="javascript:void(0);"><img src="assets/img/icons/users1.svg" alt="img"><span> Admin</span> <span class="menu-arrow"></span></a>
+                        <a href="javascript:void(0);"><img src="assets/img/icons/users1.svg"
+                                                           alt="img"><span> Admin</span> <span
+                                class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="${pageContext.request.contextPath}/AdminDashBoard">Dashboard</a></li>
                             <li><a href="${pageContext.request.contextPath}/ViewUserList">User Management</a></li>
                             <li><a href="${pageContext.request.contextPath}/ViewRoleList">Role Management</a></li>
-                            <li><a href="${pageContext.request.contextPath}/ViewPermissionList">Permission Management</a></li>
+                            <li><a href="${pageContext.request.contextPath}/ViewPermissionList">Permission
+                                Management</a></li>
                         </ul>
                     </li>
                 </c:if>

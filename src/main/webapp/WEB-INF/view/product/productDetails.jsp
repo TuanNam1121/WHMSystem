@@ -62,12 +62,6 @@
                 <div class="col-lg-8 col-sm-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="bar-code-view">
-                                <img src="barcode?code=${sessionScope.product.sku}" alt="barcode">
-                                <a class="printimg">
-                                    <img src="assets/img/icons/printer.svg" alt="print">
-                                </a>
-                            </div>
                             <div class="productdetails">
                                 <ul class="product-bar">
                                     <li>

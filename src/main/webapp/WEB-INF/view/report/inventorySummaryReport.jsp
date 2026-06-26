@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/animate.css">
     <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
@@ -151,9 +152,6 @@
                     <h6>View inventory import/export summary report</h6>
                 </div>
                 <div class="page-btn">
-                    <button onclick="window.print();" class="btn btn-print me-2">
-                        <i class="fas fa-print me-1"></i> Print Report
-                    </button>
                     <a href="${pageContext.request.contextPath}/ExportInventorySummary" class="btn btn-export">
                         <i class="fas fa-file-excel me-1"></i> Export Excel
                     </a>
@@ -172,13 +170,25 @@
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <label>From Date</label>
-                                                    <input type="date" name="fromDate" value="${param.fromDate}" class="form-control">
+                                                    <div class="input-groupicon">
+                                                        <input type="text" name="fromDate" value="${param.fromDate}"
+                                                               placeholder="DD-MM-YYYY" class="datetimepicker">
+                                                        <div class="addonset">
+                                                            <img src="assets/img/icons/calendars.svg" alt="calendar">
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <label>To Date</label>
-                                                    <input type="date" name="toDate" value="${param.toDate}" class="form-control">
+                                                    <div class="input-groupicon">
+                                                        <input type="text" name="toDate" value="${param.toDate}"
+                                                               placeholder="DD-MM-YYYY" class="datetimepicker">
+                                                        <div class="addonset">
+                                                            <img src="assets/img/icons/calendars.svg" alt="calendar">
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-lg col-sm-6 col-12">
@@ -213,35 +223,32 @@
                         </div>
 
                         <!-- Report Title -->
-                        <div class="report-title-section mt-3">
-                            <h3>Inventory Summary Report</h3>
-                            <p>
-                                <c:choose>
-                                    <c:when test="${not empty fromDate && not empty toDate}">
-                                        From <fmt:formatDate value="${fromDate}" pattern="dd/MM/yyyy"/> 
-                                        to <fmt:formatDate value="${toDate}" pattern="dd/MM/yyyy"/>
-                                    </c:when>
-                                    <c:otherwise>
-                                        All Time
-                                    </c:otherwise>
-                                </c:choose>
-                            </p>
-                        </div>
+<%--                        <div class="report-title-section mt-3">--%>
+<%--                            <p>--%>
+<%--                                <c:choose>--%>
+<%--                                    <c:when test="${not empty fromDate && not empty toDate}">--%>
+<%--                                        From <fmt:formatDate value="${fromDate}" pattern="dd/MM/yyyy"/> --%>
+<%--                                        to <fmt:formatDate value="${toDate}" pattern="dd/MM/yyyy"/>--%>
+<%--                                    </c:when>--%>
+<%--                                    <c:otherwise>--%>
+<%--                                        All Time--%>
+<%--                                    </c:otherwise>--%>
+<%--                                </c:choose>--%>
+<%--                            </p>--%>
+<%--                        </div>--%>
 
                         <!-- Report Table -->
-                        <div class="table-responsive">
+                        <div class="table-responsive" id="inventory-summary-table" tabindex="-1">
                             <table class="table report-summary-table">
                                 <thead>
                                     <tr>
                                         <th rowspan="2">No.</th>
-                                        <th rowspan="2">Product Code</th>
+                                        <th rowspan="2">SKU</th>
                                         <th rowspan="2">Product Name</th>
-                                        <th rowspan="2">Status</th>
                                         <th rowspan="2">Unit</th>
                                         <th colspan="1">Opening</th>
                                         <th colspan="2">During Period</th>
                                         <th colspan="1">Closing</th>
-                                        <th rowspan="2">Note</th>
                                     </tr>
                                     <tr>
                                         <th>Stock</th>
@@ -256,31 +263,17 @@
                                             <td>${(page - 1) * pageSize + v.index + 1}</td>
                                             <td>${item.productCode}</td>
                                             <td>${item.productName}</td>
-                                            <td>
-                                                <c:choose>
-                                                    <c:when test="${item.status == 'ACTIVE'}">
-                                                        <span class="status-badge status-active">Active</span>
-                                                    </c:when>
-                                                    <c:when test="${item.status == 'LOW_STOCK'}">
-                                                        <span class="status-badge status-warning">Low Stock</span>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <span class="status-badge status-inactive">Inactive</span>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </td>
                                             <td>${item.unit}</td>
                                             <td><fmt:formatNumber value="${item.openingStock}" pattern="#,##0"/></td>
                                             <td><fmt:formatNumber value="${item.importQty}" pattern="#,##0"/></td>
                                             <td><fmt:formatNumber value="${item.exportQty}" pattern="#,##0"/></td>
                                             <td><fmt:formatNumber value="${item.closingStock}" pattern="#,##0"/></td>
-                                            <td>${item.note}</td>
                                         </tr>
                                     </c:forEach>
 
                                     <c:if test="${empty reportList}">
                                         <tr>
-                                            <td colspan="10" class="text-center py-4">
+                                            <td colspan="8" class="text-center py-4">
                                                 <p class="mb-0" style="color: #999;">No data to display</p>
                                             </td>
                                         </tr>
@@ -289,12 +282,11 @@
                                 <c:if test="${not empty reportList}">
                                     <tfoot>
                                         <tr style="font-weight: 700; background-color: #f8f9fa;">
-                                            <td colspan="5" style="text-align: right;">Total</td>
+                                            <td colspan="4" style="text-align: right;">Total</td>
                                             <td><fmt:formatNumber value="${totalOpeningStock}" pattern="#,##0"/></td>
                                             <td><fmt:formatNumber value="${totalImportQty}" pattern="#,##0"/></td>
                                             <td><fmt:formatNumber value="${totalExportQty}" pattern="#,##0"/></td>
                                             <td><fmt:formatNumber value="${totalClosingStock}" pattern="#,##0"/></td>
-                                            <td></td>
                                         </tr>
                                     </tfoot>
                                 </c:if>
@@ -316,9 +308,20 @@
 <script src="assets/js/jquery.dataTables.min.js"></script>
 <script src="assets/js/dataTables.bootstrap4.min.js"></script>
 <script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/moment.min.js"></script>
+<script src="assets/js/bootstrap-datetimepicker.min.js"></script>
 <script src="assets/plugins/select2/js/select2.min.js"></script>
 <script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 <script src="assets/js/script.js"></script>
+<c:if test="${focusTable}">
+    <script>
+        window.addEventListener("load", function () {
+            const table = document.getElementById("inventory-summary-table");
+            table.scrollIntoView({behavior: "smooth", block: "start"});
+            table.focus({preventScroll: true});
+        });
+    </script>
+</c:if>
 </body>
 </html>

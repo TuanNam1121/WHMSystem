@@ -160,7 +160,7 @@
 
             <div class="card">
                 <div class="card-body">
-                    <form action="${pageContext.request.contextPath}/InventorySummaryReport" method="get">
+                    <form action="${pageContext.request.contextPath}/inventorySummaryReport" method="get">
                         <!-- Filter Section -->
                         <div class="card mb-0" id="filter_inputs" style="display: block !important;">
                             <div class="card-body pb-0">
@@ -195,16 +195,6 @@
                                                 <div class="form-group">
                                                     <label>Search</label>
                                                     <input type="text" name="keyword" value="${param.keyword}" placeholder="Code or product name...">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg col-sm-6 col-12">
-                                                <div class="form-group">
-                                                    <label>Status</label>
-                                                    <select class="select" name="status">
-                                                        <option value="">All</option>
-                                                        <option value="active" ${param.status == 'active' ? 'selected' : ''}>Active</option>
-                                                        <option value="inactive" ${param.status == 'inactive' ? 'selected' : ''}>Inactive</option>
-                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-lg-1 col-sm-6 col-12">

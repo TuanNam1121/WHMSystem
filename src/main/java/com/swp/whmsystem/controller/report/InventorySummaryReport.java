@@ -1,6 +1,10 @@
 package com.swp.whmsystem.controller.report;
 
 import java.io.IOException;
+import java.util.List;
+
+import com.swp.whmsystem.dal.InventorySummaryDAO;
+import com.swp.whmsystem.model.InventorySummary;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -8,11 +12,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-/**
- * Servlet for Inventory Summary Report (Báo cáo tổng hợp nhập xuất tồn)
- */
-@WebServlet(name = "InventorySummaryReport", urlPatterns = { "/InventorySummaryReport" })
-public class InventorySummaryReportServlet extends HttpServlet {
+@WebServlet(name = "InventorySummaryReport", urlPatterns = { "/inventorySummaryReport" })
+public class InventorySummaryReport extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -20,7 +21,6 @@ public class InventorySummaryReportServlet extends HttpServlet {
         String keyword = request.getParameter("keyword");
         String fromDate = request.getParameter("fromDate");
         String toDate = request.getParameter("toDate");
-        String status = request.getParameter("status");
         String pageSizeRaw = request.getParameter("pageSize");
         String pageRaw = request.getParameter("page");
 
@@ -46,11 +46,38 @@ public class InventorySummaryReportServlet extends HttpServlet {
             }
         }
 
+        InventorySummaryDAO dao = new InventorySummaryDAO();
+        int totalRecords = dao.countAll(keyword);
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+        if (totalPages == 0) {
+            totalPages = 1;
+        }
+
+        List<InventorySummary> reportList = dao.showAll(fromDate, toDate, keyword, page, pageSize);
+
+        int totalOpeningStock = 0;
+        int totalImportQty = 0;
+        int totalExportQty = 0;
+        int totalClosingStock = 0;
+
+        for (InventorySummary item : reportList) {
+            totalOpeningStock += item.getOpeningStock();
+            totalImportQty += item.getImportStock();
+            totalExportQty += item.getExportStock();
+            totalClosingStock += item.getClosingStock();
+        }
+
+        request.setAttribute("reportList", reportList);
+        request.setAttribute("totalOpeningStock", totalOpeningStock);
+        request.setAttribute("totalImportQty", totalImportQty);
+        request.setAttribute("totalExportQty", totalExportQty);
+        request.setAttribute("totalClosingStock", totalClosingStock);
+
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("page", page);
-        request.setAttribute("totalPages", 1); // Thay đổi khi có dữ liệu thực tế từ DAO
+        request.setAttribute("totalPages", totalPages);
         request.setAttribute("focusTable",
-                keyword != null || fromDate != null || toDate != null || status != null
+                keyword != null || fromDate != null || toDate != null
                         || pageSizeRaw != null || pageRaw != null);
         
         request.getRequestDispatcher("WEB-INF/view/report/inventorySummaryReport.jsp").forward(request, response);

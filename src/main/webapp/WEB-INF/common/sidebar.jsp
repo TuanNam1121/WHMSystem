@@ -114,7 +114,7 @@
                             class="menu-arrow"></span></a>
                     <ul>
                         <li><a href="InventorySummaryReport">Inventory Report</a></li>
-                        <li><a href="salesreport.html">Sales Report</a></li>
+                        <li><a href="ImportExportByDayReport">Daily Transaction Report</a></li>
                         <li><a href="purchasereport.html">Purchase Report</a></li>
                     </ul>
                 </li>

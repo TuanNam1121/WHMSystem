@@ -300,7 +300,6 @@ CREATE TABLE `good_receipts`
     `created_at`        datetime    DEFAULT CURRENT_TIMESTAMP,
     `updated_at`        datetime    DEFAULT CURRENT_TIMESTAMP,
     `note`              text,
-    `invoice_number`    varchar(50) DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY                 `purchaserequestid` (`purchaserequestid`),
     KEY                 `processedby` (`processedby`),

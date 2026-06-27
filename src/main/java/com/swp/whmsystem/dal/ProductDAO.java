@@ -237,8 +237,8 @@ public class ProductDAO {
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setInt(1, id);
             ps.setInt(2, newQuantity);
+            ps.setInt(3, newQuantity);
             ps.executeUpdate();
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -270,11 +270,13 @@ public class ProductDAO {
     }
 
     public boolean increaseQuantity(Product p) throws SQLException {
-        String sql = "insert into inventory(product_id, quantity) values (?, ?) "
-                + "on duplicate key update quantity = values(quantity)";
+
+        String sql = "INSERT INTO inventory (product_id, quantity) VALUES (?, ?) ON DUPLICATE KEY UPDATE quantity = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setInt(1, p.getProductId());
             ps.setInt(2, p.getTotalQuantity());
+            ps.setInt(3, p.getTotalQuantity());
+            System.out.println(sql);
             return ps.executeUpdate() != 0;
         } catch (Exception ex) {
             ex.printStackTrace();

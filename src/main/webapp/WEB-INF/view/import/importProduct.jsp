@@ -111,14 +111,6 @@
                                 </div>
                             </div>
 
-                            <!-- Supplier -->
-                            <div class="supplier-field">
-                                <label>Invoice Number</label>
-                                <input type="text" value="AC123" id="import-supplier-invoice"
-                                       class="form-control" name="invoiceNumber"
-                                       style="border: 1px solid #dee2e6; border-radius: 6px;">
-                            </div>
-
                             <!-- Summary Row: Total Items, Serials Filled, Total Payment -->
                             <div class="row mb-4" id="import-summary-row">
                                 <div class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3">
@@ -215,22 +207,21 @@
                         <div class="excel-import-section">
                             <div class="excel-import-header">
                                 <h5><i class="fas fa-file-excel me-2" style="color: #28C76F;"></i>Import from Excel</h5>
-                                <p class="text-muted mb-0">Upload an Excel file (.xlsx) with columns:
+                                <p class="text-muted mb-2">Upload an Excel file (.xlsx) with columns:
                                     <strong>STT</strong>, <strong>SKU</strong>, <strong>Serial</strong>
                                 </p>
+                                <a href="ImportExcel" class="btn btn-outline-success btn-sm mb-3">
+                                    <i class="fas fa-download me-2"></i>Download Excel Template
+                                </a>
                             </div>
                             <form action="ImportExcel" method="POST" enctype="multipart/form-data"
                                   id="excel-import-form">
                                 <input type="hidden" name="purchaseRequestId" value="${sessionScope.prCode}">
-                                <div class="excel-invoice-row mt-3">
-                                    <label>Invoice Number (for Excel Import)</label>
-                                    <input type="text" class="form-control" name="invoiceNumber"
-                                           id="excel-invoice-number" placeholder="Enter invoice number"
-                                           style="border: 1px solid #dee2e6; border-radius: 6px; max-width: 400px;">
-                                </div>
-                                <br>
                                 <div class="excel-upload-area" id="excel-upload-area">
                                     <div class="excel-upload-content">
+                                        <i class="fas fa-cloud-upload-alt excel-upload-icon"></i>
+                                        <p class="excel-upload-text">Drag and drop your Excel file here, or click to browse</p>
+                                        <p class="excel-upload-hint">Support .xlsx, .xls files up to 10MB</p>
                                         <input type="file" name="excelFile" id="excelFileInput"
                                                accept=".xlsx,.xls" class="excel-file-input">
                                     </div>
@@ -244,7 +235,7 @@
                                     </div>
                                 </div>
                                 <div class="excel-import-actions mt-3">
-                                    <button type="button" class="btn btn-save-import" id="btn-save-import">
+                                    <button type="submit" class="btn-excel-import" id="btn-excel-import">
                                         Save Import
                                     </button>
                                 </div>
@@ -255,8 +246,6 @@
 
             </div><!-- end content -->
         </div><!-- end page-wrapper -->
-
-
         <script src="assets/js/jquery-3.6.0.min.js"></script>
         <script src="assets/js/feather.min.js"></script>
         <script src="assets/js/jquery.slimscroll.min.js"></script>

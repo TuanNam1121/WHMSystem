@@ -107,7 +107,6 @@ public class ImportHistoryDetail extends HttpServlet {
         i.setCompletedAt(gr.getCreatedAt());
         i.setItems(item);
         i.setTotal(total);
-        i.setInvoiceNumber(gr.getInvoiceNumber());
         return i;
     }
     

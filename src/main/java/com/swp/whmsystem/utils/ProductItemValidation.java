@@ -4,7 +4,6 @@
  */
 package com.swp.whmsystem.utils;
 
-import com.swp.whmsystem.dal.GoodReceiptDAO;
 import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.dal.ProductItemDAO;
 import com.swp.whmsystem.dto.ProductItemRowDTO;
@@ -22,28 +21,23 @@ import java.util.Set;
 public class ProductItemValidation {
     public static String validateProductItem(List<ProductItemRowDTO> list) {
         Set<String> seenSerials = new HashSet<>();
-        for(ProductItemRowDTO i : list){
-            //int productId = i.getProductId();
+        for (ProductItemRowDTO i : list) {
+            // int productId = i.getProductId();
             String serial = i.getSerial().trim();
-            if(seenSerials.contains(serial)){
+            if (seenSerials.contains(serial)) {
                 return "Serial: " + serial + " is dupplicated";
             }
             seenSerials.add(serial);
         }
-      
+
         ProductDAO p = new ProductDAO();
         ProductItemDAO pi = new ProductItemDAO();
-        for(ProductItemRowDTO i : list){
+        for (ProductItemRowDTO i : list) {
             ProductItem existed = pi.existedSerial(i.getSerial());
-            if(existed != null) return "Product " + p.getProductNameById(existed.getProductId()) + " Serial : " + existed.getSerial() + " is existed in System";
+            if (existed != null)
+                return "Product " + p.getProductNameById(existed.getProductId()) + " Serial : " + existed.getSerial()
+                        + " is existed in System";
         }
-        return "true";
-    }
-    
-    public static String validateInvoiceNumber(String invoiceNumber){
-        if(invoiceNumber == null || invoiceNumber.isBlank()) return "Must be input Invoice Number of this good receipts";
-        GoodReceiptDAO gr = new GoodReceiptDAO();
-        if(gr.existInvoiceNumber(invoiceNumber)) return "Exist " + invoiceNumber + " in Good Receipts before";
         return "true";
     }
 }

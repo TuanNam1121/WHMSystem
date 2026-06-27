@@ -85,10 +85,6 @@
                                         <h6>${sessionScope.product.sku}</h6>
                                     </li>
                                     <li>
-                                        <h4>Quantity</h4>
-                                        <h6>${sessionScope.product.totalQuantity}</h6>
-                                    </li>
-                                    <li>
                                         <h4>Status</h4>
                                         <h6>${product.isActive ? "Active" : "Inactive"}</h6>
                                     </li>

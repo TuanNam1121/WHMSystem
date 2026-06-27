@@ -173,9 +173,7 @@ public class UpdateProduct extends HttpServlet {
         if (product.isIsActive() != isActive) {
             product.setIsActive(isActive);
         }
-        if (!imgUrl.equals("")) {
-            product.setImgUrl(imgUrl);
-        }
+
 
         // Chỉ cho phép sửa các field này khi chưa có transaction
         if (product.getTotalQuantity() == 0) {
@@ -251,8 +249,11 @@ public class UpdateProduct extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);
             return;
         }
-        imgUrl = FileUtils.saveFile(part, request);
-        product.setImgUrl(imgUrl);
+        if (part != null && part.getSize() > 0) {
+            imgUrl = FileUtils.saveFile(part, request);
+            product.setImgUrl(imgUrl);
+        }
+        // Nếu không upload ảnh mới thì giữ nguyên imgUrl cũ của product
         if(!productDao.updateProduct(product)){
             request.setAttribute("message", error);
             request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);

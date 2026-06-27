@@ -235,6 +235,7 @@
                                         <th rowspan="2">No.</th>
                                         <th rowspan="2">SKU</th>
                                         <th rowspan="2">Product Name</th>
+                                        <th rowspan="2">Category</th>
                                         <th rowspan="2">Unit</th>
                                         <th colspan="1">Opening</th>
                                         <th colspan="2">During Period</th>
@@ -251,19 +252,20 @@
                                     <c:forEach items="${reportList}" var="item" varStatus="v">
                                         <tr>
                                             <td>${(page - 1) * pageSize + v.index + 1}</td>
-                                            <td>${item.productCode}</td>
+                                            <td>${item.sku}</td>
                                             <td>${item.productName}</td>
+                                            <td>${item.category}</td>
                                             <td>${item.unit}</td>
                                             <td><fmt:formatNumber value="${item.openingStock}" pattern="#,##0"/></td>
-                                            <td><fmt:formatNumber value="${item.importQty}" pattern="#,##0"/></td>
-                                            <td><fmt:formatNumber value="${item.exportQty}" pattern="#,##0"/></td>
+                                            <td><fmt:formatNumber value="${item.importStock}" pattern="#,##0"/></td>
+                                            <td><fmt:formatNumber value="${item.exportStock}" pattern="#,##0"/></td>
                                             <td><fmt:formatNumber value="${item.closingStock}" pattern="#,##0"/></td>
                                         </tr>
                                     </c:forEach>
 
                                     <c:if test="${empty reportList}">
                                         <tr>
-                                            <td colspan="8" class="text-center py-4">
+                                            <td colspan="9" class="text-center py-4">
                                                 <p class="mb-0" style="color: #999;">No data to display</p>
                                             </td>
                                         </tr>
@@ -272,11 +274,11 @@
                                 <c:if test="${not empty reportList}">
                                     <tfoot>
                                         <tr style="font-weight: 700; background-color: #f8f9fa;">
-                                            <td colspan="4" style="text-align: right;">Total</td>
-                                            <td><fmt:formatNumber value="${totalOpeningStock}" pattern="#,##0"/></td>
-                                            <td><fmt:formatNumber value="${totalImportQty}" pattern="#,##0"/></td>
-                                            <td><fmt:formatNumber value="${totalExportQty}" pattern="#,##0"/></td>
-                                            <td><fmt:formatNumber value="${totalClosingStock}" pattern="#,##0"/></td>
+                                            <td colspan="5" style="text-align: right;">Total</td>
+                                            <td style="text-align: center;"><fmt:formatNumber value="${totalOpeningStock}" pattern="#,##0"/></td>
+                                            <td style="text-align: center;"><fmt:formatNumber value="${totalImportQty}" pattern="#,##0"/></td>
+                                            <td style="text-align: center;"><fmt:formatNumber value="${totalExportQty}" pattern="#,##0"/></td>
+                                            <td style="text-align: center;"><fmt:formatNumber value="${totalClosingStock}" pattern="#,##0"/></td>
                                         </tr>
                                     </tfoot>
                                 </c:if>

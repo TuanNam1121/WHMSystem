@@ -92,6 +92,7 @@ public class InventorySummaryDAO {
 
         is.setSku(product.getSku());
         is.setProductName(product.getName());
+        is.setCategory(product.getCategory().getName());
         is.setUnit(product.getUnit().getName());
 
         if (openDate != null && !openDate.isEmpty()

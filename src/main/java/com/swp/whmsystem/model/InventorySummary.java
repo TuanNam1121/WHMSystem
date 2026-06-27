@@ -3,6 +3,7 @@ package com.swp.whmsystem.model;
 public class InventorySummary {
     private String sku;
     private String productName;
+    private String category;
     private String unit;
     private int openingStock;
     private int importStock;
@@ -12,9 +13,10 @@ public class InventorySummary {
     public InventorySummary() {
     }
 
-    public InventorySummary(String sku, String productName, String unit, int openingStock, int importStock, int exportStock, int closingStock) {
+    public InventorySummary(String sku, String productName, String category, String unit, int openingStock, int importStock, int exportStock, int closingStock) {
         this.sku = sku;
         this.productName = productName;
+        this.category = category;
         this.unit = unit;
         this.openingStock = openingStock;
         this.importStock = importStock;
@@ -36,6 +38,14 @@ public class InventorySummary {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getUnit() {

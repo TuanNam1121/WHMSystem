@@ -2,8 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
-package com.swp.whmsystem.controller.sale;
+package com.swp.whmsystem.controller.sale2;
 
 import com.swp.whmsystem.dal.CustomerDAO;
 import com.swp.whmsystem.dal.ProductDAO;
@@ -23,36 +22,39 @@ import java.util.List;
  *
  * @author LENOVO
  */
-@WebServlet(name="OrderRemoveItem", urlPatterns={"/OrderRemoveItem"})
-public class OrderRemoveItem extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+@WebServlet(name = "OrderAddItem", urlPatterns = {"/OrderAddItem"})
+public class OrderAddItem extends HttpServlet {
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet OrderRemoveItem</title>");  
+            out.println("<title>Servlet OrderAddItem</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet OrderRemoveItem at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet OrderAddItem at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -60,45 +62,53 @@ public class OrderRemoveItem extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         String idStr = request.getParameter("id");
         int id = Integer.parseInt(idStr);
-         HttpSession session = request.getSession();
-         
-         List<Product> selectedProducts;
-         selectedProducts = (List<Product>) session.getAttribute("selectedProducts");
-         
-         
-         ProductDAO pd = new ProductDAO();
-//         Product p = pd.getProductFromId(id);
-         int count = 0;
-         boolean exist = false;
-         for(Product check:selectedProducts){
-             if(check.getProductId()==id){
-                 exist = true;
-                 break;
-             }
-             count++;
-         }
-         if(exist){
-         selectedProducts.remove(selectedProducts.get(count));
-             
-         }
-         session.setAttribute("selectedProducts", selectedProducts);
-         
-         
-         String customerIdStr = request.getParameter("customerId");
+        HttpSession session = request.getSession();
+
+        List<Product> selectedProducts;
+        if (session.getAttribute("selectedProducts") == null) {
+            selectedProducts = new ArrayList<>();
+        } else {
+            selectedProducts = (List<Product>) session.getAttribute("selectedProducts");
+        }
+
+        ProductDAO pd = new ProductDAO();
+        boolean exist = false;
+        int position = 0;
+        for (Product check : selectedProducts) {
+            if (check.getProductId() == id) {
+                exist = true;
+                break;
+            }
+            position++;
+        }
+        if (!exist) {
+            Product p = pd.getProductFromId(id);
+            p.setSelectedQuantity(1);
+
+            selectedProducts.add(p);
+            session.setAttribute("selectedProducts", selectedProducts);
+
+        } else {
+            Product p = selectedProducts.get(position);
+            p.setSelectedQuantity(p.getSelectedQuantity() + 1);
+            session.setAttribute("selectedProducts", selectedProducts);
+        }
+
+        String customerIdStr = request.getParameter("customerId");
         int customerId = Integer.parseInt(customerIdStr);
         CustomerDAO cd = new CustomerDAO();
         request.setAttribute("customer", cd.getCustomerById(customerId));
-        
-        
+
         request.setAttribute("products", pd.getProductList());
         request.getRequestDispatcher("WEB-INF/view/sale/createOrder.jsp").forward(request, response);
-    } 
+    }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -106,12 +116,13 @@ public class OrderRemoveItem extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override

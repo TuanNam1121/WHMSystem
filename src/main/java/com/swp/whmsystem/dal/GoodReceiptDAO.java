@@ -150,21 +150,19 @@ public class GoodReceiptDAO {
         c.setProcessedBy(rs.getInt("processedby"));
         c.setStatus(rs.getString("status"));
         c.setCreatedAt(rs.getTimestamp("created_at"));
-        c.setInvoiceNumber(rs.getString("invoice_number"));
         c.setNote(rs.getString("note"));
         return c;
     }
 
     // luôn trả về ID để insert good_receipts_items ngay sau đó
     public int insertGoodReceiptAndGetId(GoodReceipt receipt) {
-        String sql = "insert into good_receipts (purchaserequestid, processedby, status, note, invoice_number) values (?, ?, ?, ?, ?)";
+        String sql = "insert into good_receipts (purchaserequestid, processedby, status, note) values (?, ?, ?, ?)";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, receipt.getPurchaseRequestId());
             preparedStatement.setInt(2, receipt.getProcessedBy());
             preparedStatement.setString(3, receipt.getStatus());
             preparedStatement.setString(4, receipt.getNote());
-            preparedStatement.setString(5, receipt.getInvoiceNumber());
             preparedStatement.executeUpdate();
             try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -175,21 +173,6 @@ public class GoodReceiptDAO {
             throw new RuntimeException(e);
         }
         return -1;
-    }
-
-    public boolean existInvoiceNumber(String invoiceNumber){
-        String sql = "select * from good_receipts where invoice_number = ?";
-        try (Connection connection = DBContext.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, invoiceNumber);
-            ResultSet rs = preparedStatement.executeQuery();
-            if (rs.next()) {
-                return true;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return false;
     }
 
     public List<GoodReceipt> searchProduct(int receiptId, int purchaseid, int supplierId, int processedby, String sortBy) {
@@ -249,7 +232,5 @@ public class GoodReceiptDAO {
     }
 
     public static void main(String[] args) {
-        GoodReceiptDAO gr = new GoodReceiptDAO();
-        System.out.println(gr.existInvoiceNumber(""));
     }
 }

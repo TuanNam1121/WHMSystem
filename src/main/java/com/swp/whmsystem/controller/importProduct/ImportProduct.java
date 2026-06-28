@@ -167,15 +167,13 @@ public class ImportProduct extends HttpServlet {
                 request.getRequestDispatcher("WEB-INF/view/import/importProduct.jsp").forward(request, response);
                 return;
             }
-            String validInvoiceNumber = ProductItemValidation.validateInvoiceNumber(invoiceNumber);
             String valid = ProductItemValidation.validateProductItem(filledList);
             
-            if (!"true".equals(valid) || !"true".equals(validInvoiceNumber)) {
+            if (!"true".equals(valid)) {
                 List<List<ProductItemRowDTO>> filledReturnedList = returnListDTO(importItems, serials);
                 request.setAttribute("purchaseRequestId", purchaseRequestId);
                 request.setAttribute("importItems", filledReturnedList);
-                if(!"true".equals(valid)) request.setAttribute("message", valid);
-                else request.setAttribute("message", validInvoiceNumber);
+                request.setAttribute("message", valid);
                 request.getRequestDispatcher("WEB-INF/view/import/importProduct.jsp").forward(request, response);
                 return;
             }
@@ -214,7 +212,6 @@ public class ImportProduct extends HttpServlet {
         goodReceipt.setPurchaseRequestId(prId);
         goodReceipt.setProcessedBy(handler);
         goodReceipt.setStatus("COMPLETED");
-        goodReceipt.setInvoiceNumber(invoiceNumber);
         int goodReceiptId = gr.insertGoodReceiptAndGetId(goodReceipt);
 
         Map<Integer, List<ProductItemRowDTO>> a = new HashMap<>();

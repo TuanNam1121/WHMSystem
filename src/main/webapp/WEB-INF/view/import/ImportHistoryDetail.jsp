@@ -163,14 +163,6 @@
                     <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
                         <div class="card info-card h-100">
                             <div class="card-body">
-                                <span class="info-label">Invoice Number</span>
-                                <h5 class="info-value">${detail.invoiceNumber}</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
-                        <div class="card info-card h-100">
-                            <div class="card-body">
                                 <span class="info-label">Received At</span>
                                 <h5 class="info-value">${detail.completedAt}</h5>
                             </div>

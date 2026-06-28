@@ -8,7 +8,6 @@ import com.swp.whmsystem.dal.CustomerDAO;
 import com.swp.whmsystem.dal.OrderDAO;
 import com.swp.whmsystem.dal.OrderItemDAO;
 import com.swp.whmsystem.dal.ProductDAO;
-import com.swp.whmsystem.dal.RolePermissionDAO;
 import com.swp.whmsystem.model.Customer;
 import com.swp.whmsystem.model.Order;
 import com.swp.whmsystem.model.OrderItem;
@@ -23,7 +22,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.Timestamp;
-import java.util.List;
 
 /**
  *
@@ -70,23 +68,10 @@ public class CreateOder extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-//        HttpSession session = request.getSession();
-//        User user = (User) session.getAttribute("user");
-//        if (user == null) {
-//            response.sendRedirect("login");
-//            return;
-//        }
-//        RolePermissionDAO rpd = new RolePermissionDAO();
-//        if(!rpd.havePermission(user, "CreateOder")){
-//            response.sendRedirect("NoPermission");
-//            return;
-//        }
-        
-        String customerIdStr = request.getParameter("id");
-        int customerId = Integer.parseInt(customerIdStr);
+        String customerId = request.getParameter("id");
         CustomerDAO cd = new CustomerDAO();
-        request.setAttribute("customer", cd.getCustomerById(customerId));
+        Customer customer = cd.getCustomerById(Integer.parseInt(customerId));
+        request.setAttribute("customer", customer);
         
         ProductDAO pd = new ProductDAO();
         request.setAttribute("products", pd.getProductList());
@@ -105,18 +90,11 @@ public class CreateOder extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String customerId = request.getParameter("customerId");
-        String customerName = request.getParameter("customerName");
-        String customerPhone = request.getParameter("customerPhone");
         String note = request.getParameter("note");
 
         CustomerDAO cd = new CustomerDAO();
-        Customer customer = cd.getCustomerByPhone(customerPhone);
+        Customer customer = cd.getCustomerById(Integer.parseInt(customerId));
 
-        if (customer == null) {
-            customer = new Customer(0, customerName, customerPhone);
-            cd.insertCustomer(customer);
-            customer.setId(cd.getCustomerByPhone(customerPhone).getId());
-        }
 
         HttpSession session = request.getSession();
         if (session == null || session.getAttribute("user") == null) {
@@ -136,21 +114,8 @@ public class CreateOder extends HttpServlet {
         order.setCustomerId(customer.getId());
 
 
-        
-        
-        List<Product> selectedProducts = (List<Product>) session.getAttribute("selectedProducts");
-        if(selectedProducts.isEmpty()){
-            request.setAttribute("customer", cd.getCustomerById(Integer.parseInt(customerId)));
-            ProductDAO pd = new ProductDAO();
-        request.setAttribute("products", pd.getProductList());
-            request.setAttribute("message", "order must contain at least 1 product");
-            request.getRequestDispatcher("WEB-INF/view/sale/createOrder.jsp").forward(request, response);
-            return;
-        }
-        
         String[] productIds = request.getParameterValues("productId");
         ProductDAO pd = new ProductDAO();
-        
         
         Order createdOrder = od.insertOrder(order);
         double total = 0;
@@ -183,7 +148,6 @@ public class CreateOder extends HttpServlet {
         
         createdOrder.setTotalPrice(total);
         od.updateOrderPrice(createdOrder);
-        session.removeAttribute("selectedProducts");
         response.sendRedirect("OrderList");
     }
 

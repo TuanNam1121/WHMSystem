@@ -3,14 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package com.swp.whmsystem.controller.sale;
+package com.swp.whmsystem.controller.sale2;
 
 import com.swp.whmsystem.dal.CustomerDAO;
-import com.swp.whmsystem.dal.OrderDAO;
-import com.swp.whmsystem.dal.OrderItemDAO;
 import com.swp.whmsystem.dal.ProductDAO;
-import com.swp.whmsystem.model.Order;
-import com.swp.whmsystem.model.OrderItem;
 import com.swp.whmsystem.model.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -27,8 +23,8 @@ import java.util.List;
  *
  * @author LENOVO
  */
-@WebServlet(name="UpdateAddItem", urlPatterns={"/UpdateAddItem"})
-public class UpdateAddItem extends HttpServlet {
+@WebServlet(name="OrderRemoveItem", urlPatterns={"/OrderRemoveItem"})
+public class OrderRemoveItem extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -45,10 +41,10 @@ public class UpdateAddItem extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet UpdateAddItem</title>");  
+            out.println("<title>Servlet OrderRemoveItem</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet UpdateAddItem at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet OrderRemoveItem at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -67,40 +63,38 @@ public class UpdateAddItem extends HttpServlet {
     throws ServletException, IOException {
         String idStr = request.getParameter("id");
         int id = Integer.parseInt(idStr);
-        
-        String orderIdStr = request.getParameter("orderId");
-        OrderDAO od = new OrderDAO();
-        int orderId = Integer.parseInt(orderIdStr);
-        Order order = od.getOrderById(orderId);
-        request.setAttribute("order", order);
+         HttpSession session = request.getSession();
+         
+         List<Product> selectedProducts;
+         selectedProducts = (List<Product>) session.getAttribute("selectedProducts");
+         
+         
+         ProductDAO pd = new ProductDAO();
+//         Product p = pd.getProductFromId(id);
+         int count = 0;
+         boolean exist = false;
+         for(Product check:selectedProducts){
+             if(check.getProductId()==id){
+                 exist = true;
+                 break;
+             }
+             count++;
+         }
+         if(exist){
+         selectedProducts.remove(selectedProducts.get(count));
+             
+         }
+         session.setAttribute("selectedProducts", selectedProducts);
+         
+         
+         String customerIdStr = request.getParameter("customerId");
+        int customerId = Integer.parseInt(customerIdStr);
         CustomerDAO cd = new CustomerDAO();
-        request.setAttribute("customers", cd.getAllCustomer());
-        HttpSession session = request.getSession();
+        request.setAttribute("customer", cd.getCustomerById(customerId));
         
-
-        List<OrderItem> orderItems = (List<OrderItem>) session.getAttribute("orderItems");
-        ProductDAO pd = new ProductDAO();
-            request.setAttribute("products", pd.getProductList());
-            OrderItemDAO oid = new OrderItemDAO();
-            
-            boolean exist = false;
-        for (OrderItem check : orderItems) {
-            if (check.getProductId() == id) {
-                exist = true;
-            }
-        }
-        if(!exist){
-        OrderItem o = new OrderItem();
-        o.setId(0);
-        o.setProductId(id);
-        o.setProductName(pd.getProductNameById(id));
-        o.setInStock(pd.getProductQuantityById(id));
-        orderItems.add(o);
-            
-        }
-        session.setAttribute("orderItems", orderItems);
-            
-            request.getRequestDispatcher("WEB-INF/view/sale/orderDetail.jsp").forward(request, response);
+        
+        request.setAttribute("products", pd.getProductList());
+        request.getRequestDispatcher("WEB-INF/view/sale/createOrder.jsp").forward(request, response);
     } 
 
     /** 

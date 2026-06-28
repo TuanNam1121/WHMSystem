@@ -27,5 +27,4 @@ public class ImportHistoryDTO {
     private int total; 
     private String status;
     private Timestamp completedAt;
-    private String invoiceNumber;
 }

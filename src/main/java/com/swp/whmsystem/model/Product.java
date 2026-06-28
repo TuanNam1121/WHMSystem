@@ -23,6 +23,8 @@ public class Product {
     private Model model;
     private Category category;
     private Brand brand;
+    private int selectedQuantity;
+    private double selectedPrice;
 
     public Product() {
     }
@@ -43,6 +45,24 @@ public class Product {
         this.category = category;
         this.brand = brand;
     }
+
+    public int getSelectedQuantity() {
+        return selectedQuantity;
+    }
+
+    public void setSelectedQuantity(int selectedQuantity) {
+        this.selectedQuantity = selectedQuantity;
+    }
+
+    public double getSelectedPrice() {
+        return selectedPrice;
+    }
+
+    public void setSelectedPrice(double selectedPrice) {
+        this.selectedPrice = selectedPrice;
+    }
+    
+    
 
     public boolean isIsActive() {
         return isActive;

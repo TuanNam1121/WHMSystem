@@ -119,9 +119,7 @@ public class OrderDetail extends HttpServlet {
             ProductDAO pd = new ProductDAO();
             request.setAttribute("products", pd.getProductList());
             OrderItemDAO oid = new OrderItemDAO();
-
-            HttpSession session = request.getSession();
-            session.setAttribute("orderItems", oid.getOrderItemByOrderId(orderId));
+            request.setAttribute("orderItems", oid.getOrderItemByOrderId(orderId));
 
             request.getRequestDispatcher("WEB-INF/view/sale/orderDetail.jsp").forward(request, response);
             return;
@@ -143,7 +141,6 @@ public class OrderDetail extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
 
         String note = request.getParameter("note");
         String orderidStr = request.getParameter("orderid");
@@ -153,54 +150,11 @@ public class OrderDetail extends HttpServlet {
         Order order = od.getOrderById(orderid);
         order.setNote(note);
 
-        List<OrderItem> orderItems = (List<OrderItem>) session.getAttribute("orderItems");
-
-        if (orderItems.isEmpty()) {
-            CustomerDAO cd = new CustomerDAO();
-            request.setAttribute("customers", cd.getAllCustomer());
-            request.setAttribute("order", order);
-            OrderItemDAO oid = new OrderItemDAO();
-            session.setAttribute("orderItems", oid.getOrderItemByOrderId(order.getId()));
-            ProductDAO pd = new ProductDAO();
-            request.setAttribute("products", pd.getProductList());
-            request.setAttribute("message", "order must contain at least 1 product");
-            request.getRequestDispatcher("WEB-INF/view/sale/orderDetail.jsp").forward(request, response);
-            return;
-        }
 
         String[] productIds = request.getParameterValues("productId");
         ProductDAO pd = new ProductDAO();
         OrderItemDAO oid = new OrderItemDAO();
 
-        for (String pid : productIds) {
-            int productId = Integer.parseInt(pid);
-
-
-            String priceStr = request.getParameter("price_" + productId);
-            try {
-                double price = Double.parseDouble(priceStr);
-                if (price <= (double)0) {
-                    CustomerDAO cd = new CustomerDAO();
-                    request.setAttribute("customers", cd.getAllCustomer());
-                    request.setAttribute("order", order);
-                    session.setAttribute("orderItems", oid.getOrderItemByOrderId(order.getId()));
-                    request.setAttribute("products", pd.getProductList());
-                    request.setAttribute("message", "price must bigger than 0");
-                    request.getRequestDispatcher("WEB-INF/view/sale/orderDetail.jsp").forward(request, response);
-                    return;
-                }
-
-            } catch (NumberFormatException e) {
-                CustomerDAO cd = new CustomerDAO();
-                request.setAttribute("customers", cd.getAllCustomer());
-                request.setAttribute("order", order);
-                session.setAttribute("orderItems", oid.getOrderItemByOrderId(order.getId()));
-                request.setAttribute("products", pd.getProductList());
-                request.setAttribute("message", "price can only contain number");
-                request.getRequestDispatcher("WEB-INF/view/sale/orderDetail.jsp").forward(request, response);
-                return;
-            }
-        }
 
         oid.deleteOrderItem(orderid);
         double total = 0;
@@ -215,6 +169,7 @@ public class OrderDetail extends HttpServlet {
 
             if (quantityStr != null && !quantityStr.isBlank() && priceStr != null && !priceStr.isBlank()) {
 
+                priceStr = priceStr.replace(",", "").replace(".", "").replace(" ", "");
                 int quantity = Integer.parseInt(quantityStr);
                 double price = Double.parseDouble(priceStr);
                 if (quantity > 0 && price > 0) {
@@ -234,8 +189,6 @@ public class OrderDetail extends HttpServlet {
         od.updateOrderPrice(order);
         od.updateOrderNote(order);
 
-        session.removeAttribute("orderItems");
-        System.out.println("order item session removed");
         response.sendRedirect("OrderList");
     }
 

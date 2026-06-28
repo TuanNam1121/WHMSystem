@@ -68,13 +68,6 @@
             font-size: 24px;
         }
 
-        .inventory-out-stock {
-            background: #ffe5e5;
-        }
-
-        .inventory-low-stock {
-            background: #fff4cc;
-        }
     </style>
 </head>
 <body>
@@ -207,7 +200,7 @@
                                 </thead>
                                 <tbody>
                                 <c:forEach items="${inventoryList}" var="item" varStatus="v">
-                                    <tr class="${item.rowClass}">
+                                    <tr>
                                         <td>${(page - 1) * pageSize + v.index + 1}</td>
                                         <td class="productimgname">
                                             <a href="javascript:void(0);" class="product-img">

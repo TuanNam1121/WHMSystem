@@ -231,14 +231,14 @@ public class ProductDAO {
         return productList;
     }
 
-    public void changeProductQuantity(int newQuantity, int id) {
+    public void updateProductQuantity(int newQuantity, int id) {
         String sql = "insert into inventory(product_id, quantity) values (?, ?) "
                 + "on duplicate key update quantity = values(quantity)";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setInt(1, id);
             ps.setInt(2, newQuantity);
+            ps.setInt(3, newQuantity);
             ps.executeUpdate();
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -270,13 +270,15 @@ public class ProductDAO {
     }
 
     public boolean increaseQuantity(Product p) throws SQLException {
-        String sql = "insert into inventory(product_id, quantity) values (?, ?) "
-                + "on duplicate key update quantity = values(quantity)";
+
+        String sql = "INSERT INTO inventory (product_id, quantity) VALUES (?, ?) ON DUPLICATE KEY UPDATE quantity = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setInt(1, p.getProductId());
             ps.setInt(2, p.getTotalQuantity());
+            ps.setInt(3, p.getTotalQuantity());
+            System.out.println(sql);
             return ps.executeUpdate() != 0;
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return false;
@@ -441,13 +443,13 @@ public class ProductDAO {
     }
 
     public List<Product> searchProduct(String name, int categoryId, int brandId, int isActive,
-            String sortBy, int pageSize, int page) {
+                                       String sortBy, int pageSize, int page) {
         List<Product> productList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "select p.*, 0 as quantity from products p "
-                + "left join categories c ON p.categoryid = c.categoryid "
-                + "left join brands b ON p.brandid = b.brandid "
-                + "where 1=1"
+                        + "left join categories c ON p.categoryid = c.categoryid "
+                        + "left join brands b ON p.brandid = b.brandid "
+                        + "where 1=1"
         );
         List<Object> parameter = new ArrayList<>();
         if (name != null && !name.trim().isEmpty()) {
@@ -487,7 +489,7 @@ public class ProductDAO {
         } else {
             sql.append(" order by p.isActive desc, p.productid desc");
         }
-        
+
         int offset = (page - 1) * pageSize;
         sql.append(" limit ? offset ?");
         parameter.add(pageSize);
@@ -512,9 +514,9 @@ public class ProductDAO {
     public int countProducts(String name, int categoryId, int brandId, int isActive) {
         StringBuilder sql = new StringBuilder(
                 "select count(*) from products p "
-                + "left join categories c ON p.categoryid = c.categoryid "
-                + "left join brands b ON p.brandid = b.brandid "
-                + "where 1=1"
+                        + "left join categories c ON p.categoryid = c.categoryid "
+                        + "left join brands b ON p.brandid = b.brandid "
+                        + "where 1=1"
         );
         List<Object> parameters = new ArrayList<>();
 
@@ -587,11 +589,11 @@ public class ProductDAO {
     }
 
     public List<ProductItem> searchProductItems(int productId, String serial, String date,
-            String status, String sortBy, int pageSize, int page) {
+                                                String status, String sortBy, int pageSize, int page) {
         List<ProductItem> productItemList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "select pi.* from product_items pi "
-                + "where pi.product_id = ?"
+                        + "where pi.product_id = ?"
         );
         List<Object> parameter = new ArrayList<>();
         parameter.add(productId);
@@ -666,7 +668,7 @@ public class ProductDAO {
     public int countProductItems(int productId, String serial, String date, String status) {
         StringBuilder sql = new StringBuilder(
                 "select count(*) from product_items pi "
-                + "where pi.product_id = ?"
+                        + "where pi.product_id = ?"
         );
         List<Object> parameters = new ArrayList<>();
         parameters.add(productId);

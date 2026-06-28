@@ -40,6 +40,37 @@ public class ExportItemDAO {
         return dto;
     }
 
+    public ExportItemDTO getItemBySerial(String serial, int orderId) {
+        ExportItemDTO dto = null;
+
+        String sql = "SELECT p.sku, p.name, p.img_url, oi.price, pi.serial, "
+                + "(SELECT COUNT(*) FROM product_items pi2 "
+                + "WHERE pi2.product_id = p.productid AND pi2.status = 'AVAILABLE') AS available_quantity "
+                + "FROM product_items pi "
+                + "JOIN products p ON pi.product_id = p.productid "
+                + "JOIN order_items oi ON p.productid = oi.productid "
+                + "WHERE pi.serial = ? AND oi.orderid = ? "
+                + "AND pi.status = 'AVAILABLE' AND p.isactive = 1";
+
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, serial);
+            ps.setInt(2, orderId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    dto = mapResultSetToExportItemDTO(rs);
+                    dto.setSerial(rs.getString("serial"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return dto;
+    }
+
     private ExportItemDTO mapResultSetToExportItemDTO(ResultSet rs) throws SQLException {
         ExportItemDTO dto = new ExportItemDTO();
         dto.setSku(rs.getString("sku"));

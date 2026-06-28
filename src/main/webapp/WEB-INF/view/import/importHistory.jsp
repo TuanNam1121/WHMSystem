@@ -38,9 +38,6 @@
                         <h4>Import History</h4>
                         <h6>Manage your import history</h6>
                     </div>
-                    <div class="page-btn">
-                        <a href="addproduct.html" class="btn btn-added"><img src="assets/img/icons/plus.svg" alt="img" class="me-1">Add New Product</a>
-                    </div>
                 </div>
 
                 <div class="card">

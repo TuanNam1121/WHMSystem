@@ -87,13 +87,4 @@ public class InventoryItemDTO {
         return "bg-lightgreen";
     }
 
-    public String getRowClass() {
-        if (quantity == 0) {
-            return "inventory-out-stock";
-        }
-        if (quantity <= 10) {
-            return "inventory-low-stock";
-        }
-        return "";
-    }
 }

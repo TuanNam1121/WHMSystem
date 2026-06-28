@@ -33,6 +33,109 @@ import java.util.Map;
 public class ImportExcelServlet extends HttpServlet {
 
     @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
+        List<ProductItemRowDTO> list = (List<ProductItemRowDTO>) session.getAttribute("list");
+        if (list == null || list.isEmpty()) {
+            session.setAttribute("message", "No products available to export.");
+            session.setAttribute("messageType", "danger");
+            response.sendRedirect(request.getContextPath() + "/importRequestList");
+            return;
+        }
+
+        // Set response headers for Excel download
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=ImportTemplate.xlsx");
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Import Template");
+
+            // Define styles
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerFont.setColor(IndexedColors.WHITE.getIndex());
+            headerStyle.setFont(headerFont);
+            headerStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+
+            CellStyle productHeaderStyle = workbook.createCellStyle();
+            Font productHeaderFont = workbook.createFont();
+            productHeaderFont.setBold(true);
+            productHeaderStyle.setFont(productHeaderFont);
+            productHeaderStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+            productHeaderStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+            // Create sheet header row
+            Row headerRow = sheet.createRow(0);
+            Cell cell0 = headerRow.createCell(0);
+            cell0.setCellValue("STT");
+            cell0.setCellStyle(headerStyle);
+
+            Cell cell1 = headerRow.createCell(1);
+            cell1.setCellValue("SKU");
+            cell1.setCellStyle(headerStyle);
+
+            Cell cell2 = headerRow.createCell(2);
+            cell2.setCellValue("Serial");
+            cell2.setCellStyle(headerStyle);
+
+            // Group items by productId preserving order
+            Map<Integer, List<ProductItemRowDTO>> grouped = new java.util.LinkedHashMap<>();
+            for (ProductItemRowDTO item : list) {
+                grouped.computeIfAbsent(item.getProductId(), k -> new ArrayList<>()).add(item);
+            }
+
+            ProductDAO productDAO = new ProductDAO();
+            int rowIndex = 1;
+
+            for (Map.Entry<Integer, List<ProductItemRowDTO>> entry : grouped.entrySet()) {
+                int productId = entry.getKey();
+                List<ProductItemRowDTO> items = entry.getValue();
+
+                Product product = productDAO.getProductFromId(productId);
+                String productName = product != null ? product.getName() : "Unknown";
+                String sku = product != null ? product.getSku() : "";
+
+                // Write product header row: "Tên sản phẩm (SKU) : [name] ([sku])"
+                Row prodHeaderRow = sheet.createRow(rowIndex++);
+                Cell prCell = prodHeaderRow.createCell(0);
+                prCell.setCellValue("Tên sản phẩm (SKU) : " + productName + " (" + sku + ")");
+                prCell.setCellStyle(productHeaderStyle);
+
+                // Merge columns for product header row
+                sheet.addMergedRegion(new org.apache.poi.ss.util.CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 2));
+
+                // Write item rows
+                int stt = 1;
+                for (ProductItemRowDTO item : items) {
+                    Row row = sheet.createRow(rowIndex++);
+                    row.createCell(0).setCellValue(stt++);
+                    row.createCell(1).setCellValue(sku);
+                    row.createCell(2).setCellValue(""); // Empty for user to enter Serial
+                }
+            }
+
+            // Set fixed column widths for consistent look
+            sheet.setColumnWidth(0, 4000); // STT
+            sheet.setColumnWidth(1, 6000); // SKU
+            sheet.setColumnWidth(2, 8000); // Serial
+
+            workbook.write(response.getOutputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
@@ -102,32 +205,32 @@ public class ImportExcelServlet extends HttpServlet {
                 }
 
                 int lastRow = sheet.getLastRowNum();
-                // Start from row 1 (skip header row 0)
                 for (int i = 1; i <= lastRow; i++) {
                     Row row = sheet.getRow(i);
                     if (row == null)
                         continue;
 
-                    // Column 0: STT (skip, just index)
-                    // Column 1: SKU
-                    Cell skuCell = row.getCell(1);
-                    // Column 2: Serial
-                    Cell serialCell = row.getCell(2);
+                    Cell sttCell = row.getCell(0);
+                    String sttVal = (sttCell != null) ? getCellStringValue(sttCell).trim() : "";
 
-                    if (skuCell == null || serialCell == null) {
-                        errors.add("Row " + (i + 1) + ": SKU or Serial is empty.");
+                    // Skip empty rows, sheet header rows, and product header rows
+                    if (sttVal.isEmpty() || "STT".equalsIgnoreCase(sttVal) || sttVal.startsWith("Tên sản phẩm")) {
                         continue;
                     }
 
-                    String sku = getCellStringValue(skuCell).trim();
-                    String serial = getCellStringValue(serialCell).trim();
+                    Cell skuCell = row.getCell(1);
+                    Cell serialCell = row.getCell(2);
+
+                    String sku = (skuCell != null) ? getCellStringValue(skuCell).trim() : "";
+                    String serial = (serialCell != null) ? getCellStringValue(serialCell).trim() : "";
+
+                    if (serial.isEmpty()) {
+                        // Skip if the user left the serial empty (partial import support)
+                        continue;
+                    }
 
                     if (sku.isEmpty()) {
                         errors.add("Row " + (i + 1) + ": SKU is empty.");
-                        continue;
-                    }
-                    if (serial.isEmpty()) {
-                        errors.add("Row " + (i + 1) + ": Serial is empty.");
                         continue;
                     }
 
@@ -162,7 +265,7 @@ public class ImportExcelServlet extends HttpServlet {
                 StringBuilder errorMsg = new StringBuilder("Excel import failed. Errors found:<br>");
                 for (String err : errors) {
                     errorMsg.append("• ").append(err).append("<br>");
-                }
+                }   
                 session.setAttribute("message", errorMsg.toString());
                 session.setAttribute("messageType", "danger");
                 response.sendRedirect(request.getContextPath() + "/ImportProduct?prId=" + purchaseRequestId);
@@ -170,16 +273,7 @@ public class ImportExcelServlet extends HttpServlet {
             }
 
             if (filledList.isEmpty()) {
-                session.setAttribute("message", "Excel file contains no valid data rows.");
-                session.setAttribute("messageType", "danger");
-                response.sendRedirect(request.getContextPath() + "/ImportProduct?prId=" + purchaseRequestId);
-                return;
-            }
-
-            // Validate invoice number
-            String validInvoiceNumber = ProductItemValidation.validateInvoiceNumber(invoiceNumber);
-            if (!"true".equals(validInvoiceNumber)) {
-                session.setAttribute("message", validInvoiceNumber);
+                session.setAttribute("message", "Excel file contains no valid serial numbers. Please enter at least one serial number.");
                 session.setAttribute("messageType", "danger");
                 response.sendRedirect(request.getContextPath() + "/ImportProduct?prId=" + purchaseRequestId);
                 return;

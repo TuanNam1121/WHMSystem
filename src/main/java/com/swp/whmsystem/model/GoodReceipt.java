@@ -10,18 +10,10 @@ public class GoodReceipt {
     private String status;
     private Timestamp createdAt;
     private String note;
-    private String invoiceNumber;
 
     public GoodReceipt() {
     }
 
-    public String getInvoiceNumber() {
-        return invoiceNumber;
-    }
-
-    public void setInvoiceNumber(String invoiceNumber) {
-        this.invoiceNumber = invoiceNumber;
-    }
 
     public int getId() {
         return id;

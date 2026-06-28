@@ -57,7 +57,7 @@ public class ProductItemDAO {
         List<ProductItem> list = new ArrayList<>();
         String sql = """
                      select pi.id, pi.serial, pi.imported_price, pi.export_price, pi.isactive, pi.imported_at, pi.product_id, pi.goodreceiptsitemid, pi.status 
-                     from product_items pi join good_receipts_items gri on pi.goodreceiptsitemid = gri.id where gri.goodreceiptid = ? order by imported_at desc""";
+                     from product_items pi join good_receipts_items gri on pi.goodreceiptsitemid = gri.id where gri.goodreceiptid = ?""";
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, grId);
@@ -194,6 +194,7 @@ public class ProductItemDAO {
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, serial);
+            preparedStatement.setInt(2, productId);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 return mapResultsetToProductItem(rs);

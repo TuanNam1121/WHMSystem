@@ -90,6 +90,7 @@ public class InventorySummaryDAO {
         ProductDAO productDAO = new ProductDAO();
         Product product = productDAO.getProductFromId(productId);
 
+        is.setProductId(productId);
         is.setSku(product.getSku());
         is.setProductName(product.getName());
         is.setCategory(product.getCategory().getName());

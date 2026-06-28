@@ -58,6 +58,47 @@ public class StockMovementDAO {
         }
     }
 
+    public List<StockMovement> getStockMovementByProductIdAndDateRange(int productId, String fromDateStr, String toDateStr, String typeFilter) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM stock_movement WHERE productid = ?");
+        java.time.LocalDate fromDate = com.swp.whmsystem.utils.DateUtils.parseDate(fromDateStr);
+        java.time.LocalDate toDate = com.swp.whmsystem.utils.DateUtils.parseDate(toDateStr);
+
+        if (fromDate != null) {
+            sql.append(" AND createdat >= ?");
+        }
+        if (toDate != null) {
+            sql.append(" AND createdat <= ?");
+        }
+        if (typeFilter != null && !typeFilter.trim().isEmpty() && !typeFilter.equalsIgnoreCase("ALL")) {
+            sql.append(" AND type = ?");
+        }
+        sql.append(" ORDER BY id DESC");
+
+        List<StockMovement> list = new ArrayList<>();
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql.toString());
+            int idx = 1;
+            preparedStatement.setInt(idx++, productId);
+            if (fromDate != null) {
+                preparedStatement.setTimestamp(idx++, java.sql.Timestamp.valueOf(fromDate.atStartOfDay()));
+            }
+            if (toDate != null) {
+                preparedStatement.setTimestamp(idx++, java.sql.Timestamp.valueOf(toDate.atTime(java.time.LocalTime.MAX)));
+            }
+            if (typeFilter != null && !typeFilter.trim().isEmpty() && !typeFilter.equalsIgnoreCase("ALL")) {
+                preparedStatement.setString(idx++, typeFilter.toUpperCase());
+            }
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    list.add(mapResultSetToStockMovement(resultSet));
+                }
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public boolean insertStockMovement(StockMovement stockMovement) {
         String sql = "INSERT INTO stock_movement (productid, quantity, type, reference_type) VALUES (?, ?, ?, ?)";
         try (Connection connection = DBContext.getConnection()) {

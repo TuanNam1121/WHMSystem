@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <title>Inventory Summary Report</title>
+    <title>Import / Export Transactions History</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
@@ -37,102 +37,66 @@
             border: 1px solid #e8e8e8;
         }
 
-        .report-summary-table tbody td:nth-child(3) {
-            text-align: left;
-        }
-
         .report-summary-table tbody tr:hover {
             background-color: #fff5ec;
         }
 
-        .report-header-info {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: flex-end;
+        .btn-back {
+            background-color: #6c757d;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+            color: #fff;
+        }
+
+        .badge-import {
+            background-color: #e6f9ee;
+            color: #28a745;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-export {
+            background-color: #fce4e4;
+            color: #e74c3c;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .product-meta-card {
+            background-color: #f8f9fa;
+            border-left: 4px solid #ff9f43;
+            padding: 15px 20px;
+            border-radius: 4px;
             margin-bottom: 20px;
         }
 
-        .report-header-info .form-group {
-            margin-bottom: 0;
-        }
-
-        .report-header-info label {
-            font-weight: 600;
-            font-size: 13px;
-            margin-bottom: 5px;
-            color: #333;
-        }
-
-        .report-title-section {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .report-title-section h3 {
+        .product-meta-card h5 {
+            margin-bottom: 10px;
             font-weight: 700;
             color: #333;
-            text-transform: uppercase;
-            margin-bottom: 5px;
         }
 
-        .report-title-section p {
-            color: #777;
+        .product-meta-card .meta-item {
             font-size: 14px;
+            color: #555;
+            margin-right: 25px;
         }
 
-        .btn-export {
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-export:hover {
-            background-color: #218838;
-            color: #fff;
-        }
-
-        .btn-print {
-            background-color: #17a2b8;
-            color: #fff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-print:hover {
-            background-color: #138496;
-            color: #fff;
-        }
-
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .status-active {
-            background-color: #e6f9ee;
-            color: #28a745;
-        }
-
-        .status-inactive {
-            background-color: #fce4e4;
-            color: #e74c3c;
-        }
-
-        .status-warning {
-            background-color: #fff8e1;
-            color: #f39c12;
+        .product-meta-card .meta-item strong {
+            color: #333;
         }
     </style>
 </head>
@@ -148,21 +112,32 @@
         <div class="content">
             <div class="page-header">
                 <div class="page-title">
-                    <h4>Inventory Summary Report</h4>
-                    <h6>View inventory import/export summary report</h6>
+                    <h4>Import / Export Transactions History</h4>
+                    <h6>Detailed import and export transactions for selected product</h6>
                 </div>
                 <div class="page-btn">
-                    <a href="${pageContext.request.contextPath}/ExportInventorySummary" class="btn btn-export">
-                        <i class="fas fa-file-excel me-1"></i> Export Excel
+                    <a href="${pageContext.request.contextPath}/inventorySummaryReport?fromDate=${param.fromDate}&toDate=${param.toDate}" class="btn btn-back">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Summary Report
                     </a>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-body">
-                    <form action="${pageContext.request.contextPath}/inventorySummaryReport" method="get">
+                    <!-- Product Information Header -->
+                    <div class="product-meta-card">
+                        <h5>${product.name}</h5>
+                        <div class="d-flex flex-wrap">
+                            <div class="meta-item"><strong>SKU:</strong> ${product.sku}</div>
+                            <div class="meta-item"><strong>Category:</strong> ${product.category.name}</div>
+                            <div class="meta-item"><strong>Unit:</strong> ${product.unit.name}</div>
+                        </div>
+                    </div>
+
+                    <form action="${pageContext.request.contextPath}/inventorySummaryDetail" method="get">
+                        <input type="hidden" name="productId" value="${product.productId}">
                         <!-- Filter Section -->
-                        <div class="card mb-0" id="filter_inputs" style="display: block !important;">
+                        <div class="card mb-3" id="filter_inputs" style="display: block !important;">
                             <div class="card-body pb-0">
                                 <div class="row">
                                     <div class="col-lg-12 col-sm-12">
@@ -171,7 +146,7 @@
                                                 <div class="form-group">
                                                     <label>From Date</label>
                                                     <div class="input-groupicon">
-                                                        <input type="text" name="fromDate" value="${param.fromDate}"
+                                                        <input type="text" name="fromDate" value="${fromDate}"
                                                                placeholder="DD-MM-YYYY" class="datetimepicker">
                                                         <div class="addonset">
                                                             <img src="assets/img/icons/calendars.svg" alt="calendar">
@@ -183,7 +158,7 @@
                                                 <div class="form-group">
                                                     <label>To Date</label>
                                                     <div class="input-groupicon">
-                                                        <input type="text" name="toDate" value="${param.toDate}"
+                                                        <input type="text" name="toDate" value="${toDate}"
                                                                placeholder="DD-MM-YYYY" class="datetimepicker">
                                                         <div class="addonset">
                                                             <img src="assets/img/icons/calendars.svg" alt="calendar">
@@ -193,8 +168,12 @@
                                             </div>
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <label>Search</label>
-                                                    <input type="text" name="keyword" value="${param.keyword}" placeholder="Code or product name...">
+                                                    <label>Movement Type</label>
+                                                    <select name="typeFilter" class="select">
+                                                        <option value="ALL" ${typeFilter == 'ALL' ? 'selected' : ''}>All</option>
+                                                        <option value="INCREASED" ${typeFilter == 'INCREASED' ? 'selected' : ''}>Import (Increased)</option>
+                                                        <option value="DECREASED" ${typeFilter == 'DECREASED' ? 'selected' : ''}>Export (Decreased)</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-lg-1 col-sm-6 col-12">
@@ -212,84 +191,62 @@
                             </div>
                         </div>
 
-                        <!-- Report Title -->
-<%--                        <div class="report-title-section mt-3">--%>
-<%--                            <p>--%>
-<%--                                <c:choose>--%>
-<%--                                    <c:when test="${not empty fromDate && not empty toDate}">--%>
-<%--                                        From <fmt:formatDate value="${fromDate}" pattern="dd/MM/yyyy"/> --%>
-<%--                                        to <fmt:formatDate value="${toDate}" pattern="dd/MM/yyyy"/>--%>
-<%--                                    </c:when>--%>
-<%--                                    <c:otherwise>--%>
-<%--                                        All Time--%>
-<%--                                    </c:otherwise>--%>
-<%--                                </c:choose>--%>
-<%--                            </p>--%>
-<%--                        </div>--%>
-
-                        <!-- Report Table -->
-                        <div class="table-responsive" id="inventory-summary-table" tabindex="-1">
+                        <!-- Transactions Table -->
+                        <div class="table-responsive" id="inventory-summary-detail-table">
                             <table class="table report-summary-table">
                                 <thead>
                                     <tr>
-                                        <th rowspan="2">No.</th>
-                                        <th rowspan="2">SKU</th>
-                                        <th rowspan="2">Product Name</th>
-                                        <th rowspan="2">Category</th>
-                                        <th rowspan="2">Unit</th>
-                                        <th colspan="1">Opening</th>
-                                        <th colspan="2">During Period</th>
-                                        <th colspan="1">Closing</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Stock</th>
-                                        <th>Import</th>
-                                        <th>Export</th>
-                                        <th>Stock</th>
+                                        <th>No.</th>
+                                        <th>Date & Time</th>
+                                        <th>Movement Type</th>
+                                        <th>Reference Type</th>
+                                        <th>Quantity</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <c:forEach items="${reportList}" var="item" varStatus="v">
+                                    <c:forEach items="${movementList}" var="item" varStatus="v">
                                         <tr>
-                                            <td>${(page - 1) * pageSize + v.index + 1}</td>
-                                            <td>${item.sku}</td>
+                                            <td>${v.index + 1}</td>
+                                            <td><fmt:formatDate value="${item.createdAt}" pattern="dd-MM-yyyy HH:mm:ss"/></td>
                                             <td>
-                                                <a href="${pageContext.request.contextPath}/inventorySummaryDetail?productId=${item.productId}&fromDate=${param.fromDate}&toDate=${param.toDate}" class="text-dark fw-bold" style="text-decoration: none;" title="View import/export transactions history">
-                                                    ${item.productName}
-                                                </a>
+                                                <c:choose>
+                                                    <c:when test="${item.type == 'INCREASED'}">
+                                                        <span class="badge-import">Import</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="badge-export">Export</span>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </td>
-                                            <td>${item.category}</td>
-                                            <td>${item.unit}</td>
-                                            <td><fmt:formatNumber value="${item.openingStock}" pattern="#,##0"/></td>
-                                            <td><fmt:formatNumber value="${item.importStock}" pattern="#,##0"/></td>
-                                            <td><fmt:formatNumber value="${item.exportStock}" pattern="#,##0"/></td>
-                                            <td><fmt:formatNumber value="${item.closingStock}" pattern="#,##0"/></td>
+                                            <td>${item.reference_type}</td>
+                                            <td style="font-weight: 600; color: ${item.type == 'INCREASED' ? '#28a745' : '#e74c3c'};">
+                                                ${item.type == 'INCREASED' ? '+' : '-'}<fmt:formatNumber value="${item.quantity}" pattern="#,##0"/>
+                                            </td>
                                         </tr>
                                     </c:forEach>
 
-                                    <c:if test="${empty reportList}">
+                                    <c:if test="${empty movementList}">
                                         <tr>
-                                            <td colspan="9" class="text-center py-4">
-                                                <p class="mb-0" style="color: #999;">No data to display</p>
+                                            <td colspan="5" class="text-center py-4">
+                                                <p class="mb-0" style="color: #999;">No import/export transactions found in this period</p>
                                             </td>
                                         </tr>
                                     </c:if>
                                 </tbody>
-                                <c:if test="${not empty reportList}">
+                                <c:if test="${not empty movementList}">
                                     <tfoot>
                                         <tr style="font-weight: 700; background-color: #f8f9fa;">
-                                            <td colspan="5" style="text-align: right;">Total</td>
-                                            <td style="text-align: center;"><fmt:formatNumber value="${totalOpeningStock}" pattern="#,##0"/></td>
-                                            <td style="text-align: center;"><fmt:formatNumber value="${totalImportQty}" pattern="#,##0"/></td>
-                                            <td style="text-align: center;"><fmt:formatNumber value="${totalExportQty}" pattern="#,##0"/></td>
-                                            <td style="text-align: center;"><fmt:formatNumber value="${totalClosingStock}" pattern="#,##0"/></td>
+                                            <td colspan="4" style="text-align: right;">Total Import:</td>
+                                            <td style="text-align: center; color: #28a745;">+<fmt:formatNumber value="${totalImportQty}" pattern="#,##0"/></td>
+                                        </tr>
+                                        <tr style="font-weight: 700; background-color: #f8f9fa;">
+                                            <td colspan="4" style="text-align: right;">Total Export:</td>
+                                            <td style="text-align: center; color: #e74c3c;">-<fmt:formatNumber value="${totalExportQty}" pattern="#,##0"/></td>
                                         </tr>
                                     </tfoot>
                                 </c:if>
                             </table>
                         </div>
-
-                        <jsp:include page="/WEB-INF/common/pagination.jsp"/>
                     </form>
                 </div>
             </div>
@@ -310,14 +267,5 @@
 <script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 <script src="assets/js/script.js"></script>
-<c:if test="${focusTable}">
-    <script>
-        window.addEventListener("load", function () {
-            const table = document.getElementById("inventory-summary-table");
-            table.scrollIntoView({behavior: "smooth", block: "start"});
-            table.focus({preventScroll: true});
-        });
-    </script>
-</c:if>
 </body>
 </html>

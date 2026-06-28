@@ -1,6 +1,7 @@
 package com.swp.whmsystem.model;
 
 public class InventorySummary {
+    private int productId;
     private String sku;
     private String productName;
     private String category;
@@ -86,5 +87,13 @@ public class InventorySummary {
 
     public void setClosingStock(int closingStock) {
         this.closingStock = closingStock;
+    }
+
+    public int getProductId() {
+        return productId;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
     }
 }

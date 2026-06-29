@@ -170,6 +170,25 @@
                                                 </div>
                                             </div>
 
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <select class="select" name="sortBy">
+                                                        <option value="quantityDesc" ${sortBy == 'quantityDesc' ? 'selected' : ''}>
+                                                            Quantity High-Low
+                                                        </option>
+                                                        <option value="quantityAsc" ${sortBy == 'quantityAsc' ? 'selected' : ''}>
+                                                            Quantity Low-High
+                                                        </option>
+                                                        <option value="valueDesc" ${sortBy == 'valueDesc' ? 'selected' : ''}>
+                                                            Value High-Low
+                                                        </option>
+                                                        <option value="valueAsc" ${sortBy == 'valueAsc' ? 'selected' : ''}>
+                                                            Value Low-High
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
                                             <div class="col-lg-1 col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <button type="submit" class="btn btn-filters ms-auto"

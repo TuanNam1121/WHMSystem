@@ -21,11 +21,16 @@ public class InventoryList extends HttpServlet {
         InventoryDAO inventoryDAO = new InventoryDAO();
         String keyword = request.getParameter("keyword");
         String stockStatus = request.getParameter("stockStatus");
+        String sortBy = request.getParameter("sortBy");
         String pageSizeRaw = request.getParameter("pageSize");
         String pageRaw = request.getParameter("page");
 
         int pageSize = 10;
         int page = 1;
+
+        if (sortBy == null || sortBy.trim().isEmpty()) {
+            sortBy = "quantityDesc";
+        }
 
         if (pageSizeRaw != null && !pageSizeRaw.trim().isEmpty()) {
             try {
@@ -51,7 +56,7 @@ public class InventoryList extends HttpServlet {
         page = Math.min(page, totalPages);
 
         List<InventoryItemDTO> inventoryList =
-                inventoryDAO.searchInventory(keyword, stockStatus, pageSize, page);
+                inventoryDAO.searchInventory(keyword, stockStatus, sortBy, pageSize, page);
         List<InventoryItemDTO> allInventoryList = inventoryDAO.getInventoryList();
 
         int totalProducts = allInventoryList.size();
@@ -75,6 +80,7 @@ public class InventoryList extends HttpServlet {
         request.setAttribute("totalInventoryValue", totalInventoryValue);
         request.setAttribute("keyword", keyword);
         request.setAttribute("stockStatus", stockStatus);
+        request.setAttribute("sortBy", sortBy);
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);

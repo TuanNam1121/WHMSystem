@@ -51,7 +51,7 @@ public class ChipList extends HttpServlet {
         request.setAttribute("chips", chips);
         request.setAttribute("status", status);
         request.setAttribute("search", search);
-        request.setAttribute("currentPage", page);
+        request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("pageSize", pageSize);
         request.getRequestDispatcher("WEB-INF/view/product/chipList.jsp").forward(request, response);

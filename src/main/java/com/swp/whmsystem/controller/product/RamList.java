@@ -47,7 +47,7 @@ public class RamList extends HttpServlet {
         request.setAttribute("rams", rams);
         request.setAttribute("status", status);
         request.setAttribute("search", search);
-        request.setAttribute("currentPage", page);
+        request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("pageSize", pageSize);
         request.getRequestDispatcher("WEB-INF/view/product/ramList.jsp").forward(request, response);

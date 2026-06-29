@@ -92,6 +92,9 @@
                 <li>
                     <a href="InventoryAuditList"><i data-feather="layers"></i><span> Inventory Audit List</span> </a>
                 </li>
+                <li>
+                    <a href="InventoryTransaction"><i data-feather="repeat"></i><span> InventoryTransaction</span> </a>
+                </li>
 
                 <c:if test="${sessionScope.user.roleId == 1}">
                     <li class="submenu">
@@ -113,8 +116,8 @@
                                                        alt="img"><span> Report</span> <span
                             class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="inventorySummaryReport">Inventory Report</a></li>
-                        <li><a href="salesreport.html">Sales Report</a></li>
+                        <li><a href="InventorySummaryReport">Inventory Report</a></li>
+                        <li><a href="ImportExportByDayReport">Daily Transaction Report</a></li>
                         <li><a href="purchasereport.html">Purchase Report</a></li>
                     </ul>
                 </li>

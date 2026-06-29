@@ -211,6 +211,7 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Serial Number</th>
+                                    <th>Barcode</th>
                                     <th>Imported Date</th>
                                     <th>Imported Price</th>
                                     <th>Export Price</th>
@@ -223,6 +224,15 @@
                                     <tr>
                                         <td>${v.index+1}</td>
                                         <td>${p.serial}</td>
+                                        <td>
+                                            <c:if test="${not empty p.serial}">
+                                                <c:url var="barcodeUrl" value="/barcode">
+                                                    <c:param name="code" value="${p.serial}"/>
+                                                </c:url>
+                                                <img src="${barcodeUrl}" alt="Barcode"
+                                                     style="width: 160px; height: 48px; object-fit: contain;">
+                                            </c:if>
+                                        </td>
                                         <td>
                                             <fmt:formatDate value="${p.importAt}" pattern="dd-MM-yyyy HH:mm:ss"/>
                                         </td>

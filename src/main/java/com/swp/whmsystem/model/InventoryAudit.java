@@ -17,6 +17,7 @@ public class InventoryAudit {
     private InventoryAuditStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String userFullName;
+    private User creator;
+    private User processor;
     private List<InventoryAuditItem> inventoryAuditItems;
 }

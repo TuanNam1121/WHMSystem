@@ -11,6 +11,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import com.swp.whmsystem.model.User;
 
 import java.io.IOException;
 import java.util.List;
@@ -86,12 +88,16 @@ public class ReviewInventoryAudit extends HttpServlet {
                 return;
             }
 
+            HttpSession session = request.getSession(false);
+            User user = (User) session.getAttribute("user");
+            int processedBy = user.getId();
+
             List<InventoryAuditItem> items = audit.getInventoryAuditItems();
 
             if ("approve".equalsIgnoreCase(action)) {
-                inventoryAuditDAO.approveInventoryAudit(auditId, items);
+                inventoryAuditDAO.approveInventoryAudit(auditId, items, processedBy);
             } else if ("decline".equalsIgnoreCase(action)) {
-                inventoryAuditDAO.updateInventoryAuditStatus(auditId, InventoryAuditStatus.REJECTED);
+                inventoryAuditDAO.updateInventoryAuditStatus(auditId, InventoryAuditStatus.REJECTED, processedBy);
             }
 
             response.sendRedirect("InventoryAuditList");

@@ -305,6 +305,22 @@ public class InventoryAuditDAO {
                 ps.executeBatch();
             }
 
+            String insertStockMovementSql = "INSERT INTO stock_movement (productid, quantity, type, reference_type, reference_id) VALUES (?, ?, ?, ?, ?)";
+            try (PreparedStatement ps = conn.prepareStatement(insertStockMovementSql)) {
+                for (InventoryAuditItem item : items) {
+                    int diff = item.getPhysicalQuantity() - item.getSystemQuantity();
+                    if (diff != 0) {
+                        ps.setInt(1, item.getProductId());
+                        ps.setInt(2, Math.abs(diff));
+                        ps.setString(3, diff > 0 ? "INCREASED" : "DECREASED");
+                        ps.setString(4, "AUDIT");
+                        ps.setInt(5, auditId);
+                        ps.addBatch();
+                    }
+                }
+                ps.executeBatch();
+            }
+
             for (InventoryAuditItem item : items) {
                 if (item.getPhysicalQuantity() != item.getSystemQuantity()) {
                     String getSerialsSql = "SELECT * FROM inventory_audit_item_serials WHERE audit_item_id = ?";

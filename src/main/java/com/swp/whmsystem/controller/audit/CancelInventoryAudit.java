@@ -26,7 +26,7 @@ public class CancelInventoryAudit extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_INVENTORY_AUDIT,
-                "Only staff with cancel audit permission are authorized to cancel inventory audits.")) {
+                "You are not authorized to cancel inventory audits.")) {
             return;
         }
 

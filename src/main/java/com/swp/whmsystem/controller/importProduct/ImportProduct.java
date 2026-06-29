@@ -256,6 +256,7 @@ public class ImportProduct extends HttpServlet {
             stockMovement.setQuantity(val.size());
             stockMovement.setType("INCREASED");
             stockMovement.setReference_type("IMPORT");
+            stockMovement.setReference_id(goodReceiptId);
             stockMovementDAO.insertStockMovement(stockMovement);
         }
 

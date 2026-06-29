@@ -27,8 +27,8 @@
 </div>
 
 <div class="main-wrapper">
-    <jsp:include page="/WEB-INF/common/adminTopbar.jsp"></jsp:include>
-    <jsp:include page="/WEB-INF/common/adminSidebar.jsp"></jsp:include>
+    <jsp:include page="/WEB-INF/common/header.jsp"></jsp:include>
+        <jsp:include page="/WEB-INF/common/sidebar.jsp"></jsp:include>
 
     <div class="page-wrapper">
         <div class="content">

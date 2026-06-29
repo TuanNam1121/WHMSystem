@@ -22,6 +22,20 @@ public class CustomerDAO {
     public CustomerDAO() {
     }
 
+    public int countCustomers() {
+        String sql = "select count(*) from customers";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return 0;
+    }
+
     public List<Customer> getAllCustomer() {
         String sql = "select * from customers";
 

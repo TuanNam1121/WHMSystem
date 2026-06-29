@@ -126,7 +126,8 @@
                             <tr>
                                 <th>Id</th>
                                 <th>Date</th>
-                                <th>To</th>
+                                <th>Processed By</th>
+                                <th>Customer</th>
                                 <th>Items</th>
                                 <th>Grand total</th>
                                 <th>Status</th>
@@ -139,6 +140,14 @@
                                     <td>${o.id}</td>
                                     <td>
                                         <fmt:formatDate value="${o.orderDate}" pattern="dd-MM-yyyy HH:mm:ss"/>
+                                    </td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${not empty o.processor}">
+                                                ${o.processor}
+                                            </c:when>
+                                            <c:otherwise>-</c:otherwise>
+                                        </c:choose>
                                     </td>
                                     <td>${o.customer}</td>
                                     <td>${o.totalQuantity}</td>

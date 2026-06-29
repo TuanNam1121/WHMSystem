@@ -13,11 +13,11 @@ import java.util.List;
 public class InventoryDAO {
 
     public List<InventoryItemDTO> getInventoryList() {
-        return searchInventory("", "", 100000, 1);
+        return searchInventory("", "", "quantityDesc", 100000, 1);
     }
 
     public List<InventoryItemDTO> searchInventory(String keyword, String stockStatus,
-            int pageSize, int page) {
+            String sortBy, int pageSize, int page) {
         List<InventoryItemDTO> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "select p.productid, p.name, p.sku, p.img_url, u.name as unit_name, "
@@ -38,7 +38,8 @@ public class InventoryDAO {
 
         sql.append(" group by p.productid, p.name, p.sku, p.img_url, u.name");
         addStatusCondition(sql, stockStatus);
-        sql.append(" order by quantity asc, p.name asc limit ? offset ?");
+        addSortCondition(sql, sortBy);
+        sql.append(" limit ? offset ?");
 
         int offset = (page - 1) * pageSize;
         parameters.add(pageSize);
@@ -99,6 +100,18 @@ public class InventoryDAO {
             sql.append(" having quantity > 0 and quantity <= 10");
         } else if ("outOfStock".equals(stockStatus)) {
             sql.append(" having quantity = 0");
+        }
+    }
+
+    private void addSortCondition(StringBuilder sql, String sortBy) {
+        if ("quantityAsc".equals(sortBy)) {
+            sql.append(" order by quantity asc, p.name asc");
+        } else if ("valueDesc".equals(sortBy)) {
+            sql.append(" order by total_value desc, p.name asc");
+        } else if ("valueAsc".equals(sortBy)) {
+            sql.append(" order by total_value asc, p.name asc");
+        } else {
+            sql.append(" order by quantity desc, p.name asc");
         }
     }
 

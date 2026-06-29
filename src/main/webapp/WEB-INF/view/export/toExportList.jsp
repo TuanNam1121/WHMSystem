@@ -89,6 +89,7 @@
                                                     <select class="select" name="status">
                                                         <option value="">Choose Status</option>
                                                         <option value="NEW" ${param.status == 'NEW' ? 'selected' : ''}>New</option>
+                                                        <option value="DRAFT" ${param.status == 'DRAFT' ? 'selected' : ''}>Draft</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -125,7 +126,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Date</th>
-                                <th>To</th>
+                                <th>Customer</th>
                                 <th>Items</th>
                                 <th>Grand total</th>
                                 <th>Status</th>
@@ -152,6 +153,9 @@
                                             <c:when test="${o.status == 'NEW'}">
                                                 <span class="badges bg-lightgrey">New</span>
                                             </c:when>
+                                            <c:when test="${o.status == 'DRAFT'}">
+                                                <span class="badges bg-lightyellow">Draft</span>
+                                            </c:when>
                                             <c:otherwise>
                                                 <span class="badges bg-lightgrey">${o.status}</span>
                                             </c:otherwise>
@@ -159,7 +163,7 @@
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <c:if test="${o.status == 'NEW'}">
+                                            <c:if test="${o.status == 'NEW' || o.status == 'DRAFT'}">
                                                 <a href="exportProduct?orderId=${o.id}">
                                                     <button type="button" class="btn btn-primary btn-sm">Process
                                                     </button>

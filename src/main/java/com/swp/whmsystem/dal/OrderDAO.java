@@ -75,8 +75,12 @@ public class OrderDAO {
                                             String sortBy, int pageSize, int page) {
         List<Order> orderList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-                "select o.* from orders o "
+                "select o.id, coalesce(er.status, o.status) as status, o.total_price, o.note, "
+                        + "o.orderdate, o.createdat, o.updatedat, o.completedat, "
+                        + "o.createdby, o.processedby, o.customer_id "
+                        + "from orders o "
                         + "join customers c on o.customer_id = c.id "
+                        + "left join export_receipts er on er.order_id = o.id and er.status = 'DRAFT' "
                         + "where o.status = 'NEW'"
         );
         List<Object> parameter = new ArrayList<>();
@@ -93,7 +97,7 @@ public class OrderDAO {
         }
 
         if (status != null && !status.trim().isEmpty()) {
-            sql.append(" and o.status = ?");
+            sql.append(" and coalesce(er.status, o.status) = ?");
             parameter.add(status);
         }
 
@@ -147,6 +151,7 @@ public class OrderDAO {
         StringBuilder sql = new StringBuilder(
                 "select count(*) from orders o "
                         + "join customers c on o.customer_id = c.id "
+                        + "left join export_receipts er on er.order_id = o.id and er.status = 'DRAFT' "
                         + "where o.status = 'NEW'"
         );
         List<Object> parameters = new ArrayList<>();
@@ -164,7 +169,7 @@ public class OrderDAO {
         }
 
         if (status != null && !status.trim().isEmpty()) {
-            sql.append(" and o.status = ?");
+            sql.append(" and coalesce(er.status, o.status) = ?");
             parameters.add(status);
         }
 
@@ -488,8 +493,10 @@ public class OrderDAO {
                 while (rs.next()) {
                     Order order = mapResultSetToOrder(rs);
                     CustomerDAO customerDAO = new CustomerDAO();
+                    UserDAO userDAO = new UserDAO();
                     OrderItemDAO orderItemDAO = new OrderItemDAO();
                     order.setCustomer(customerDAO.getCustomerNameById(order.getCustomerId()));
+                    order.setProcessor(userDAO.getUserNameById(order.getProcessedBy()));
                     order.setTotalQuantity(orderItemDAO.totalQuantityByOrderId(order.getId()));
                     orderList.add(order);
                 }

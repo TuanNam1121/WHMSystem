@@ -8,6 +8,7 @@ public class StockMovement {
     private int quantity;
     private String type;
     private String reference_type;
+    private int reference_id;
     private Timestamp createdAt;
 
     public StockMovement() {
@@ -68,5 +69,13 @@ public class StockMovement {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public int getReference_id() {
+        return reference_id;
+    }
+
+    public void setReference_id(int reference_id) {
+        this.reference_id = reference_id;
     }
 }

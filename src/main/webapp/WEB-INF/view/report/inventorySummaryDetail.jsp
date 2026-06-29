@@ -201,6 +201,7 @@
                                         <th>Movement Type</th>
                                         <th>Reference Type</th>
                                         <th>Quantity</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -222,12 +223,17 @@
                                             <td style="font-weight: 600; color: ${item.type == 'INCREASED' ? '#28a745' : '#e74c3c'};">
                                                 ${item.type == 'INCREASED' ? '+' : '-'}<fmt:formatNumber value="${item.quantity}" pattern="#,##0"/>
                                             </td>
+                                            <td>
+                                                <a href="${pageContext.request.contextPath}/viewStockMovementDetail?movementId=${item.id}" class="btn btn-sm btn-outline-info" title="View Detail">
+                                                    <i class="fas fa-eye me-1"></i> View Detail
+                                                </a>
+                                            </td>
                                         </tr>
                                     </c:forEach>
 
                                     <c:if test="${empty movementList}">
                                         <tr>
-                                            <td colspan="5" class="text-center py-4">
+                                            <td colspan="6" class="text-center py-4">
                                                 <p class="mb-0" style="color: #999;">No import/export transactions found in this period</p>
                                             </td>
                                         </tr>
@@ -238,10 +244,12 @@
                                         <tr style="font-weight: 700; background-color: #f8f9fa;">
                                             <td colspan="4" style="text-align: right;">Total Import:</td>
                                             <td style="text-align: center; color: #28a745;">+<fmt:formatNumber value="${totalImportQty}" pattern="#,##0"/></td>
+                                            <td></td>
                                         </tr>
                                         <tr style="font-weight: 700; background-color: #f8f9fa;">
                                             <td colspan="4" style="text-align: right;">Total Export:</td>
                                             <td style="text-align: center; color: #e74c3c;">-<fmt:formatNumber value="${totalExportQty}" pattern="#,##0"/></td>
+                                            <td></td>
                                         </tr>
                                     </tfoot>
                                 </c:if>

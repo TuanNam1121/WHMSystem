@@ -97,7 +97,6 @@
                                 </div>
                             </div>
                         </div>
-                    </form>
 
                     <div class="table-responsive">
                         <table class="table">
@@ -141,24 +140,8 @@
                             </tbody>
                         </table>
                     </div>
-                    
-                    <c:if test="${totalPages > 1}">
-                        <div class="d-flex justify-content-center mt-4">
-                            <ul class="pagination">
-                                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                    <a class="page-link" href="?page=${currentPage - 1}">Previous</a>
-                                </li>
-                                <c:forEach begin="1" end="${totalPages}" var="i">
-                                    <li class="page-item ${currentPage == i ? 'active' : ''}">
-                                        <a class="page-link" href="?page=${i}">${i}</a>
-                                    </li>
-                                </c:forEach>
-                                <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                    <a class="page-link" href="?page=${currentPage + 1}">Next</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </c:if>
+                    <jsp:include page="/WEB-INF/common/pagination.jsp"/>
+                    </form>
 
                 </div>
             </div>

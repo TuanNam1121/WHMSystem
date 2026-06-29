@@ -51,7 +51,7 @@ public class InventoryTransaction extends HttpServlet {
         int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
         request.setAttribute("type", type);
-        request.setAttribute("currentPage", page);
+        request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("transactions", transactions);

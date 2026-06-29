@@ -10,6 +10,7 @@ import com.swp.whmsystem.model.PurchaseItem;
 import com.swp.whmsystem.model.PurchaseRequest;
 import java.awt.BorderLayout;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,6 +20,26 @@ import java.util.List;
 import java.util.Map;
 
 public class GoodReceiptDAO {
+
+    public BigDecimal getCompletedImportTotalPrice() {
+        String sql = "SELECT COALESCE(SUM(pi.imported_price), 0) "
+                + "FROM good_receipts gr "
+                + "JOIN good_receipts_items gri ON gr.id = gri.goodreceiptid "
+                + "JOIN product_items pi ON gri.id = pi.goodreceiptsitemid "
+                + "WHERE gr.status = 'COMPLETED'";
+
+        try (Connection connection = DBContext.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            if (resultSet.next()) {
+                BigDecimal totalPrice = resultSet.getBigDecimal(1);
+                return totalPrice == null ? BigDecimal.ZERO : totalPrice;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return BigDecimal.ZERO;
+    }
 
     public List<GoodReceipt> getAllGoodReceipt() {
         String sql = "SELECT gr.* "

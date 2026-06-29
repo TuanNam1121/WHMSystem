@@ -28,7 +28,7 @@ public class ReviewInventoryAudit extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.APPROVE_INVENTORY_AUDIT,
-                "Only managers with approve audit permission are authorized to review inventory audits.")) {
+                "You are not authorized to review inventory audits.")) {
             return;
         }
 

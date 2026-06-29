@@ -313,7 +313,7 @@ public class InventoryAuditDAO {
                         ps.setInt(1, item.getProductId());
                         ps.setInt(2, Math.abs(diff));
                         ps.setString(3, diff > 0 ? "INCREASED" : "DECREASED");
-                        ps.setString(4, "AUDIT");
+                        ps.setString(4, "INVENTORY_AUDIT");
                         ps.setInt(5, auditId);
                         ps.addBatch();
                     }

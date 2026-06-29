@@ -47,7 +47,7 @@ public class RomList extends HttpServlet {
         request.setAttribute("roms", roms);
         request.setAttribute("status", status);
         request.setAttribute("search", search);
-        request.setAttribute("currentPage", page);
+        request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("pageSize", pageSize);
         request.getRequestDispatcher("WEB-INF/view/product/romList.jsp").forward(request, response);

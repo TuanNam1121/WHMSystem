@@ -51,7 +51,7 @@ public class InventoryAuditList extends HttpServlet {
 
         request.setAttribute("inventoryAudits", inventoryAudits);
         request.setAttribute("keyword", keyword);
-        request.setAttribute("currentPage", page);
+        request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("hasActiveAudit", inventoryAuditDAO.hasActiveAudit());

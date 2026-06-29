@@ -32,7 +32,7 @@ public class EditInventoryAudit extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_INVENTORY_AUDIT,
-                "Only managers with create audit permission are authorized to edit inventory audits.")) {
+                "You are not authorized to edit inventory audits.")) {
             return;
         }
 

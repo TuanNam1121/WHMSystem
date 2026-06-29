@@ -2,6 +2,8 @@ package com.swp.whmsystem.controller.inventoryTransaction;
 
 import com.swp.whmsystem.dto.InventoryTransactionDTO;
 import com.swp.whmsystem.dal.InventoryTransactionDAO;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -23,6 +25,10 @@ public class InventoryTransaction extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_INVENTORY_TRANSACTION,
+                "You are not authorized to view the inventory transactions.")) {
+            return;
+        }
         String type = request.getParameter("type");
         int page = 1;
         int pageSize = 10;

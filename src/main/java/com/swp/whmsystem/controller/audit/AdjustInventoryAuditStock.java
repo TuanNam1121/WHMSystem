@@ -38,7 +38,7 @@ public class AdjustInventoryAuditStock extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.PERFORM_INVENTORY_AUDIT,
-                "Only staff with perform audit permission are authorized to perform inventory audits.")) {
+                "You are not authorized to adjust inventory audit stock.")) {
             return;
         }
 

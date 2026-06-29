@@ -65,7 +65,7 @@
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>Full Name</th>
+                                        <th>Created By</th>
                                         <th>Status</th>
                                         <th>Created At</th>
                                         <th>Updated At</th>
@@ -75,7 +75,7 @@
                                 <tbody>
                                     <c:forEach var="audit" items="${inventoryAudits}">
                                         <tr>
-                                            <td>${audit.userFullName}</td>
+                                            <td>${audit.creator.fullName}</td>
                                             <td><span class="badges bg-lightgrey">${audit.status}</span></td>
                                             <td>${audit.createdAt}</td>
                                             <td>${audit.updatedAt}</td>

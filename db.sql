@@ -361,14 +361,17 @@ DROP TABLE IF EXISTS `inventory_audit`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `inventory_audit`
 (
-    `id`        int NOT NULL AUTO_INCREMENT,
-    `createdby` int NOT NULL,
-    `status`    enum('DRAFT','CANCELLED','SUBMITTED','COMPLETED','PENDING','REJECTED') DEFAULT 'DRAFT',
-    `createdat` datetime DEFAULT CURRENT_TIMESTAMP,
-    `updatedat` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `id`          int NOT NULL AUTO_INCREMENT,
+    `createdby`   int NOT NULL,
+    `processedby` int DEFAULT NULL,
+    `status`      enum('DRAFT','CANCELLED','SUBMITTED','COMPLETED','PENDING','REJECTED') DEFAULT 'DRAFT',
+    `createdat`   datetime DEFAULT CURRENT_TIMESTAMP,
+    `updatedat`   datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    KEY         `createdby` (`createdby`),
-    CONSTRAINT `inventory_audit_ibfk_1` FOREIGN KEY (`createdby`) REFERENCES `users` (`userid`)
+    KEY           `createdby` (`createdby`),
+    KEY           `processedby` (`processedby`),
+    CONSTRAINT `inventory_audit_ibfk_1` FOREIGN KEY (`createdby`) REFERENCES `users` (`userid`),
+    CONSTRAINT `inventory_audit_ibfk_2` FOREIGN KEY (`processedby`) REFERENCES `users` (`userid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

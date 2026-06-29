@@ -60,7 +60,7 @@
                                        style="font-size: 14px; color: #555;">Auditor</label>
                                 <div class="form-control-static"
                                      style="font-size: 16px; font-weight: 600; padding: 8px 0;">
-                                    ${audit.userFullName}
+                                    ${audit.creator.fullName}
                                 </div>
                             </div>
                         </div>

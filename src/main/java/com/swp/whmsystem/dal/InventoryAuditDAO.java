@@ -4,6 +4,7 @@ import com.swp.whmsystem.enums.InventoryAuditStatus;
 import com.swp.whmsystem.model.InventoryAudit;
 import com.swp.whmsystem.model.InventoryAuditItem;
 import com.swp.whmsystem.model.InventoryAuditItemSerial;
+import com.swp.whmsystem.model.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,18 +19,36 @@ public class InventoryAuditDAO {
     private InventoryAudit mapInventoryAudit(ResultSet rs) throws SQLException {
         InventoryAudit inventoryAudit = new InventoryAudit();
         inventoryAudit.setId(rs.getInt("id"));
-        inventoryAudit.setUserId(rs.getInt("userid"));
+        inventoryAudit.setUserId(rs.getInt("createdby"));
         inventoryAudit.setStatus(InventoryAuditStatus.valueOf(rs.getString("status")));
         inventoryAudit.setCreatedAt(rs.getObject("createdat", LocalDateTime.class));
         inventoryAudit.setUpdatedAt(rs.getObject("updatedat", LocalDateTime.class));
-        inventoryAudit.setUserFullName(rs.getString("fullname"));
+
+        User creator = new User();
+        creator.setId(rs.getInt("createdby"));
+        creator.setFullName(rs.getString("creator_fullname"));
+        inventoryAudit.setCreator(creator);
+
+        int processedById = rs.getInt("processedby");
+        if (!rs.wasNull()) {
+            User processor = new User();
+            processor.setId(processedById);
+            processor.setFullName(rs.getString("processor_fullname"));
+            inventoryAudit.setProcessor(processor);
+        } else {
+            inventoryAudit.setProcessor(null);
+        }
+
         return inventoryAudit;
     }
 
     public List<InventoryAudit> getAllInventoryAudit() {
         String sql = """
-                SELECT * FROM inventory_audit join users on inventory_audit.createdby = users.userid
-                ORDER BY inventory_audit.createdat DESC
+                SELECT ia.*, u1.userid AS userid, u1.fullname AS creator_fullname, u2.fullname AS processor_fullname
+                FROM inventory_audit ia
+                JOIN users u1 ON ia.createdby = u1.userid
+                LEFT JOIN users u2 ON ia.processedby = u2.userid
+                ORDER BY ia.createdat DESC
                 """;
         List<InventoryAudit> list = new ArrayList<>();
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -44,11 +63,16 @@ public class InventoryAuditDAO {
     }
 
     public List<InventoryAudit> getInventoryAuditsByFilter(String keyword, int offset, int limit) {
-        String sql = "SELECT * FROM inventory_audit JOIN users ON inventory_audit.createdby = users.userid WHERE 1=1";
+        String sql = "SELECT ia.*, u1.userid AS userid, u1.fullname AS creator_fullname, u2.fullname AS processor_fullname "
+                +
+                "FROM inventory_audit ia " +
+                "JOIN users u1 ON ia.createdby = u1.userid " +
+                "LEFT JOIN users u2 ON ia.processedby = u2.userid " +
+                "WHERE 1=1";
         if (keyword != null && !keyword.trim().isEmpty()) {
-            sql += " AND users.fullname LIKE ?";
+            sql += " AND u1.fullname LIKE ?";
         }
-        sql += " ORDER BY inventory_audit.createdat DESC LIMIT ? OFFSET ?";
+        sql += " ORDER BY ia.createdat DESC LIMIT ? OFFSET ?";
 
         List<InventoryAudit> list = new ArrayList<>();
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -92,8 +116,11 @@ public class InventoryAuditDAO {
 
     public InventoryAudit getInventoryAuditById(int id) {
         String sql = """
-                SELECT * FROM inventory_audit join users on inventory_audit.createdby = users.userid
-                WHERE inventory_audit.id = ?
+                SELECT ia.*, u1.userid AS userid, u1.fullname AS creator_fullname, u2.fullname AS processor_fullname
+                FROM inventory_audit ia
+                JOIN users u1 ON ia.createdby = u1.userid
+                LEFT JOIN users u2 ON ia.processedby = u2.userid
+                WHERE ia.id = ?
                 """;
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -185,6 +212,18 @@ public class InventoryAuditDAO {
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, status.name());
             ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean updateInventoryAuditStatus(int id, InventoryAuditStatus status, int processedBy) {
+        String sql = "UPDATE inventory_audit SET status = ?, processedby = ?, updatedat = CURRENT_TIMESTAMP WHERE id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status.name());
+            ps.setInt(2, processedBy);
+            ps.setInt(3, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -286,12 +325,13 @@ public class InventoryAuditDAO {
         }
     }
 
-    public boolean approveInventoryAudit(int auditId, List<InventoryAuditItem> items) {
+    public boolean approveInventoryAudit(int auditId, List<InventoryAuditItem> items, int processedBy) {
         try (Connection conn = DBContext.getConnection()) {
-            String updateAuditSql = "UPDATE inventory_audit SET status = ?, updatedat = CURRENT_TIMESTAMP WHERE id = ?";
+            String updateAuditSql = "UPDATE inventory_audit SET status = ?, processedby = ?, updatedat = CURRENT_TIMESTAMP WHERE id = ?";
             try (PreparedStatement ps = conn.prepareStatement(updateAuditSql)) {
                 ps.setString(1, InventoryAuditStatus.COMPLETED.name());
-                ps.setInt(2, auditId);
+                ps.setInt(2, processedBy);
+                ps.setInt(3, auditId);
                 ps.executeUpdate();
             }
 

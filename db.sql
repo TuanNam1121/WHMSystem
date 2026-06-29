@@ -1265,7 +1265,9 @@ VALUES (2, 'manager01', 'Nguyen Thi Manager 1', 'manager123hash', 2, '0900000002
        (16, 'saleman', 'Saleman Staff', '$2a$12$ijZe3yxmOyjx19zGgdRnZ.3h13ud0QYDho4YaDgEAjljFvDjlltsG', 4, '0900000212',
         'audsi_staff@gmail.com', 'MALE', 1, 'Audist', 'Staff'),
        (17, 'tung', 'Tran Thanh Tung', '$2a$12$Jt1ki.DA8zjeyJLU2EDTHeTlHDtd59S0m/sEQtf4h/IgefF4r0wuW', 2, '0966244761',
-        'trthtung231@gmail.com', 'MALE', 1, 'Tung', 'Tran');
+        'trthtung231@gmail.com', 'MALE', 1, 'Tung', 'Tran'),
+       (18, 'ducanh', 'Duc Anh', '$2a$12$q3.HklFPX.EVDoGlhfF2EOTI99m/RyXZl4W2Z8hw0J5uN7WAPF7Ie', 2, '0988888818',
+        'ducanh@gmail.com', 'MALE', 1, 'Duc', 'Anh');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK
 TABLES;

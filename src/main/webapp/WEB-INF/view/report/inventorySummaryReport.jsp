@@ -152,7 +152,7 @@
                     <h6>View inventory import/export summary report</h6>
                 </div>
                 <div class="page-btn">
-                    <a href="${pageContext.request.contextPath}/ExportInventorySummary" class="btn btn-export">
+                    <a href="${pageContext.request.contextPath}/ExportInventorySummary?keyword=${param.keyword}&fromDate=${param.fromDate}&toDate=${param.toDate}" class="btn btn-export">
                         <i class="fas fa-file-excel me-1"></i> Export Excel
                     </a>
                 </div>

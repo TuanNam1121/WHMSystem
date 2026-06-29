@@ -127,7 +127,7 @@
                             <tbody>
                             <c:forEach items="${purchaseList}" var="pr">
                                 <tr>
-                                    <td class="text-bolds"><fmt:formatNumber value="${pr.id}" pattern="000"/></td>
+                                    <td class="text-bolds"><fmt:formatNumber value="${pr.id}" pattern="PR-"/></td>
                                     <td>${pr.createdByUsername}</td>
                                     <td>${pr.note}</td>
                                     <td>

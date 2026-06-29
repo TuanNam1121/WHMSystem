@@ -86,7 +86,6 @@ public class InventorySummaryDAO {
 
     public InventorySummary toInventorySummary(int productId, String openDate, String closeDate) {
         InventorySummary is = new InventorySummary();
-
         ProductDAO productDAO = new ProductDAO();
         Product product = productDAO.getProductFromId(productId);
 

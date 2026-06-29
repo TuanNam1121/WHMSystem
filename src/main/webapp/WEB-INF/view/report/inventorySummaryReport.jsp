@@ -212,21 +212,6 @@
                             </div>
                         </div>
 
-                        <!-- Report Title -->
-<%--                        <div class="report-title-section mt-3">--%>
-<%--                            <p>--%>
-<%--                                <c:choose>--%>
-<%--                                    <c:when test="${not empty fromDate && not empty toDate}">--%>
-<%--                                        From <fmt:formatDate value="${fromDate}" pattern="dd/MM/yyyy"/> --%>
-<%--                                        to <fmt:formatDate value="${toDate}" pattern="dd/MM/yyyy"/>--%>
-<%--                                    </c:when>--%>
-<%--                                    <c:otherwise>--%>
-<%--                                        All Time--%>
-<%--                                    </c:otherwise>--%>
-<%--                                </c:choose>--%>
-<%--                            </p>--%>
-<%--                        </div>--%>
-
                         <!-- Report Table -->
                         <div class="table-responsive" id="inventory-summary-table" tabindex="-1">
                             <table class="table report-summary-table">
@@ -254,7 +239,8 @@
                                             <td>${(page - 1) * pageSize + v.index + 1}</td>
                                             <td>${item.sku}</td>
                                             <td>
-                                                <a href="${pageContext.request.contextPath}/inventorySummaryDetail?productId=${item.productId}&fromDate=${param.fromDate}&toDate=${param.toDate}" class="text-dark fw-bold" style="text-decoration: none;" title="View import/export transactions history">
+                                                <a href="${pageContext.request.contextPath}/inventorySummaryDetail?productId=${item.productId}&fromDate=${param.fromDate}&toDate=${param.toDate}"
+                                                   class="text-dark fw-bold" style="text-decoration: none;" title="View import/export transactions history">
                                                     ${item.productName}
                                                 </a>
                                             </td>

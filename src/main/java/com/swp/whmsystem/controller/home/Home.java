@@ -35,7 +35,9 @@ public class Home extends HttpServlet {
         // -------------------------------------------------------------------------------------------------------------
         // First row: financial summary cards.
         OrderDAO orderDAO = new OrderDAO();
+        GoodReceiptDAO goodReceiptDAO = new GoodReceiptDAO();
 
+        request.setAttribute("completedImportTotalPrice", goodReceiptDAO.getCompletedImportTotalPrice());
         request.setAttribute("completedSaleOrderTotalPrice", orderDAO.getCompletedSaleOrderTotalPrice());
 
         // -------------------------------------------------------------------------------------------------------------

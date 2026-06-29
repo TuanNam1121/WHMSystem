@@ -65,8 +65,11 @@
                             <span><img src="assets/img/icons/dash3.svg" alt="img"></span>
                         </div>
                         <div class="dash-widgetcontent">
-                            <h5>$<span class="counters" data-count="385656.50">385,656.50</span></h5>
-                            <h6>Total Sale Amount</h6>
+                            <h5>
+                                <span class="counters money-vn"
+                                      data-count="${requestScope.completedImportTotalPrice}"></span>
+                            </h5>
+                            <h6>Total Import Amount</h6>
                         </div>
                     </div>
                 </div>
@@ -179,7 +182,7 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <li>
-                                        <a href="productlist.html" class="dropdown-item">Product List</a>
+                                        <a href="productlist" class="dropdown-item">Product List</a>
                                     </li>
                                     <li>
                                         <a href="addProduct.jsp" class="dropdown-item">Product Add</a>

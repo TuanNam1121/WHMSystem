@@ -76,8 +76,11 @@
                             <span><img src="assets/img/icons/dash4.svg" alt="img"></span>
                         </div>
                         <div class="dash-widgetcontent">
-                            <h5>$<span class="counters" data-count="40000.00">400.00</span></h5>
-                            <h6>Total Sale Amount</h6>
+                            <h5>
+                                <span class="counters money-vn"
+                                      data-count="${requestScope.completedSaleOrderTotalPrice}"></span>
+                            </h5>
+                            <h6>Total Export Amount</h6>
                         </div>
                     </div>
                 </div>

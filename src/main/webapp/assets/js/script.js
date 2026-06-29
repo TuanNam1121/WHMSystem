@@ -305,12 +305,24 @@ $(document).ready(function () {
         var secondUpload = new FileUploadWithPreview('mySecondImage')
     }
     $('.counters').each(function () {
-        var $this = $(this), countTo = $this.attr('data-count');
-        $({countNum: $this.text()}).animate({countNum: countTo}, {
+        var $this = $(this),
+            countTo = parseFloat($this.attr('data-count')) || 0,
+            countFrom = parseFloat($this.text().replace(/[^\d.-]/g, '')) || 0,
+            isVietnameseMoney = $this.hasClass('money-vn');
+
+        function formatCounter(value) {
+            var number = Math.floor(value);
+            if (isVietnameseMoney) {
+                return new Intl.NumberFormat('vi-VN').format(number);
+            }
+            return number;
+        }
+
+        $({countNum: countFrom}).animate({countNum: countTo}, {
             duration: 2000, easing: 'linear', step: function () {
-                $this.text(Math.floor(this.countNum));
+                $this.text(formatCounter(this.countNum));
             }, complete: function () {
-                $this.text(this.countNum);
+                $this.text(formatCounter(this.countNum));
             }
         });
     });

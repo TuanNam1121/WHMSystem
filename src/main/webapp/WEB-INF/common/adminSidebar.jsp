@@ -27,33 +27,28 @@
     <div class="sidebar-inner slimscroll">
         <div id="sidebar-menu" class="sidebar-menu">
             <ul>
-                <li class="active">
+                <li class="${activeMenu == 'dashboard' ? 'active' : ''}">
                     <a href="${pageContext.request.contextPath}/AdminDashBoard"><img src="assets/img/icons/dashboard.svg" alt="img"><span> Dashboard</span>
                     </a>
                 </li>
-                <li class="submenu">
+                <li class="menu ${activeMenu == 'users' ? 'active' : ''}">
                     <a href="${pageContext.request.contextPath}/ViewUserList"><img src="assets/img/icons/product.svg"
+                                                       class="${activeMenu == 'users' ? 'active' : ''}"
                                                        alt="img"><span> User Management</span> <span
                                                        class="menu"></span></a>
-                    <ul>
-                        <li><a href="${pageContext.request.contextPath}/ViewUserList"
-                               class="menu-item ${activeMenu == 'users' ? 'active' : ''}">User Management</a></li>
-                        <li><a href="${pageContext.request.contextPath}/ViewRoleList"
-                               class="menu-item ${activeMenu == 'roles' ? 'active' : ''}">Role Management</a></li>
-                        <li><a href="${pageContext.request.contextPath}/ViewPermissionList"
-                               class="menu-item ${activeMenu == 'permissions' ? 'active' : ''}">Permission Management</a></li>
-                    </ul>
                 </li>
-                <li class="submenu">
+                <li class="menu ${activeMenu == 'roles' ? 'active' : ''}">
                     <a href="${pageContext.request.contextPath}/ViewRoleList"><img src="assets/img/icons/product.svg"
+                                                       class="${activeMenu == 'roles' ? 'active' : ''}"
                                                        alt="img"><span>Role Management</span> <span
-                                                       class="menu-arrow"></span></a>
+                                                       class="menu"></span></a>
                         
                 </li>
-                <li class="menu">
+                <li class="menu ${activeMenu == 'permissions' ? 'active' : ''}">
                     <a href="${pageContext.request.contextPath}/ViewPermissionList"><img src="assets/img/icons/product.svg"
-                        class="${activeMenu == 'users' ? 'active' : ''}"
-                                                       alt="img"><span>Permission Management</span></a>
+                        class="${activeMenu == 'permissions' ? 'active' : ''}"
+                                                       alt="img"><span>Permission Management</span><span
+                                                       class="menu"></span></a>
                         
                 </li>
 

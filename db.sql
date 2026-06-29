@@ -674,7 +674,7 @@ VALUES (1, 'VIEWUSER', 'Xem thong tin user'),
        (15, 'VIEW_INVENTORY_AUDIT', 'Can view inventory audits'),
        (16, 'CREATE_INVENTORY_AUDIT', 'Can create inventory audits'),
        (17, 'PERFORM_INVENTORY_AUDIT', 'Can perform inventory audits'),
-       (19, 'APPROVE_INVENTORY_AUDIT', 'Can approve or decline inventory audits');
+       (19, 'APPROVE_INVENTORY_AUDIT', 'Can approve or decline inventory audits'),
        (20, 'VIEW_INVENTORY_TRANSACTION', 'Can view inventory transactions');
 /*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
 UNLOCK

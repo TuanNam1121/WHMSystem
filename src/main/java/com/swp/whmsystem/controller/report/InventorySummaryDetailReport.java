@@ -34,14 +34,14 @@ public class InventorySummaryDetailReport extends HttpServlet {
         }
 
         if (productId == -1) {
-            response.sendRedirect(request.getContextPath() + "/inventorySummaryReport");
+            response.sendRedirect("/inventorySummaryReport");
             return;
         }
 
         ProductDAO productDAO = new ProductDAO();
         Product product = productDAO.getProductFromId(productId);
         if (product == null) {
-            response.sendRedirect(request.getContextPath() + "/inventorySummaryReport");
+            response.sendRedirect("/inventorySummaryReport");
             return;
         }
 

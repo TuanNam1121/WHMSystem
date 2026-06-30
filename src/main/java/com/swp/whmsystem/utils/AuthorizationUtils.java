@@ -14,27 +14,28 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AuthorizationUtils {
+    public static void setSession(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        RolePermissionDAO rpDAO = new RolePermissionDAO();
+        List<Permission> permissionsList = rpDAO.getPermissionByRole(user.getRoleId());
+        Set<String> permissions = permissionsList.stream().map(Permission::getPermissionName)
+                .collect(Collectors.toSet());
+        System.out.print(permissions);
+        session.setAttribute("userPermissions", permissions);
+    }
 
     public static boolean hasPermission(HttpServletRequest request, String permissionName) {
         HttpSession session = request.getSession(false);
         if (session == null) {
             return false;
         }
-
-        Set<String> permissions;
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            return false;
-        }
-        RolePermissionDAO rpDAO = new RolePermissionDAO();
-        List<Permission> permissionsList = rpDAO.getPermissionByRole(user.getRoleId());
-        permissions = permissionsList.stream().map(Permission::getPermissionName).collect(Collectors.toSet());
-        session.setAttribute("userPermissions", permissions);
-
+        Set<String> permissions = (Set<String>) session.getAttribute("userPermissions");
         return permissions.contains(permissionName);
     }
 
-    public static boolean checkAccess(HttpServletRequest request, HttpServletResponse response, String permissionName, String errorMessage) throws IOException, ServletException {
+    public static boolean checkAccess(HttpServletRequest request, HttpServletResponse response, String permissionName,
+            String errorMessage) throws IOException, ServletException {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
             response.sendRedirect(request.getContextPath() + "/login");

@@ -7,6 +7,8 @@ package com.swp.whmsystem.controller.sale;
 
 import com.swp.whmsystem.dal.CustomerDAO;
 import com.swp.whmsystem.dal.OrderDAO;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -57,6 +59,11 @@ public class OrderList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_SALE_ORDER,
+                    "You are not authorized to view sale order.")) {
+                return;
+            }
+        
         OrderDAO od = new OrderDAO();
         CustomerDAO cd = new CustomerDAO();
         request.setAttribute("customers", cd.getAllCustomer());

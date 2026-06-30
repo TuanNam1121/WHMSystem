@@ -15,6 +15,8 @@ import com.swp.whmsystem.model.Customer;
 import com.swp.whmsystem.model.Order;
 import com.swp.whmsystem.model.OrderItem;
 import com.swp.whmsystem.model.User;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -72,17 +74,6 @@ public class OrderDetail extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-//        HttpSession session = request.getSession();
-//        User user = (User) session.getAttribute("user");
-//        if (user == null) {
-//            response.sendRedirect("login");
-//            return;
-//        }
-//        RolePermissionDAO rpd = new RolePermissionDAO();
-//        if(!rpd.havePermission(user, "CreateOder")){
-//            response.sendRedirect("NoPermission");
-//            return;
-//        }
         String id = request.getParameter("id");
         String action = request.getParameter("action");
         request.setAttribute("action", action);
@@ -96,6 +87,12 @@ public class OrderDetail extends HttpServlet {
 
         //VIEW
         if (action.equals("view")) {
+            
+            //authorize
+            if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_SALE_ORDER,
+                    "You are not authorized to view sale order.")) {
+                return;
+            }
             if (order.getStatus().equals("NEW")) {
                 OrderItemDAO oid = new OrderItemDAO();
 
@@ -116,6 +113,12 @@ public class OrderDetail extends HttpServlet {
 
         //UPDATE
         if (order.getStatus().equals("NEW")) {
+            
+            //authorize
+            if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.UPDATE_SALE_ORDER,
+                    "You are not authorized to update sale order.")) {
+                return;
+            }
             ProductDAO pd = new ProductDAO();
             request.setAttribute("products", pd.getProductList());
             OrderItemDAO oid = new OrderItemDAO();
@@ -150,11 +153,9 @@ public class OrderDetail extends HttpServlet {
         Order order = od.getOrderById(orderid);
         order.setNote(note);
 
-
         String[] productIds = request.getParameterValues("productId");
         ProductDAO pd = new ProductDAO();
         OrderItemDAO oid = new OrderItemDAO();
-
 
         oid.deleteOrderItem(orderid);
         double total = 0;

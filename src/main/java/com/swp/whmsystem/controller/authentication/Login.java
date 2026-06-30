@@ -6,7 +6,7 @@ package com.swp.whmsystem.controller.authentication;
 
 import com.swp.whmsystem.dal.*;
 import com.swp.whmsystem.model.*;
-import com.swp.whmsystem.utils.*;
+import com.swp.whmsystem.utils.AuthorizationUtils;
 
 import java.io.IOException;
 
@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebServlet(name = "Login", urlPatterns = {"/login"})
+@WebServlet(name = "Login", urlPatterns = { "/login" })
 public class Login extends HttpServlet {
 
     @Override
@@ -44,6 +44,7 @@ public class Login extends HttpServlet {
             session.setAttribute("roleName", roleName);
             session.setAttribute("user", user);
             response.sendRedirect("home");
+            AuthorizationUtils.setSession(request);
         } else if (account != null && !userDAO.isActiveUser(account)) {
             request.setAttribute("error", "Your account is deactive!");
             request.getRequestDispatcher("WEB-INF/view/authentication/login.jsp").forward(request, response);
@@ -53,4 +54,3 @@ public class Login extends HttpServlet {
         }
     }
 }
-

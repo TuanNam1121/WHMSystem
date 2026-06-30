@@ -13,6 +13,8 @@ import com.swp.whmsystem.model.Order;
 import com.swp.whmsystem.model.OrderItem;
 import com.swp.whmsystem.model.Product;
 import com.swp.whmsystem.model.User;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -68,6 +70,11 @@ public class CreateOder extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_SALE_ORDER,
+                "You are not authorized to create sale order.")) {
+            return;
+        }
+        
         String customerId = request.getParameter("id");
         CustomerDAO cd = new CustomerDAO();
         Customer customer = cd.getCustomerById(Integer.parseInt(customerId));

@@ -2,6 +2,7 @@ package com.swp.whmsystem.dal;
 
 import com.swp.whmsystem.model.*;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -47,6 +48,44 @@ public class PurchaseRequestDAO {
             throw new RuntimeException(e);
         }
         return java.math.BigDecimal.ZERO;
+    }
+
+    public List<BigDecimal> getMonthlyPurchaseTotals(int year) {
+        String sql = "SELECT MONTH(pr.createdat) AS monthNumber, "
+                + "COALESCE(SUM(pri.quantity * pri.price), 0) AS totalPrice "
+                + "FROM purchase_requests pr "
+                + "JOIN purchase_request_items pri ON pr.id = pri.purchaserequestid "
+                + "WHERE pr.status IN ('APPROVED','PROCESSING','COMPLETED') "
+                + "AND pr.isDeleted = 0 "
+                + "AND pri.isDeleted = 0 "
+                + "AND YEAR(pr.createdat) = ? "
+                + "GROUP BY monthNumber";
+        List<BigDecimal> monthlyTotals = createEmptyMonthlyTotals();
+
+        try (Connection connection = DBContext.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, year);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    int month = resultSet.getInt("monthNumber");
+                    if (month >= 1 && month <= 12) {
+                        BigDecimal totalPrice = resultSet.getBigDecimal("totalPrice");
+                        monthlyTotals.set(month - 1, totalPrice == null ? BigDecimal.ZERO : totalPrice);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return monthlyTotals;
+    }
+
+    private List<BigDecimal> createEmptyMonthlyTotals() {
+        List<BigDecimal> monthlyTotals = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            monthlyTotals.add(BigDecimal.ZERO);
+        }
+        return monthlyTotals;
     }
 
     public List<PurchaseRequest> getAllPurchaseRequest() {

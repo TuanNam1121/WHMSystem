@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "CreatePurchaseRequest", urlPatterns = {"/createPurchaseRequest"})
+@WebServlet(name = "CreatePurchaseRequest", urlPatterns = { "/createPurchaseRequest" })
 public class CreatePurchaseRequest extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -40,9 +40,9 @@ public class CreatePurchaseRequest extends HttpServlet {
         ProductDAO productDAO = new ProductDAO();
         List<Product> productList = new ArrayList<>();
         if (productSearch == null || productSearch.isEmpty()) {
-            productList = productDAO.getProductList();
+            productList = productDAO.getActiveProductList();
         } else {
-            productList = productDAO.searchProductByName(productSearch);
+            productList = productDAO.searchActiveProductByName(productSearch);
         }
 
         request.setAttribute("productListForPurchase", productList);
@@ -50,7 +50,8 @@ public class CreatePurchaseRequest extends HttpServlet {
         SupplierDAO supplierDAO = new SupplierDAO();
         request.setAttribute("supplierList", supplierDAO.getActiveSuppliers());
 
-        request.getRequestDispatcher("WEB-INF/view/purchaseRequest/createPurchaseRequest.jsp").forward(request, response);
+        request.getRequestDispatcher("WEB-INF/view/purchaseRequest/createPurchaseRequest.jsp").forward(request,
+                response);
     }
 
     @Override
@@ -96,7 +97,8 @@ public class CreatePurchaseRequest extends HttpServlet {
                 }
             } catch (NumberFormatException e) {
                 request.setAttribute("error", "Error occured!");
-                request.getRequestDispatcher("WEB-INF/view/purchaseRequest/createPurchaseRequest.jsp").forward(request, response);
+                request.getRequestDispatcher("WEB-INF/view/purchaseRequest/createPurchaseRequest.jsp").forward(request,
+                        response);
                 return;
             }
             i++;
@@ -138,9 +140,9 @@ public class CreatePurchaseRequest extends HttpServlet {
             i++;
         }
 
-        request.getSession().setAttribute("message", "Create a purchase request successfully! Wait for the confirmation by manager!");
+        request.getSession().setAttribute("message",
+                "Create a purchase request successfully! Wait for the confirmation by manager!");
         response.sendRedirect("purchaseRequestList");
     }
 
 }
-

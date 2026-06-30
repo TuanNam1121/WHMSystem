@@ -85,22 +85,6 @@ public class RoleDAO {
         return null;
     }
 
-    public Integer getRoleIdFromRoleName(String roleName) {
-        String sql = "select roleid from roles where rolename = ?";
-
-        try (Connection conn = DBContext.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, roleName);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("roleid");
-            }
-        } catch (SQLException ex) {
-            System.err.println(ex.getMessage());
-        }
-        return null;
-    }
-
     public Role mapResultSetToRole(ResultSet rs) throws SQLException {
         Role i = new Role();
         i.setRoleId(rs.getInt("roleid"));

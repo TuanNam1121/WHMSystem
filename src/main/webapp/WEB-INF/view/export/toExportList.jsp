@@ -136,7 +136,7 @@
                             <tbody>
                             <c:forEach items="${sessionScope.orderList}" var="o" varStatus="v">
                                 <tr>
-                                <td>${(page - 1) * pageSize + v.index + 1}</td>
+                                <td>ER-${(page - 1) * pageSize + v.index + 1}</td>
                                     <td>
                                         <fmt:formatDate value="${o.orderDate}" pattern="dd-MM-yyyy HH:mm:ss"/>
                                     </td>

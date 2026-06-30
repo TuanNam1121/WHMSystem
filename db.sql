@@ -1,5 +1,7 @@
+DROP DATABASE IF EXISTS `wms`;
+
 CREATE
-DATABASE  IF NOT EXISTS `wms` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+DATABASE `wms` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE
 `wms`;
 -- MySQL dump 10.13  Distrib 8.0.46, for macos15 (arm64)
@@ -656,26 +658,110 @@ CREATE TABLE `permissions`
 LOCK
 TABLES `permissions` WRITE;
 /*!40000 ALTER TABLE `permissions` DISABLE KEYS */;
+
+-- =========================
+-- AUDIT PERMISSION
+-- =========================
 INSERT INTO `permissions`
-VALUES (1, 'VIEWUSER', 'Xem thong tin user'),
-       (2, 'CREATE_USER', 'Can create new users'),
-       (3, 'UPDATE_USER', 'Can update user information'),
-       (4, 'DELETE_USER', 'Can delete users'),
-       (5, 'VIEW_REQUEST', 'Can view requests'),
-       (6, 'HANDLE_REQUEST', 'Can complete requests'),
-       (7, 'test_first', 'tet tet tet'),
-       (8, 'IMPORT_PRODUCT', 'Can import products'),
-       (9, 'EXPORT_PRODUCT', 'Can export products'),
-       (10, 'AUDIT_INVENTORY', 'Can audit warehouse'),
-       (11, 'CREATE_PURCHASE_REQUEST', 'Create purchase request'),
-       (12, 'APPROVE_PURCHASE_REQUEST', 'Approve purchase request'),
-       (13, 'VIEW_STOCK', 'View stock'),
-       (14, 'PROCESS_GOODS_RECEIPT', 'Process goods receipt'),
-       (15, 'VIEW_INVENTORY_AUDIT', 'Can view inventory audits'),
-       (16, 'CREATE_INVENTORY_AUDIT', 'Can create inventory audits'),
-       (17, 'PERFORM_INVENTORY_AUDIT', 'Can perform inventory audits'),
-       (19, 'APPROVE_INVENTORY_AUDIT', 'Can approve or decline inventory audits'),
-       (20, 'VIEW_INVENTORY_TRANSACTION', 'Can view inventory transactions');
+VALUES 
+       (1, 'VIEW_INVENTORY_AUDIT', 'Can view inventory audits'),
+       (2, 'CREATE_INVENTORY_AUDIT', 'Can create inventory audits'),
+       (3, 'PERFORM_INVENTORY_AUDIT', 'Can perform inventory audits'),
+       (4, 'APPROVE_INVENTORY_AUDIT', 'Can approve or decline inventory audits'),
+       (5, 'VIEW_INVENTORY_TRANSACTION', 'Can view inventory transactions');
+-- =========================
+-- PRODUCT PERMISSION
+-- =========================
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(6, 'VIEW_PRODUCT', 'View product list'),
+(7, 'CREATE_PRODUCT', 'Create new product'),
+(8, 'UPDATE_PRODUCT', 'Update product');
+
+-- =========================
+-- CATEGORY PERMISSION
+-- =========================
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(9, 'VIEW_CATEGORY', 'View category list'),
+(10, 'CREATE_CATEGORY', 'Create new category'),
+(11, 'UPDATE_CATEGORY', 'Update category');
+
+-- =========================
+-- BRAND PERMISSION
+-- =========================
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(12, 'VIEW_BRAND', 'View brand list'),
+(13, 'CREATE_BRAND', 'Create new brand'),
+(14, 'UPDATE_BRAND', 'Update brand');
+
+-- =========================
+-- SPECIFICATION PERMISSION
+-- =========================
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(15, 'VIEW_SPECIFICATION', 'View specification list'),
+(16, 'CREATE_SPECIFICATION', 'Create specification'),
+(17, 'UPDATE_SPECIFICATION', 'Update specification');
+
+-- =========================
+-- SALE ORDER PERMISSION
+-- =========================
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(18, 'VIEW_SALE_ORDER', 'View sale order list'),
+(19, 'CREATE_SALE_ORDER', 'Create sale order'),
+(20, 'UPDATE_SALE_ORDER', 'Update sale order');
+
+-- =========================
+-- PURCHASE ORDER PERMISSION
+-- =========================
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(21, 'VIEW_PURCHASE_ORDER', 'View purchase order list'),
+(22, 'CREATE_PURCHASE_ORDER', 'Create purchase order'),
+(23, 'UPDATE_PURCHASE_ORDER', 'Update purchase order'),
+(24, 'APPROVE_REJECT_PURCHASE_REQUEST', 'Approve or Reject purchase request');
+
+-- =========================
+-- IMPORT PERMISSION
+-- =========================
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(25, 'VIEW_IMPORT_REQUEST', 'View import request list'),
+(26, 'VIEW_IMPORT_HISTORY', 'View import history'),
+(27, 'PROCESS_IMPORT', 'Process import');
+
+-- =========================
+-- EXPORT PERMISSION
+-- =========================
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(28, 'VIEW_EXPORT_PRODUCT', 'View export product list'),
+(29, 'VIEW_EXPORT_HISTORY', 'View export history'),
+(30, 'PROCESS_EXPORT', 'Process export');
+
+-- =========================
+-- INVENTORY PERMISSION
+-- =========================
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(31, 'VIEW_INVENTORY', 'View inventory');
+
+-- =========================
+-- REPORT PERMISSION
+-- =========================
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(32, 'VIEW_REPORT', 'View reports');
+
+-- =========================
+-- CUSTOMER PERMISSION
+-- =========================
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(33, 'VIEW_CUSTOMER', 'View customer list'),
+(34, 'CREATE_CUSTOMER', 'Create customer'),
+(35, 'UPDATE_CUSTOMER', 'Update customer');
+
+-- =========================
+-- SUPPLIER PERMISSION
+-- =========================
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(36, 'VIEW_SUPPLIER', 'View supplier list'),
+(37, 'CREATE_SUPPLIER', 'Create supplier'),
+(38, 'UPDATE_SUPPLIER', 'Update supplier');
+
 /*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -991,41 +1077,11 @@ CREATE TABLE `role_permission`
 -- Dumping data for table `role_permission`
 --
 
-LOCK
-TABLES `role_permission` WRITE;
+LOCK TABLES `role_permission` WRITE;
 /*!40000 ALTER TABLE `role_permission` DISABLE KEYS */;
-INSERT INTO `role_permission`
-VALUES (1, 1, 1),
-       (2, 1, 2),
-       (3, 1, 3),
-       (4, 1, 4),
-       (5, 1, 5),
-       (6, 1, 6),
-       (7, 1, 8),
-       (8, 1, 9),
-       (9, 1, 10),
-       (10, 1, 11),
-       (11, 1, 12),
-       (12, 1, 13),
-       (13, 1, 14),
-       (33, 2, 1),
-       (34, 2, 5),
-       (35, 2, 6),
-       (36, 2, 10),
-       (37, 2, 11),
-       (38, 2, 12),
-       (44, 2, 15),
-       (40, 2, 16),
-       (41, 2, 19),
-       (20, 3, 8),
-       (21, 3, 9),
-       (22, 3, 13),
-       (23, 3, 14),
-       (45, 3, 15),
-       (43, 3, 17),
-       (46, 4, 15);
+INSERT INTO `role_permission` VALUES (72,2,1),(73,2,5),(74,2,6),(75,2,9),(76,2,12),(77,2,15),(78,2,18),(79,2,21),(80,2,24),(81,2,25),(82,2,26),(83,2,28),(84,2,29),(85,2,31),(86,2,32),(87,2,33),(88,2,36),(89,3,1),(90,3,2),(91,3,3),(92,3,4),(93,3,5),(94,3,6),(95,3,7),(96,3,8),(97,3,9),(98,3,10),(99,3,11),(100,3,12),(101,3,13),(102,3,14),(103,3,15),(104,3,16),(105,3,17),(106,3,18),(107,3,21),(108,3,25),(109,3,26),(110,3,27),(111,3,28),(112,3,29),(113,3,30),(114,3,31),(47,4,6),(48,4,7),(49,4,8),(50,4,9),(51,4,10),(52,4,11),(53,4,12),(54,4,13),(55,4,14),(56,4,15),(57,4,16),(58,4,17),(59,4,18),(60,4,19),(61,4,20),(62,4,21),(63,4,22),(64,4,23),(65,4,31),(66,4,33),(67,4,34),(68,4,35),(69,4,36),(70,4,37),(71,4,38);
 /*!40000 ALTER TABLE `role_permission` ENABLE KEYS */;
-UNLOCK
+UNLOCK TABLES;
 TABLES;
 
 --

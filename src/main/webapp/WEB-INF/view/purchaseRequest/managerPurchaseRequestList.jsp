@@ -118,7 +118,7 @@
                             <tr>
                                 <th>Request Code</th>
                                 <th>Created By</th>
-                                <th>Supplier</th>
+                                <th>Note</th>
                                 <th>Status</th>
                                 <th>Created At</th>
                                 <th>Action</th>
@@ -127,35 +127,36 @@
                             <tbody>
                             <c:forEach items="${purchaseList}" var="pr">
                                 <tr>
-                                    <td class="text-bolds"><fmt:formatNumber value="${pr.id}" pattern="PR-"/></td>
+                                    <td class="text-bolds"><fmt:formatNumber value="${pr.id}" pattern="000"/></td>
                                     <td>${pr.createdByUsername}</td>
-                                    <td>${pr.supplierName}</td>
+                                    <td>${pr.note}</td>
                                     <td>
                                         <c:choose>
                                             <c:when test="${pr.status == 'New' || pr.status == 'NEW'}">
-                                                <span class="badges bg-lightyellow" style="min-width: 110px; display: inline-block; text-align: center;">${pr.status}</span>
+                                                <span class="badges bg-lightyellow">${pr.status}</span>
                                             </c:when>
                                             <c:when test="${pr.status == 'Approved' || pr.status == 'APPROVED'}">
-                                                <span class="badges bg-blue" style="min-width: 110px; display: inline-block; text-align: center;">${pr.status}</span>
+                                                <span class="badges bg-lightgreen">${pr.status}</span>
                                             </c:when>
                                             <c:when test="${pr.status == 'Rejected' || pr.status == 'REJECTED'}">
-                                                <span class="badges bg-lightred" style="min-width: 110px; display: inline-block; text-align: center;">${pr.status}</span>
+                                                <span class="badges bg-lightred">${pr.status}</span>
                                             </c:when>
                                             <c:when test="${pr.status == 'Processing' || pr.status == 'PROCESSING'}">
-                                                <span class="badges bg-lightpurple" style="min-width: 110px; display: inline-block; text-align: center;">${pr.status}</span>
+                                                <span class="badges bg-lightpurple">${pr.status}</span>
                                             </c:when>
                                             <c:when test="${pr.status == 'Completed' || pr.status == 'COMPLETED'}">
-                                                <span class="badges bg-lightgreen" style="min-width: 110px; display: inline-block; text-align: center;">${pr.status}</span>
+                                                <span class="badges bg-lightgreen">${pr.status}</span>
                                             </c:when>
                                             <c:otherwise>
-                                                <span class="badges bg-lightgrey" style="min-width: 110px; display: inline-block; text-align: center;">${pr.status}</span>
+                                                <span class="badges bg-lightgrey">${pr.status}</span>
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
                                     <td><fmt:formatDate value="${pr.createdAt}" pattern="dd MMM yyyy"/></td>
                                     <td>
-                                        <a href="managerPurchaseRequestDetail?id=${pr.id}" id="btn-view-pr${pr.id}" title="View Detail" class="me-2" style="font-size: 1.2rem; color: #202b36;">
-                                            <i class="fas fa-eye"></i>
+                                        <a class="btn btn-sm btn-outline-primary"
+                                           href="managerPurchaseRequestDetail?id=${pr.id}" id="btn-view-pr${pr.id}">
+                                            <i class="fas fa-eye me-1"></i> View Detail
                                         </a>
                                     </td>
                                 </tr>

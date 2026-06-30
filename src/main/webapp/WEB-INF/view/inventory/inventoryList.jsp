@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/style.css?v=20260621-table-pagination">
+    <link rel="stylesheet" href="assets/css/style.css?v=sidebar-export-badge">
 
     <style>
         .inventory-summary-card {

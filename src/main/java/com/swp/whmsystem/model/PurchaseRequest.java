@@ -1,5 +1,6 @@
 package com.swp.whmsystem.model;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 public class PurchaseRequest {
@@ -14,6 +15,7 @@ public class PurchaseRequest {
     private boolean isDeleted;
     private int supplierId;
     private String supplierName;
+    private BigDecimal totalPrice = BigDecimal.ZERO;
 
     public PurchaseRequest() {
     }
@@ -104,5 +106,13 @@ public class PurchaseRequest {
 
     public void setSupplierName(String supplierName) {
         this.supplierName = supplierName;
+    }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }

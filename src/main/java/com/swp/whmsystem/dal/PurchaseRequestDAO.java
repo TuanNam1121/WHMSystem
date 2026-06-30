@@ -28,6 +28,27 @@ public class PurchaseRequestDAO {
         return java.math.BigDecimal.ZERO;
     }
 
+    public java.math.BigDecimal getApprovedAndIncompletedPurchaseRequestTotalPrice() {
+        String sql = "SELECT COALESCE(SUM(pri.quantity * pri.price), 0) "
+                + "FROM purchase_requests pr "
+                + "JOIN purchase_request_items pri ON pr.id = pri.purchaserequestid "
+                + "WHERE pr.status IN ('APPROVED','PROCESSING') "
+                + "AND pr.isDeleted = 0 "
+                + "AND pri.isDeleted = 0";
+
+        try (Connection connection = DBContext.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            if (resultSet.next()) {
+                java.math.BigDecimal totalPrice = resultSet.getBigDecimal(1);
+                return totalPrice == null ? java.math.BigDecimal.ZERO : totalPrice;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return java.math.BigDecimal.ZERO;
+    }
+
     public List<PurchaseRequest> getAllPurchaseRequest() {
         String sql = "SELECT pr.*, u.username AS createdByUsername, s.suppliername FROM purchase_requests pr " +
                 "LEFT JOIN users u ON pr.createdby = u.userid " +
@@ -48,10 +69,17 @@ public class PurchaseRequestDAO {
     }
     
     public List<PurchaseRequest> getApprovedAndIncompletedPurchaseRequest() {
-        String sql = "SELECT pr.*, u.username AS createdByUsername, s.suppliername FROM purchase_requests pr " +
-                "LEFT JOIN users u ON pr.createdby = u.userid " +
-                "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid " +
-                "where pr.isDeleted = 0 and pr.status in ('APPROVED','PROCESSING') ORDER BY pr.id DESC";
+        String sql = "SELECT pr.*, u.username AS createdByUsername, s.suppliername, "
+                + "COALESCE(pr_total.totalPrice, 0) AS totalPrice FROM purchase_requests pr "
+                + "LEFT JOIN users u ON pr.createdby = u.userid "
+                + "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid "
+                + "LEFT JOIN ("
+                + "    SELECT purchaserequestid, SUM(quantity * price) AS totalPrice "
+                + "    FROM purchase_request_items "
+                + "    WHERE isDeleted = 0 "
+                + "    GROUP BY purchaserequestid"
+                + ") pr_total ON pr.id = pr_total.purchaserequestid "
+                + "where pr.isDeleted = 0 and pr.status in ('APPROVED','PROCESSING') ORDER BY pr.id DESC";
         List<PurchaseRequest> list = new ArrayList<>();
         try (Connection connection = DBContext.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -159,6 +187,12 @@ public class PurchaseRequestDAO {
         } catch (SQLException e) {
             // Column might not exist in some queries if not updated
         }
+        try {
+            java.math.BigDecimal totalPrice = rs.getBigDecimal("totalPrice");
+            c.setTotalPrice(totalPrice == null ? java.math.BigDecimal.ZERO : totalPrice);
+        } catch (SQLException e) {
+            // Column might not exist in some queries if not updated
+        }
         return c;
     }
 
@@ -219,10 +253,17 @@ public class PurchaseRequestDAO {
     }
 
     public List<PurchaseRequest> searchPurchaseItem(int salemanId, int id, String status, String dateStr, String sort, int pageSize, int page) {
-        StringBuilder sql = new StringBuilder("SELECT pr.*, u.username AS createdByUsername, s.suppliername FROM purchase_requests pr " +
-                "LEFT JOIN users u ON pr.createdby = u.userid " +
-                "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid " +
-                "where pr.isDeleted = 0") ;
+        StringBuilder sql = new StringBuilder("SELECT pr.*, u.username AS createdByUsername, s.suppliername, "
+                + "COALESCE(pr_total.totalPrice, 0) AS totalPrice FROM purchase_requests pr "
+                + "LEFT JOIN users u ON pr.createdby = u.userid "
+                + "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid "
+                + "LEFT JOIN ("
+                + "    SELECT purchaserequestid, SUM(quantity * price) AS totalPrice "
+                + "    FROM purchase_request_items "
+                + "    WHERE isDeleted = 0 "
+                + "    GROUP BY purchaserequestid"
+                + ") pr_total ON pr.id = pr_total.purchaserequestid "
+                + "where pr.isDeleted = 0") ;
         List<Object> parameter = new ArrayList<>();
         if (salemanId != 0) {
             sql.append(" and pr.createdBy = ?");

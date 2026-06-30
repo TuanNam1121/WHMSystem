@@ -119,6 +119,7 @@
                                 <th>Request Code</th>
                                 <th>Created By</th>
                                 <th>Note</th>
+                                <th>Total Price</th>
                                 <th>Status</th>
                                 <th>Created At</th>
                                 <th>Action</th>
@@ -130,6 +131,7 @@
                                     <td class="text-bolds"><fmt:formatNumber value="${pr.id}" pattern="000"/></td>
                                     <td>${pr.createdByUsername}</td>
                                     <td>${pr.note}</td>
+                                    <td><fmt:formatNumber value="${pr.totalPrice}" pattern="#,###"/></td>
                                     <td>
                                         <c:choose>
                                             <c:when test="${pr.status == 'New' || pr.status == 'NEW'}">

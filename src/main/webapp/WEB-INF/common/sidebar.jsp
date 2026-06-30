@@ -67,7 +67,13 @@
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="assets/img/icons/transfer1.svg"
                                                        alt="img"><span> Export</span>
-                        <span class="menu-arrow"></span></a>
+                        <c:if test="${requestScope.newSaleOrderCount > 0}">
+                            <span class="badge rounded-pill bg-warning sidebar-notification-badge">
+                                ${requestScope.newSaleOrderCount}
+                            </span>
+                        </c:if>
+                        <span class="menu-arrow"></span>
+                    </a>
                     <ul>
                         <li><a href="toExportList">Export Product</a></li>
                         <li><a href="exportHistory">Export History</a></li>

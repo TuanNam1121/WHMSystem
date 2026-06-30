@@ -43,7 +43,10 @@
                             <span><img src="assets/img/icons/dash1.svg" alt="img"></span>
                         </div>
                         <div class="dash-widgetcontent">
-                            <h5>$<span class="counters" data-count="307144.00">$307,144.00</span></h5>
+                            <h5>
+                                <span class="counters money-vn"
+                                      data-count="${requestScope.newPurchaseOrderTotalPrice}"></span>
+                            </h5>
                             <h6>Total Purchase Due</h6>
                         </div>
                     </div>
@@ -54,7 +57,10 @@
                             <span><img src="assets/img/icons/dash2.svg" alt="img"></span>
                         </div>
                         <div class="dash-widgetcontent">
-                            <h5>$<span class="counters" data-count="4385.00">$4,385.00</span></h5>
+                            <h5>
+                                <span class="counters money-vn"
+                                      data-count="${requestScope.newSaleOrderTotalPrice}"></span>
+                            </h5>
                             <h6>Total Sales Due</h6>
                         </div>
                     </div>

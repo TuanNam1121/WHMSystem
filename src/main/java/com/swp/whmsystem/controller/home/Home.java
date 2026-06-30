@@ -36,7 +36,10 @@ public class Home extends HttpServlet {
         // First row: financial summary cards.
         OrderDAO orderDAO = new OrderDAO();
         GoodReceiptDAO goodReceiptDAO = new GoodReceiptDAO();
+        PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
 
+        request.setAttribute("newPurchaseOrderTotalPrice", purchaseRequestDAO.getNewPurchaseOrderTotalPrice());
+        request.setAttribute("newSaleOrderTotalPrice", orderDAO.getNewSaleOrderTotalPrice());
         request.setAttribute("completedImportTotalPrice", goodReceiptDAO.getCompletedImportTotalPrice());
         request.setAttribute("completedSaleOrderTotalPrice", orderDAO.getCompletedSaleOrderTotalPrice());
 
@@ -44,7 +47,6 @@ public class Home extends HttpServlet {
         // Second row: customer, supplier, purchase invoice, and sales invoice cards.
         CustomerDAO customerDAO = new CustomerDAO();
         SupplierDAO supplierDAO = new SupplierDAO();
-        PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
         ExportItemDAO exportItemDAO = new ExportItemDAO();
 
         request.setAttribute("customerCount", customerDAO.countCustomers());

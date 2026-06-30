@@ -55,17 +55,11 @@ public class InventorySummaryReport extends HttpServlet {
 
         List<InventorySummary> reportList = dao.showAll(fromDate, toDate, keyword, page, pageSize);
 
-        int totalOpeningStock = 0;
-        int totalImportQty = 0;
-        int totalExportQty = 0;
-        int totalClosingStock = 0;
-
-        for (InventorySummary item : reportList) {
-            totalOpeningStock += item.getOpeningStock();
-            totalImportQty += item.getImportStock();
-            totalExportQty += item.getExportStock();
-            totalClosingStock += item.getClosingStock();
-        }
+        int[] grandTotals = dao.getGrandTotals(fromDate, toDate, keyword);
+        int totalOpeningStock = grandTotals[0];
+        int totalImportQty = grandTotals[1];
+        int totalExportQty = grandTotals[2];
+        int totalClosingStock = grandTotals[3];
 
         request.setAttribute("reportList", reportList);
         request.setAttribute("totalOpeningStock", totalOpeningStock);
@@ -79,7 +73,7 @@ public class InventorySummaryReport extends HttpServlet {
         request.setAttribute("focusTable",
                 keyword != null || fromDate != null || toDate != null
                         || pageSizeRaw != null || pageRaw != null);
-        
+
         request.getRequestDispatcher("WEB-INF/view/report/inventorySummaryReport.jsp").forward(request, response);
     }
 

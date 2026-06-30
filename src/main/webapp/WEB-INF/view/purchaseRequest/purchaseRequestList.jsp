@@ -143,7 +143,7 @@
                             <tbody>
                             <c:forEach items="${purchaseList}" var="pr">
                                 <tr>
-                                    <td class="text-bolds"><fmt:formatNumber value="${pr.id}" pattern="000"/></td>
+                                    <td class="text-bolds"><fmt:formatNumber value="${pr.id}" pattern="PR-"/></td>
                                     <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
                                         title="<c:out value='${pr.supplierName}'/>">${pr.supplierName}</td>
                                     <td><fmt:formatNumber value="${pr.totalPrice}" pattern="#,###"/></td>

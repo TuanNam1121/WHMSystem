@@ -132,6 +132,7 @@
                                 <th>Status</th>
                                 <th>Created At</th>
                                 <th>Total Item</th>
+                                <th>Total Price</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -160,6 +161,7 @@
                                                         pattern='dd MMM yyyy'/>
                                     </td>
                                     <td>${ir.totalItem}</td>
+                                    <td><fmt:formatNumber value="${ir.totalPrice}" pattern="#,###"/></td>
                                     <td>
                                         <a class="btn btn-sm btn-outline-primary"
                                            href="ImportProduct?prId=${ir.purchaseRequestId}">

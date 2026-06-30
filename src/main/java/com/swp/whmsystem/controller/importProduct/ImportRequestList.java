@@ -70,6 +70,7 @@ public class ImportRequestList extends HttpServlet {
         List<PurchaseItem> purchaseItems = purchaseItemDAO.getItemsByPurchaseRequestId(pr.getId());
         for(PurchaseItem i : purchaseItems) total += i.getRequiredQty();
         dto.setTotalItem(total);
+        dto.setTotalPrice(pr.getTotalPrice());
         return dto;
     }
     

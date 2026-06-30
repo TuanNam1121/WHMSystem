@@ -38,7 +38,8 @@ public class Home extends HttpServlet {
         GoodReceiptDAO goodReceiptDAO = new GoodReceiptDAO();
         PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
 
-        request.setAttribute("newPurchaseOrderTotalPrice", purchaseRequestDAO.getNewPurchaseOrderTotalPrice());
+        request.setAttribute("newPurchaseOrderTotalPrice",
+                purchaseRequestDAO.getApprovedAndIncompletedPurchaseRequestTotalPrice());
         request.setAttribute("newSaleOrderTotalPrice", orderDAO.getNewSaleOrderTotalPrice());
         request.setAttribute("completedImportTotalPrice", goodReceiptDAO.getCompletedImportTotalPrice());
         request.setAttribute("completedSaleOrderTotalPrice", orderDAO.getCompletedSaleOrderTotalPrice());

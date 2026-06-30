@@ -528,9 +528,16 @@ public class OrderDAO {
         List<Object> parameter = new ArrayList<>();
 
         if (keyword != null && !keyword.trim().isEmpty()) {
-            sql.append(" and (c.name like ? or o.id like ?)");
-            parameter.add("%" + keyword.trim() + "%");
-            parameter.add("%" + keyword.trim() + "%");
+            String searchValue = "%" + keyword.trim() + "%";
+            sql.append(" and (c.name like ? or o.id like ? or exists ("
+                    + "select 1 from export_receipt_details erd "
+                    + "join export_receipt_serials ers on erd.id = ers.export_receipt_detail_id "
+                    + "join product_items pi on ers.product_item_id = pi.id "
+                    + "where erd.export_receipt_id = er.id and pi.serial like ?"
+                    + "))");
+            parameter.add(searchValue);
+            parameter.add(searchValue);
+            parameter.add(searchValue);
         }
 
         if (date != null && !date.trim().isEmpty()) {
@@ -602,7 +609,13 @@ public class OrderDAO {
 
         if (keyword != null && !keyword.trim().isEmpty()) {
             String searchValue = "%" + keyword.trim() + "%";
-            sql.append(" and (c.name like ? or o.id like ?)");
+            sql.append(" and (c.name like ? or o.id like ? or exists ("
+                    + "select 1 from export_receipt_details erd "
+                    + "join export_receipt_serials ers on erd.id = ers.export_receipt_detail_id "
+                    + "join product_items pi on ers.product_item_id = pi.id "
+                    + "where erd.export_receipt_id = er.id and pi.serial like ?"
+                    + "))");
+            parameters.add(searchValue);
             parameters.add(searchValue);
             parameters.add(searchValue);
         }

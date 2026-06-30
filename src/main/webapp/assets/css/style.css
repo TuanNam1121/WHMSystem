@@ -3792,6 +3792,25 @@ span.select2-container.select2-container--default.select2-container--open {
     color: #637381
 }
 
+.sidebar .sidebar-menu > ul > li > a .sidebar-notification-badge {
+    position: absolute;
+    top: 9px;
+    right: 38px;
+    min-width: 22px;
+    height: 22px;
+    margin-left: 0;
+    padding: 0 7px;
+    border-radius: 50px;
+    background: #ff9f43 !important;
+    color: #fff !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    line-height: 1
+}
+
 .sidebar .sidebar-menu > ul > li > a .menu-arrow {
     display: inline-block;
     font-family: "font awesome 5 free";

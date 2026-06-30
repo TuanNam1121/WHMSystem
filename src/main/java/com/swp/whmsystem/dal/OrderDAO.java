@@ -57,6 +57,21 @@ public class OrderDAO {
         return BigDecimal.ZERO;
     }
 
+    public int countNewSaleOrders() {
+        String sql = "select count(*) from orders where status = 'NEW'";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return 0;
+    }
+
     public List<Order> getAllOrder() {
         String sql = "select * from orders";
 

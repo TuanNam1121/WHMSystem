@@ -67,18 +67,28 @@
                                 <div class="row">
                                     <div class="col-lg-2 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <input type="text" placeholder="Enter Request Code" id="filter-code" name="code" value="${param.code}">
+                                            <input type="text" placeholder="Enter Request Code" id="filter-code"
+                                                   name="code" value="${param.code}">
                                         </div>
                                     </div>
                                     <div class="col-lg-2 col-sm-6 col-12">
                                         <div class="form-group">
                                             <select class="select" id="filter-status" name="status">
                                                 <option value="">Choose Status</option>
-                                                <option value="New" ${param.status == 'New' ? 'selected' : ''}>New</option>
-                                                <option value="Approved" ${param.status == 'Approved' ? 'selected' : ''}>Approved</option>
-                                                <option value="Rejected" ${param.status == 'Rejected' ? 'selected' : ''}>Rejected</option>
-                                                <option value="Processing" ${param.status == 'Processing' ? 'selected' : ''}>Processing</option>
-                                                <option value="Completed" ${param.status == 'Completed' ? 'selected' : ''}>Completed</option>
+                                                <option value="New" ${param.status == 'New' ? 'selected' : ''}>New
+                                                </option>
+                                                <option value="Approved" ${param.status == 'Approved' ? 'selected' : ''}>
+                                                    Approved
+                                                </option>
+                                                <option value="Rejected" ${param.status == 'Rejected' ? 'selected' : ''}>
+                                                    Rejected
+                                                </option>
+                                                <option value="Processing" ${param.status == 'Processing' ? 'selected' : ''}>
+                                                    Processing
+                                                </option>
+                                                <option value="Completed" ${param.status == 'Completed' ? 'selected' : ''}>
+                                                    Completed
+                                                </option>
                                             </select>
                                         </div>
                                     </div>
@@ -92,18 +102,31 @@
                                         <div class="form-group">
                                             <select class="select" id="filter-sort" name="sort">
                                                 <option value="">Sort By</option>
-                                                <option value="id_desc" ${param.sort == 'id_desc' ? 'selected' : ''}>ID (Desc)</option>
-                                                <option value="id_asc" ${param.sort == 'id_asc' ? 'selected' : ''}>ID (Asc)</option>
-                                                <option value="status_desc" ${param.sort == 'status_desc' ? 'selected' : ''}>Status (Desc)</option>
-                                                <option value="status_asc" ${param.sort == 'status_asc' ? 'selected' : ''}>Status (Asc)</option>
-                                                <option value="date_desc" ${param.sort == 'date_desc' ? 'selected' : ''}>Date (Desc)</option>
-                                                <option value="date_asc" ${param.sort == 'date_asc' ? 'selected' : ''}>Date (Asc)</option>
+                                                <option value="id_desc" ${param.sort == 'id_desc' ? 'selected' : ''}>ID
+                                                    (Desc)
+                                                </option>
+                                                <option value="id_asc" ${param.sort == 'id_asc' ? 'selected' : ''}>ID
+                                                    (Asc)
+                                                </option>
+                                                <option value="status_desc" ${param.sort == 'status_desc' ? 'selected' : ''}>
+                                                    Status (Desc)
+                                                </option>
+                                                <option value="status_asc" ${param.sort == 'status_asc' ? 'selected' : ''}>
+                                                    Status (Asc)
+                                                </option>
+                                                <option value="date_desc" ${param.sort == 'date_desc' ? 'selected' : ''}>
+                                                    Date (Desc)
+                                                </option>
+                                                <option value="date_asc" ${param.sort == 'date_asc' ? 'selected' : ''}>
+                                                    Date (Asc)
+                                                </option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-2 col-sm-6 col-12">
                                         <div class="form-group d-flex justify-content-end">
-                                            <button type="submit" class="btn btn-filters ms-auto" id="btn-apply-filter" style="border: none;">
+                                            <button type="submit" class="btn btn-filters ms-auto" id="btn-apply-filter"
+                                                    style="border: none;">
                                                 <img src="assets/img/icons/search-whites.svg" alt="img">
                                             </button>
                                         </div>
@@ -112,59 +135,60 @@
                             </div>
                         </div>
 
-                    <div class="table-responsive">
-                        <table class="table custom-datanew" id="manager-purchase-request-table">
-                            <thead>
-                            <tr>
-                                <th>Request Code</th>
-                                <th>Created By</th>
-                                <th>Note</th>
-                                <th>Status</th>
-                                <th>Created At</th>
-                                <th>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <c:forEach items="${purchaseList}" var="pr">
+                        <div class="table-responsive">
+                            <table class="table custom-datanew" id="manager-purchase-request-table">
+                                <thead>
                                 <tr>
-                                    <td class="text-bolds"><fmt:formatNumber value="${pr.id}" pattern="000"/></td>
-                                    <td>${pr.createdByUsername}</td>
-                                    <td>${pr.note}</td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${pr.status == 'New' || pr.status == 'NEW'}">
-                                                <span class="badges bg-lightyellow">${pr.status}</span>
-                                            </c:when>
-                                            <c:when test="${pr.status == 'Approved' || pr.status == 'APPROVED'}">
-                                                <span class="badges bg-lightgreen">${pr.status}</span>
-                                            </c:when>
-                                            <c:when test="${pr.status == 'Rejected' || pr.status == 'REJECTED'}">
-                                                <span class="badges bg-lightred">${pr.status}</span>
-                                            </c:when>
-                                            <c:when test="${pr.status == 'Processing' || pr.status == 'PROCESSING'}">
-                                                <span class="badges bg-lightpurple">${pr.status}</span>
-                                            </c:when>
-                                            <c:when test="${pr.status == 'Completed' || pr.status == 'COMPLETED'}">
-                                                <span class="badges bg-lightgreen">${pr.status}</span>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="badges bg-lightgrey">${pr.status}</span>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td><fmt:formatDate value="${pr.createdAt}" pattern="dd MMM yyyy"/></td>
-                                    <td>
-                                        <a class="btn btn-sm btn-outline-primary"
-                                           href="managerPurchaseRequestDetail?id=${pr.id}" id="btn-view-pr${pr.id}">
-                                            <i class="fas fa-eye me-1"></i> View Detail
-                                        </a>
-                                    </td>
+                                    <th>Request Code</th>
+                                    <th>Created By</th>
+                                    <th>Supplier</th>
+                                    <th>Total Price</th>
+                                    <th>Status</th>
+                                    <th>Created At</th>
+                                    <th>Action</th>
                                 </tr>
-                            </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
-                    <jsp:include page="/WEB-INF/common/pagination.jsp"/>
+                                </thead>
+                                <tbody>
+                                <c:forEach items="${purchaseList}" var="pr">
+                                    <tr>
+                                        <td class="text-bolds"><fmt:formatNumber value="${pr.id}" pattern="000"/></td>
+                                        <td>${pr.createdByUsername}</td>
+                                        <td>${pr.supplierName}</td>
+                                        <td><fmt:formatNumber value="${pr.totalPrice}" pattern="#,###"/></td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${pr.status == 'New' || pr.status == 'NEW'}">
+                                                    <span class="badges bg-lightyellow">${pr.status}</span>
+                                                </c:when>
+                                                <c:when test="${pr.status == 'Approved' || pr.status == 'APPROVED'}">
+                                                    <span class="badges bg-lightgreen">${pr.status}</span>
+                                                </c:when>
+                                                <c:when test="${pr.status == 'Rejected' || pr.status == 'REJECTED'}">
+                                                    <span class="badges bg-lightred">${pr.status}</span>
+                                                </c:when>
+                                                <c:when test="${pr.status == 'Processing' || pr.status == 'PROCESSING'}">
+                                                    <span class="badges bg-lightpurple">${pr.status}</span>
+                                                </c:when>
+                                                <c:when test="${pr.status == 'Completed' || pr.status == 'COMPLETED'}">
+                                                    <span class="badges bg-lightgreen">${pr.status}</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="badges bg-lightgrey">${pr.status}</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td><fmt:formatDate value="${pr.createdAt}" pattern="dd MMM yyyy"/></td>
+                                        <td>
+                                            <a href="managerPurchaseRequestDetail?id=${pr.id}" id="btn-view-pr${pr.id}" class="me-2" data-bs-toggle="tooltip" title="View Detail">
+                                                <img src="assets/img/icons/eye.svg" alt="img">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+                        <jsp:include page="/WEB-INF/common/pagination.jsp"/>
                     </form>
                 </div>
             </div>

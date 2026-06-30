@@ -1074,8 +1074,8 @@ CREATE TABLE `role_permission`
 LOCK
 TABLES `role_permission` WRITE;
 /*!40000 ALTER TABLE `role_permission` DISABLE KEYS */;
---INSERT INTO `role_permission`
---VALUES ()
+-- INSERT INTO `role_permission`
+-- VALUES ()
 /*!40000 ALTER TABLE `role_permission` ENABLE KEYS */;
 UNLOCK
 TABLES;

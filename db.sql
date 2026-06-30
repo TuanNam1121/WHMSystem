@@ -656,26 +656,106 @@ CREATE TABLE `permissions`
 LOCK
 TABLES `permissions` WRITE;
 /*!40000 ALTER TABLE `permissions` DISABLE KEYS */;
+
+-- =========================
+-- AUDIT PERMISSION
+-- =========================
 INSERT INTO `permissions`
-VALUES (1, 'VIEWUSER', 'Xem thong tin user'),
-       (2, 'CREATE_USER', 'Can create new users'),
-       (3, 'UPDATE_USER', 'Can update user information'),
-       (4, 'DELETE_USER', 'Can delete users'),
-       (5, 'VIEW_REQUEST', 'Can view requests'),
-       (6, 'HANDLE_REQUEST', 'Can complete requests'),
-       (7, 'test_first', 'tet tet tet'),
-       (8, 'IMPORT_PRODUCT', 'Can import products'),
-       (9, 'EXPORT_PRODUCT', 'Can export products'),
-       (10, 'AUDIT_INVENTORY', 'Can audit warehouse'),
-       (11, 'CREATE_PURCHASE_REQUEST', 'Create purchase request'),
-       (12, 'APPROVE_PURCHASE_REQUEST', 'Approve purchase request'),
-       (13, 'VIEW_STOCK', 'View stock'),
-       (14, 'PROCESS_GOODS_RECEIPT', 'Process goods receipt'),
-       (15, 'VIEW_INVENTORY_AUDIT', 'Can view inventory audits'),
-       (16, 'CREATE_INVENTORY_AUDIT', 'Can create inventory audits'),
-       (17, 'PERFORM_INVENTORY_AUDIT', 'Can perform inventory audits'),
-       (19, 'APPROVE_INVENTORY_AUDIT', 'Can approve or decline inventory audits'),
-       (20, 'VIEW_INVENTORY_TRANSACTION', 'Can view inventory transactions');
+VALUES 
+       (1, 'VIEW_INVENTORY_AUDIT', 'Can view inventory audits'),
+       (2, 'CREATE_INVENTORY_AUDIT', 'Can create inventory audits'),
+       (3, 'PERFORM_INVENTORY_AUDIT', 'Can perform inventory audits'),
+       (4, 'APPROVE_INVENTORY_AUDIT', 'Can approve or decline inventory audits'),
+       (5, 'VIEW_INVENTORY_TRANSACTION', 'Can view inventory transactions');
+-- =========================
+-- PRODUCT PERMISSION
+-- =========================
+INSERT INTO `permissions` (permissionname, description) VALUES
+('VIEW_PRODUCT', 'View product list'),
+('CREATE_PRODUCT', 'Create new product'),
+('UPDATE_PRODUCT', 'Update product');
+
+-- =========================
+-- CATEGORY PERMISSION
+-- =========================
+INSERT INTO `permissions` (permissionname, description) VALUES
+('VIEW_CATEGORY', 'View category list'),
+('CREATE_CATEGORY', 'Create new category'),
+('UPDATE_CATEGORY', 'Update category');
+
+-- =========================
+-- BRAND PERMISSION
+-- =========================
+INSERT INTO `permissions` (permissionname, description) VALUES
+('VIEW_BRAND', 'View brand list'),
+('CREATE_BRAND', 'Create new brand'),
+('UPDATE_BRAND', 'Update brand');
+
+-- =========================
+-- SPECIFICATION PERMISSION
+-- =========================
+INSERT INTO `permissions` (permissionname, description) VALUES
+('VIEW_SPECIFICATION', 'View specification list'),
+('CREATE_SPECIFICATION', 'Create specification'),
+('UPDATE_SPECIFICATION', 'Update specification');
+
+-- =========================
+-- SALE ORDER PERMISSION
+-- =========================
+INSERT INTO `permissions` (permissionname, description) VALUES
+('VIEW_SALE_ORDER', 'View sale order list'),
+('CREATE_SALE_ORDER', 'Create sale order'),
+('UPDATE_SALE_ORDER', 'Update sale order');
+
+-- =========================
+-- PURCHASE ORDER PERMISSION
+-- =========================
+INSERT INTO `permissions` (permissionname, description) VALUES
+('VIEW_PURCHASE_ORDER', 'View purchase order list'),
+('CREATE_PURCHASE_ORDER', 'Create purchase order'),
+('UPDATE_PURCHASE_ORDER', 'Update purchase order'),
+('APPROVE_REJECT_PURCHASE_REQUEST', 'Approve or Reject purchase request');
+
+-- =========================
+-- IMPORT PERMISSION
+-- =========================
+INSERT INTO `permissions` (permissionname, description) VALUES
+('VIEW_IMPORT_REQUEST', 'View import request list'),
+('VIEW_IMPORT_HISTORY', 'View import history'),
+('PROCESS_IMPORT', 'Process import');
+
+-- =========================
+-- EXPORT PERMISSION
+-- =========================
+INSERT INTO `permissions` (permissionname, description) VALUES
+('VIEW_EXPORT_PRODUCT', 'View export product list'),
+('VIEW_EXPORT_HISTORY', 'View export history'),
+('PROCESS_EXPORT', 'Process export');
+
+-- =========================
+-- INVENTORY PERMISSION
+-- =========================
+INSERT INTO `permissions` (permissionname, description) VALUES
+('VIEW_INVENTORY', 'View inventory');
+
+-- =========================
+-- REPORT PERMISSION
+-- =========================
+INSERT INTO `permissions` (permissionname, description) VALUES
+('VIEW_REPORT', 'View reports');
+
+-- =========================
+-- CUSTOMER / SUPPLIER PERMISSION
+-- =========================
+INSERT INTO `permissions` (permissionname, description) VALUES
+('VIEW_CUSTOMER', 'View customer list'),
+('CREATE_CUSTOMER', 'Create customer'),
+('UPDATE_CUSTOMER', 'Update customer'),
+
+('VIEW_SUPPLIER', 'View supplier list'),
+('CREATE_SUPPLIER', 'Create supplier'),
+('UPDATE_SUPPLIER', 'Update supplier');
+
 /*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -994,36 +1074,8 @@ CREATE TABLE `role_permission`
 LOCK
 TABLES `role_permission` WRITE;
 /*!40000 ALTER TABLE `role_permission` DISABLE KEYS */;
-INSERT INTO `role_permission`
-VALUES (1, 1, 1),
-       (2, 1, 2),
-       (3, 1, 3),
-       (4, 1, 4),
-       (5, 1, 5),
-       (6, 1, 6),
-       (7, 1, 8),
-       (8, 1, 9),
-       (9, 1, 10),
-       (10, 1, 11),
-       (11, 1, 12),
-       (12, 1, 13),
-       (13, 1, 14),
-       (33, 2, 1),
-       (34, 2, 5),
-       (35, 2, 6),
-       (36, 2, 10),
-       (37, 2, 11),
-       (38, 2, 12),
-       (44, 2, 15),
-       (40, 2, 16),
-       (41, 2, 19),
-       (20, 3, 8),
-       (21, 3, 9),
-       (22, 3, 13),
-       (23, 3, 14),
-       (45, 3, 15),
-       (43, 3, 17),
-       (46, 4, 15);
+--INSERT INTO `role_permission`
+--VALUES ()
 /*!40000 ALTER TABLE `role_permission` ENABLE KEYS */;
 UNLOCK
 TABLES;

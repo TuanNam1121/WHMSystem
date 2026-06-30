@@ -1,6 +1,7 @@
 package com.swp.whmsystem.filter;
 
 import com.swp.whmsystem.dal.OrderDAO;
+import com.swp.whmsystem.dal.PurchaseRequestDAO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebFilter;
@@ -20,6 +21,9 @@ public class SidebarNotificationFilter extends HttpFilter {
 
         if (shouldLoadSidebarNotifications(request)) {
             OrderDAO orderDAO = new OrderDAO();
+            PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
+            request.setAttribute("pendingImportRequestCount",
+                    purchaseRequestDAO.countApprovedAndIncompletedPurchaseRequest());
             request.setAttribute("newSaleOrderCount", orderDAO.countNewSaleOrders());
         }
 

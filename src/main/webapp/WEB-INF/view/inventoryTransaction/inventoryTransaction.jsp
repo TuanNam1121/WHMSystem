@@ -98,9 +98,11 @@
                                         <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th class="col-3">ID</th>
-                                                    <th class="col-4">Type</th>
-                                                    <th class="col-5">Time Completed</th>
+                                                    <th>ID</th>
+                                                    <th>Type</th>
+                                                    <th>Total Items</th>
+                                                    <th>Who Processed</th>
+                                                    <th>Time Completed</th>
                                                 </tr>
                                             </thead>
 
@@ -111,22 +113,24 @@
                                                             <c:choose>
                                                                 <c:when test="${item.type == 'AUDIT'}">
                                                                     <a href="InventoryAuditDetail?id=${item.id}"
-                                                                        class="text-info font-weight-bold">#${item.id}</a>
+                                                                        class="text-info font-weight-bold">AD-${item.id}</a>
                                                                 </c:when>
 
                                                                 <c:when test="${item.type == 'IMPORT'}">
                                                                     <a href="ImportHistoryDetail?receiptId=${item.id}"
-                                                                        class="text-success font-weight-bold">#${item.id}</a>
+                                                                        class="text-success font-weight-bold">GR-${item.id}</a>
                                                                 </c:when>
 
                                                                 <c:otherwise>
                                                                     <a href="exportDetail?orderId=${item.id}"
-                                                                        class="text-primary font-weight-bold">#${item.id}</a>
+                                                                        class="text-primary font-weight-bold">ER-${item.id}</a>
                                                                 </c:otherwise>
 
                                                             </c:choose>
                                                         </td>
                                                         <td>${item.type}</td>
+                                                        <td>${item.totalItems}</td>
+                                                        <td>${not empty item.processor ? item.processor : 'N/A'}</td>
                                                         <td>${item.date}</td>
                                                     </tr>
                                                 </c:forEach>

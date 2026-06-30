@@ -65,8 +65,11 @@
                             <span><img src="assets/img/icons/dash3.svg" alt="img"></span>
                         </div>
                         <div class="dash-widgetcontent">
-                            <h5>$<span class="counters" data-count="385656.50">385,656.50</span></h5>
-                            <h6>Total Sale Amount</h6>
+                            <h5>
+                                <span class="counters money-vn"
+                                      data-count="${requestScope.completedImportTotalPrice}"></span>
+                            </h5>
+                            <h6>Total Import Amount</h6>
                         </div>
                     </div>
                 </div>
@@ -76,15 +79,18 @@
                             <span><img src="assets/img/icons/dash4.svg" alt="img"></span>
                         </div>
                         <div class="dash-widgetcontent">
-                            <h5>$<span class="counters" data-count="40000.00">400.00</span></h5>
-                            <h6>Total Sale Amount</h6>
+                            <h5>
+                                <span class="counters money-vn"
+                                      data-count="${requestScope.completedSaleOrderTotalPrice}"></span>
+                            </h5>
+                            <h6>Total Export Amount</h6>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-sm-6 col-12 d-flex">
                     <div class="dash-count">
                         <div class="dash-counts">
-                            <h4>100</h4>
+                            <h4>${requestScope.customerCount}</h4>
                             <h5>Customers</h5>
                         </div>
                         <div class="dash-imgs">
@@ -95,7 +101,7 @@
                 <div class="col-lg-3 col-sm-6 col-12 d-flex">
                     <div class="dash-count das1">
                         <div class="dash-counts">
-                            <h4>100</h4>
+                            <h4>${requestScope.activeSupplierCount}</h4>
                             <h5>Suppliers</h5>
                         </div>
                         <div class="dash-imgs">
@@ -106,7 +112,7 @@
                 <div class="col-lg-3 col-sm-6 col-12 d-flex">
                     <div class="dash-count das2">
                         <div class="dash-counts">
-                            <h4>100</h4>
+                            <h4>${requestScope.completedPurchaseInvoiceCount}</h4>
                             <h5>Purchase Invoice</h5>
                         </div>
                         <div class="dash-imgs">
@@ -117,7 +123,7 @@
                 <div class="col-lg-3 col-sm-6 col-12 d-flex">
                     <div class="dash-count das3">
                         <div class="dash-counts">
-                            <h4>105</h4>
+                            <h4>${requestScope.completedSaleInvoiceCount}</h4>
                             <h5>Sales Invoice</h5>
                         </div>
                         <div class="dash-imgs">
@@ -176,7 +182,7 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <li>
-                                        <a href="productlist.html" class="dropdown-item">Product List</a>
+                                        <a href="productlist" class="dropdown-item">Product List</a>
                                     </li>
                                     <li>
                                         <a href="addProduct.jsp" class="dropdown-item">Product Add</a>

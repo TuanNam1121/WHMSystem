@@ -93,7 +93,8 @@
                     <a href="InventoryAuditList"><i data-feather="layers"></i><span> Inventory Audit List</span> </a>
                 </li>
                 <li>
-                    <a href="InventoryTransaction"><i data-feather="repeat"></i><span> Inventory Transaction List</span> </a>
+                    <a href="InventoryTransaction"><i data-feather="repeat"></i><span> Inventory Transaction List</span>
+                    </a>
                 </li>
 
                 <c:if test="${sessionScope.user.roleId == 1}">

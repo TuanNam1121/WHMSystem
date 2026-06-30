@@ -12,6 +12,21 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class ExportItemDAO {
+    public int countCompletedExportReceipts() {
+        String sql = "SELECT COUNT(*) FROM export_receipts WHERE status = 'COMPLETED'";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
+
     public ExportItemDTO getItemBySKU(String sku, int orderId) {
         ExportItemDTO dto = null;
 

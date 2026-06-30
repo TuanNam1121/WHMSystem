@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import com.swp.whmsystem.dal.*;
 import com.swp.whmsystem.model.*;
-import com.swp.whmsystem.utils.*;
 
 @WebServlet(name = "Home", urlPatterns = {"/home"})
 public class Home extends HttpServlet {
@@ -30,7 +29,31 @@ public class Home extends HttpServlet {
         request.setAttribute("user", user);
         if (role.getRoleNamFromRoleID(user.getRoleId()).equals("ADMIN")) {
             response.sendRedirect("AdminDashBoard");
-        } else request.getRequestDispatcher("WEB-INF/view/home/home.jsp").forward(request, response);
+            return;
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+        // First row: financial summary cards.
+        OrderDAO orderDAO = new OrderDAO();
+        GoodReceiptDAO goodReceiptDAO = new GoodReceiptDAO();
+
+        request.setAttribute("completedImportTotalPrice", goodReceiptDAO.getCompletedImportTotalPrice());
+        request.setAttribute("completedSaleOrderTotalPrice", orderDAO.getCompletedSaleOrderTotalPrice());
+
+        // -------------------------------------------------------------------------------------------------------------
+        // Second row: customer, supplier, purchase invoice, and sales invoice cards.
+        CustomerDAO customerDAO = new CustomerDAO();
+        SupplierDAO supplierDAO = new SupplierDAO();
+        PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
+        ExportItemDAO exportItemDAO = new ExportItemDAO();
+
+        request.setAttribute("customerCount", customerDAO.countCustomers());
+        request.setAttribute("activeSupplierCount", supplierDAO.countActiveSuppliers());
+        request.setAttribute("completedPurchaseInvoiceCount",
+                purchaseRequestDAO.countPurchaseItem(0, 0, "COMPLETED", null));
+        request.setAttribute("completedSaleInvoiceCount", exportItemDAO.countCompletedExportReceipts());
+
+        request.getRequestDispatcher("WEB-INF/view/home/home.jsp").forward(request, response);
     }
 
     @Override
@@ -44,4 +67,3 @@ public class Home extends HttpServlet {
     }
 
 }
-

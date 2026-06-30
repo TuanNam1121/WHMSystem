@@ -7,6 +7,7 @@ package com.swp.whmsystem.dal;
 import com.swp.whmsystem.dto.OrderItemDetailDTO;
 import com.swp.whmsystem.model.Order;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -22,6 +23,22 @@ public class OrderDAO {
     ResultSet rs;
 
     public OrderDAO() {
+    }
+
+    public BigDecimal getCompletedSaleOrderTotalPrice() {
+        String sql = "select coalesce(sum(total_price), 0) from orders where status = 'COMPLETED'";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                BigDecimal totalPrice = rs.getBigDecimal(1);
+                return totalPrice == null ? BigDecimal.ZERO : totalPrice;
+            }
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return BigDecimal.ZERO;
     }
 
     public List<Order> getAllOrder() {

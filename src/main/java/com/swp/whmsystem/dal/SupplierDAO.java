@@ -10,6 +10,20 @@ import java.util.List;
 
 public class SupplierDAO {
 
+    public int countActiveSuppliers() {
+        String sql = "select count(*) from suppliers where isactive = 1";
+        try (Connection connection = DBContext.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
+
     public Supplier mapResultSetToSupplier(ResultSet rs) throws SQLException {
         Supplier supplier = new Supplier();
         supplier.setSupplierId(rs.getInt("supplierid"));

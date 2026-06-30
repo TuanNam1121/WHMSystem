@@ -54,7 +54,15 @@
                             <div class="form-group">
                                 <label>Auditor</label>
                                 <div class="form-control-static font-weight-bold">
-                                    ${audit.userFullName}
+                                    ${audit.creator.fullName}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label>Processed By</label>
+                                <div class="form-control-static font-weight-bold">
+                                    ${not empty audit.processor ? audit.processor.fullName : 'N/A'}
                                 </div>
                             </div>
                         </div>

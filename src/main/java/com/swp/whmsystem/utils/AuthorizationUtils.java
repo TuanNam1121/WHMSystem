@@ -21,7 +21,6 @@ public class AuthorizationUtils {
         List<Permission> permissionsList = rpDAO.getPermissionByRole(user.getRoleId());
         Set<String> permissions = permissionsList.stream().map(Permission::getPermissionName)
                 .collect(Collectors.toSet());
-        System.out.print(permissions);
         session.setAttribute("userPermissions", permissions);
     }
 

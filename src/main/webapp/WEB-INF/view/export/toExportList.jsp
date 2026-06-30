@@ -154,7 +154,7 @@
                                                 <span class="badges bg-lightgrey">New</span>
                                             </c:when>
                                             <c:when test="${o.status == 'DRAFT'}">
-                                                <span class="badges bg-lightyellow">Draft</span>
+                                                <span class="badges bg-lightpurple">Draft</span>
                                             </c:when>
                                             <c:otherwise>
                                                 <span class="badges bg-lightgrey">${o.status}</span>

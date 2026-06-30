@@ -1,6 +1,9 @@
 package com.swp.whmsystem.controller.home;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.Year;
+import java.util.List;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -56,7 +59,41 @@ public class Home extends HttpServlet {
                 purchaseRequestDAO.countPurchaseItem(0, 0, "COMPLETED", null));
         request.setAttribute("completedSaleInvoiceCount", exportItemDAO.countCompletedExportReceipts());
 
+        // -------------------------------------------------------------------------------------------------------------
+        // Purchase and sales chart.
+        int chartYear = getChartYear(request);
+        request.setAttribute("chartYear", chartYear);
+        request.setAttribute("monthlySalesChartData", toJsonArray(orderDAO.getMonthlySaleTotals(chartYear)));
+        request.setAttribute("monthlyPurchaseChartData", toJsonArray(purchaseRequestDAO.getMonthlyPurchaseTotals(chartYear)));
+
         request.getRequestDispatcher("WEB-INF/view/home/home.jsp").forward(request, response);
+    }
+
+    private int getChartYear(HttpServletRequest request) {
+        String yearRaw = request.getParameter("year");
+        int currentYear = Year.now().getValue();
+        if (yearRaw == null || yearRaw.trim().isEmpty()) {
+            return currentYear;
+        }
+        try {
+            int year = Integer.parseInt(yearRaw.trim());
+            return year > 0 ? year : currentYear;
+        } catch (NumberFormatException e) {
+            return currentYear;
+        }
+    }
+
+    private String toJsonArray(List<BigDecimal> values) {
+        StringBuilder json = new StringBuilder("[");
+        for (int i = 0; i < values.size(); i++) {
+            if (i > 0) {
+                json.append(",");
+            }
+            BigDecimal value = values.get(i);
+            json.append(value == null ? BigDecimal.ZERO.toPlainString() : value.stripTrailingZeros().toPlainString());
+        }
+        json.append("]");
+        return json.toString();
     }
 
     @Override

@@ -9,6 +9,8 @@ import com.swp.whmsystem.model.*;
 import com.swp.whmsystem.dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import com.swp.whmsystem.utils.AuthorizationUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -73,6 +75,7 @@ public class PermissionDetail extends HttpServlet {
             List<Role> roles = rpd.getRoleByPermission(p);
             request.setAttribute("roles", roles);
             request.setAttribute("p", p);
+            AuthorizationUtils.setSession(request);
         }
 
         request.getRequestDispatcher("WEB-INF/view/admin/permissionDetail.jsp").forward(request, response);

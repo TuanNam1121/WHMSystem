@@ -102,11 +102,15 @@
 
 
                 <li>
-                    <a href="InventoryAuditList"><i data-feather="layers"></i><span> Inventory Audit List</span> </a>
+                    <c:if test="${sessionScope.userPermissions.contains('VIEW_INVENTORY_AUDIT')}">
+                        <a href="InventoryAuditList"><i data-feather="layers"></i><span> Inventory Audit List</span> </a>
+                    </c:if>
                 </li>
+                
                 <li>
-                    <a href="InventoryTransaction"><i data-feather="repeat"></i><span> Inventory Transaction List</span>
-                    </a>
+                    <c:if test="${sessionScope.userPermissions.contains('VIEW_INVENTORY_TRANSACTION')}">
+                        <a href="InventoryTransaction"><i data-feather="repeat"></i><span> Inventory Transaction List</span>
+                    </c:if>
                 </li>
 
                 <c:if test="${sessionScope.user.roleId == 1}">

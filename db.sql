@@ -672,91 +672,95 @@ VALUES
 -- =========================
 -- PRODUCT PERMISSION
 -- =========================
-INSERT INTO `permissions` (permissionname, description) VALUES
-('VIEW_PRODUCT', 'View product list'),
-('CREATE_PRODUCT', 'Create new product'),
-('UPDATE_PRODUCT', 'Update product');
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(6, 'VIEW_PRODUCT', 'View product list'),
+(7, 'CREATE_PRODUCT', 'Create new product'),
+(8, 'UPDATE_PRODUCT', 'Update product');
 
 -- =========================
 -- CATEGORY PERMISSION
 -- =========================
-INSERT INTO `permissions` (permissionname, description) VALUES
-('VIEW_CATEGORY', 'View category list'),
-('CREATE_CATEGORY', 'Create new category'),
-('UPDATE_CATEGORY', 'Update category');
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(9, 'VIEW_CATEGORY', 'View category list'),
+(10, 'CREATE_CATEGORY', 'Create new category'),
+(11, 'UPDATE_CATEGORY', 'Update category');
 
 -- =========================
 -- BRAND PERMISSION
 -- =========================
-INSERT INTO `permissions` (permissionname, description) VALUES
-('VIEW_BRAND', 'View brand list'),
-('CREATE_BRAND', 'Create new brand'),
-('UPDATE_BRAND', 'Update brand');
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(12, 'VIEW_BRAND', 'View brand list'),
+(13, 'CREATE_BRAND', 'Create new brand'),
+(14, 'UPDATE_BRAND', 'Update brand');
 
 -- =========================
 -- SPECIFICATION PERMISSION
 -- =========================
-INSERT INTO `permissions` (permissionname, description) VALUES
-('VIEW_SPECIFICATION', 'View specification list'),
-('CREATE_SPECIFICATION', 'Create specification'),
-('UPDATE_SPECIFICATION', 'Update specification');
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(15, 'VIEW_SPECIFICATION', 'View specification list'),
+(16, 'CREATE_SPECIFICATION', 'Create specification'),
+(17, 'UPDATE_SPECIFICATION', 'Update specification');
 
 -- =========================
 -- SALE ORDER PERMISSION
 -- =========================
-INSERT INTO `permissions` (permissionname, description) VALUES
-('VIEW_SALE_ORDER', 'View sale order list'),
-('CREATE_SALE_ORDER', 'Create sale order'),
-('UPDATE_SALE_ORDER', 'Update sale order');
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(18, 'VIEW_SALE_ORDER', 'View sale order list'),
+(19, 'CREATE_SALE_ORDER', 'Create sale order'),
+(20, 'UPDATE_SALE_ORDER', 'Update sale order');
 
 -- =========================
 -- PURCHASE ORDER PERMISSION
 -- =========================
-INSERT INTO `permissions` (permissionname, description) VALUES
-('VIEW_PURCHASE_ORDER', 'View purchase order list'),
-('CREATE_PURCHASE_ORDER', 'Create purchase order'),
-('UPDATE_PURCHASE_ORDER', 'Update purchase order'),
-('APPROVE_REJECT_PURCHASE_REQUEST', 'Approve or Reject purchase request');
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(21, 'VIEW_PURCHASE_ORDER', 'View purchase order list'),
+(22, 'CREATE_PURCHASE_ORDER', 'Create purchase order'),
+(23, 'UPDATE_PURCHASE_ORDER', 'Update purchase order'),
+(24, 'APPROVE_REJECT_PURCHASE_REQUEST', 'Approve or Reject purchase request');
 
 -- =========================
 -- IMPORT PERMISSION
 -- =========================
-INSERT INTO `permissions` (permissionname, description) VALUES
-('VIEW_IMPORT_REQUEST', 'View import request list'),
-('VIEW_IMPORT_HISTORY', 'View import history'),
-('PROCESS_IMPORT', 'Process import');
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(25, 'VIEW_IMPORT_REQUEST', 'View import request list'),
+(26, 'VIEW_IMPORT_HISTORY', 'View import history'),
+(27, 'PROCESS_IMPORT', 'Process import');
 
 -- =========================
 -- EXPORT PERMISSION
 -- =========================
-INSERT INTO `permissions` (permissionname, description) VALUES
-('VIEW_EXPORT_PRODUCT', 'View export product list'),
-('VIEW_EXPORT_HISTORY', 'View export history'),
-('PROCESS_EXPORT', 'Process export');
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(28, 'VIEW_EXPORT_PRODUCT', 'View export product list'),
+(29, 'VIEW_EXPORT_HISTORY', 'View export history'),
+(30, 'PROCESS_EXPORT', 'Process export');
 
 -- =========================
 -- INVENTORY PERMISSION
 -- =========================
-INSERT INTO `permissions` (permissionname, description) VALUES
-('VIEW_INVENTORY', 'View inventory');
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(31, 'VIEW_INVENTORY', 'View inventory');
 
 -- =========================
 -- REPORT PERMISSION
 -- =========================
-INSERT INTO `permissions` (permissionname, description) VALUES
-('VIEW_REPORT', 'View reports');
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(32, 'VIEW_REPORT', 'View reports');
 
 -- =========================
--- CUSTOMER / SUPPLIER PERMISSION
+-- CUSTOMER PERMISSION
 -- =========================
-INSERT INTO `permissions` (permissionname, description) VALUES
-('VIEW_CUSTOMER', 'View customer list'),
-('CREATE_CUSTOMER', 'Create customer'),
-('UPDATE_CUSTOMER', 'Update customer'),
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(33, 'VIEW_CUSTOMER', 'View customer list'),
+(34, 'CREATE_CUSTOMER', 'Create customer'),
+(35, 'UPDATE_CUSTOMER', 'Update customer');
 
-('VIEW_SUPPLIER', 'View supplier list'),
-('CREATE_SUPPLIER', 'Create supplier'),
-('UPDATE_SUPPLIER', 'Update supplier');
+-- =========================
+-- SUPPLIER PERMISSION
+-- =========================
+INSERT INTO permissions (permissionid, permissionname, description) VALUES
+(36, 'VIEW_SUPPLIER', 'View supplier list'),
+(37, 'CREATE_SUPPLIER', 'Create supplier'),
+(38, 'UPDATE_SUPPLIER', 'Update supplier');
 
 /*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
 UNLOCK

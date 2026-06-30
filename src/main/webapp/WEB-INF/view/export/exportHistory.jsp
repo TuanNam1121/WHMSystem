@@ -68,7 +68,7 @@
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <input type="text" name="keyword" value="${param.keyword}"
-                                                           placeholder="Search order ID or customer...">
+                                                           placeholder="Search order ID, customer, or serial...">
                                                 </div>
                                             </div>
 
@@ -159,8 +159,8 @@
                                             <c:when test="${o.status == 'COMPLETED'}">
                                                 <span class="badges bg-lightgreen">Completed</span>
                                             </c:when>
-                                            <c:when test="${o.status == 'NEW'}">
-                                                <span class="badges bg-lightgrey">New</span>
+                                            <c:when test="${o.status == 'DRAFT'}">
+                                                <span class="badges bg-lightpurple">Draft</span>
                                             </c:when>
                                             <c:otherwise>
                                                 <span class="badges bg-lightgrey">${o.status}</span>

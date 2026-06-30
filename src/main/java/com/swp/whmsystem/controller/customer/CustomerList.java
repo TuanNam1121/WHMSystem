@@ -6,6 +6,8 @@
 package com.swp.whmsystem.controller.customer;
 
 import com.swp.whmsystem.dal.CustomerDAO;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -56,6 +58,10 @@ public class CustomerList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_CUSTOMER,
+                    "You are not authorized to view customer.")) {
+                return;
+            }
         CustomerDAO cd = new CustomerDAO();
         request.setAttribute("customers", cd.getAllCustomer());
         request.getRequestDispatcher("WEB-INF/view/customer/customerList.jsp").forward(request, response);

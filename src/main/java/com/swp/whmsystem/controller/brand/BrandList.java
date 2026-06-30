@@ -19,6 +19,10 @@ public class BrandList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_BRAND,
+                    "You are not authorized to view brand.")) {
+                return;
+            }
         HttpSession session = request.getSession();
         BrandDAO brandDAO = new BrandDAO();
         List<Brand> brandList = new ArrayList<>();

@@ -7,6 +7,8 @@ package com.swp.whmsystem.controller.customer;
 
 import com.swp.whmsystem.dal.CustomerDAO;
 import com.swp.whmsystem.model.Customer;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -57,6 +59,10 @@ public class CreateCustomer extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_CUSTOMER,
+                    "You are not authorized to create customer.")) {
+                return;
+            }
         request.getRequestDispatcher("WEB-INF/view/customer/createCustomer.jsp").forward(request, response);
     } 
 

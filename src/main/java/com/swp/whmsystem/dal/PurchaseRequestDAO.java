@@ -66,6 +66,23 @@ public class PurchaseRequestDAO {
         }
     }
 
+    public int countApprovedAndIncompletedPurchaseRequest() {
+        String sql = "SELECT count(*) FROM purchase_requests pr "
+                + "WHERE pr.isDeleted = 0 "
+                + "AND pr.status IN ('APPROVED','PROCESSING')";
+
+        try (Connection connection = DBContext.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
+
     public List<PurchaseRequest> getAllPurchaseRequestForSaleman(int salemanId) {
         String sql = "SELECT pr.*, u.username AS createdByUsername, s.suppliername FROM purchase_requests pr " +
                 "LEFT JOIN users u ON pr.createdby = u.userid " +

@@ -57,8 +57,14 @@
                 </li>
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="assets/img/icons/expense1.svg"
-                                                       alt="img"><span> Import</span> <span
-                            class="menu-arrow"></span></a>
+                                                       alt="img"><span> Import</span>
+                        <c:if test="${requestScope.pendingImportRequestCount > 0}">
+                            <span class="sidebar-notification-badge">
+                                    ${requestScope.pendingImportRequestCount}
+                            </span>
+                        </c:if>
+                        <span class="menu-arrow"></span>
+                    </a>
                     <ul>
                         <li><a href="importRequestList">Import Request List</a></li>
                         <li><a href="ImportHistory">Import History</a></li>
@@ -69,13 +75,13 @@
                                                        alt="img"><span> Export</span>
                         <c:if test="${requestScope.newSaleOrderCount > 0}">
                             <span class="sidebar-notification-badge">
-                                ${requestScope.newSaleOrderCount}
+                                    ${requestScope.newSaleOrderCount}
                             </span>
                         </c:if>
                         <span class="menu-arrow"></span>
                     </a>
                     <ul>
-                        <li><a href="toExportList">Export Product</a></li>
+                        <li><a href="toExportList">Export Request List</a></li>
                         <li><a href="exportHistory">Export History</a></li>
 
                     </ul>

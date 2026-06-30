@@ -6,6 +6,7 @@
 package com.swp.whmsystem.controller.customer;
 
 import com.swp.whmsystem.dal.CustomerDAO;
+import com.swp.whmsystem.dal.OrderDAO;
 import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.utils.AuthorizationUtils;
 import com.swp.whmsystem.utils.PermissionConstants;
@@ -63,10 +64,13 @@ public class ViewCustomer extends HttpServlet {
                     "You are not authorized to view customer.")) {
                 return;
             }
+        
         String customerIdStr = request.getParameter("id");
         int customerId = Integer.parseInt(customerIdStr);
         CustomerDAO cd = new CustomerDAO();
         request.setAttribute("customer", cd.getCustomerById(customerId));
+        OrderDAO od = new OrderDAO();
+        request.setAttribute("orders", od.getOrderByCustomerId(customerId));
         request.getRequestDispatcher("WEB-INF/view/customer/viewCustomer.jsp").forward(request, response);
     } 
 

@@ -118,6 +118,33 @@ public class OrderDAO {
         }
         return null;
     }
+    
+    
+    public List<Order> getOrderByCustomerId(int id) {
+
+        try (Connection conn = DBContext.getConnection()) {
+            String sql = "select o.* from orders o join customers c on o.customer_id = c.id where c.id = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            List<Order> result = new ArrayList<>();
+            while (rs.next()) {
+                Order o = mapResultSetToOrder(rs);
+                UserDAO ud = new UserDAO();
+                CustomerDAO cd = new CustomerDAO();
+                o.setCustomer(cd.getCustomerNameById(o.getCustomerId()));
+                o.setCreater(ud.getUserNameById(o.getCreatedBy()));
+                o.setProcessor(ud.getUserNameById(o.getProcessedBy()));
+                OrderItemDAO oid = new OrderItemDAO();
+                o.setTotalQuantity(oid.totalQuantityByOrderId(o.getId()));
+                result.add(o);
+            }
+            return result;
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return null;
+    }
 
     public List<Order> searchOrdersToExport(String keyword, String date, String status,
                                             String sortBy, int pageSize, int page) {

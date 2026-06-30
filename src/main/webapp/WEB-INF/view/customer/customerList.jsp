@@ -123,7 +123,7 @@
                                             <th>id</th>
                                             <th>Customer name</th>
                                             <th>Phone</th>
-                                            <th>Action</th>
+                                            <th>Update</th>
                                             <th>Create Order</th>
                                         </tr>
                                     </thead>
@@ -131,13 +131,9 @@
                                         <c:forEach items="${customers}" var="c">
                                             <tr>
                                                 <td>${c.id}</td>
-                                                <td>${c.name}</td>
+                                                <td><a href="${pageContext.request.contextPath}/ViewCustomer?id=${c.id}">${c.name}</a></td>
                                                 <td>${c.phone}</td>
                                                 <td>
-                                                    <a class="me-3"
-                                                       href="${pageContext.request.contextPath}/ViewCustomer?id=${c.id}">
-                                                        <img src="assets/img/icons/eye.svg" alt="img">
-                                                    </a>
                                                         <a class="btn btn-added"  id="btn-create-request"
                                                            href="${pageContext.request.contextPath}/UpdateCustomer?id=${c.id}">
                                                             <img src="assets/img/icons/edit.svg" alt="img">

@@ -3792,16 +3792,23 @@ span.select2-container.select2-container--default.select2-container--open {
     color: #637381
 }
 
+.sidebar .sidebar-menu > ul > li > a {
+    position: relative
+}
+
 .sidebar .sidebar-menu > ul > li > a .sidebar-notification-badge {
-    position: absolute;
-    top: 9px;
+    position: absolute !important;
+    top: 50%;
     right: 38px;
+    transform: translateY(-50%);
     min-width: 22px;
     height: 22px;
-    margin-left: 0;
+    margin-left: 0 !important;
     padding: 0 7px;
-    border-radius: 50px;
+    border-radius: 50px !important;
     background: #ff9f43 !important;
+    background-color: #ff9f43 !important;
+    background-image: none !important;
     color: #fff !important;
     display: inline-flex;
     align-items: center;
@@ -3809,6 +3816,11 @@ span.select2-container.select2-container--default.select2-container--open {
     font-size: 12px !important;
     font-weight: 700 !important;
     line-height: 1
+}
+
+.sidebar .sidebar-menu > ul > li > a:hover .sidebar-notification-badge,
+.sidebar .sidebar-menu > ul > li > a.active .sidebar-notification-badge {
+    color: #fff !important
 }
 
 .sidebar .sidebar-menu > ul > li > a .menu-arrow {

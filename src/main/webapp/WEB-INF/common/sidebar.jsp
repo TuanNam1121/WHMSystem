@@ -68,7 +68,7 @@
                     <a href="javascript:void(0);"><img src="assets/img/icons/transfer1.svg"
                                                        alt="img"><span> Export</span>
                         <c:if test="${requestScope.newSaleOrderCount > 0}">
-                            <span class="badge rounded-pill bg-warning sidebar-notification-badge">
+                            <span class="sidebar-notification-badge">
                                 ${requestScope.newSaleOrderCount}
                             </span>
                         </c:if>

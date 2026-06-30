@@ -41,6 +41,22 @@ public class OrderDAO {
         return BigDecimal.ZERO;
     }
 
+    public BigDecimal getNewSaleOrderTotalPrice() {
+        String sql = "select coalesce(sum(total_price), 0) from orders where status = 'NEW'";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                BigDecimal totalPrice = rs.getBigDecimal(1);
+                return totalPrice == null ? BigDecimal.ZERO : totalPrice;
+            }
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return BigDecimal.ZERO;
+    }
+
     public List<Order> getAllOrder() {
         String sql = "select * from orders";
 

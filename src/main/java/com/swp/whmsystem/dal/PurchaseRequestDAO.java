@@ -7,6 +7,27 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class PurchaseRequestDAO {
+    public java.math.BigDecimal getNewPurchaseOrderTotalPrice() {
+        String sql = "SELECT COALESCE(SUM(pri.quantity * pri.price), 0) "
+                + "FROM purchase_requests pr "
+                + "JOIN purchase_request_items pri ON pr.id = pri.purchaserequestid "
+                + "WHERE pr.status = 'NEW' "
+                + "AND pr.isDeleted = 0 "
+                + "AND pri.isDeleted = 0";
+
+        try (Connection connection = DBContext.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            if (resultSet.next()) {
+                java.math.BigDecimal totalPrice = resultSet.getBigDecimal(1);
+                return totalPrice == null ? java.math.BigDecimal.ZERO : totalPrice;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return java.math.BigDecimal.ZERO;
+    }
+
     public List<PurchaseRequest> getAllPurchaseRequest() {
         String sql = "SELECT pr.*, u.username AS createdByUsername, s.suppliername FROM purchase_requests pr " +
                 "LEFT JOIN users u ON pr.createdby = u.userid " +

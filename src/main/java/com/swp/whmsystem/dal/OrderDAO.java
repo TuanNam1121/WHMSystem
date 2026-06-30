@@ -72,6 +72,41 @@ public class OrderDAO {
         return 0;
     }
 
+    public List<BigDecimal> getMonthlySaleTotals(int year) {
+        String sql = "select month(coalesce(completedat, orderdate, createdat)) as monthNumber, "
+                + "coalesce(sum(total_price), 0) as totalPrice "
+                + "from orders "
+                + "where status = 'COMPLETED' "
+                + "and year(coalesce(completedat, orderdate, createdat)) = ? "
+                + "group by monthNumber";
+        List<BigDecimal> monthlyTotals = createEmptyMonthlyTotals();
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, year);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int month = rs.getInt("monthNumber");
+                    if (month >= 1 && month <= 12) {
+                        BigDecimal totalPrice = rs.getBigDecimal("totalPrice");
+                        monthlyTotals.set(month - 1, totalPrice == null ? BigDecimal.ZERO : totalPrice);
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return monthlyTotals;
+    }
+
+    private List<BigDecimal> createEmptyMonthlyTotals() {
+        List<BigDecimal> monthlyTotals = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            monthlyTotals.add(BigDecimal.ZERO);
+        }
+        return monthlyTotals;
+    }
+
     public List<Order> getAllOrder() {
         String sql = "select * from orders";
 

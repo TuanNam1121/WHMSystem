@@ -156,24 +156,26 @@
                                 <div class="dropdown">
                                     <button class="btn btn-white btn-sm dropdown-toggle" type="button"
                                             id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                        2022 <img src="assets/img/icons/dropdown.svg" alt="img" class="ms-2">
+                                        ${requestScope.chartYear} <img src="assets/img/icons/dropdown.svg" alt="img" class="ms-2">
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                         <li>
-                                            <a href="javascript:void(0);" class="dropdown-item">2022</a>
+                                            <a href="home?year=${requestScope.chartYear}" class="dropdown-item">${requestScope.chartYear}</a>
                                         </li>
                                         <li>
-                                            <a href="javascript:void(0);" class="dropdown-item">2021</a>
+                                            <a href="home?year=${requestScope.chartYear - 1}" class="dropdown-item">${requestScope.chartYear - 1}</a>
                                         </li>
                                         <li>
-                                            <a href="javascript:void(0);" class="dropdown-item">2020</a>
+                                            <a href="home?year=${requestScope.chartYear - 2}" class="dropdown-item">${requestScope.chartYear - 2}</a>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <div id="sales_charts"></div>
+                            <div id="sales_charts"
+                                 data-sales="${requestScope.monthlySalesChartData}"
+                                 data-purchase="${requestScope.monthlyPurchaseChartData}"></div>
                         </div>
                     </div>
                 </div>
@@ -344,7 +346,7 @@
 <script src="assets/js/bootstrap.bundle.min.js"></script>
 
 <script src="assets/plugins/apexchart/apexcharts.min.js"></script>
-<script src="assets/plugins/apexchart/chart-data.js"></script>
+<script src="assets/plugins/apexchart/chart-data.js?v=home-chart-full-tooltip"></script>
 
 <script src="assets/js/script.js"></script>
 </body>

@@ -113,6 +113,17 @@
                     </c:if>
                 </li>
 
+                <li class="submenu">
+                    <a href="javascript:void(0);"><img src="assets/img/icons/time.svg"
+                                                       alt="img"><span> Report</span> <span
+                            class="menu-arrow"></span></a>
+                    <ul>
+                        <li><a href="inventorySummaryReport">Inventory Report</a></li>
+                        <li><a href="ImportExportByDayReport">Daily Transaction Report</a></li>
+                        <li><a href="purchasereport.html">Purchase Report</a></li>
+                    </ul>
+                </li>
+                
                 <c:if test="${sessionScope.user.roleId == 1}">
                     <li class="submenu">
                         <a href="javascript:void(0);"><img src="assets/img/icons/users1.svg"
@@ -127,17 +138,6 @@
                         </ul>
                     </li>
                 </c:if>
-
-                <li class="submenu">
-                    <a href="javascript:void(0);"><img src="assets/img/icons/time.svg"
-                                                       alt="img"><span> Report</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="inventorySummaryReport">Inventory Report</a></li>
-                        <li><a href="ImportExportByDayReport">Daily Transaction Report</a></li>
-                        <li><a href="purchasereport.html">Purchase Report</a></li>
-                    </ul>
-                </li>
             </ul>
         </div>
     </div>

@@ -20,7 +20,9 @@ import com.swp.whmsystem.model.Product;
 import com.swp.whmsystem.model.Ram;
 import com.swp.whmsystem.model.Rom;
 import com.swp.whmsystem.model.Unit;
+import com.swp.whmsystem.utils.AuthorizationUtils;
 import com.swp.whmsystem.utils.FileUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import com.swp.whmsystem.utils.ProductValidation;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -52,6 +54,10 @@ public class AddProduct extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_PRODUCT,
+                "You are not authorized to handle import product")) {
+            return;
+        }
         HttpSession session = request.getSession();
         RamDAO ram = new RamDAO();
         RomDAO rom = new RomDAO();

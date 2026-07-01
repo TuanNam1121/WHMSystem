@@ -18,6 +18,8 @@ import com.swp.whmsystem.model.ProductItem;
 import com.swp.whmsystem.model.PurchaseRequest;
 import com.swp.whmsystem.model.Supplier;
 import com.swp.whmsystem.model.User;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -45,6 +47,10 @@ public class ImportHistory extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_IMPORT_HISTORY,
+                "You are not authorized to handle import product")) {
+            return;
+        }
         String rawReceiptId = request.getParameter("receiptid");
         String rawPurchaseId = request.getParameter("purchaseid");
         String rawSupplierId = request.getParameter("supplierid");

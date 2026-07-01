@@ -22,6 +22,8 @@ import com.swp.whmsystem.model.GoodReceipt;
 import com.swp.whmsystem.dal.GoodReceiptDAO;
 import com.swp.whmsystem.dal.SupplierDAO;
 import com.swp.whmsystem.dto.PurchaseRequestDTO;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 
 import java.util.ArrayList;
 
@@ -31,6 +33,10 @@ public class ImportRequestList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_IMPORT_HISTORY,
+                "You are not authorized to view import history")) {
+            return;
+        }
         try {
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("user");

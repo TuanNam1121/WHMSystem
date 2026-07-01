@@ -44,9 +44,11 @@
                     <h6>View/Search product Category</h6>
                 </div>
                 <div class="page-btn">
-                    <a href="addCategory" class="btn btn-added">
-                        <img src="assets/img/icons/plus.svg" class="me-1" alt="img">Add Category
-                    </a>
+                    <c:if test="${sessionScope.userPermissions.contains('CREATE_CATEGORY')}">
+                        <a href="addCategory" class="btn btn-added">
+                            <img src="assets/img/icons/plus.svg" class="me-1" alt="img">Add Category
+                        </a>
+                    </c:if>
                 </div>
             </div>
 
@@ -124,7 +126,9 @@
                                 <th>Category name</th>
                                 <th>Description</th>
                                 <th>Active</th>
-                                <th>Action</th>
+                                <c:if test="${sessionScope.userPermissions.contains('UPDATE_CATEGORY')}">
+                                    <th>Action</th>
+                                </c:if>
                             </tr>
                             </thead>
                             <tbody>
@@ -137,11 +141,13 @@
                                     </td>
                                     <td>${c.description}</td>
                                     <td>${c.isActive ? 'Active' : 'Inactive'}</td>
-                                    <td>
-                                        <a class="me-3" href="updateCategory?cateid=${c.categoryId}">
-                                            <img src="assets/img/icons/edit.svg" alt="img">
-                                        </a>
-                                    </td>
+                                    <c:if test="${sessionScope.userPermissions.contains('UPDATE_CATEGORY')}">
+                                        <td>
+                                            <a class="me-3" href="updateCategory?cateid=${c.categoryId}">
+                                                <img src="assets/img/icons/edit.svg" alt="img">
+                                            </a>
+                                        </td>
+                                    </c:if>
                                 </tr>
                             </c:forEach>
                             </tbody>

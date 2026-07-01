@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,8 +28,9 @@ public class PurchaseRequestList extends HttpServlet {
             response.sendRedirect("login");
             return;
         }
-        if (user.getRoleId() != 4) {
-            response.sendRedirect("home");
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_PURCHASE_ORDER,
+                "You don't have permission to view your purchase requests!")) {
+            return;
         }
 
         String codeStr = request.getParameter("code");
@@ -83,6 +86,10 @@ public class PurchaseRequestList extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_PURCHASE_ORDER,
+                "You don't have permission to delete purchase requests!")) {
+            return;
+        }
         int prId = Integer.parseInt(request.getParameter("id"));
         PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
         PurchaseItemDAO purchaseItemDAO = new PurchaseItemDAO();

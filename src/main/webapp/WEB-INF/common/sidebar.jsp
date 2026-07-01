@@ -38,17 +38,16 @@
                         <span class="menu-arrow"></span></a>
                     <ul>
                         <li>
-                            <c:if test="${sessionScope.user.roleId == 2}">
-                                <a href="managerPurchaseRequestList">Purchase List</a>
-                            </c:if>
-                            <c:if test="${sessionScope.user.roleId == 4}">
-                                <a href="purchaseRequestList">Purchase List</a>
-                            </c:if>
-                            <c:if test="${sessionScope.user.roleId != 2 && sessionScope.user.roleId != 4}">
-                                <a href="home">Purchase List</a>
-                            </c:if>
+                            <c:choose>
+                                <c:when test="${sessionScope.userPermissions.contains('APPROVE_REJECT_PURCHASE_REQUEST')}">
+                                    <a href="managerPurchaseRequestList">Purchase List</a>
+                                </c:when>
+                                <c:when test="${sessionScope.userPermissions.contains('VIEW_PURCHASE_ORDER')}">
+                                    <a href="purchaseRequestList">Purchase List</a>
+                                </c:when>
+                            </c:choose>
                         </li>
-                        <c:if test="${sessionScope.user.roleId == 4}">
+                        <c:if test="${sessionScope.userPermissions.contains('CREATE_PURCHASE_ORDER')}">
                             <li>
                                 <a href="createPurchaseRequest">Create Purchase Request</a>
                             </li>

@@ -78,6 +78,13 @@ public class CreateOder extends HttpServlet {
         String customerId = request.getParameter("id");
         CustomerDAO cd = new CustomerDAO();
         Customer customer = cd.getCustomerById(Integer.parseInt(customerId));
+        
+        //if no customer found
+        if(customer == null){
+            request.setAttribute("errorMessage", "this customer no exist");
+            request.getRequestDispatcher("/WEB-INF/view/error/error-403.jsp").forward(request, response);
+            return;
+        }
         request.setAttribute("customer", customer);
         
         ProductDAO pd = new ProductDAO();

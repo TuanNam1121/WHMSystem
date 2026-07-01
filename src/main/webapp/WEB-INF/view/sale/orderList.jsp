@@ -85,7 +85,8 @@
 
 
 
-                                        <form style="display:flex" action="${pageContext.request.contextPath}/OrderList" method="post">
+                                        <form action="${pageContext.request.contextPath}/OrderList" method="post">
+                                        <div style="display:flex" class="">
                                             <div class="col-lg-3 col-sm-6 col-12">
 
                                                 <div class="form-group">
@@ -112,11 +113,11 @@
                                                     </button>
                                                 </div>
                                             </div>
-                                        </form>
+                                            </div>
 
                             <div class="table-responsive">
                                 <fmt:setLocale value="en_US"/>
-                                <table class="table datanew" >
+                                <table class="table" >
                                     <thead>
                                         <tr>
                                             <th>id</th>
@@ -178,6 +179,8 @@
                                     </tbody>
                                 </table>
                             </div>
+                                <jsp:include page="/WEB-INF/common/pagination.jsp"/>
+                                </form>
                         </div>
                     </div>
 

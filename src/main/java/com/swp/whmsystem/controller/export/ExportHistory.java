@@ -23,19 +23,12 @@ public class ExportHistory extends HttpServlet {
         List<Order> orderList = new ArrayList<>();
         String keyword = request.getParameter("keyword");
         String date = request.getParameter("date");
-        String status = request.getParameter("status");
         String sortBy = request.getParameter("sortBy");
         String pageSizeRaw = request.getParameter("pageSize");
         String pageRaw = request.getParameter("page");
 
         int pageSize = 10;
         int page = 1;
-
-        if (status != null && !status.trim().isEmpty()) {
-            if (!status.equals("DRAFT") && !status.equals("COMPLETED")) {
-                status = null;
-            }
-        }
 
         if (pageSizeRaw != null && !pageSizeRaw.trim().isEmpty()) {
             try {
@@ -56,12 +49,12 @@ public class ExportHistory extends HttpServlet {
             }
         }
 
-        int totalOrders = orderDAO.countExportHistory(keyword, date, status);
+        int totalOrders = orderDAO.countExportHistory(keyword, date);
         int totalPages = Math.max(1, (int) Math.ceil((double) totalOrders / pageSize));
         page = Math.min(page, totalPages);
 
         orderList = orderDAO.searchExportHistory(
-                keyword, date, status, sortBy, pageSize, page
+                keyword, date, sortBy, pageSize, page
         );
 
         session.setAttribute("orderList", orderList);
@@ -69,7 +62,7 @@ public class ExportHistory extends HttpServlet {
         request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("focusTable",
-                keyword != null || date != null || status != null
+                keyword != null || date != null
                         || sortBy != null || pageSizeRaw != null || pageRaw != null);
         request.getRequestDispatcher("WEB-INF/view/export/exportHistory.jsp").forward(request, response);
     }

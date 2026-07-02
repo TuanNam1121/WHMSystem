@@ -3823,6 +3823,66 @@ span.select2-container.select2-container--default.select2-container--open {
     color: #fff !important
 }
 
+.low-stock-scroll {
+    max-height: 318px;
+    overflow-y: auto;
+    overflow-x: hidden
+}
+
+.low-stock-scroll table {
+    margin-bottom: 0;
+    table-layout: fixed;
+    width: 100%
+}
+
+.low-stock-scroll th:nth-child(1),
+.low-stock-scroll td:nth-child(1) {
+    width: 52px;
+    padding-right: 4px
+}
+
+.low-stock-scroll th:nth-child(2),
+.low-stock-scroll td:nth-child(2) {
+    width: auto;
+    padding-left: 4px
+}
+
+.low-stock-scroll th:nth-child(3),
+.low-stock-scroll td:nth-child(3) {
+    width: 70px;
+    text-align: center
+}
+
+.low-stock-scroll .low-stock-quantity {
+    display: inline-block;
+    min-width: 24px;
+    color: #637381;
+    font-weight: 600;
+    background: transparent
+}
+
+.low-stock-scroll .low-stock-quantity.bg-lightred {
+    color: #ea5455
+}
+
+.low-stock-scroll .low-stock-quantity.bg-lightyellow {
+    color: #f90
+}
+
+.low-stock-scroll thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #fff
+}
+
+.low-stock-scroll .productimgname a:not(.product-img) {
+    max-width: 210px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
 .sidebar .sidebar-menu > ul > li > a .menu-arrow {
     display: inline-block;
     font-family: "font awesome 5 free";
@@ -7707,4 +7767,65 @@ span.select2-container.select2-container--default.select2-container--open {
     position: absolute;
     top: 50%;
     right: 10px
+}
+
+.export-scan-table-scroll {
+    max-height: 420px;
+    overflow-y: auto;
+    overflow-x: auto
+}
+
+.export-scan-table-scroll thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #f8f9fa
+}
+
+.product-detail-summary-row {
+    align-items: stretch;
+    margin-bottom: 24px
+}
+
+.product-detail-summary-row > [class*="col-"] {
+    display: flex
+}
+
+.product-detail-summary-row .card {
+    width: 100%;
+    height: 100%
+}
+
+.product-detail-image-card .card-body,
+.product-detail-image-card .slider-product-details,
+.product-detail-image-card .product-slide,
+.product-detail-image-card .owl-stage-outer,
+.product-detail-image-card .owl-stage,
+.product-detail-image-card .owl-item,
+.product-detail-image-card .slider-product {
+    height: 100%
+}
+
+.product-detail-image-card .card-body,
+.product-detail-image-card .slider-product {
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.product-detail-image-card .slider-product img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    margin: 0
+}
+
+@media (max-width: 991px) {
+    .product-detail-summary-row > [class*="col-"] {
+        display: block
+    }
+
+    .product-detail-summary-row .card {
+        height: auto
+    }
 }

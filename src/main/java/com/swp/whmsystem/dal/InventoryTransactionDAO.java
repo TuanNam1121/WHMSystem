@@ -19,7 +19,7 @@ public class InventoryTransactionDAO {
                         'AUDIT' AS type, 
                         ia.updatedat AS date, 
                         u.fullname AS processor,
-                        COALESCE((SELECT SUM(iai.physicalquantity) FROM inventory_audit_items iai WHERE iai.auditid = ia.id), 0) AS total_items
+                        COALESCE((SELECT SUM(ABS(iai.physicalquantity - iai.systemquantity)) FROM inventory_audit_items iai WHERE iai.auditid = ia.id), 0) AS total_items
                     FROM inventory_audit ia
                     LEFT JOIN users u ON ia.processedby = u.userid
                     WHERE ia.status = 'COMPLETED'

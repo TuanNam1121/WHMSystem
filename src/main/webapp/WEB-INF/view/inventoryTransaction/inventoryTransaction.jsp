@@ -61,7 +61,7 @@
                                                         <div class="col-lg col-sm-6 col-12">
                                                             <div class="form-group">
                                                                 <select class="select" name="type">
-                                                                    <option value="">Choose Status</option>
+                                                                    <option value="">Choose Type</option>
                                                                     <option value="AUDIT" <c:if
                                                                         test="${param.type == 'AUDIT'}">selected
                                                                         </c:if>>

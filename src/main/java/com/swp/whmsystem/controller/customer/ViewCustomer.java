@@ -8,6 +8,7 @@ package com.swp.whmsystem.controller.customer;
 import com.swp.whmsystem.dal.CustomerDAO;
 import com.swp.whmsystem.dal.OrderDAO;
 import com.swp.whmsystem.dal.ProductDAO;
+import com.swp.whmsystem.model.Order;
 import com.swp.whmsystem.utils.AuthorizationUtils;
 import com.swp.whmsystem.utils.PermissionConstants;
 import java.io.IOException;
@@ -71,6 +72,11 @@ public class ViewCustomer extends HttpServlet {
         request.setAttribute("customer", cd.getCustomerById(customerId));
         OrderDAO od = new OrderDAO();
         request.setAttribute("orders", od.getOrderByCustomerId(customerId));
+        double total = 0;
+        for(Order o:od.getOrderByCustomerId(customerId)){
+            total += o.getTotalPrice();
+        }
+        request.setAttribute("totalSpent", total);
         request.getRequestDispatcher("WEB-INF/view/customer/viewCustomer.jsp").forward(request, response);
     } 
 

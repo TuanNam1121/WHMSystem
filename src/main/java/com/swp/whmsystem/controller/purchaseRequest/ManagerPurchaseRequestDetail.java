@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,8 +31,8 @@ public class ManagerPurchaseRequestDetail extends HttpServlet {
             response.sendRedirect("login");
             return;
         }
-        if (user.getRoleId() != 2) {
-            response.sendRedirect("home");
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.APPROVE_REJECT_PURCHASE_REQUEST,
+                "You don't have permission to manage purchase requests!")) {
             return;
         }
 
@@ -87,6 +89,10 @@ public class ManagerPurchaseRequestDetail extends HttpServlet {
         try {
             if (user == null) {
                 response.sendRedirect("login");
+                return;
+            }
+            if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.APPROVE_REJECT_PURCHASE_REQUEST,
+                    "You don't have permission to manage purchase requests!")) {
                 return;
             }
         } catch (Exception e) {

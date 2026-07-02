@@ -49,7 +49,7 @@ public class ReviewInventoryAudit extends HttpServlet {
             }
 
             if (audit.getStatus() != InventoryAuditStatus.PENDING) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Only pending approval audits can be reviewed.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditDetail?id=" + auditId);
                 return;
             }
 
@@ -84,7 +84,7 @@ public class ReviewInventoryAudit extends HttpServlet {
             }
 
             if (audit.getStatus() != InventoryAuditStatus.PENDING) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Only pending approval audits can be reviewed.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditDetail?id=" + auditId);
                 return;
             }
 

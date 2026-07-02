@@ -136,6 +136,13 @@
                                                 
                                             </tr>
                                         </c:forEach>
+                                            <tr>
+                                                <td></td>
+                                                <td>Total spent: </td>
+                                                <td><fmt:formatNumber
+                                                        value="${totalSpent}"
+                                                        pattern="#,###"/></td>
+                                            </tr>
                                     </tbody>
                                 </table>
 

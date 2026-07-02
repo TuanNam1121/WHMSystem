@@ -22,6 +22,8 @@ import com.swp.whmsystem.model.PurchaseItem;
 import com.swp.whmsystem.model.PurchaseRequest;
 import com.swp.whmsystem.model.StockMovement;
 import com.swp.whmsystem.model.User;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import com.swp.whmsystem.utils.ProductItemValidation;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -47,6 +49,10 @@ public class ImportProduct extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.PROCESS_IMPORT,
+                "You are not authorized to handle import product")) {
+            return;
+        }
         HttpSession session = request.getSession();
         GoodReceiptDAO gr = new GoodReceiptDAO();
         PurchaseRequestDAO pr = new PurchaseRequestDAO();

@@ -170,15 +170,11 @@ public class StockMovementDAO {
         return false;
     }
 
-    public int getAssociatedGoodReceiptId(int productId, java.sql.Timestamp createdAt) {
-        String sql = "SELECT gr.id FROM good_receipts gr " +
-                     "JOIN good_receipts_items gri ON gr.id = gri.goodreceiptid " +
-                     "WHERE gri.product_id = ? " +
-                     "ORDER BY ABS(TIMESTAMPDIFF(SECOND, gr.created_at, ?)) ASC LIMIT 1";
+    public int getOrderIdByExportReceiptId(int exportReceiptId) {
+        String sql = "SELECT order_id FROM export_receipts WHERE id = ?";
         try (Connection connection = DBContext.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, productId);
-            ps.setTimestamp(2, createdAt);
+            ps.setInt(1, exportReceiptId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);
@@ -187,93 +183,6 @@ public class StockMovementDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        String sqlAnyGr = "SELECT id FROM good_receipts WHERE status = 'COMPLETED' ORDER BY id DESC LIMIT 1";
-        try (Connection connection = DBContext.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sqlAnyGr)) {
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return 1;
-    }
-
-    public int getAssociatedOrderIdForExport(int referenceId, int productId, java.sql.Timestamp createdAt) {
-        if (referenceId > 0) {
-            String sql1 = "SELECT order_id FROM export_receipts WHERE id = ?";
-            try (Connection connection = DBContext.getConnection();
-                 PreparedStatement ps = connection.prepareStatement(sql1)) {
-                ps.setInt(1, referenceId);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getInt(1);
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-            String sql2 = "SELECT id FROM orders WHERE id = ?";
-            try (Connection connection = DBContext.getConnection();
-                 PreparedStatement ps = connection.prepareStatement(sql2)) {
-                ps.setInt(1, referenceId);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getInt(1);
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        String sqlFallback = "SELECT er.order_id FROM export_receipts er " +
-                             "JOIN export_receipt_details erd ON er.id = erd.export_receipt_id " +
-                             "WHERE erd.product_id = ? " +
-                             "ORDER BY ABS(TIMESTAMPDIFF(SECOND, er.exported_at, ?)) ASC LIMIT 1";
-        try (Connection connection = DBContext.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sqlFallback)) {
-            ps.setInt(1, productId);
-            ps.setTimestamp(2, createdAt);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        String sqlOrderFallback = "SELECT oi.orderid FROM order_items oi WHERE oi.productid = ? LIMIT 1";
-        try (Connection connection = DBContext.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sqlOrderFallback)) {
-            ps.setInt(1, productId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        String sqlAnyOrder = "SELECT id FROM orders WHERE status = 'COMPLETED' ORDER BY id DESC LIMIT 1";
-        try (Connection connection = DBContext.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sqlAnyOrder)) {
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return referenceId > 0 ? referenceId : 1;
+        return -1;
     }
 }

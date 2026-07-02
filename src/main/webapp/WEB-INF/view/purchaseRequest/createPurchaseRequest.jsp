@@ -108,8 +108,18 @@
                                                         </td>
                                                         <td class="product-quantity">${p.totalQuantity}
                                                         </td>
-                                                        <td><span class="badges ${p.isActive ? 'bg-lightgreen' : 'bg-lightred'}">
-                                                                ${p.isActive ? 'Active' : 'Inactive'}</span>
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${p.totalQuantity > 10}">
+                                                                    <span class="badges bg-lightgreen">In stock</span>
+                                                                </c:when>
+                                                                <c:when test="${p.totalQuantity > 0}">
+                                                                    <span class="badges bg-lightyellow">Low stock</span>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <span class="badges bg-lightred">Out of stock</span>
+                                                                </c:otherwise>
+                                                            </c:choose>
                                                         </td>
                                                         <td>
                                                             <a class="btn btn-sm btn-outline-primary add-product-btn"
@@ -172,6 +182,12 @@
                                                 </thead>
                                                 <tbody id="selected-product-list">
                                                 </tbody>
+                                                <tfoot id="total-amount-footer" style="display: none;">
+                                                <tr>
+                                                    <td colspan="4" class="text-end" style="font-weight: 600; font-size: 16px;">Total Amount:</td>
+                                                    <td colspan="2" style="font-weight: 700; font-size: 18px; color: #FF9F43;" id="total-amount-display">0 VNĐ</td>
+                                                </tr>
+                                                </tfoot>
                                             </table>
                                         </div>
 
@@ -230,8 +246,12 @@
                             <td>\${item.sku}</td>
                             <td>\${item.category}</td>
                             <td>
-                                <input name="selectedPrice\${index}" type="number" min=1000 class="form-control form-control-sm price-input"
-                                data-id="\${item.id}" value="\${item.price}" style="width: 100px;" required>
+                                <input type="hidden" name="selectedPrice\${index}" class="price-hidden-input" value="\${item.price}">
+                                <div class="input-group input-group-sm" style="width: 150px;">
+                                    <input type="text" class="form-control price-display-input"
+                                    data-id="\${item.id}" value="\${item.price.toLocaleString('vi-VN')}" required>
+                                    <span class="input-group-text">VNĐ</span>
+                                </div>
                             </td>
                             <td>
                                 <input name="selectedQty\${index}" type="number" min=1 class="form-control form-control-sm qty-input" 
@@ -247,6 +267,22 @@
                 });
             }
             $('#selected-product-list').html(html);
+            updateTotalAmount();
+        }
+
+        function updateTotalAmount() {
+            if (selectedItems.length === 0) {
+                $('#total-amount-footer').hide();
+                return;
+            }
+            $('#total-amount-footer').show();
+            let total = 0;
+            selectedItems.forEach(item => {
+                const price = isNaN(item.price) ? 0 : item.price;
+                const qty = isNaN(item.reqQty) ? 0 : item.reqQty;
+                total += (price * qty);
+            });
+            $('#total-amount-display').text(total.toLocaleString('vi-VN') + ' VNĐ');
         }
 
         // Initial render
@@ -254,16 +290,16 @@
 
         // Add Product
         $(document).on('click', '.add-product-btn', function () {
-            const isActive = $(this).data('active');
-            if (isActive === false || isActive === 'false') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Cannot Add Product',
-                    text: 'You cannot add an inactive product.',
-                    confirmButtonColor: '#FF9F43'
-                });
-                return;
-            }
+            // const isActive = $(this).data('active');
+            // if (isActive === false || isActive === 'false') {
+            //     Swal.fire({
+            //         icon: 'error',
+            //         title: 'Cannot Add Product',
+            //         text: 'You cannot add an inactive product.',
+            //         confirmButtonColor: '#FF9F43'
+            //     });
+            //     return;
+            // }
 
             const id = $(this).data('id');
             const name = $(this).data('name');
@@ -295,13 +331,39 @@
             renderSelectedItems();
         });
 
-        // Update Price
-        $(document).on('change', '.price-input', function () {
+        // Update Price on input
+        $(document).on('input', '.price-display-input', function (e) {
+            let val = $(this).val();
+            let cleanStr = val.replace(/\D/g, '');
+            let numericVal = cleanStr ? parseInt(cleanStr, 10) : 0;
+
             const id = $(this).data('id');
-            const newPrice = parseInt($(this).val());
             const item = selectedItems.find(i => i.id === id);
-            item.price = newPrice;
-            $(this).val(item.price);
+            item.price = numericVal;
+
+            $(this).closest('td').find('.price-hidden-input').val(numericVal);
+
+            if (cleanStr) {
+                $(this).val(numericVal.toLocaleString('vi-VN'));
+            } else {
+                $(this).val('');
+            }
+
+            updateTotalAmount();
+        });
+
+        $(document).on('blur', '.price-display-input', function () {
+            let cleanStr = $(this).val().replace(/\D/g, '');
+            let numericVal = cleanStr ? parseInt(cleanStr, 10) : 0;
+            if (numericVal < 1000) {
+                numericVal = 1000;
+            }
+            const id = $(this).data('id');
+            const item = selectedItems.find(i => i.id === id);
+            item.price = numericVal;
+            $(this).closest('td').find('.price-hidden-input').val(numericVal);
+            $(this).val(numericVal.toLocaleString('vi-VN'));
+            updateTotalAmount();
         });
 
         // Update Qty
@@ -311,7 +373,7 @@
             const item = selectedItems.find(i => i.id === id);
             item.reqQty = newQty;
             $(this).val(item.reqQty);
-
+            updateTotalAmount();
         });
     });
 </script>

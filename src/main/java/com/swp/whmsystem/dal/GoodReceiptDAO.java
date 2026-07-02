@@ -208,7 +208,7 @@ public class GoodReceiptDAO {
         List<String> parameter = new ArrayList<>();
 
         if (receiptId != -1) {
-            sql.append(" and id = ? ");
+            sql.append(" and gr.id = ? ");
             parameter.add(String.valueOf(receiptId));
         }
 
@@ -253,5 +253,10 @@ public class GoodReceiptDAO {
     }
 
     public static void main(String[] args) {
+        GoodReceiptDAO dao = new GoodReceiptDAO();
+        List<GoodReceipt> list = dao.searchProduct(1, -1, -1, -1, null);
+        for(GoodReceipt i : list){
+            System.out.println(i);
+        }
     }
 }

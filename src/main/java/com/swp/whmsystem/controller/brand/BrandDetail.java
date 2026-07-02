@@ -6,7 +6,9 @@ package com.swp.whmsystem.controller.brand;
 
 import com.swp.whmsystem.dal.BrandDAO;
 import com.swp.whmsystem.model.Brand;
+import com.swp.whmsystem.utils.AuthorizationUtils;
 import com.swp.whmsystem.utils.FileUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -68,6 +70,10 @@ public class BrandDetail extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.UPDATE_BRAND,
+                    "You are not authorized to update brand.")) {
+                return;
+            }
             int id = Integer.parseInt(request.getParameter("id"));
             BrandDAO bd = new BrandDAO();
             Brand b = bd.getBrandById(id);

@@ -81,6 +81,24 @@ public class InventoryDAO {
         }
         return list;
     }
+    
+    public boolean isHavingProductInInventory(int productId){
+        String sql = """
+                     select count(pi.id), p.name from products p
+                     left join product_items pi on p.productid = pi.product_id
+                     where pi.product_id = ? and pi.status = 'AVAILABLE'""";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, productId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public int countInventory(String keyword, String stockStatus) {
         StringBuilder sql = new StringBuilder(
@@ -157,5 +175,10 @@ public class InventoryDAO {
         BigDecimal totalValue = rs.getBigDecimal("total_value");
         item.setTotalValue(totalValue == null ? BigDecimal.ZERO : totalValue);
         return item;
+    }
+    
+    public static void main(String[] args) {
+        InventoryDAO dao = new InventoryDAO();
+        System.out.println(dao.isHavingProductInInventory(2));
     }
 }

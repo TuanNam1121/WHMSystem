@@ -29,9 +29,7 @@ public class OrderDAO {
     public BigDecimal getCompletedSaleOrderTotalPrice() {
         String sql = "select coalesce(sum(total_price), 0) from orders where status = 'COMPLETED'";
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 BigDecimal totalPrice = rs.getBigDecimal(1);
                 return totalPrice == null ? BigDecimal.ZERO : totalPrice;
@@ -45,9 +43,7 @@ public class OrderDAO {
     public BigDecimal getNewSaleOrderTotalPrice() {
         String sql = "select coalesce(sum(total_price), 0) from orders where status = 'NEW'";
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 BigDecimal totalPrice = rs.getBigDecimal(1);
                 return totalPrice == null ? BigDecimal.ZERO : totalPrice;
@@ -61,9 +57,7 @@ public class OrderDAO {
     public int countNewSaleOrders() {
         String sql = "select count(*) from orders where status = 'NEW'";
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt(1);
             }
@@ -82,8 +76,7 @@ public class OrderDAO {
                 + "group by monthNumber";
         List<BigDecimal> monthlyTotals = createEmptyMonthlyTotals();
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, year);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -197,17 +190,43 @@ public class OrderDAO {
         return null;
     }
 
+    public List<Order> getOrderByCustomerId(int id) {
+
+        try (Connection conn = DBContext.getConnection()) {
+            String sql = "select o.* from orders o join customers c on o.customer_id = c.id where c.id = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            List<Order> result = new ArrayList<>();
+            while (rs.next()) {
+                Order o = mapResultSetToOrder(rs);
+                UserDAO ud = new UserDAO();
+                CustomerDAO cd = new CustomerDAO();
+                o.setCustomer(cd.getCustomerNameById(o.getCustomerId()));
+                o.setCreater(ud.getUserNameById(o.getCreatedBy()));
+                o.setProcessor(ud.getUserNameById(o.getProcessedBy()));
+                OrderItemDAO oid = new OrderItemDAO();
+                o.setTotalQuantity(oid.totalQuantityByOrderId(o.getId()));
+                result.add(o);
+            }
+            return result;
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return null;
+    }
+
     public List<Order> searchOrdersToExport(String keyword, String date, String status,
-                                            String sortBy, int pageSize, int page) {
+            String sortBy, int pageSize, int page) {
         List<Order> orderList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "select o.id, coalesce(er.status, o.status) as status, o.total_price, o.note, "
-                        + "o.orderdate, o.createdat, o.updatedat, o.completedat, "
-                        + "o.createdby, o.processedby, o.customer_id "
-                        + "from orders o "
-                        + "join customers c on o.customer_id = c.id "
-                        + "left join export_receipts er on er.order_id = o.id and er.status = 'DRAFT' "
-                        + "where o.status = 'NEW'"
+                + "o.orderdate, o.createdat, o.updatedat, o.completedat, "
+                + "o.createdby, o.processedby, o.customer_id "
+                + "from orders o "
+                + "join customers c on o.customer_id = c.id "
+                + "left join export_receipts er on er.order_id = o.id and er.status = 'DRAFT' "
+                + "where o.status = 'NEW'"
         );
         List<Object> parameter = new ArrayList<>();
 
@@ -251,8 +270,7 @@ public class OrderDAO {
         parameter.add(pageSize);
         parameter.add(offset);
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             for (int i = 0; i < parameter.size(); i++) {
                 ps.setObject(i + 1, parameter.get(i));
             }
@@ -276,9 +294,9 @@ public class OrderDAO {
     public int countOrdersToExport(String keyword, String date, String status) {
         StringBuilder sql = new StringBuilder(
                 "select count(*) from orders o "
-                        + "join customers c on o.customer_id = c.id "
-                        + "left join export_receipts er on er.order_id = o.id and er.status = 'DRAFT' "
-                        + "where o.status = 'NEW'"
+                + "join customers c on o.customer_id = c.id "
+                + "left join export_receipts er on er.order_id = o.id and er.status = 'DRAFT' "
+                + "where o.status = 'NEW'"
         );
         List<Object> parameters = new ArrayList<>();
 
@@ -299,8 +317,7 @@ public class OrderDAO {
             parameters.add(status);
         }
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             for (int i = 0; i < parameters.size(); i++) {
                 ps.setObject(i + 1, parameters.get(i));
             }
@@ -345,21 +362,26 @@ public class OrderDAO {
         }
     }
 
-    public List<Order> searchOrder(String customerName, String status) {
+    public List<Order> searchOrder(String customerName, String status, int pageSize, int page) {
 
         try (Connection conn = DBContext.getConnection()) {
-            String sql = "select o.* from orders o join customers c on o.customer_id = c.id where ";
+            String sql = "select o.* from orders o join customers c on o.customer_id = c.id ";
             if (customerName != null && !customerName.isBlank()) {
 
-                sql += "c.name LIKE ? ";
+                sql += "where c.name LIKE ? ";
                 if (!status.equals("ALL")) {
                     sql += "AND ";
                     sql += "o.status = ?";
                 }
             } else if (customerName == null || customerName.isBlank()) {
-                sql += "o.status = ?";
+                if (!status.equals("ALL")) {
+                    sql += "where o.status = ?";
+                }
             }
 
+            sql += " ORDER BY o.id ";
+            sql += " limit " + pageSize;
+            sql += " offset " + (pageSize * (page - 1)) + " ";
 
             PreparedStatement ps = conn.prepareStatement(sql);
             if (customerName != null && !customerName.isBlank()) {
@@ -369,9 +391,10 @@ public class OrderDAO {
                     ps.setString(2, status);
                 }
             } else if (customerName == null || customerName.isBlank()) {
-                ps.setString(1, status);
+                if (!status.equals("ALL")) {
+                    ps.setString(1, status);
+                }
             }
-
 
             ResultSet rs = ps.executeQuery();
             List<Order> result = new ArrayList<>();
@@ -390,7 +413,48 @@ public class OrderDAO {
         }
         return null;
     }
+    
+    public int countSearchOrder(String customerName, String status) {
 
+        try (Connection conn = DBContext.getConnection()) {
+            String sql = "select COUNT(*) from orders o join customers c on o.customer_id = c.id ";
+            if (customerName != null && !customerName.isBlank()) {
+
+                sql += "where c.name LIKE ? ";
+                if (!status.equals("ALL")) {
+                    sql += "AND ";
+                    sql += "o.status = ?";
+                }
+            } else if (customerName == null || customerName.isBlank()) {
+                if (!status.equals("ALL")) {
+                    sql += "where o.status = ?";
+                }
+            }
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            if (customerName != null && !customerName.isBlank()) {
+
+                ps.setString(1, "%" + customerName + "%");
+                if (!status.equals("ALL")) {
+                    ps.setString(2, status);
+                }
+            } else if (customerName == null || customerName.isBlank()) {
+                if (!status.equals("ALL")) {
+                    ps.setString(1, status);
+                }
+            }
+
+            ResultSet rs = ps.executeQuery();
+            int result = 0;
+            if (rs.next()) {
+                result = rs.getInt("COUNT(*)");
+            }
+            return result;
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return 0;
+    }
 
     public Order insertOrder(Order o) {
         try {
@@ -497,13 +561,12 @@ public class OrderDAO {
     public List<OrderItemDetailDTO> getOrderItemsByOrderId(int orderId) {
         List<OrderItemDetailDTO> list = new ArrayList<>();
 
-        String sql = "SELECT p.name, p.img_url, p.sku, oi.quantity, oi.price " +
-                "FROM order_items oi " +
-                "JOIN products p ON oi.productid = p.productid " +
-                "WHERE oi.orderid = ?";
+        String sql = "SELECT p.name, p.img_url, p.sku, oi.quantity, oi.price "
+                + "FROM order_items oi "
+                + "JOIN products p ON oi.productid = p.productid "
+                + "WHERE oi.orderid = ?";
 
-        try (Connection conn = new DBContext().getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, orderId);
 
@@ -612,8 +675,7 @@ public class OrderDAO {
         parameter.add(pageSize);
         parameter.add(offset);
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             for (int i = 0; i < parameter.size(); i++) {
                 ps.setObject(i + 1, parameter.get(i));
             }
@@ -679,7 +741,6 @@ public class OrderDAO {
         return 0;
     }
 
-
     public static void main(String[] args) {
         OrderDAO orderDAO = new OrderDAO();
         List<OrderItemDetailDTO> orderList = orderDAO.getOrderItemsByOrderId(3);
@@ -687,6 +748,5 @@ public class OrderDAO {
             System.out.println(o);
         }
     }
-
 
 }

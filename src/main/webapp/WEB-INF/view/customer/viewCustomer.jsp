@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="activeMenu" value="permissions" scope="request" />
 <c:set var="pageTitle" value="Create Order" scope="request" />
 <!DOCTYPE html>
@@ -88,6 +89,55 @@
                                 </div>
                             </div>
                         </div>
+                                    
+                                    <fmt:setLocale value="en_US"/>
+                                    <table class="table" >
+                                    <thead>
+                                        <tr>
+                                            <th>id</th>
+                                            <th>Customer name</th>
+                                            <th>total price</th>
+                                            <th>Note</th>
+                                            <th>Order date</th>
+                                            <th>Created by</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach items="${orders}" var="o">
+                                            <tr>
+                                                <td>SO-${o.id}</td>
+                                                <td>${o.customer}</td>
+                                                <td>
+                                                    <fmt:formatNumber
+                                                        value="${o.totalPrice}"
+                                                        pattern="#,###"/>
+                                                </td>
+                                                <td style="max-width: 200px; overflow-x: auto">${o.note}</td>
+                                                <td>${o.orderDate}</td>
+                                                <td>${o.creater}</td>
+                                                <td><c:choose>
+                                                        <c:when
+                                                            test="${o.status == 'NEW' || o.status == 'New'}">
+                                                            <span class="badges bg-lightyellow">${o.status}</span>
+                                                        </c:when>
+                                                        <c:when
+                                                            test="${o.status == 'DOING' || o.status == 'Doing'}">
+                                                            <span class="badges bg-lightpurple">${o.status}</span>
+                                                        </c:when>
+                                                        <c:when
+                                                            test="${o.status == 'COMPLETED' || o.status== 'Completed'}">
+                                                            <span class="badges bg-lightgreen">${o.status}</span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span class="badges bg-lightgrey">${o.status}</span>
+                                                        </c:otherwise>
+                                                    </c:choose></td>
+                                                
+                                            </tr>
+                                        </c:forEach>
+                                    </tbody>
+                                </table>
 
                 </div>
             </div>

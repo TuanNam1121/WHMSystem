@@ -7,6 +7,7 @@ package com.swp.whmsystem.controller.product;
 import com.swp.whmsystem.dal.BrandDAO;
 import com.swp.whmsystem.dal.CategoryDAO;
 import com.swp.whmsystem.dal.ChipDAO;
+import com.swp.whmsystem.dal.InventoryDAO;
 import com.swp.whmsystem.dal.ModelDAO;
 import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.dal.RamDAO;
@@ -20,7 +21,9 @@ import com.swp.whmsystem.model.Product;
 import com.swp.whmsystem.model.Ram;
 import com.swp.whmsystem.model.Rom;
 import com.swp.whmsystem.model.Unit;
+import com.swp.whmsystem.utils.AuthorizationUtils;
 import com.swp.whmsystem.utils.FileUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import com.swp.whmsystem.utils.ProductValidation;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -52,6 +55,10 @@ public class UpdateProduct extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.UPDATE_PRODUCT,
+                "You are not authorized to handle update product")) {
+            return;
+        }
         RamDAO ram = new RamDAO();
         RomDAO rom = new RomDAO();
         ChipDAO chip = new ChipDAO();
@@ -73,10 +80,16 @@ public class UpdateProduct extends HttpServlet {
         try {
             Product product = productDao.getProductFromId(Integer.parseInt(productIdr));
             if (ProductValidation.existTransaction(product.getProductId())) {
+                if(!ramList.contains(product.getRam())) ramList.add(product.getRam());
+                if(!romList.contains(product.getRom())) romList.add(product.getRom());
+                if(!chipList.contains(product.getChip())) chipList.add(product.getChip());
+                if(!modelList.contains(product.getModel())) modelList.add(product.getModel());
+                if(!unitList.contains(product.getUnit())) unitList.add(product.getUnit());
+                if(!categoryList.contains(product.getCategory())) categoryList.add(product.getCategory());
                 request.setAttribute("transactionExist", "v");
             }
             request.setAttribute("mode", "update");
-            request.setAttribute("product", product);
+            request.setAttribute("p", product);
             request.setAttribute("ramList", ramList);
             request.setAttribute("romList", romList);
             request.setAttribute("chipList", chipList);
@@ -123,6 +136,7 @@ public class UpdateProduct extends HttpServlet {
         BrandDAO brandDao = new BrandDAO();
         UnitDAO unitDao = new UnitDAO();
         CategoryDAO categoryDao = new CategoryDAO();
+        InventoryDAO inventoryDAO = new InventoryDAO();
 
         Integer ramIdInt = ProductValidation.parseInteger(ramId);
         Integer romIdInt = ProductValidation.parseInteger(romId);
@@ -170,13 +184,10 @@ public class UpdateProduct extends HttpServlet {
         if (!sku.equals(product.getSku())) {
             product.setSku(sku);
         }
-        if (product.isIsActive() != isActive) {
-            product.setIsActive(isActive);
-        }
 
 
         // Chỉ cho phép sửa các field này khi chưa có transaction
-        if (product.getTotalQuantity() == 0) {
+        if (ProductValidation.existTransaction(product.getProductId())) {
             if (unit != null) {
                 product.setUnit(unit);
             }
@@ -231,11 +242,18 @@ public class UpdateProduct extends HttpServlet {
         }
 
         request.setAttribute("mode", "update");
-        request.setAttribute("product", product);
+        request.setAttribute("p", product);
         if (ProductValidation.existTransaction(product.getProductId())) {
                 request.setAttribute("transactionExist", "v");
         }
-
+        if (product.isIsActive() != isActive && !inventoryDAO.isHavingProductInInventory(product.getProductId())) {
+            product.setIsActive(isActive);
+        }
+        else{
+            request.setAttribute("message", "This product is still having items in inventory. Cannot deactive");
+            request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);
+            return;
+        }
         Product skuExistedProduct = productDao.getProductFromSKU(sku);
         if (skuExistedProduct != null && skuExistedProduct.getProductId() != product.getProductId()) {
             request.setAttribute("message", "SKU was existed in other product !");
@@ -249,11 +267,11 @@ public class UpdateProduct extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);
             return;
         }
+        // Nếu không upload ảnh mới thì giữ nguyên imgUrl cũ của product
         if (part != null && part.getSize() > 0) {
             imgUrl = FileUtils.saveFile(part, request);
             product.setImgUrl(imgUrl);
         }
-        // Nếu không upload ảnh mới thì giữ nguyên imgUrl cũ của product
         if(!productDao.updateProduct(product)){
             request.setAttribute("message", error);
             request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);

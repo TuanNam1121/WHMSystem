@@ -231,6 +231,37 @@ public class ProductDAO {
         return productList;
     }
 
+    public List<Product> getActiveProductList() {
+        List<Product> productList = new ArrayList<>();
+        String sql = "select p.*, coalesce(i.quantity, 0) as quantity from products p left join inventory i on p.productid = i.product_id where p.isActive = 1 order by p.productid desc";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                productList.add(mapFromResultSetToProduct(rs));
+            }
+            return productList;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return productList;
+    }
+
+    public List<Product> searchActiveProductByName(String name) {
+        List<Product> productList = new ArrayList<>();
+        String sql = "select p.*, coalesce(i.quantity, 0) as quantity from products p left join inventory i on p.productid = i.product_id where p.isActive = 1 and p.name like ? order by p.productid desc";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + name + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                productList.add(mapFromResultSetToProduct(rs));
+            }
+            return productList;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return productList;
+    }
+
     public void updateProductQuantity(int newQuantity, int id) {
         String sql = "insert into inventory(product_id, quantity) values (?, ?) "
                 + "on duplicate key update quantity = values(quantity)";

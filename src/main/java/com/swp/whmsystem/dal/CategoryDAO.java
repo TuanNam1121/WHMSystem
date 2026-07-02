@@ -239,6 +239,20 @@ public class CategoryDAO {
         return 0;
     }
 
+    public boolean isCategoryUsed(int categoryId) {
+        String sql = "SELECT COUNT(*) FROM products WHERE categoryid = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, categoryId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
 
         CategoryDAO categoryDAO = new CategoryDAO();

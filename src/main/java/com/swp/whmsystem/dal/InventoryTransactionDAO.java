@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InventoryTransactionDAO {
-    public List<InventoryTransactionDTO> getCompletedTransaction(String type, int offset, int pageSize) {
+    public List<InventoryTransactionDTO> getCompletedTransaction(String type, String searchId, String startDate, String endDate, int offset, int pageSize) {
         List<InventoryTransactionDTO> list = new ArrayList<>();
         String sql = """
                 SELECT id, type, date, processor, total_items
@@ -53,11 +53,29 @@ public class InventoryTransactionDAO {
         if (type != null && !type.isBlank()) {
             sql += " AND type = ? ";
         }
+        if (searchId != null && !searchId.isBlank()) {
+            sql += " AND CAST(id AS CHAR) LIKE ? ";
+        }
+        if (startDate != null && !startDate.isBlank()) {
+            sql += " AND date >= ? ";
+        }
+        if (endDate != null && !endDate.isBlank()) {
+            sql += " AND date <= ? ";
+        }
         sql += " ORDER BY date DESC LIMIT ? OFFSET ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             int paramIndex = 1;
             if (type != null && !type.isBlank()) {
                 ps.setString(paramIndex++, type);
+            }
+            if (searchId != null && !searchId.isBlank()) {
+                ps.setString(paramIndex++, "%" + searchId.trim() + "%");
+            }
+            if (startDate != null && !startDate.isBlank()) {
+                ps.setString(paramIndex++, startDate + " 00:00:00");
+            }
+            if (endDate != null && !endDate.isBlank()) {
+                ps.setString(paramIndex++, endDate + " 23:59:59");
             }
             ps.setInt(paramIndex++, pageSize);
             ps.setInt(paramIndex++, offset);
@@ -78,7 +96,7 @@ public class InventoryTransactionDAO {
         return null;
     }
 
-    public int totalCompletedTransaction(String type) {
+    public int totalCompletedTransaction(String type, String searchId, String startDate, String endDate) {
         String sql = """
                 SELECT COUNT(*) FROM (
                     SELECT id, 'AUDIT' as type FROM inventory_audit WHERE status = 'COMPLETED'
@@ -92,9 +110,28 @@ public class InventoryTransactionDAO {
         if (type != null && !type.isBlank()) {
             sql += " AND type = ? ";
         }
+        if (searchId != null && !searchId.isBlank()) {
+            sql += " AND CAST(id AS CHAR) LIKE ? ";
+        }
+        if (startDate != null && !startDate.isBlank()) {
+            sql += " AND date >= ? ";
+        }
+        if (endDate != null && !endDate.isBlank()) {
+            sql += " AND date <= ? ";
+        }
         try (Connection con = DBContext.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-            if (type != null) {
-                ps.setString(1, type);
+            int paramIndex = 1;
+            if (type != null && !type.isBlank()) {
+                ps.setString(paramIndex++, type);
+            }
+            if (searchId != null && !searchId.isBlank()) {
+                ps.setString(paramIndex++, "%" + searchId.trim() + "%");
+            }
+            if (startDate != null && !startDate.isBlank()) {
+                ps.setString(paramIndex++, startDate + " 00:00:00");
+            }
+            if (endDate != null && !endDate.isBlank()) {
+                ps.setString(paramIndex++, endDate + " 23:59:59");
             }
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {

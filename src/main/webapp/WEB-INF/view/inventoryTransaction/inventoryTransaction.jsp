@@ -80,6 +80,21 @@
                                                                 </select>
                                                             </div>
                                                         </div>
+                                                        <div class="col-lg col-sm-6 col-12">
+                                                            <div class="form-group">
+                                                                <input type="text" class="form-control" name="searchId" value="${param.searchId}" placeholder="Search ID" title="Search ID">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg col-sm-6 col-12">
+                                                            <div class="form-group">
+                                                                <input type="date" class="form-control" name="startDate" value="${param.startDate}" title="Start Date">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg col-sm-6 col-12">
+                                                            <div class="form-group">
+                                                                <input type="date" class="form-control" name="endDate" value="${param.endDate}" title="End Date">
+                                                            </div>
+                                                        </div>
                                                         <div class="col-lg-1 col-sm-6 col-12">
                                                             <div class="form-group">
                                                                 <button type="submit" class="btn btn-filters ms-auto">
@@ -113,17 +128,17 @@
                                                             <c:choose>
                                                                 <c:when test="${item.type == 'AUDIT'}">
                                                                     <a href="InventoryAuditDetail?id=${item.id}"
-                                                                        class="text-info font-weight-bold">AD-${item.id}</a>
+                                                                        class="font-weight-bold">${item.id}</a>
                                                                 </c:when>
 
                                                                 <c:when test="${item.type == 'IMPORT'}">
                                                                     <a href="ImportHistoryDetail?receiptId=${item.id}"
-                                                                        class="text-success font-weight-bold">GR-${item.id}</a>
+                                                                        class="font-weight-bold">${item.id}</a>
                                                                 </c:when>
 
                                                                 <c:otherwise>
                                                                     <a href="exportDetail?orderId=${item.id}"
-                                                                        class="text-primary font-weight-bold">ER-${item.id}</a>
+                                                                        class="font-weight-bold">${item.id}</a>
                                                                 </c:otherwise>
 
                                                             </c:choose>

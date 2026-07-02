@@ -16,6 +16,30 @@ public class InventoryDAO {
         return searchInventory("", "", "quantityDesc", 100000, 1);
     }
 
+    public List<InventoryItemDTO> getLowStockProducts(int threshold) {
+        List<InventoryItemDTO> list = new ArrayList<>();
+        String sql = "select p.productid, p.name, p.sku, p.img_url, u.name as unit_name, "
+                + "count(pi.id) as quantity, coalesce(sum(pi.imported_price), 0) as total_value "
+                + "from products p "
+                + "left join units u on p.unitid = u.id "
+                + "left join product_items pi on p.productid = pi.product_id and pi.status = 'AVAILABLE' "
+                + "group by p.productid, p.name, p.sku, p.img_url, u.name "
+                + "having quantity < ? "
+                + "order by quantity asc, p.name asc";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, threshold);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(mapInventoryItem(rs));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public List<InventoryItemDTO> searchInventory(String keyword, String stockStatus,
             String sortBy, int pageSize, int page) {
         List<InventoryItemDTO> list = new ArrayList<>();

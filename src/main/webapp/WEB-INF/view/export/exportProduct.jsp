@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=export-scan-scroll">
 </head>
 <body>
 <div id="global-loader">
@@ -141,7 +141,7 @@
                         <input type="hidden" name="orderId" value="${sessionScope.order.id}">
                         <input type="hidden" name="submitAction" id="submitActionInput" value="COMPLETE">
                         <div class="row">
-                            <div class="table-responsive" id="scannedProductTable" tabindex="-1">
+                            <div class="table-responsive export-scan-table-scroll" id="scannedProductTable" tabindex="-1">
                                 <table class="table">
                                     <thead>
                                     <tr>

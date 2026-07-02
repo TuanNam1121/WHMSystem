@@ -86,16 +86,6 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <select class="select" name="status">
-                                                        <option value="">Choose Status</option>
-                                                        <option value="DRAFT" ${param.status == 'DRAFT' ? 'selected' : ''}>Draft</option>
-                                                        <option value="COMPLETED" ${param.status == 'COMPLETED' ? 'selected' : ''}>Completed</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-lg col-sm-6 col-12">
-                                                <div class="form-group">
                                                     <select class="select" name="sortBy">
                                                         <option value="">Sort By</option>
                                                         <option value="dateNewest" ${param.sortBy == 'dateNewest' ? 'selected' : ''}>Date: Newest</option>

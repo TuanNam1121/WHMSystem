@@ -1,3 +1,6 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<fmt:setLocale value="vi_VN"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,7 +24,7 @@
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
 
-    <link rel="stylesheet" href="assets/css/style.css?v=sidebar-export-badge">
+    <link rel="stylesheet" href="assets/css/style.css?v=home-low-stock-compact">
 </head>
 <body>
 <div id="global-loader">
@@ -182,7 +185,7 @@
                 <div class="col-lg-5 col-sm-12 col-12 d-flex">
                     <div class="card flex-fill">
                         <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-                            <h4 class="card-title mb-0">Recently Added Products</h4>
+                            <h4 class="card-title mb-0">Low Stock Products</h4>
                             <div class="dropdown">
                                 <a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false"
                                    class="dropset">
@@ -190,65 +193,43 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <li>
-                                        <a href="productlist" class="dropdown-item">Product List</a>
-                                    </li>
-                                    <li>
-                                        <a href="addProduct.jsp" class="dropdown-item">Product Add</a>
+                                        <a href="inventory?stockStatus=lowStock&sortBy=quantityAsc"
+                                           class="dropdown-item">Inventory List</a>
                                     </li>
                                 </ul>
                             </div>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive dataview">
-                                <table class="table datatable ">
+                            <div class="table-responsive dataview low-stock-scroll">
+                                <table class="table">
                                     <thead>
                                     <tr>
                                         <th>Sno</th>
                                         <th>Products</th>
-                                        <th>Price</th>
+                                        <th>Stock</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td class="productimgname">
-                                            <a href="productlist.html" class="product-img">
-                                                <img src="assets/img/product/product22.jpg" alt="product">
-                                            </a>
-                                            <a href="productlist.html">Apple Earpods</a>
-                                        </td>
-                                        <td>$891.2</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td class="productimgname">
-                                            <a href="productlist.html" class="product-img">
-                                                <img src="assets/img/product/product23.jpg" alt="product">
-                                            </a>
-                                            <a href="productlist.html">iPhone 11</a>
-                                        </td>
-                                        <td>$668.51</td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td class="productimgname">
-                                            <a href="productlist.html" class="product-img">
-                                                <img src="assets/img/product/product24.jpg" alt="product">
-                                            </a>
-                                            <a href="productlist.html">samsung</a>
-                                        </td>
-                                        <td>$522.29</td>
-                                    </tr>
-                                    <tr>
-                                        <td>4</td>
-                                        <td class="productimgname">
-                                            <a href="productlist.html" class="product-img">
-                                                <img src="assets/img/product/product6.jpg" alt="product">
-                                            </a>
-                                            <a href="productlist.html">Macbook Pro</a>
-                                        </td>
-                                        <td>$291.01</td>
-                                    </tr>
+                                    <c:forEach items="${requestScope.lowStockProducts}" var="item" varStatus="v">
+                                        <tr>
+                                            <td>${v.index + 1}</td>
+                                            <td class="productimgname">
+                                                <a href="productDetails?productId=${item.productId}" class="product-img">
+                                                    <img src="${not empty item.imgUrl ? item.imgUrl : 'assets/img/product/product7.jpg'}"
+                                                         alt="product">
+                                                </a>
+                                                <a href="productDetails?productId=${item.productId}">${item.productName}</a>
+                                            </td>
+                                            <td>
+                                                <span class="low-stock-quantity ${item.statusClass}">${item.quantity}</span>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                    <c:if test="${empty requestScope.lowStockProducts}">
+                                        <tr>
+                                            <td colspan="3" class="text-center">No low stock products</td>
+                                        </tr>
+                                    </c:if>
                                     </tbody>
                                 </table>
                             </div>
@@ -258,72 +239,41 @@
             </div>
             <div class="card mb-0">
                 <div class="card-body">
-                    <h4 class="card-title">Expired Products</h4>
+                    <h4 class="card-title">Top 5 Best Selling Products</h4>
                     <div class="table-responsive dataview">
-                        <table class="table datatable ">
+                        <table class="table">
                             <thead>
                             <tr>
-                                <th>SNo</th>
-                                <th>Product Code</th>
-                                <th>Product Name</th>
-                                <th>Brand Name</th>
-                                <th>Category Name</th>
-                                <th>Expiry Date</th>
+                                <th>No</th>
+                                <th>Product</th>
+                                <th>Brand</th>
+                                <th>Category</th>
+                                <th>Total Item Sold</th>
+                                <th>Total Price</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td><a href="javascript:void(0);">IT0001</a></td>
-                                <td class="productimgname">
-                                    <a class="product-img" href="productlist.html">
-                                        <img src="assets/img/product/product2.jpg" alt="product">
-                                    </a>
-                                    <a href="productlist.html">Orange</a>
-                                </td>
-                                <td>N/D</td>
-                                <td>Fruits</td>
-                                <td>12-12-2022</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td><a href="javascript:void(0);">IT0002</a></td>
-                                <td class="productimgname">
-                                    <a class="product-img" href="productlist.html">
-                                        <img src="assets/img/product/product3.jpg" alt="product">
-                                    </a>
-                                    <a href="productlist.html">Pineapple</a>
-                                </td>
-                                <td>N/D</td>
-                                <td>Fruits</td>
-                                <td>25-11-2022</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td><a href="javascript:void(0);">IT0003</a></td>
-                                <td class="productimgname">
-                                    <a class="product-img" href="productlist.html">
-                                        <img src="assets/img/product/product4.jpg" alt="product">
-                                    </a>
-                                    <a href="productlist.html">Stawberry</a>
-                                </td>
-                                <td>N/D</td>
-                                <td>Fruits</td>
-                                <td>19-11-2022</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td><a href="javascript:void(0);">IT0004</a></td>
-                                <td class="productimgname">
-                                    <a class="product-img" href="productlist.html">
-                                        <img src="assets/img/product/product5.jpg" alt="product">
-                                    </a>
-                                    <a href="productlist.html">Avocat</a>
-                                </td>
-                                <td>N/D</td>
-                                <td>Fruits</td>
-                                <td>20-11-2022</td>
-                            </tr>
+                            <c:forEach items="${requestScope.topSellingProducts}" var="item" varStatus="v">
+                                <tr>
+                                    <td>${v.index + 1}</td>
+                                    <td class="productimgname">
+                                        <a class="product-img" href="productDetails?productId=${item.productId}">
+                                            <img src="${not empty item.imgUrl ? item.imgUrl : 'assets/img/product/product7.jpg'}"
+                                                 alt="product">
+                                        </a>
+                                        <a href="productDetails?productId=${item.productId}">${item.productName}</a>
+                                    </td>
+                                    <td>${item.brandName}</td>
+                                    <td>${item.categoryName}</td>
+                                    <td>${item.totalItemSold}</td>
+                                    <td><fmt:formatNumber value="${item.totalPrice}" pattern="#,###"/></td>
+                                </tr>
+                            </c:forEach>
+                            <c:if test="${empty requestScope.topSellingProducts}">
+                                <tr>
+                                    <td colspan="6" class="text-center">No sold products</td>
+                                </tr>
+                            </c:if>
                             </tbody>
                         </table>
                     </div>

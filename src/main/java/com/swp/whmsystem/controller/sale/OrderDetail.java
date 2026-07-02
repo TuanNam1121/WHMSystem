@@ -81,6 +81,13 @@ public class OrderDetail extends HttpServlet {
         OrderDAO od = new OrderDAO();
         int orderId = Integer.parseInt(id);
         Order order = od.getOrderById(orderId);
+        
+        //if no order found
+        if(order == null){
+            request.setAttribute("errorMessage", "this order no exist");
+            request.getRequestDispatcher("/WEB-INF/view/error/error-403.jsp").forward(request, response);
+            return;
+        }
         request.setAttribute("order", order);
         CustomerDAO cd = new CustomerDAO();
         request.setAttribute("customers", cd.getAllCustomer());
@@ -127,7 +134,8 @@ public class OrderDetail extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/view/sale/orderDetail.jsp").forward(request, response);
             return;
         } else {
-            response.sendRedirect("NoPermission");
+            request.setAttribute("errorMessage", "cannot edit this order");
+            request.getRequestDispatcher("/WEB-INF/view/error/error-403.jsp").forward(request, response);
             return;
         }
 

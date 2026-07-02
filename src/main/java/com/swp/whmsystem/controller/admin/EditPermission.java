@@ -127,7 +127,6 @@ public class EditPermission extends HttpServlet {
             }
         }
 
-        AuthorizationUtils.setSession(request);
 
         response.sendRedirect("ViewPermissionList");
     }

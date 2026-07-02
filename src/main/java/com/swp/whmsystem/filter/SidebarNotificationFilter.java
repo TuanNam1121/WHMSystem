@@ -2,6 +2,9 @@ package com.swp.whmsystem.filter;
 
 import com.swp.whmsystem.dal.OrderDAO;
 import com.swp.whmsystem.dal.PurchaseRequestDAO;
+import com.swp.whmsystem.dal.UserDAO;
+import com.swp.whmsystem.model.User;
+import com.swp.whmsystem.utils.AuthorizationUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebFilter;
@@ -12,7 +15,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-@WebFilter(urlPatterns = {"/*"})
+@WebFilter(urlPatterns = { "/*" })
 public class SidebarNotificationFilter extends HttpFilter {
 
     @Override
@@ -25,6 +28,23 @@ public class SidebarNotificationFilter extends HttpFilter {
             request.setAttribute("pendingImportRequestCount",
                     purchaseRequestDAO.countApprovedAndIncompletedPurchaseRequest());
             request.setAttribute("newSaleOrderCount", orderDAO.countNewSaleOrders());
+
+            HttpSession session = request.getSession(false);
+            if (session != null && session.getAttribute("user") != null) {
+                User currentUser = (User) session.getAttribute("user");
+                UserDAO userDAO = new UserDAO();
+                User refreshedUser = userDAO.getUserFromId(currentUser.getId());
+                if (refreshedUser != null) {
+                    if (refreshedUser.isIsActive()) {
+                        session.setAttribute("user", refreshedUser);
+                        AuthorizationUtils.setSession(request);
+                    } else {
+                        session.invalidate();
+                        response.sendRedirect(request.getContextPath() + "/login");
+                        return;
+                    }
+                }
+            }
         }
 
         chain.doFilter(request, response);

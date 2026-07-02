@@ -11,6 +11,8 @@ import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.model.Brand;
 import com.swp.whmsystem.model.Category;
 import com.swp.whmsystem.model.Product;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -26,6 +28,11 @@ public class ProductList extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
+        
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_PRODUCT,
+                "You are not authorized to View products.")) {
+            return;
+        }
         ProductDAO productDAO = new ProductDAO();
         BrandDAO brandDAO = new BrandDAO();
         CategoryDAO categoryDAO = new CategoryDAO();

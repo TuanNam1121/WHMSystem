@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import com.swp.whmsystem.dal.*;
 import com.swp.whmsystem.model.*;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 
 import java.util.*;
 
@@ -19,6 +21,10 @@ public class CategoryList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_CATEGORY,
+                "You are not authorized to view category.")) {
+            return;
+        }
 
         HttpSession session = request.getSession();
         CategoryDAO categoryDAO = new CategoryDAO();

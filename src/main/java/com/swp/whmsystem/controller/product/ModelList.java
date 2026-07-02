@@ -4,6 +4,8 @@ import com.swp.whmsystem.dal.ModelDAO;
 import com.swp.whmsystem.dal.BrandDAO;
 import com.swp.whmsystem.model.Brand;
 import com.swp.whmsystem.model.Model;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -27,6 +29,10 @@ public class ModelList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_SPECIFICATION,
+                "You are not authorized to view specifications.")) {
+            return;
+        }
         String status = request.getParameter("status");
         Integer brandId = null;
         try {

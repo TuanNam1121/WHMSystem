@@ -3,6 +3,8 @@ package com.swp.whmsystem.controller.product;
 import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.model.Product;
 import com.swp.whmsystem.model.ProductItem;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,6 +21,12 @@ public class ProductDetails extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.UPDATE_PRODUCT,
+                "You are not authorized to Update products.")) {
+            return;
+        }
+        
         HttpSession session = request.getSession();
         ProductDAO productDAO = new ProductDAO();
         List<ProductItem> productItemList = new ArrayList<>();

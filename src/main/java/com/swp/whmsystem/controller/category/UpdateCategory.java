@@ -3,7 +3,9 @@ package com.swp.whmsystem.controller.category;
 import com.swp.whmsystem.dal.CategoryDAO;
 import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.model.Category;
+import com.swp.whmsystem.utils.AuthorizationUtils;
 import com.swp.whmsystem.utils.InputStandization;
+import com.swp.whmsystem.utils.PermissionConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,6 +19,10 @@ public class UpdateCategory extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.UPDATE_CATEGORY,
+                "You are not authorized to update category.")) {
+            return;
+        }
         String id_raw = request.getParameter("cateid");
         int id = Integer.parseInt(id_raw);
         CategoryDAO categoryDAO = new CategoryDAO();

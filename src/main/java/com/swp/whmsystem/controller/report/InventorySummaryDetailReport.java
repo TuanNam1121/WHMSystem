@@ -6,6 +6,8 @@ import java.util.List;
 import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.dal.StockMovementDAO;
 import com.swp.whmsystem.model.Product;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import com.swp.whmsystem.model.StockMovement;
 
 import jakarta.servlet.ServletException;
@@ -20,6 +22,11 @@ public class InventorySummaryDetailReport extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_REPORT,
+                "You don't have permission to view inventory summary detail reports!")) {
+            return;
+        }
+
         String productIdRaw = request.getParameter("productId");
         String fromDate = request.getParameter("fromDate");
         String toDate = request.getParameter("toDate");

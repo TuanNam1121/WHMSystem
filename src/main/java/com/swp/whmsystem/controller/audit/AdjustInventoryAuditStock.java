@@ -52,13 +52,14 @@ public class AdjustInventoryAuditStock extends HttpServlet {
             int auditId = Integer.parseInt(idParam);
             InventoryAudit audit = inventoryAuditDAO.getInventoryAuditById(auditId);
             if (audit == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Inventory audit not found.");
+                request.getSession().setAttribute("errorMessage", "Inventory audit not found.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
                 return;
             }
 
             if (audit.getStatus() != InventoryAuditStatus.SUBMITTED) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                        "Only submitted audits can have their stock adjusted.");
+                request.getSession().setAttribute("errorMessage", "Only submitted audits can have their stock adjusted.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
                 return;
             }
 
@@ -70,7 +71,8 @@ public class AdjustInventoryAuditStock extends HttpServlet {
             }
 
             if (discrepancyItems.isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No discrepancies to adjust.");
+                request.getSession().setAttribute("errorMessage", "No discrepancies to adjust.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
                 return;
             }
 
@@ -101,13 +103,14 @@ public class AdjustInventoryAuditStock extends HttpServlet {
             int auditId = Integer.parseInt(idParam);
             InventoryAudit audit = inventoryAuditDAO.getInventoryAuditById(auditId);
             if (audit == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Inventory audit not found.");
+                request.getSession().setAttribute("errorMessage", "Inventory audit not found.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
                 return;
             }
 
             if (audit.getStatus() != InventoryAuditStatus.SUBMITTED) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                        "Only submitted audits can have their stock adjusted.");
+                request.getSession().setAttribute("errorMessage", "Only submitted audits can have their stock adjusted.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
                 return;
             }
 
@@ -119,7 +122,8 @@ public class AdjustInventoryAuditStock extends HttpServlet {
             }
 
             if (discrepancyItems.isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No discrepancies to adjust.");
+                request.getSession().setAttribute("errorMessage", "No discrepancies to adjust.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
                 return;
             }
 

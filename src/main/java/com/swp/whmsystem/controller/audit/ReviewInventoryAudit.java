@@ -44,7 +44,8 @@ public class ReviewInventoryAudit extends HttpServlet {
             int auditId = Integer.parseInt(idParam);
             InventoryAudit audit = inventoryAuditDAO.getInventoryAuditById(auditId);
             if (audit == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Inventory audit not found.");
+                request.getSession().setAttribute("errorMessage", "Inventory audit not found.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
                 return;
             }
 
@@ -79,7 +80,8 @@ public class ReviewInventoryAudit extends HttpServlet {
             int auditId = Integer.parseInt(idParam);
             InventoryAudit audit = inventoryAuditDAO.getInventoryAuditById(auditId);
             if (audit == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Inventory audit not found.");
+                request.getSession().setAttribute("errorMessage", "Inventory audit not found.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
                 return;
             }
 

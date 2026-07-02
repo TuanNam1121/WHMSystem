@@ -205,6 +205,8 @@ public class UserDAO {
         i.setGender(rs.getString("gender"));
         i.setEmail(rs.getString("email"));
         i.setFullName(rs.getString("fullname"));
+        i.setFirstname(rs.getString("firstname"));
+        i.setLastname(rs.getString("lastname"));
         i.setIsActive(rs.getBoolean("isActive"));
         i.setRoleId(rs.getInt("roleid"));
         return i;

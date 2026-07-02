@@ -8,6 +8,8 @@ import java.io.IOException;
 
 import com.swp.whmsystem.dal.ModelDAO;
 import com.swp.whmsystem.dal.BrandDAO;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -28,6 +30,10 @@ public class AddModel extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_SPECIFICATION,
+                "You are not authorized to create specifications.")) {
+            return;
+        }
         request.setAttribute("brands", brandDao.getAllBrand());
         request.getRequestDispatcher("WEB-INF/view/product/addModel.jsp").forward(request, response);
     }

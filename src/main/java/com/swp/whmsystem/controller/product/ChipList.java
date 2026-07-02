@@ -9,6 +9,8 @@ import java.util.List;
 
 import com.swp.whmsystem.dal.ChipDAO;
 import com.swp.whmsystem.model.Chip;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -27,6 +29,10 @@ public class ChipList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_SPECIFICATION,
+                "You are not authorized to view specifications.")) {
+            return;
+        }
         String status = request.getParameter("status");
         String search = request.getParameter("search");
         

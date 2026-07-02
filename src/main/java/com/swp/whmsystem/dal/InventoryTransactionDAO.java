@@ -11,6 +11,16 @@ import java.util.List;
 public class InventoryTransactionDAO {
     public List<InventoryTransactionDTO> getCompletedTransaction(String type, String searchId, String startDate, String endDate, int offset, int pageSize) {
         List<InventoryTransactionDTO> list = new ArrayList<>();
+        
+        String auditCondition = "";
+        String importCondition = "";
+        String exportCondition = "";
+        if (searchId != null && !searchId.isBlank()) {
+            auditCondition = " AND EXISTS (SELECT 1 FROM inventory_audit_items iai JOIN inventory_audit_item_serials iais ON iais.audit_item_id = iai.id JOIN product_items pi ON pi.id = iais.product_item_id WHERE iai.auditid = ia.id AND pi.serial LIKE ?) ";
+            importCondition = " AND EXISTS (SELECT 1 FROM good_receipts_items gri JOIN product_items pi ON pi.goodreceiptsitemid = gri.id WHERE gri.goodreceiptid = gr.id AND pi.serial LIKE ?) ";
+            exportCondition = " AND EXISTS (SELECT 1 FROM export_receipt_details erd JOIN export_receipt_serials ers ON ers.export_receipt_detail_id = erd.id JOIN product_items pi ON pi.id = ers.product_item_id WHERE erd.export_receipt_id = er.id AND pi.serial LIKE ?) ";
+        }
+
         String sql = """
                 SELECT id, type, date, processor, total_items
                 FROM (
@@ -22,7 +32,7 @@ public class InventoryTransactionDAO {
                         COALESCE((SELECT SUM(ABS(iai.physicalquantity - iai.systemquantity)) FROM inventory_audit_items iai WHERE iai.auditid = ia.id), 0) AS total_items
                     FROM inventory_audit ia
                     LEFT JOIN users u ON ia.processedby = u.userid
-                    WHERE ia.status = 'COMPLETED'
+                    WHERE ia.status = 'COMPLETED' """ + auditCondition + """
                     
                     UNION ALL
                     
@@ -34,7 +44,7 @@ public class InventoryTransactionDAO {
                         COALESCE((SELECT SUM(gri.actual_quantity) FROM good_receipts_items gri WHERE gri.goodreceiptid = gr.id), 0) AS total_items
                     FROM good_receipts gr
                     LEFT JOIN users u ON gr.processedby = u.userid
-                    WHERE gr.status = 'COMPLETED'
+                    WHERE gr.status = 'COMPLETED' """ + importCondition + """
                     
                     UNION ALL
                     
@@ -46,15 +56,12 @@ public class InventoryTransactionDAO {
                         COALESCE((SELECT SUM(erd.quantity) FROM export_receipt_details erd WHERE erd.export_receipt_id = er.id), 0) AS total_items
                     FROM export_receipts er
                     LEFT JOIN users u ON er.exported_by = u.userid
-                    WHERE er.status = 'COMPLETED'
+                    WHERE er.status = 'COMPLETED' """ + exportCondition + """
                 ) AS combined
                 WHERE 1=1
                 """;
         if (type != null && !type.isBlank()) {
             sql += " AND type = ? ";
-        }
-        if (searchId != null && !searchId.isBlank()) {
-            sql += " AND CAST(id AS CHAR) LIKE ? ";
         }
         if (startDate != null && !startDate.isBlank()) {
             sql += " AND date >= ? ";
@@ -65,11 +72,14 @@ public class InventoryTransactionDAO {
         sql += " ORDER BY date DESC LIMIT ? OFFSET ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             int paramIndex = 1;
+            if (searchId != null && !searchId.isBlank()) {
+                String searchPattern = "%" + searchId.trim() + "%";
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+            }
             if (type != null && !type.isBlank()) {
                 ps.setString(paramIndex++, type);
-            }
-            if (searchId != null && !searchId.isBlank()) {
-                ps.setString(paramIndex++, "%" + searchId.trim() + "%");
             }
             if (startDate != null && !startDate.isBlank()) {
                 ps.setString(paramIndex++, startDate + " 00:00:00");
@@ -97,21 +107,27 @@ public class InventoryTransactionDAO {
     }
 
     public int totalCompletedTransaction(String type, String searchId, String startDate, String endDate) {
+        String auditCondition = "";
+        String importCondition = "";
+        String exportCondition = "";
+        if (searchId != null && !searchId.isBlank()) {
+            auditCondition = " AND EXISTS (SELECT 1 FROM inventory_audit_items iai JOIN inventory_audit_item_serials iais ON iais.audit_item_id = iai.id JOIN product_items pi ON pi.id = iais.product_item_id WHERE iai.auditid = ia.id AND pi.serial LIKE ?) ";
+            importCondition = " AND EXISTS (SELECT 1 FROM good_receipts_items gri JOIN product_items pi ON pi.goodreceiptsitemid = gri.id WHERE gri.goodreceiptid = gr.id AND pi.serial LIKE ?) ";
+            exportCondition = " AND EXISTS (SELECT 1 FROM export_receipt_details erd JOIN export_receipt_serials ers ON ers.export_receipt_detail_id = erd.id JOIN product_items pi ON pi.id = ers.product_item_id WHERE erd.export_receipt_id = er.id AND pi.serial LIKE ?) ";
+        }
+
         String sql = """
                 SELECT COUNT(*) FROM (
-                    SELECT id, 'AUDIT' as type FROM inventory_audit WHERE status = 'COMPLETED'
+                    SELECT ia.id, 'AUDIT' as type, ia.updatedat as date FROM inventory_audit ia WHERE ia.status = 'COMPLETED' """ + auditCondition + """
                     UNION ALL
-                    SELECT id, 'IMPORT' as type FROM good_receipts WHERE status = 'COMPLETED'
+                    SELECT gr.id, 'IMPORT' as type, gr.created_at as date FROM good_receipts gr WHERE gr.status = 'COMPLETED' """ + importCondition + """
                     UNION ALL
-                    SELECT order_id as id, 'EXPORT' as type FROM export_receipts WHERE status = 'COMPLETED'
+                    SELECT er.order_id as id, 'EXPORT' as type, er.exported_at as date FROM export_receipts er WHERE er.status = 'COMPLETED' """ + exportCondition + """
                 ) AS combined
                 WHERE 1=1
                 """;
         if (type != null && !type.isBlank()) {
             sql += " AND type = ? ";
-        }
-        if (searchId != null && !searchId.isBlank()) {
-            sql += " AND CAST(id AS CHAR) LIKE ? ";
         }
         if (startDate != null && !startDate.isBlank()) {
             sql += " AND date >= ? ";
@@ -121,11 +137,14 @@ public class InventoryTransactionDAO {
         }
         try (Connection con = DBContext.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             int paramIndex = 1;
+            if (searchId != null && !searchId.isBlank()) {
+                String searchPattern = "%" + searchId.trim() + "%";
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+            }
             if (type != null && !type.isBlank()) {
                 ps.setString(paramIndex++, type);
-            }
-            if (searchId != null && !searchId.isBlank()) {
-                ps.setString(paramIndex++, "%" + searchId.trim() + "%");
             }
             if (startDate != null && !startDate.isBlank()) {
                 ps.setString(paramIndex++, startDate + " 00:00:00");

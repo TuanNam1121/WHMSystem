@@ -6,6 +6,8 @@ import com.swp.whmsystem.dto.ExportItemDTO;
 import com.swp.whmsystem.dto.OrderItemDetailDTO;
 import com.swp.whmsystem.model.Order;
 import com.swp.whmsystem.model.User;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -24,6 +26,10 @@ public class SubmitExport extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.PROCESS_EXPORT,
+                "You don't have permission to process exports!")) {
+            return;
+        }
 
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");

@@ -163,7 +163,7 @@
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <c:if test="${o.status == 'NEW' || o.status == 'DRAFT'}">
+                                            <c:if test="${sessionScope.userPermissions.contains('PROCESS_EXPORT') && (o.status == 'NEW' || o.status == 'DRAFT')}">
                                                 <a href="exportProduct?orderId=${o.id}">
                                                     <button type="button" class="btn btn-primary btn-sm">Process
                                                     </button>

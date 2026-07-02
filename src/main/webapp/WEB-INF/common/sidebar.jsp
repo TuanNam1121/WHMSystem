@@ -69,22 +69,28 @@
                         <li><a href="ImportHistory">Import History</a></li>
                     </ul>
                 </li>
-                <li class="submenu">
-                    <a href="javascript:void(0);"><img src="assets/img/icons/transfer1.svg"
-                                                       alt="img"><span> Export</span>
-                        <c:if test="${requestScope.newSaleOrderCount > 0}">
-                            <span class="sidebar-notification-badge">
-                                    ${requestScope.newSaleOrderCount}
-                            </span>
-                        </c:if>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <ul>
-                        <li><a href="toExportList">Export Request List</a></li>
-                        <li><a href="exportHistory">Export History</a></li>
+                <c:if test="${sessionScope.userPermissions.contains('VIEW_EXPORT_PRODUCT') || sessionScope.userPermissions.contains('VIEW_EXPORT_HISTORY')}">
+                    <li class="submenu">
+                        <a href="javascript:void(0);"><img src="assets/img/icons/transfer1.svg"
+                                                           alt="img"><span> Export</span>
+                            <c:if test="${requestScope.newSaleOrderCount > 0}">
+                                <span class="sidebar-notification-badge">
+                                        ${requestScope.newSaleOrderCount}
+                                </span>
+                            </c:if>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <ul>
+                            <c:if test="${sessionScope.userPermissions.contains('VIEW_EXPORT_PRODUCT')}">
+                                <li><a href="toExportList">Export Request List</a></li>
+                            </c:if>
+                            <c:if test="${sessionScope.userPermissions.contains('VIEW_EXPORT_HISTORY')}">
+                                <li><a href="exportHistory">Export History</a></li>
+                            </c:if>
 
-                    </ul>
-                </li>
+                        </ul>
+                    </li>
+                </c:if>
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="assets/img/icons/users1.svg"
                                                        alt="img"><span> People</span> <span

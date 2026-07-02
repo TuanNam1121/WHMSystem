@@ -1,5 +1,7 @@
 package com.swp.whmsystem.controller.export;
 
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,6 +17,11 @@ public class CancelExport extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.PROCESS_EXPORT,
+                "You don't have permission to process exports!")) {
+            return;
+        }
+
         HttpSession session = request.getSession();
         session.removeAttribute("scannedList");
         session.removeAttribute("error");

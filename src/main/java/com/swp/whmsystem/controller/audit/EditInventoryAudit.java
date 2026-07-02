@@ -46,12 +46,14 @@ public class EditInventoryAudit extends HttpServlet {
             int auditId = Integer.parseInt(idParam);
             InventoryAudit audit = inventoryAuditDAO.getInventoryAuditById(auditId);
             if (audit == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Inventory audit not found.");
+                request.getSession().setAttribute("errorMessage", "Inventory audit not found.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
                 return;
             }
 
             if (audit.getStatus() != InventoryAuditStatus.DRAFT) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Only DRAFT audits can be edited.");
+                request.getSession().setAttribute("errorMessage", "Only DRAFT audits can be edited.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
                 return;
             }
 
@@ -91,7 +93,8 @@ public class EditInventoryAudit extends HttpServlet {
 
         InventoryAudit audit = inventoryAuditDAO.getInventoryAuditById(auditId);
         if (audit == null || audit.getStatus() != InventoryAuditStatus.DRAFT) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid audit request.");
+            request.getSession().setAttribute("errorMessage", "Invalid audit request.");
+            response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
             return;
         }
 

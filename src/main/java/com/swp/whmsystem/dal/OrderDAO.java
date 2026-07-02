@@ -5,6 +5,7 @@
 package com.swp.whmsystem.dal;
 
 import com.swp.whmsystem.dto.OrderItemDetailDTO;
+import com.swp.whmsystem.dto.TopSellingProductDTO;
 import com.swp.whmsystem.model.Order;
 
 import java.math.BigDecimal;
@@ -90,6 +91,48 @@ public class OrderDAO {
             System.err.println(ex.getMessage());
         }
         return monthlyTotals;
+    }
+
+    public List<TopSellingProductDTO> getTopSellingProducts(int limit) {
+        List<TopSellingProductDTO> topProducts = new ArrayList<>();
+        String sql = "select p.productid, p.name as product_name, p.img_url, "
+                + "coalesce(b.name, 'N/A') as brand_name, "
+                + "coalesce(c.name, 'N/A') as category_name, "
+                + "coalesce(sum(erd.quantity), 0) as total_item_sold, "
+                + "coalesce(sum(erd.quantity * erd.unit_price), 0) as total_price "
+                + "from export_receipts er "
+                + "join orders o on er.order_id = o.id "
+                + "join export_receipt_details erd on er.id = erd.export_receipt_id "
+                + "join products p on erd.product_id = p.productid "
+                + "left join brands b on p.brandid = b.brandid "
+                + "left join categories c on p.categoryid = c.categoryid "
+                + "where er.status = 'COMPLETED' and o.status = 'COMPLETED' "
+                + "group by p.productid, p.name, p.img_url, b.name, c.name "
+                + "order by total_item_sold desc, total_price desc, p.name asc "
+                + "limit ?";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    TopSellingProductDTO item = new TopSellingProductDTO();
+                    item.setProductId(rs.getInt("productid"));
+                    item.setProductName(rs.getString("product_name"));
+                    item.setImgUrl(rs.getString("img_url"));
+                    item.setBrandName(rs.getString("brand_name"));
+                    item.setCategoryName(rs.getString("category_name"));
+                    item.setTotalItemSold(rs.getInt("total_item_sold"));
+
+                    BigDecimal totalPrice = rs.getBigDecimal("total_price");
+                    item.setTotalPrice(totalPrice == null ? BigDecimal.ZERO : totalPrice);
+                    topProducts.add(item);
+                }
+            }
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return topProducts;
     }
 
     private List<BigDecimal> createEmptyMonthlyTotals() {
@@ -575,18 +618,18 @@ public class OrderDAO {
         return null;
     }
 
-    public List<Order> searchExportHistory(String keyword, String date, String status,
-            String sortBy, int pageSize, int page) {
+    public List<Order> searchExportHistory(String keyword, String date,
+                                           String sortBy, int pageSize, int page) {
         List<Order> orderList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "select o.id, er.status, o.total_price, o.note, "
-                + "coalesce(er.exported_at, er.created_at) as orderdate, er.created_at as createdat, "
-                + "er.updated_at as updatedat, er.exported_at as completedat, "
-                + "o.createdby, er.exported_by as processedby, o.customer_id "
-                + "from export_receipts er "
-                + "join orders o on er.order_id = o.id "
-                + "join customers c on o.customer_id = c.id "
-                + "where 1=1"
+                        + "coalesce(er.exported_at, er.created_at) as orderdate, er.created_at as createdat, "
+                        + "er.updated_at as updatedat, er.exported_at as completedat, "
+                        + "o.createdby, er.exported_by as processedby, o.customer_id "
+                        + "from export_receipts er "
+                        + "join orders o on er.order_id = o.id "
+                        + "join customers c on o.customer_id = c.id "
+                        + "where er.status = 'COMPLETED'"
         );
         List<Object> parameter = new ArrayList<>();
 
@@ -606,11 +649,6 @@ public class OrderDAO {
         if (date != null && !date.trim().isEmpty()) {
             sql.append(" and date_format(coalesce(er.exported_at, er.created_at), '%d-%m-%Y') = ?");
             parameter.add(date.trim());
-        }
-
-        if (status != null && !status.trim().isEmpty()) {
-            sql.append(" and er.status = ?");
-            parameter.add(status);
         }
 
         if (sortBy != null && !sortBy.trim().isEmpty()) {
@@ -660,12 +698,12 @@ public class OrderDAO {
         return orderList;
     }
 
-    public int countExportHistory(String keyword, String date, String status) {
+    public int countExportHistory(String keyword, String date) {
         StringBuilder sql = new StringBuilder(
                 "select count(*) from orders o "
-                + "join export_receipts er on er.order_id = o.id "
-                + "join customers c on o.customer_id = c.id "
-                + "where 1=1"
+                        + "join export_receipts er on er.order_id = o.id "
+                        + "join customers c on o.customer_id = c.id "
+                        + "where er.status = 'COMPLETED'"
         );
         List<Object> parameters = new ArrayList<>();
 
@@ -687,12 +725,8 @@ public class OrderDAO {
             parameters.add(date.trim());
         }
 
-        if (status != null && !status.trim().isEmpty()) {
-            sql.append(" and er.status = ?");
-            parameters.add(status);
-        }
-
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             for (int i = 0; i < parameters.size(); i++) {
                 ps.setObject(i + 1, parameters.get(i));
             }

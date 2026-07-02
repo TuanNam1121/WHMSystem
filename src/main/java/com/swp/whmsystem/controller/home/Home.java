@@ -52,12 +52,15 @@ public class Home extends HttpServlet {
         CustomerDAO customerDAO = new CustomerDAO();
         SupplierDAO supplierDAO = new SupplierDAO();
         ExportItemDAO exportItemDAO = new ExportItemDAO();
+        InventoryDAO inventoryDAO = new InventoryDAO();
 
         request.setAttribute("customerCount", customerDAO.countCustomers());
         request.setAttribute("activeSupplierCount", supplierDAO.countActiveSuppliers());
         request.setAttribute("completedPurchaseInvoiceCount",
                 purchaseRequestDAO.countPurchaseItem(0, 0, "COMPLETED", null));
         request.setAttribute("completedSaleInvoiceCount", exportItemDAO.countCompletedExportReceipts());
+        request.setAttribute("lowStockProducts", inventoryDAO.getLowStockProducts(10));
+        request.setAttribute("topSellingProducts", orderDAO.getTopSellingProducts(5));
 
         // -------------------------------------------------------------------------------------------------------------
         // Purchase and sales chart.

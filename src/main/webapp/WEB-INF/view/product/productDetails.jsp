@@ -37,7 +37,7 @@
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
 
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=product-detail-image-match">
 </head>
 <body>
 <div id="global-loader">
@@ -58,9 +58,9 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row product-detail-summary-row">
                 <div class="col-lg-8 col-sm-12">
-                    <div class="card">
+                    <div class="card product-detail-info-card">
                         <div class="card-body">
                             <div class="productdetails">
                                 <ul class="product-bar">
@@ -98,7 +98,7 @@
                     </div>
                 </div>
                 <div class="col-lg-4 col-sm-12">
-                    <div class="card">
+                    <div class="card product-detail-image-card">
                         <div class="card-body">
                             <div class="slider-product-details">
                                 <div class="owl-carousel owl-theme product-slide">

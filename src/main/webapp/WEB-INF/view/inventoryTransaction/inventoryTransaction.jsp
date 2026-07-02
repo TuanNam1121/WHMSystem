@@ -82,7 +82,7 @@
                                                         </div>
                                                         <div class="col-lg col-sm-6 col-12">
                                                             <div class="form-group">
-                                                                <input type="text" class="form-control" name="searchId" value="${param.searchId}" placeholder="Search ID" title="Search ID">
+                                                                <input type="text" class="form-control" name="searchId" value="${param.searchId}" placeholder="Search Serial" title="Search Serial">
                                                             </div>
                                                         </div>
                                                         <div class="col-lg col-sm-6 col-12">

@@ -100,17 +100,17 @@
                 </li>
 
 
-                <li>
-                    <c:if test="${sessionScope.userPermissions.contains('VIEW_INVENTORY_AUDIT')}">
+                <c:if test="${sessionScope.userPermissions.contains('VIEW_INVENTORY_AUDIT')}">
+                    <li>
                         <a href="InventoryAuditList"><i data-feather="layers"></i><span> Inventory Audit List</span> </a>
-                    </c:if>
-                </li>
+                    </li>
+                </c:if>
                 
-                <li>
-                    <c:if test="${sessionScope.userPermissions.contains('VIEW_INVENTORY_TRANSACTION')}">
-                        <a href="InventoryTransaction"><i data-feather="repeat"></i><span> Inventory Transaction List</span>
-                    </c:if>
-                </li>
+                <c:if test="${sessionScope.userPermissions.contains('VIEW_INVENTORY_TRANSACTION')}">
+                    <li>
+                        <a href="InventoryTransaction"><i data-feather="repeat"></i><span> Inventory Transaction List</span> </a>
+                    </li>
+                </c:if>
 
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="assets/img/icons/time.svg"

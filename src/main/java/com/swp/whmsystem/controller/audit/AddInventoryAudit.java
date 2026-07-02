@@ -39,7 +39,8 @@ public class AddInventoryAudit extends HttpServlet {
         }
 
         if (inventoryAuditDAO.hasActiveAudit()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "An active audit is already in progress. Please complete or cancel it before starting a new one.");
+            request.getSession().setAttribute("errorMessage", "An active audit is already in progress. Please complete or cancel it before starting a new one.");
+            response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
             return;
         }
 

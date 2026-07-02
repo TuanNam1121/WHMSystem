@@ -40,7 +40,8 @@ public class CancelInventoryAudit extends HttpServlet {
             int auditId = Integer.parseInt(idParam);
             InventoryAudit audit = inventoryAuditDAO.getInventoryAuditById(auditId);
             if (audit == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Inventory audit not found.");
+                request.getSession().setAttribute("errorMessage", "Inventory audit not found.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
                 return;
             }
 
@@ -51,8 +52,8 @@ public class CancelInventoryAudit extends HttpServlet {
 
                 inventoryAuditDAO.updateInventoryAuditStatus(auditId, InventoryAuditStatus.CANCELLED);
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                        "Only draft or submitted audits can be cancelled.");
+                request.getSession().setAttribute("errorMessage", "Only draft or submitted audits can be cancelled.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
                 return;
             }
 

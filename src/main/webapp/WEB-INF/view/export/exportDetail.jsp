@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=export-scan-scroll">
 </head>
 <body>
 <div id="global-loader">
@@ -86,7 +86,7 @@
 
                     <form action="submitExport" method="post" id="submitExportForm">
                         <div class="row">
-                            <div class="table-responsive ">
+                            <div class="table-responsive export-scan-table-scroll">
                                 <table class="table">
                                     <thead>
                                     <tr>

@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.swp.whmsystem.dal.InventorySummaryDAO;
 import com.swp.whmsystem.model.InventorySummary;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,6 +20,11 @@ public class InventorySummaryReport extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_REPORT,
+                "You don't have permission to view inventory summary reports!")) {
+            return;
+        }
+
         String keyword = request.getParameter("keyword");
         String fromDate = request.getParameter("fromDate");
         String toDate = request.getParameter("toDate");

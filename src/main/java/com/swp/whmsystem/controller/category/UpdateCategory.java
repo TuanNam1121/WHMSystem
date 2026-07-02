@@ -20,7 +20,7 @@ public class UpdateCategory extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.UPDATE_CATEGORY,
-                "You are not authorized to update category.")) {
+                "You don't have permission to update or deactivate a category!")) {
             return;
         }
         String id_raw = request.getParameter("cateid");
@@ -34,6 +34,10 @@ public class UpdateCategory extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.UPDATE_CATEGORY,
+                "You don't have permission to update or deactivate a category!")) {
+            return;
+        }
         String categoryName = request.getParameter("categoryName");
         String description = request.getParameter("description");
 

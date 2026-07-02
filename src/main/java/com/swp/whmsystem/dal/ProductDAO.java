@@ -672,7 +672,11 @@ public class ProductDAO {
                     break;
             }
         } else {
-            sql.append(" order by pi.id asc");
+            sql.append(" order by case pi.status "
+                    + "when 'AVAILABLE' then 1 "
+                    + "when 'UNAVAILABLE' then 2 "
+                    + "when 'SOLD' then 3 "
+                    + "else 4 end, pi.serial asc");
         }
 
         int offset = (page - 1) * pageSize;

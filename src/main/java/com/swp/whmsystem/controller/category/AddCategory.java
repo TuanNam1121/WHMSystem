@@ -19,7 +19,7 @@ public class AddCategory extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_CATEGORY,
-                "You are not authorized to create category.")) {
+                "You don't have permission to add a category!")) {
             return;
         }
         request.getRequestDispatcher("WEB-INF/view/category/addCategory.jsp").forward(request, response);
@@ -28,6 +28,10 @@ public class AddCategory extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_CATEGORY,
+                "You don't have permission to add a category!")) {
+            return;
+        }
         String categoryName = request.getParameter("categoryName");
         String description = request.getParameter("description");
 

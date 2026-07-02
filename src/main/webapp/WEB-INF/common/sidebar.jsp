@@ -38,17 +38,16 @@
                         <span class="menu-arrow"></span></a>
                     <ul>
                         <li>
-                            <c:if test="${sessionScope.user.roleId == 2}">
-                                <a href="managerPurchaseRequestList">Purchase List</a>
-                            </c:if>
-                            <c:if test="${sessionScope.user.roleId == 4}">
-                                <a href="purchaseRequestList">Purchase List</a>
-                            </c:if>
-                            <c:if test="${sessionScope.user.roleId != 2 && sessionScope.user.roleId != 4}">
-                                <a href="home">Purchase List</a>
-                            </c:if>
+                            <c:choose>
+                                <c:when test="${sessionScope.userPermissions.contains('APPROVE_REJECT_PURCHASE_REQUEST')}">
+                                    <a href="managerPurchaseRequestList">Purchase List</a>
+                                </c:when>
+                                <c:when test="${sessionScope.userPermissions.contains('VIEW_PURCHASE_ORDER')}">
+                                    <a href="purchaseRequestList">Purchase List</a>
+                                </c:when>
+                            </c:choose>
                         </li>
-                        <c:if test="${sessionScope.user.roleId == 4}">
+                        <c:if test="${sessionScope.userPermissions.contains('CREATE_PURCHASE_ORDER')}">
                             <li>
                                 <a href="createPurchaseRequest">Create Purchase Request</a>
                             </li>
@@ -101,17 +100,17 @@
                 </li>
 
 
-                <li>
-                    <c:if test="${sessionScope.userPermissions.contains('VIEW_INVENTORY_AUDIT')}">
+                <c:if test="${sessionScope.userPermissions.contains('VIEW_INVENTORY_AUDIT')}">
+                    <li>
                         <a href="InventoryAuditList"><i data-feather="layers"></i><span> Inventory Audit List</span> </a>
-                    </c:if>
-                </li>
+                    </li>
+                </c:if>
                 
-                <li>
-                    <c:if test="${sessionScope.userPermissions.contains('VIEW_INVENTORY_TRANSACTION')}">
-                        <a href="InventoryTransaction"><i data-feather="repeat"></i><span> Inventory Transaction List</span>
-                    </c:if>
-                </li>
+                <c:if test="${sessionScope.userPermissions.contains('VIEW_INVENTORY_TRANSACTION')}">
+                    <li>
+                        <a href="InventoryTransaction"><i data-feather="repeat"></i><span> Inventory Transaction List</span> </a>
+                    </li>
+                </c:if>
 
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="assets/img/icons/time.svg"

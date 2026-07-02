@@ -26,6 +26,11 @@ public class CategoryList extends HttpServlet {
             return;
         }
 
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_CATEGORY,
+                "You don't have permission to view the category list!")) {
+            return;
+        }
+
         HttpSession session = request.getSession();
         CategoryDAO categoryDAO = new CategoryDAO();
         List<Category> searchedCategoryList = new ArrayList<>();

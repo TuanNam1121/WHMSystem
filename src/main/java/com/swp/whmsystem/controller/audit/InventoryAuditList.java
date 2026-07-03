@@ -2,6 +2,7 @@ package com.swp.whmsystem.controller.audit;
 
 import com.swp.whmsystem.dal.InventoryAuditDAO;
 import com.swp.whmsystem.model.InventoryAudit;
+import com.swp.whmsystem.model.User;
 import com.swp.whmsystem.utils.AuthorizationUtils;
 import com.swp.whmsystem.utils.PermissionConstants;
 import jakarta.servlet.ServletException;
@@ -44,9 +45,11 @@ public class InventoryAuditList extends HttpServlet {
         }
 
         int offset = (page - 1) * pageSize;
-
-        List<InventoryAudit> inventoryAudits = inventoryAuditDAO.getInventoryAuditsByFilter(keyword, offset, pageSize);
-        int totalRecords = inventoryAuditDAO.countInventoryAuditsByFilter(keyword);
+        User user = (User) request.getSession(false).getAttribute("user");
+        int userid = user.getId();
+        List<InventoryAudit> inventoryAudits = inventoryAuditDAO.getInventoryAuditsByFilter(keyword, offset, pageSize,
+                userid);
+        int totalRecords = inventoryAuditDAO.countInventoryAuditsByFilter(keyword, userid);
         int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
         request.setAttribute("inventoryAudits", inventoryAudits);

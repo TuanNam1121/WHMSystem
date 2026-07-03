@@ -142,10 +142,11 @@
                                     </c:if>
                                     <div class="col-lg-12">
                                         <a class="btn btn-submit me-2"
-                                           <c:if test="${order.status=='NEW'}">
-                                               href="${pageContext.request.contextPath}/OrderDetail?id=${order.id}&action=update">UPDATE</a>
+                                           <c:if test="${sessionScope.userPermissions.contains('UPDATE_SALE_ORDER')}">
+                                                <c:if test="${order.status=='NEW'}">
+                                                    href="${pageContext.request.contextPath}/OrderDetail?id=${order.id}&action=update">UPDATE</a>
+                                                </c:if>
                                            </c:if>
-                                           
                                         <a href="${pageContext.request.contextPath}/OrderList" class="btn btn-cancel">CANCEL</a>
                                     </div>
                                 </div>

@@ -27,6 +27,25 @@
         <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
 
         <link rel="stylesheet" href="assets/css/style.css">
+        <style>
+            .enterNumber{
+                width: 50%;
+                height: 70%;
+                padding: 8px 12px;
+                border: 1px solid #ced4da;
+                border-radius: 6px;
+                font-size: 14px;
+                transition: 0.2s;
+            }
+            .productSearch{
+                width: 25%;
+                padding: 8px 12px;
+                border: 1px solid #ced4da;
+                border-radius: 6px;
+                font-size: 14px;
+                transition: 0.2s;
+            }
+        </style>
     </head>
     <body>
         <div id="global-loader">
@@ -82,6 +101,9 @@
                                     <div class="table-responsive flex-grow-1"
                                          style="max-height: 400px; overflow-y: auto;">
                                         <table class="table table-hover table-nowrap mb-0">
+                                            <div style="position: sticky; top: 0; z-index: 99;">
+                                                <input class="productSearch" type="text" placeholder="search for product...">
+                                            </div>
                                             <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
                                                 <tr>
                                                     <th>Name</th>
@@ -200,8 +222,8 @@
                             <input type="hidden" value="\${item.id}" name="productId">
                             <td>\${item.name}</td>
                             <td>\${item.stock}</td>
-                            <td><input required type="number" name="quantity_\${item.id}" min="1" max="\${item.stock}" value="\${item.quantity}"></td>
-                            <td><input required type="number" name="price_\${item.id}" min="1"  value="\${item.price!=null?item.price:''}" ></td>
+                            <td><input required type="number" name="quantity_\${item.id}" min="1" max="\${item.stock}" value="\${item.quantity}" class="enterNumber"></td>
+                            <td><input required type="number" name="price_\${item.id}" min="1"  value="\${item.price!=null?item.price:''}" class="enterNumber"></td>
                             <td>
                                 <a class="delete-set remove-item-btn" href="javascript:void(0);" data-id="\${item.id}">
                                     <img src="${pageContext.request.contextPath}/assets/img/icons/delete.svg" alt="Remove">
@@ -216,18 +238,19 @@
 
             // Initial render
             renderSelectedItems();
-                    // Search Product directly in DOM
-                    $('#product-search').on('input', function () {
-            const searchTerm = $(this).val().toLowerCase();
-                    $('.product-item').each(function () {
-            const name = $(this).find('.product-name').text().toLowerCase();
+            // Search Product directly in DOM
+            $('.productSearch').on('input', function () {
+                const searchTerm = $(this).val().toLowerCase();
+                $('.product-item').each(function () {
+                    const name = $(this).find('.product-name').text().toLowerCase();
                     const sku = $(this).find('.product-sku').text().toLowerCase();
-                    if (name.includes(searchTerm) || sku.includes(searchTerm)) {
-            $(this).show();
-            } else {
-            $(this).hide();
-            }
-            });
+                    const cate = $(this).find('.product-category').text().toLowerCase();
+                    if (name.includes(searchTerm) || sku.includes(searchTerm) || cate.includes(searchTerm)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
             });
                     // Add Product
                     $(document).on('click', '.add-product-btn', function () {

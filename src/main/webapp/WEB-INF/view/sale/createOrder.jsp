@@ -27,6 +27,25 @@
         <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
 
         <link rel="stylesheet" href="assets/css/style.css">
+        <style>
+            .enterNumber{
+                width: 50%;
+                height: 70%;
+                padding: 8px 12px;
+                border: 1px solid #ced4da;
+                border-radius: 6px;
+                font-size: 14px;
+                transition: 0.2s;
+            }
+            .productSearch{
+                width: 25%;
+                padding: 8px 12px;
+                border: 1px solid #ced4da;
+                border-radius: 6px;
+                font-size: 14px;
+                transition: 0.2s;
+            }
+        </style>
     </head>
     <body>
         <div id="global-loader">
@@ -54,7 +73,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
-                                            <input required type="hidden" name="customerId" maxlength="50" value="${customer.id}" readonly>
+                                    <input required type="hidden" name="customerId" maxlength="50" value="${customer.id}" readonly>
                                     <div class="col-lg-3 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label>Customer Name</label>
@@ -75,9 +94,12 @@
                                     </div>
 
                                     <div class="table-responsive flex-grow-1"
-                                             style="max-height: 400px; overflow-y: auto;">
-                                            <table class="table table-hover table-nowrap mb-0">
-                                                <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                         style="max-height: 400px; overflow-y: auto;">
+                                        <table class="table table-hover table-nowrap mb-0">
+                                            <div style="position: sticky; top: 0; z-index: 99;">
+                                                <input class="productSearch" type="text" placeholder="search for product...">
+                                            </div>
+                                            <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>SKU</th>
@@ -86,42 +108,42 @@
                                                     <th>Status</th>
                                                     <th>Action</th>
                                                 </tr>
-                                                </thead>
-                                                <tbody id="product-list-body">
+                                            </thead>
+                                            <tbody id="product-list-body">
                                                 <c:forEach items="${products}" var="p">
                                                     <c:if test="${p.totalQuantity>0}">
-                                                    <tr class="product-item">
-                                                        <td class="product-name">${p.name}</td>
-                                                        <td class="product-sku">${p.sku}</td>
-                                                        <td class="product-category">${p.category.name}</td>
-                                                        <td class="product-quantity">${p.totalQuantity}</td>
-                                                        <td><span
-                                                                class="badges ${p.isActive ? 'bg-lightgreen' : 'bg-lightred'}">
-                                                                ${p.isActive ? 'Active' : 'Inactive'}</span>
-                                                        </td>
-                                                        <td>
-                                                            <a class="btn btn-sm btn-outline-primary add-product-btn"
-                                                               data-id="${p.productId}"
-                                                               data-name="${p.name}"
-                                                               data-sku="${p.sku}"
-                                                               data-category="${p.category.name}"
-                                                               data-stock="${p.totalQuantity}"
-                                                               data-active="${p.isActive}"
-                                                               href="javascript:void(0);">
-                                                                <i class="fas fa-plus"></i> Add
-                                                            </a>
-                                                        </td>
-                                                    </tr>
+                                                        <tr class="product-item">
+                                                            <td class="product-name">${p.name}</td>
+                                                            <td class="product-sku">${p.sku}</td>
+                                                            <td class="product-category">${p.category.name}</td>
+                                                            <td class="product-quantity">${p.totalQuantity}</td>
+                                                            <td><span
+                                                                    class="badges ${p.isActive ? 'bg-lightgreen' : 'bg-lightred'}">
+                                                                    ${p.isActive ? 'Active' : 'Inactive'}</span>
+                                                            </td>
+                                                            <td>
+                                                                <a class="btn btn-sm btn-outline-primary add-product-btn"
+                                                                   data-id="${p.productId}"
+                                                                   data-name="${p.name}"
+                                                                   data-sku="${p.sku}"
+                                                                   data-category="${p.category.name}"
+                                                                   data-stock="${p.totalQuantity}"
+                                                                   data-active="${p.isActive}"
+                                                                   href="javascript:void(0);">
+                                                                    <i class="fas fa-plus"></i> Add
+                                                                </a>
+                                                            </td>
+                                                        </tr>
                                                     </c:if>
                                                 </c:forEach>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                     <div class="table-responsive flex-grow-1"
-                                             style="max-height: 250px; overflow-y: auto;">
-                                            <table class="table table-hover mb-0">
-                                                <thead
-                                                        style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                         style="max-height: 250px; overflow-y: auto;">
+                                        <table class="table table-hover mb-0">
+                                            <thead
+                                                style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>In Stock</th>
@@ -129,11 +151,11 @@
                                                     <th>Price</th>
                                                     <th>Action</th>
                                                 </tr>
-                                                </thead>
-                                                <tbody id="selected-product-list">
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                            </thead>
+                                            <tbody id="selected-product-list">
+                                            </tbody>
+                                        </table>
+                                    </div>
                                     <div class="col-lg-12">
                                         <input class="btn btn-submit me-2" type="submit" value="CREATE">
                                         <a href="${pageContext.request.contextPath}/OrderList" class="btn btn-cancel">CANCEL</a>
@@ -167,22 +189,22 @@
         <script src="assets/js/script.js"></script>
         <script>
 
-        $(document).ready(function () {
-        let selectedItems = [];
+            $(document).ready(function () {
+                let selectedItems = [];
 
-        function renderSelectedItems() {
-            let html = '';
-            if (selectedItems.length === 0) {
-                html = '<tr><td colspan="6" class="text-center text-muted">No products selected</td></tr>';
-            } else {
-                selectedItems.forEach((item, index) => {
-                    html += `
+                function renderSelectedItems() {
+                    let html = '';
+                    if (selectedItems.length === 0) {
+                        html = '<tr><td colspan="6" class="text-center text-muted">No products selected</td></tr>';
+                    } else {
+                        selectedItems.forEach((item, index) => {
+                            html += `
                         <tr>
                             <input type="hidden" value="\${item.id}" name="productId">
                             <td>\${item.name}</td>
                             <td>\${item.stock}</td>
-                            <td><input required type="number" name="quantity_\${item.id}" min="1" max="\${item.stock}" value="\${item.quantity}"></td>
-                            <td><input required type="number" name="price_\${item.id}" min="1" ></td>
+                            <td><input required type="number" name="quantity_\${item.id}" min="1" max="\${item.stock}" value="\${item.quantity}" class="enterNumber"></td>
+                            <td><input required type="number" name="price_\${item.id}" min="1" class="enterNumber"></td>
                             <td>
                                 <a class="delete-set remove-item-btn" href="javascript:void(0);" data-id="\${item.id}">
                                     <img src="${pageContext.request.contextPath}/assets/img/icons/delete.svg" alt="Remove">
@@ -190,82 +212,82 @@
                             </td>
                         </tr>
                     `;
-                });
-            }
-            $('#selected-product-list').html(html);
-        }
-
-        // Initial render
-        renderSelectedItems();
-
-        // Search Product directly in DOM
-        $('#product-search').on('input', function () {
-            const searchTerm = $(this).val().toLowerCase();
-            $('.product-item').each(function () {
-                const name = $(this).find('.product-name').text().toLowerCase();
-                const sku = $(this).find('.product-sku').text().toLowerCase();
-                if (name.includes(searchTerm) || sku.includes(searchTerm)) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
+                        });
+                    }
+                    $('#selected-product-list').html(html);
                 }
+
+                // Initial render
+                renderSelectedItems();
+
+                // Search Product directly in DOM
+                $('#productSearch').on('input', function () {
+                    const searchTerm = $(this).val().toLowerCase();
+                    $('.product-item').each(function () {
+                        const name = $(this).find('.product-name').text().toLowerCase();
+                        const sku = $(this).find('.product-sku').text().toLowerCase();
+                        if (name.includes(searchTerm) || sku.includes(searchTerm)) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+                });
+
+                // Add Product
+                $(document).on('click', '.add-product-btn', function () {
+                    const isActive = $(this).data('active');
+                    if (isActive === false || isActive === 'false') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Cannot Add Product',
+                            text: 'You cannot add an inactive product.',
+                            confirmButtonColor: '#FF9F43'
+                        });
+                        return;
+                    }
+
+                    const id = $(this).data('id');
+                    const name = $(this).data('name');
+                    const sku = $(this).data('sku');
+                    const category = $(this).data('category');
+                    const stock = $(this).data('stock');
+
+                    const existingItem = selectedItems.find(item => item.id === id);
+                    if (existingItem) {
+                        existingItem.quantity++;
+                    } else {
+                        selectedItems.push({
+                            id: id,
+                            name: name,
+                            stock: stock,
+                            quantity: 1
+                        });
+                    }
+                    renderSelectedItems();
+                });
+
+                // Remove Product
+                $(document).on('click', '.remove-item-btn', function () {
+                    const id = $(this).data('id');
+                    selectedItems = selectedItems.filter(item => item.id !== id);
+                    renderSelectedItems();
+                });
+
+                // Send Request Validation
+                $('form').on('submit', function (e) {
+                    if (selectedItems.length === 0) {
+                        e.preventDefault();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Validation Error',
+                            text: 'Please select at least one product!',
+                            confirmButtonColor: '#FF9F43'
+                        });
+                        return false;
+                    }
+                });
             });
-        });
-
-        // Add Product
-        $(document).on('click', '.add-product-btn', function () {
-            const isActive = $(this).data('active');
-            if (isActive === false || isActive === 'false') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Cannot Add Product',
-                    text: 'You cannot add an inactive product.',
-                    confirmButtonColor: '#FF9F43'
-                });
-                return;
-            }
-
-            const id = $(this).data('id');
-            const name = $(this).data('name');
-            const sku = $(this).data('sku');
-            const category = $(this).data('category');
-            const stock = $(this).data('stock');
-
-            const existingItem = selectedItems.find(item => item.id === id);
-            if (existingItem) {
-                existingItem.quantity++;
-            } else {
-                selectedItems.push({
-                    id: id,
-                    name: name,
-                    stock: stock,
-                    quantity: 1
-                });
-            }
-            renderSelectedItems();
-        });
-
-        // Remove Product
-        $(document).on('click', '.remove-item-btn', function () {
-            const id = $(this).data('id');
-            selectedItems = selectedItems.filter(item => item.id !== id);
-            renderSelectedItems();
-        });
-
-        // Send Request Validation
-        $('form').on('submit', function (e) {
-            if (selectedItems.length === 0) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validation Error',
-                    text: 'Please select at least one product!',
-                    confirmButtonColor: '#FF9F43'
-                });
-                return false;
-            }
-        });
-    });
         </script>
     </body>
 </html>

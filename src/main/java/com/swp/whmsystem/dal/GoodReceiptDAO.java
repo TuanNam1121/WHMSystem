@@ -2,6 +2,7 @@ package com.swp.whmsystem.dal;
 
 import com.swp.whmsystem.dto.ImportHistoryDTO;
 import com.swp.whmsystem.dto.ProductItemRowDTO;
+import com.swp.whmsystem.model.DailyTransaction;
 import com.swp.whmsystem.model.GoodReceipt;
 import com.swp.whmsystem.model.GoodReceiptItem;
 import com.swp.whmsystem.model.Product;
@@ -28,9 +29,7 @@ public class GoodReceiptDAO {
                 + "JOIN product_items pi ON gri.id = pi.goodreceiptsitemid "
                 + "WHERE gr.status = 'COMPLETED'";
 
-        try (Connection connection = DBContext.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+        try (Connection connection = DBContext.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql); ResultSet resultSet = preparedStatement.executeQuery()) {
             if (resultSet.next()) {
                 BigDecimal totalPrice = resultSet.getBigDecimal(1);
                 return totalPrice == null ? BigDecimal.ZERO : totalPrice;
@@ -39,6 +38,34 @@ public class GoodReceiptDAO {
             throw new RuntimeException(e);
         }
         return BigDecimal.ZERO;
+    }
+
+    public Long getCompletedImportTotalPriceByDay(String date, String keyword) {
+        String sql = """
+                     SELECT COALESCE(SUM(pi.imported_price), 0)
+                     FROM good_receipts gr 
+                     JOIN good_receipts_items gri ON gr.id = gri.goodreceiptid 
+                     JOIN product_items pi ON gri.id = pi.goodreceiptsitemid 
+                     JOIN products p on p.productid = pi.product_id 
+                     WHERE date(gr.created_at) = ? """;
+        if (keyword != null && !keyword.isEmpty()) {
+            sql += " and ( ";
+            sql += " p.name like '%" + keyword + "%' ";
+            sql += " or p.sku like '%" + keyword + "%' ";
+            sql += " )";
+        }
+        try (Connection connection = DBContext.getConnection();) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, date);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Long totalPrice = resultSet.getLong(1);
+                return totalPrice;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0L;
     }
 
     public List<GoodReceipt> getAllGoodReceipt() {
@@ -253,10 +280,19 @@ public class GoodReceiptDAO {
     }
 
     public static void main(String[] args) {
-        GoodReceiptDAO dao = new GoodReceiptDAO();
-        List<GoodReceipt> list = dao.searchProduct(1, -1, -1, -1, null);
-        for(GoodReceipt i : list){
-            System.out.println(i);
-        }
+        String date = "2026-07-02";
+        DailyTransactionDAO dao = new DailyTransactionDAO();
+        List<DailyTransaction> list = dao.searchDailyTransaction(date, null, null, null, 1, 10);
+        long totalImportQty = dao.getTotalImportQty(date, null);
+        long totalExportQty = dao.getTotalExportQty(date, null);
+        long totalAdjustQty = dao.getTotalAdjustQty(date, null);
+        long totalImportValue = dao.getTotalImportValue(date, null);
+        long totalExportValue = dao.getTotalExportValue(date, null);
+        System.out.println(totalImportQty);
+        System.out.println(totalExportQty);
+        System.out.println(totalAdjustQty);
+        System.out.println(totalExportValue);
+        System.out.println(totalImportValue);
+
     }
 }

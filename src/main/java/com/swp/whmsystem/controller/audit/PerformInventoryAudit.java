@@ -41,12 +41,14 @@ public class PerformInventoryAudit extends HttpServlet {
             int auditId = Integer.parseInt(idParam);
             InventoryAudit audit = inventoryAuditDAO.getInventoryAuditById(auditId);
             if (audit == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Inventory audit not found.");
+                request.getSession().setAttribute("errorMessage", "Inventory audit not found.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
                 return;
             }
 
             if (audit.getStatus() != InventoryAuditStatus.SUBMITTED) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Only submitted audits can be performed.");
+                request.getSession().setAttribute("errorMessage", "Only submitted audits can be performed.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
                 return;
             }
 
@@ -75,12 +77,14 @@ public class PerformInventoryAudit extends HttpServlet {
             int auditId = Integer.parseInt(idParam);
             InventoryAudit audit = inventoryAuditDAO.getInventoryAuditById(auditId);
             if (audit == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Inventory audit not found.");
+                request.getSession().setAttribute("errorMessage", "Inventory audit not found.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
                 return;
             }
 
             if (audit.getStatus() != InventoryAuditStatus.SUBMITTED) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Only submitted audits can be performed.");
+                request.getSession().setAttribute("errorMessage", "Only submitted audits can be performed.");
+                response.sendRedirect(request.getContextPath() + "/InventoryAuditList");
                 return;
             }
 

@@ -8,6 +8,8 @@ import com.swp.whmsystem.dal.*;
 import com.swp.whmsystem.dto.ExportItemDTO;
 import com.swp.whmsystem.dto.OrderItemDetailDTO;
 import com.swp.whmsystem.model.Order;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -21,6 +23,10 @@ public class ExportProduct extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.PROCESS_EXPORT,
+                "You don't have permission to process export products!")) {
+            return;
+        }
 
         HttpSession session = request.getSession();
         String orderIdStr = request.getParameter("orderId");
@@ -163,6 +169,11 @@ public class ExportProduct extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.PROCESS_EXPORT,
+                "You don't have permission to process export products!")) {
+            return;
+        }
+
         HttpSession session = request.getSession();
         ExportItemDAO exportItemDAO = new ExportItemDAO();
         String serial = request.getParameter("serial");

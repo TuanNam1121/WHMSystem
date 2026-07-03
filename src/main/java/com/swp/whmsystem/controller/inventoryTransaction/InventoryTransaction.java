@@ -30,6 +30,9 @@ public class InventoryTransaction extends HttpServlet {
             return;
         }
         String type = request.getParameter("type");
+        String searchId = request.getParameter("searchId");
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
         int page = 1;
         int pageSize = 10;
 
@@ -44,13 +47,16 @@ public class InventoryTransaction extends HttpServlet {
 
         int offset = (page - 1) * pageSize;
 
-        List<InventoryTransactionDTO> transactions = inventoryTransactionDAO.getCompletedTransaction(type, offset,
+        List<InventoryTransactionDTO> transactions = inventoryTransactionDAO.getCompletedTransaction(type, searchId, startDate, endDate, offset,
                 pageSize);
 
-        int totalRecords = inventoryTransactionDAO.totalCompletedTransaction(type);
+        int totalRecords = inventoryTransactionDAO.totalCompletedTransaction(type, searchId, startDate, endDate);
         int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
         request.setAttribute("type", type);
+        request.setAttribute("searchId", searchId);
+        request.setAttribute("startDate", startDate);
+        request.setAttribute("endDate", endDate);
         request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("pageSize", pageSize);

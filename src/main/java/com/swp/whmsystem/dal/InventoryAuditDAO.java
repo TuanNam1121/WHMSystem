@@ -42,27 +42,7 @@ public class InventoryAuditDAO {
         return inventoryAudit;
     }
 
-    public List<InventoryAudit> getAllInventoryAudit() {
-        String sql = """
-                SELECT ia.*, u1.userid AS userid, u1.fullname AS creator_fullname, u2.fullname AS processor_fullname
-                FROM inventory_audit ia
-                JOIN users u1 ON ia.createdby = u1.userid
-                LEFT JOIN users u2 ON ia.processedby = u2.userid
-                ORDER BY ia.createdat DESC
-                """;
-        List<InventoryAudit> list = new ArrayList<>();
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                list.add(mapInventoryAudit(rs));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return list;
-    }
-
-    public List<InventoryAudit> getInventoryAuditsByFilter(String keyword, int offset, int limit) {
+    public List<InventoryAudit> getInventoryAuditsByFilter(String keyword, int offset, int limit, int userid) {
         String sql = "SELECT ia.*, u1.userid AS userid, u1.fullname AS creator_fullname, u2.fullname AS processor_fullname "
                 +
                 "FROM inventory_audit ia " +
@@ -72,6 +52,7 @@ public class InventoryAuditDAO {
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += " AND u1.fullname LIKE ?";
         }
+        sql += " AND ( (ia.status = ? and u1.userid=?) or ia.status != ?)";
         sql += " ORDER BY ia.createdat DESC LIMIT ? OFFSET ?";
 
         List<InventoryAudit> list = new ArrayList<>();
@@ -80,6 +61,9 @@ public class InventoryAuditDAO {
             if (keyword != null && !keyword.trim().isEmpty()) {
                 ps.setString(paramIndex++, "%" + keyword.trim() + "%");
             }
+            ps.setString(paramIndex++, InventoryAuditStatus.DRAFT.name());
+            ps.setInt(paramIndex++, userid);
+            ps.setString(paramIndex++, InventoryAuditStatus.DRAFT.name());
             ps.setInt(paramIndex++, limit);
             ps.setInt(paramIndex, offset);
 
@@ -93,16 +77,21 @@ public class InventoryAuditDAO {
         return list;
     }
 
-    public int countInventoryAuditsByFilter(String keyword) {
-        String sql = "SELECT COUNT(*) FROM inventory_audit JOIN users ON inventory_audit.createdby = users.userid WHERE 1=1";
+    public int countInventoryAuditsByFilter(String keyword, int userid) {
+        String sql = "SELECT COUNT(*) FROM inventory_audit ia JOIN users ON ia.createdby = users.userid WHERE 1=1";
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += " AND users.fullname LIKE ?";
         }
+        sql += " AND ( (ia.status = ? and users.userid=?) or ia.status != ?)";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            int paramIndex = 1;
             if (keyword != null && !keyword.trim().isEmpty()) {
-                ps.setString(1, "%" + keyword.trim() + "%");
+                ps.setString(paramIndex++, "%" + keyword.trim() + "%");
             }
+            ps.setString(paramIndex++, InventoryAuditStatus.DRAFT.name());
+            ps.setInt(paramIndex++, userid);
+            ps.setString(paramIndex++, InventoryAuditStatus.DRAFT.name());
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {

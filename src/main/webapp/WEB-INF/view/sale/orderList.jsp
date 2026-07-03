@@ -91,14 +91,8 @@
                                                         </option>
                                                         <option ${searchStatus=='NEW'?'selected':''} value="NEW">New
                                                         </option>
-                                                        <option ${searchStatus=='DOING'?'selected':''} value="DOING">On
-                                                            going
-                                                        </option>
                                                         <option ${searchStatus=='COMPLETED'?'selected':''}
                                                                 value="COMPLETED">Completed
-                                                        </option>
-                                                        <option ${searchStatus=='CANCELLED'?'selected':''}
-                                                                value="CANCELLED">Cancelled
                                                         </option>
                                                     </select>
                                                 </div>
@@ -141,27 +135,20 @@
                                         <td>
                                             <fmt:formatNumber
                                                     value="${o.totalPrice}"
-                                                    pattern="#,##0.00"/>
+                                                    pattern="#,###"/>
                                         </td>
                                         <td style="max-width: 200px; overflow-x: auto">${o.note}</td>
                                         <td>${o.orderDate}</td>
                                         <td>${o.creater}</td>
                                         <td><c:choose>
                                             <c:when
-                                                    test="${o.status == 'NEW' || o.status == 'New'}">
+                                                    test="${o.status == 'NEW'}">
                                                 <span class="badges bg-lightyellow">${o.status}</span>
                                             </c:when>
                                             <c:when
-                                                    test="${o.status == 'DOING' || o.status == 'Doing'}">
-                                                <span class="badges bg-lightpurple">${o.status}</span>
-                                            </c:when>
-                                            <c:when
-                                                    test="${o.status == 'COMPLETED' || o.status== 'Completed'}">
+                                                    test="${o.status == 'COMPLETED'}">
                                                 <span class="badges bg-lightgreen">${o.status}</span>
                                             </c:when>
-                                            <c:otherwise>
-                                                <span class="badges bg-lightgrey">${o.status}</span>
-                                            </c:otherwise>
                                         </c:choose></td>
                                         <td>
                                             <a class="me-3"

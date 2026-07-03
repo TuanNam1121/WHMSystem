@@ -88,10 +88,7 @@
                                                         <div class="col-lg col-sm-6 col-12">
                                                             <div class="form-group">
                                                                 <input type="date" class="form-control" name="startDate" value="${param.startDate}" title="Start Date">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg col-sm-6 col-12">
-                                                            <div class="form-group">
+                                                                <span>to</span>
                                                                 <input type="date" class="form-control" name="endDate" value="${param.endDate}" title="End Date">
                                                             </div>
                                                         </div>
@@ -118,35 +115,40 @@
                                                     <th>Total Items</th>
                                                     <th>Who Processed</th>
                                                     <th>Time Completed</th>
+                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
 
                                             <tbody>
                                                 <c:forEach var="item" items="${transactions}">
                                                     <tr>
-                                                        <td>
-                                                            <c:choose>
-                                                                <c:when test="${item.type == 'AUDIT'}">
-                                                                    <a href="InventoryAuditDetail?id=${item.id}"
-                                                                        class="font-weight-bold">${item.id}</a>
-                                                                </c:when>
-
-                                                                <c:when test="${item.type == 'IMPORT'}">
-                                                                    <a href="ImportHistoryDetail?receiptId=${item.id}"
-                                                                        class="font-weight-bold">${item.id}</a>
-                                                                </c:when>
-
-                                                                <c:otherwise>
-                                                                    <a href="exportDetail?orderId=${item.id}"
-                                                                        class="font-weight-bold">${item.id}</a>
-                                                                </c:otherwise>
-
-                                                            </c:choose>
-                                                        </td>
+                                                        <td>${item.id}</td>
                                                         <td>${item.type}</td>
                                                         <td>${item.totalItems}</td>
                                                         <td>${not empty item.processor ? item.processor : 'N/A'}</td>
                                                         <td>${item.date}</td>
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${item.type == 'AUDIT'}">
+                                                                    <a class="mr-3" href="InventoryAuditDetail?id=${item.id}">
+                                                                        <img src="assets/img/icons/eye.svg" alt="img">
+                                                                    </a>
+                                                                </c:when>
+
+                                                                <c:when test="${item.type == 'IMPORT'}">
+                                                                    <a class="mr-3" href="ImportHistoryDetail?receiptId=${item.id}">
+                                                                        <img src="assets/img/icons/eye.svg" alt="img">
+                                                                    </a>
+                                                                </c:when>
+
+                                                                <c:otherwise>
+                                                                    <a class="mr-3" href="exportDetail?orderId=${item.id}">
+                                                                        <img src="assets/img/icons/eye.svg" alt="img">
+                                                                    </a>
+                                                                </c:otherwise>
+
+                                                            </c:choose>
+                                                        </td>
                                                     </tr>
                                                 </c:forEach>
                                             </tbody>

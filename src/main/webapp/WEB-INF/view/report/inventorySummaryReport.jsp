@@ -186,6 +186,90 @@
                         margin-bottom: 0;
                         font-size: 24px;
                     }
+
+                    /* ===== Chart Section ===== */
+                    .chart-card {
+                        border: 1px solid #e8ebed;
+                        border-radius: 10px;
+                        padding: 20px;
+                        background: #fff;
+                        height: 100%;
+                    }
+
+                    .chart-card-title {
+                        font-weight: 700;
+                        font-size: 14px;
+                        color: #333;
+                        margin-bottom: 16px;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    }
+
+                    .chart-card-title i {
+                        color: #ff9f43;
+                    }
+
+                    /* ===== Top-5 Ranking Table ===== */
+                    .ranking-table thead th {
+                        background-color: #ff9f43;
+                        color: #fff;
+                        font-weight: 600;
+                        font-size: 12px;
+                        text-align: center;
+                        vertical-align: middle;
+                        white-space: nowrap;
+                        border: 1px solid #e8e8e8;
+                        padding: 8px 10px;
+                    }
+
+                    .ranking-table tbody td {
+                        font-size: 12px;
+                        text-align: center;
+                        vertical-align: middle;
+                        border: 1px solid #eee;
+                        padding: 7px 10px;
+                    }
+
+                    .ranking-table tbody td.td-name {
+                        text-align: left;
+                    }
+
+                    .ranking-table tbody tr:hover {
+                        background-color: #fff5ec;
+                    }
+
+                    .rank-badge {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 24px;
+                        height: 24px;
+                        border-radius: 50%;
+                        font-weight: 700;
+                        font-size: 12px;
+                        color: #fff;
+                    }
+
+                    .rank-1 { background: #f39c12; }
+                    .rank-2 { background: #95a5a6; }
+                    .rank-3 { background: #cd7f32; }
+                    .rank-4 { background: #7367f0; }
+                    .rank-5 { background: #00cfe8; }
+
+                    /* ===== No data placeholder ===== */
+                    .no-data-placeholder {
+                        text-align: center;
+                        padding: 40px 20px;
+                        color: #aaa;
+                    }
+
+                    .no-data-placeholder i {
+                        font-size: 40px;
+                        margin-bottom: 10px;
+                        display: block;
+                        color: #ddd;
+                    }
                 </style>
             </head>
 
@@ -265,6 +349,136 @@
                                             <h4>
                                                 <fmt:formatNumber value="${totalClosingStock}" pattern="#,##0" />
                                             </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== CHARTS + RANKING ===== -->
+                            <div class="row mb-3">
+                                <!-- Pie Chart -->
+                                <div class="col-lg-5 col-sm-12 mb-3">
+                                    <div class="chart-card">
+                                        <div class="chart-card-title">
+                                            <i class="fas fa-chart-pie"></i>
+                                            Distribution of Transaction Quantities
+                                        </div>
+                                        <div style="position: relative; height: 260px; display:flex; align-items:center; justify-content:center;">
+                                            <canvas id="transactionPieChart"></canvas>
+                                        </div>
+                                        <div class="d-flex justify-content-center gap-3 mt-3" style="font-size:12px;">
+                                            <span><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#28c76f;margin-right:4px;"></span>Import</span>
+                                            <span><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#ea5455;margin-right:4px;"></span>Export</span>
+                                            <span><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#ff9f43;margin-right:4px;"></span>Adjustment</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Top 5 Ranking -->
+                                <div class="col-lg-7 col-sm-12 mb-3">
+                                    <div class="chart-card">
+                                        <div class="chart-card-title">
+                                            <i class="fas fa-trophy"></i>
+                                            Top 5 Most Imported / Exported Products
+                                        </div>
+
+                                        <ul class="nav nav-tabs mb-3" id="rankingTab" role="tablist" style="font-size:13px;">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="tab-import-btn" data-bs-toggle="tab"
+                                                    data-bs-target="#tab-import" type="button" role="tab"
+                                                    aria-selected="true" style="color:#28a745; font-weight:600;">
+                                                    <i class="fas fa-arrow-down me-1"></i> Top Imported
+                                                </button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="tab-export-btn" data-bs-toggle="tab"
+                                                    data-bs-target="#tab-export" type="button" role="tab"
+                                                    aria-selected="false" style="color:#ea5455; font-weight:600;">
+                                                    <i class="fas fa-arrow-up me-1"></i> Top Exported
+                                                </button>
+                                            </li>
+                                        </ul>
+
+                                        <div class="tab-content" id="rankingTabContent">
+                                            <!-- Top Import -->
+                                            <div class="tab-pane fade show active" id="tab-import" role="tabpanel">
+                                                <div class="table-responsive">
+                                                    <table class="table ranking-table mb-0">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="width:40px;">Rank</th>
+                                                                <th>SKU</th>
+                                                                <th>Product Name</th>
+                                                                <th>Unit</th>
+                                                                <th>Import Qty</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <c:choose>
+                                                                <c:when test="${not empty top5Import}">
+                                                                    <c:forEach items="${top5Import}" var="item" varStatus="v">
+                                                                        <tr>
+                                                                            <td><span class="rank-badge rank-${v.index + 1}">${v.index + 1}</span></td>
+                                                                            <td>${item.sku}</td>
+                                                                            <td class="td-name">${item.productName}</td>
+                                                                            <td>${item.unit}</td>
+                                                                            <td><strong style="color:#28a745;"><fmt:formatNumber value="${item.importStock}" pattern="#,##0" /></strong></td>
+                                                                        </tr>
+                                                                    </c:forEach>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <tr>
+                                                                        <td colspan="5" class="no-data-placeholder">
+                                                                            <i class="fas fa-inbox"></i>
+                                                                            No import data in this period
+                                                                        </td>
+                                                                    </tr>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            <!-- Top Export -->
+                                            <div class="tab-pane fade" id="tab-export" role="tabpanel">
+                                                <div class="table-responsive">
+                                                    <table class="table ranking-table mb-0">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="width:40px;">Rank</th>
+                                                                <th>SKU</th>
+                                                                <th>Product Name</th>
+                                                                <th>Unit</th>
+                                                                <th>Export Qty</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <c:choose>
+                                                                <c:when test="${not empty top5Export}">
+                                                                    <c:forEach items="${top5Export}" var="item" varStatus="v">
+                                                                        <tr>
+                                                                            <td><span class="rank-badge rank-${v.index + 1}">${v.index + 1}</span></td>
+                                                                            <td>${item.sku}</td>
+                                                                            <td class="td-name">${item.productName}</td>
+                                                                            <td>${item.unit}</td>
+                                                                            <td><strong style="color:#ea5455;"><fmt:formatNumber value="${item.exportStock}" pattern="#,##0" /></strong></td>
+                                                                        </tr>
+                                                                    </c:forEach>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <tr>
+                                                                        <td colspan="5" class="no-data-placeholder">
+                                                                            <i class="fas fa-inbox"></i>
+                                                                            No export data in this period
+                                                                        </td>
+                                                                    </tr>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -458,6 +672,96 @@
                             }
                         }
                     });
+                </script>
+                <script>
+                    (function () {
+                        var s = document.createElement('script');
+                        s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
+                        s.onerror = function () {
+                            window.__chartJsFailed = true;
+                            var canvas = document.getElementById('transactionPieChart');
+                            if (canvas) {
+                                canvas.parentNode.innerHTML =
+                                    '<div style="text-align:center;color:#aaa;padding:40px 0;">' +
+                                    '<i class="fas fa-exclamation-circle" style="font-size:36px;color:#f39c12;display:block;margin-bottom:8px;"></i>' +
+                                    'Cannot load chart (check network connection)' +
+                                    '</div>';
+                            }
+                        };
+                        document.head.appendChild(s);
+                    })();
+                </script>
+                <script>
+                    function initPieChart() {
+                        if (window.__chartJsFailed) return;
+
+                        var importQty = parseInt('${totalImportQty != null ? totalImportQty : 0}') || 0;
+                        var exportQty = parseInt('${totalExportQty != null ? totalExportQty : 0}') || 0;
+                        var adjustQty = 0;
+
+                        var total = importQty + exportQty + adjustQty;
+                        var canvas = document.getElementById('transactionPieChart');
+                        if (!canvas) return;
+
+                        if (total === 0) {
+                            canvas.parentNode.innerHTML =
+                                '<div style="text-align:center;color:#aaa;padding:40px 0;">' +
+                                '<i class="fas fa-chart-pie" style="font-size:40px;color:#eee;display:block;margin-bottom:10px;"></i>' +
+                                'No data to display chart' +
+                                '</div>';
+                            return;
+                        }
+
+                        var ctx = canvas.getContext('2d');
+                        new Chart(ctx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: ['Import', 'Export', 'Adjustment'],
+                                datasets: [{
+                                    data: [importQty, exportQty, adjustQty],
+                                    backgroundColor: ['#28c76f', '#ea5455', '#ff9f43'],
+                                    borderColor: ['#fff', '#fff', '#fff'],
+                                    borderWidth: 3,
+                                    hoverOffset: 8
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                cutout: '65%',
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function (context) {
+                                                var label = context.label || '';
+                                                var value = context.parsed;
+                                                var pct = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                                return ' ' + label + ': ' + value.toLocaleString() + ' (' + pct + '%)';
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    (function waitForChartJs() {
+                        var scripts = document.head.querySelectorAll('script[src*="chart.js"]');
+                        if (scripts.length === 0) {
+                            setTimeout(waitForChartJs, 50);
+                            return;
+                        }
+                        var tag = scripts[scripts.length - 1];
+                        if (tag.readyState === 'loaded' || tag.readyState === 'complete') {
+                            initPieChart();
+                        } else {
+                            tag.onload = initPieChart;
+                            tag.onreadystatechange = function () {
+                                if (this.readyState === 'loaded' || this.readyState === 'complete') initPieChart();
+                            };
+                        }
+                    })();
                 </script>
             </body>
 

@@ -22,14 +22,13 @@ public class InventoryTransactionDAO {
         }
 
         String sql = """
-                SELECT id, type, date, processor, total_items
+                SELECT id, type, date, processor
                 FROM (
                     SELECT 
                         ia.id AS id, 
                         'AUDIT' AS type, 
                         ia.updatedat AS date, 
-                        u.fullname AS processor,
-                        COALESCE((SELECT SUM(ABS(iai.physicalquantity - iai.systemquantity)) FROM inventory_audit_items iai WHERE iai.auditid = ia.id), 0) AS total_items
+                        u.fullname AS processor
                     FROM inventory_audit ia
                     LEFT JOIN users u ON ia.processedby = u.userid
                     WHERE ia.status = 'COMPLETED' """ + auditCondition + """
@@ -40,8 +39,7 @@ public class InventoryTransactionDAO {
                         gr.id AS id, 
                         'IMPORT' AS type, 
                         gr.created_at AS date, 
-                        u.fullname AS processor,
-                        COALESCE((SELECT SUM(gri.actual_quantity) FROM good_receipts_items gri WHERE gri.goodreceiptid = gr.id), 0) AS total_items
+                        u.fullname AS processor
                     FROM good_receipts gr
                     LEFT JOIN users u ON gr.processedby = u.userid
                     WHERE gr.status = 'COMPLETED' """ + importCondition + """
@@ -52,8 +50,7 @@ public class InventoryTransactionDAO {
                         er.order_id AS id, 
                         'EXPORT' AS type, 
                         er.exported_at AS date, 
-                        u.fullname AS processor,
-                        COALESCE((SELECT SUM(erd.quantity) FROM export_receipt_details erd WHERE erd.export_receipt_id = er.id), 0) AS total_items
+                        u.fullname AS processor
                     FROM export_receipts er
                     LEFT JOIN users u ON er.exported_by = u.userid
                     WHERE er.status = 'COMPLETED' """ + exportCondition + """
@@ -95,8 +92,7 @@ public class InventoryTransactionDAO {
                     rs.getInt("id"), 
                     rs.getString("type"), 
                     rs.getTimestamp("date"),
-                    rs.getString("processor"),
-                    rs.getInt("total_items")
+                    rs.getString("processor")
                 ));
             }
             return list;

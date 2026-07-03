@@ -30,8 +30,9 @@ public class InventoryAuditList extends HttpServlet {
             return;
         }
 
-        String keyword = request.getParameter("keyword");
-
+        String searchId = request.getParameter("searchId");
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
         int page = 1;
         int pageSize = 10;
 
@@ -47,13 +48,15 @@ public class InventoryAuditList extends HttpServlet {
         int offset = (page - 1) * pageSize;
         User user = (User) request.getSession(false).getAttribute("user");
         int userid = user.getId();
-        List<InventoryAudit> inventoryAudits = inventoryAuditDAO.getInventoryAuditsByFilter(keyword, offset, pageSize,
+        List<InventoryAudit> inventoryAudits = inventoryAuditDAO.getInventoryAuditsByFilter(searchId, startDate, endDate, offset, pageSize,
                 userid);
-        int totalRecords = inventoryAuditDAO.countInventoryAuditsByFilter(keyword, userid);
+        int totalRecords = inventoryAuditDAO.countInventoryAuditsByFilter(searchId, startDate, endDate, userid);
         int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
         request.setAttribute("inventoryAudits", inventoryAudits);
-        request.setAttribute("keyword", keyword);
+        request.setAttribute("searchId", searchId);
+        request.setAttribute("startDate", startDate);
+        request.setAttribute("endDate", endDate);
         request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("pageSize", pageSize);

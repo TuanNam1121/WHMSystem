@@ -82,14 +82,18 @@
                                                         </div>
                                                         <div class="col-lg col-sm-6 col-12">
                                                             <div class="form-group">
-                                                                <input type="text" class="form-control" name="searchId" value="${param.searchId}" placeholder="Search Serial" title="Search Serial">
+                                                                <input type="text" class="form-control" name="searchId"
+                                                                    value="${param.searchId}"
+                                                                    placeholder="Search Serial" title="Search Serial">
                                                             </div>
                                                         </div>
                                                         <div class="col-lg col-sm-6 col-12">
-                                                            <div class="form-group">
-                                                                <input type="date" class="form-control" name="startDate" value="${param.startDate}" title="Start Date">
-                                                                <span>to</span>
-                                                                <input type="date" class="form-control" name="endDate" value="${param.endDate}" title="End Date">
+                                                            <div class="form-group d-flex align-items-center">
+                                                                <input type="date" class="form-control" name="startDate"
+                                                                    value="${param.startDate}" title="Start Date">
+                                                                <span class="px-2">to</span>
+                                                                <input type="date" class="form-control" name="endDate"
+                                                                    value="${param.endDate}" title="End Date">
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-1 col-sm-6 col-12">
@@ -112,7 +116,6 @@
                                                 <tr>
                                                     <th>ID</th>
                                                     <th>Type</th>
-                                                    <th>Total Items</th>
                                                     <th>Who Processed</th>
                                                     <th>Time Completed</th>
                                                     <th>Action</th>
@@ -124,25 +127,27 @@
                                                     <tr>
                                                         <td>${item.id}</td>
                                                         <td>${item.type}</td>
-                                                        <td>${item.totalItems}</td>
                                                         <td>${not empty item.processor ? item.processor : 'N/A'}</td>
                                                         <td>${item.date}</td>
                                                         <td>
                                                             <c:choose>
                                                                 <c:when test="${item.type == 'AUDIT'}">
-                                                                    <a class="mr-3" href="InventoryAuditDetail?id=${item.id}">
+                                                                    <a class="mr-3"
+                                                                        href="InventoryAuditDetail?id=${item.id}">
                                                                         <img src="assets/img/icons/eye.svg" alt="img">
                                                                     </a>
                                                                 </c:when>
 
                                                                 <c:when test="${item.type == 'IMPORT'}">
-                                                                    <a class="mr-3" href="ImportHistoryDetail?receiptId=${item.id}">
+                                                                    <a class="mr-3"
+                                                                        href="ImportHistoryDetail?receiptId=${item.id}">
                                                                         <img src="assets/img/icons/eye.svg" alt="img">
                                                                     </a>
                                                                 </c:when>
 
                                                                 <c:otherwise>
-                                                                    <a class="mr-3" href="exportDetail?orderId=${item.id}">
+                                                                    <a class="mr-3"
+                                                                        href="exportDetail?orderId=${item.id}">
                                                                         <img src="assets/img/icons/eye.svg" alt="img">
                                                                     </a>
                                                                 </c:otherwise>

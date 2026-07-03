@@ -198,6 +198,10 @@ public class ExportProduct extends HttpServlet {
             return;
         }
 
+        OrderDAO orderDAO = new OrderDAO();
+        Map<String, Integer> requiredQuantities = getRequiredQuantitiesBySku(
+                orderDAO.getOrderItemsByOrderId(orderId));
+
         ExportItemDTO addedItem = null;
         String errorMessage = null;
         double grandTotal = 0;
@@ -213,42 +217,57 @@ public class ExportProduct extends HttpServlet {
 
             if (serial != null && !serial.trim().isEmpty()) {
                 serial = serial.trim();
-                ExportItemDTO productFromDB =
-                        exportItemDAO.getItemBySerial(serial, orderId);
+                int requiredTotalQuantity = getTotalRequiredQuantity(requiredQuantities);
+                int currentTotalScannedQty = getTotalScannedQuantity(scannedList);
 
-                if (productFromDB == null) {
-                    errorMessage = "Serial number " + serial
-                            + " is not available or is not included in this order.";
+                if (requiredTotalQuantity > 0 && currentTotalScannedQty >= requiredTotalQuantity) {
+                    errorMessage = "This order already has enough items to export.";
                 } else {
-                    boolean serialAlreadyScanned = false;
-                    int currentScannedQty = 0;
-                    for (ExportItemDTO item : scannedList) {
-                        if (item.getSku().equalsIgnoreCase(productFromDB.getSku())) {
-                            currentScannedQty += item.getQty();
-                        }
-                        if (serial.equalsIgnoreCase(item.getSerial())) {
-                            serialAlreadyScanned = true;
-                        }
-                    }
+                    ExportItemDTO productFromDB =
+                            exportItemDAO.getItemBySerial(serial, orderId);
 
-                    if (serialAlreadyScanned) {
-                        errorMessage = "Serial number " + serial + " was scanned already.";
-                    } else if (productFromDB.getStock() <= 0) {
-                        errorMessage = productFromDB.getName()
-                                + " is currently out of stock.";
-                    } else if (currentScannedQty >= productFromDB.getStock()) {
-                        errorMessage = "Cannot add more " + productFromDB.getName()
-                                + ". Available stock: "
-                                + productFromDB.getStock() + ".";
+                    if (productFromDB == null) {
+                        errorMessage = "Serial number " + serial
+                                + " is not available or is not included in this order.";
                     } else {
-                        addedItem = new ExportItemDTO();
-                        addedItem.setSku(productFromDB.getSku());
-                        addedItem.setName(productFromDB.getName());
-                        addedItem.setImgUrl(productFromDB.getImgUrl());
-                        addedItem.setStock(productFromDB.getStock());
-                        addedItem.setPrice(productFromDB.getPrice());
-                        addedItem.setSerial(productFromDB.getSerial());
-                        scannedList.add(0, addedItem);
+                        String normalizedSku = productFromDB.getSku().toUpperCase();
+                        int requiredQuantity = requiredQuantities.getOrDefault(normalizedSku, 0);
+                        boolean serialAlreadyScanned = false;
+                        int currentScannedQty = 0;
+                        for (ExportItemDTO item : scannedList) {
+                            if (item.getSku().equalsIgnoreCase(productFromDB.getSku())) {
+                                currentScannedQty += item.getQty();
+                            }
+                            if (serial.equalsIgnoreCase(item.getSerial())) {
+                                serialAlreadyScanned = true;
+                            }
+                        }
+
+                        if (serialAlreadyScanned) {
+                            errorMessage = "Serial number " + serial + " was scanned already.";
+                        } else if (requiredQuantity <= 0) {
+                            errorMessage = productFromDB.getName()
+                                    + " is not included in this order.";
+                        } else if (currentScannedQty >= requiredQuantity) {
+                            errorMessage = "Cannot scan more " + productFromDB.getName()
+                                    + ". Required quantity: " + requiredQuantity + ".";
+                        } else if (productFromDB.getStock() <= 0) {
+                            errorMessage = productFromDB.getName()
+                                    + " is currently out of stock.";
+                        } else if (currentScannedQty >= productFromDB.getStock()) {
+                            errorMessage = "Cannot add more " + productFromDB.getName()
+                                    + ". Available stock: "
+                                    + productFromDB.getStock() + ".";
+                        } else {
+                            addedItem = new ExportItemDTO();
+                            addedItem.setSku(productFromDB.getSku());
+                            addedItem.setName(productFromDB.getName());
+                            addedItem.setImgUrl(productFromDB.getImgUrl());
+                            addedItem.setStock(productFromDB.getStock());
+                            addedItem.setPrice(productFromDB.getPrice());
+                            addedItem.setSerial(productFromDB.getSerial());
+                            scannedList.add(0, addedItem);
+                        }
                     }
                 }
             }
@@ -262,6 +281,41 @@ public class ExportProduct extends HttpServlet {
 
         sendAjaxResponse(response, errorMessage == null,
                 errorMessage, addedItem, grandTotal);
+    }
+
+    private Map<String, Integer> getRequiredQuantitiesBySku(List<OrderItemDetailDTO> orderItems) {
+        Map<String, Integer> requiredQuantities = new HashMap<>();
+        if (orderItems == null) {
+            return requiredQuantities;
+        }
+
+        for (OrderItemDetailDTO orderItem : orderItems) {
+            if (orderItem.getSku() == null) {
+                continue;
+            }
+
+            String sku = orderItem.getSku().toUpperCase();
+            requiredQuantities.put(sku,
+                    requiredQuantities.getOrDefault(sku, 0) + orderItem.getQuantity());
+        }
+
+        return requiredQuantities;
+    }
+
+    private int getTotalRequiredQuantity(Map<String, Integer> requiredQuantities) {
+        int totalQuantity = 0;
+        for (Integer quantity : requiredQuantities.values()) {
+            totalQuantity += quantity;
+        }
+        return totalQuantity;
+    }
+
+    private int getTotalScannedQuantity(List<ExportItemDTO> scannedList) {
+        int totalQuantity = 0;
+        for (ExportItemDTO item : scannedList) {
+            totalQuantity += item.getQty();
+        }
+        return totalQuantity;
     }
 
     private void sendAjaxResponse(HttpServletResponse response, boolean success,

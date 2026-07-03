@@ -31,17 +31,35 @@ public class ViewStockMovementDetail extends HttpServlet {
                 String refType = sm.getReference_type();
                 int refId = sm.getReference_id();
 
+                String from = request.getParameter("from");
+                String productId = request.getParameter("productId");
+                String fromDate = request.getParameter("fromDate");
+                String toDate = request.getParameter("toDate");
+                String backParams = "";
+                if (from != null && !from.isEmpty()) {
+                    backParams += "&from=" + from;
+                }
+                if (productId != null && !productId.isEmpty()) {
+                    backParams += "&productId=" + productId;
+                }
+                if (fromDate != null && !fromDate.isEmpty()) {
+                    backParams += "&fromDate=" + fromDate;
+                }
+                if (toDate != null && !toDate.isEmpty()) {
+                    backParams += "&toDate=" + toDate;
+                }
+
                 if ("IMPORT".equalsIgnoreCase(refType)) {
-                    response.sendRedirect(request.getContextPath() + "/ImportHistoryDetail?receiptId=" + refId);
+                    response.sendRedirect(request.getContextPath() + "/ImportHistoryDetail?receiptId=" + refId + backParams);
                     return;
                 } else if ("EXPORT".equalsIgnoreCase(refType)) {
                     int orderId = dao.getOrderIdByExportReceiptId(refId);
                     if (orderId > 0) {
-                        response.sendRedirect(request.getContextPath() + "/exportDetail?orderId=" + orderId);
+                        response.sendRedirect(request.getContextPath() + "/exportDetail?orderId=" + orderId + backParams);
                         return;
                     }
                 } else if (refId > 0) {
-                    response.sendRedirect(request.getContextPath() + "/InventoryAuditDetail?id=" + refId);
+                    response.sendRedirect(request.getContextPath() + "/InventoryAuditDetail?id=" + refId + backParams);
                     return;
                 }
             }

@@ -106,9 +106,18 @@
                             <h4 class="mb-0" style="font-size: 22px; font-weight: 700; color: #333;">Import History Detail</h4>
                         </div>
                         <div class="page-btn">
-                            <a href="ImportHistory" class="btn btn-cancel" id="btn-back-to-list">
-                                <i class="fas fa-arrow-left me-2"></i>Back to List
-                            </a>
+                            <c:choose>
+                                <c:when test="${param.from == 'inventorySummaryDetail'}">
+                                    <a href="${pageContext.request.contextPath}/inventorySummaryDetail?productId=${param.productId}&fromDate=${param.fromDate}&toDate=${param.toDate}" class="btn btn-cancel" id="btn-back-to-list">
+                                        <i class="fas fa-arrow-left me-2"></i>Back to Transaction History
+                                    </a>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="ImportHistory" class="btn btn-cancel" id="btn-back-to-list">
+                                        <i class="fas fa-arrow-left me-2"></i>Back to List
+                                    </a>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </div>
 

@@ -1,4 +1,5 @@
-DROP DATABASE IF EXISTS `wms`;
+DROP
+DATABASE IF EXISTS `wms`;
 
 CREATE
 DATABASE `wms` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
@@ -299,8 +300,8 @@ CREATE TABLE `good_receipts`
     `purchaserequestid` int NOT NULL,
     `processedby`       int NOT NULL,
     `status`            enum('NEW','INCOMPLETED','COMPLETED') DEFAULT 'NEW',
-    `created_at`        datetime    DEFAULT CURRENT_TIMESTAMP,
-    `updated_at`        datetime    DEFAULT CURRENT_TIMESTAMP,
+    `created_at`        datetime DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`        datetime DEFAULT CURRENT_TIMESTAMP,
     `note`              text,
     PRIMARY KEY (`id`),
     KEY                 `purchaserequestid` (`purchaserequestid`),
@@ -365,7 +366,7 @@ CREATE TABLE `inventory_audit`
 (
     `id`          int NOT NULL AUTO_INCREMENT,
     `createdby`   int NOT NULL,
-    `processedby` int DEFAULT NULL,
+    `processedby` int      DEFAULT NULL,
     `status`      enum('DRAFT','CANCELLED','SUBMITTED','COMPLETED','PENDING','REJECTED') DEFAULT 'DRAFT',
     `createdat`   datetime DEFAULT CURRENT_TIMESTAMP,
     `updatedat`   datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -663,8 +664,7 @@ TABLES `permissions` WRITE;
 -- AUDIT PERMISSION
 -- =========================
 INSERT INTO `permissions`
-VALUES 
-       (1, 'VIEW_INVENTORY_AUDIT', 'Can view inventory audits'),
+VALUES (1, 'VIEW_INVENTORY_AUDIT', 'Can view inventory audits'),
        (2, 'CREATE_INVENTORY_AUDIT', 'Can create inventory audits'),
        (3, 'PERFORM_INVENTORY_AUDIT', 'Can perform inventory audits'),
        (4, 'APPROVE_INVENTORY_AUDIT', 'Can approve or decline inventory audits'),
@@ -672,95 +672,95 @@ VALUES
 -- =========================
 -- PRODUCT PERMISSION
 -- =========================
-INSERT INTO permissions (permissionid, permissionname, description) VALUES
-(6, 'VIEW_PRODUCT', 'View product list'),
-(7, 'CREATE_PRODUCT', 'Create new product'),
-(8, 'UPDATE_PRODUCT', 'Update product');
+INSERT INTO permissions (permissionid, permissionname, description)
+VALUES (6, 'VIEW_PRODUCT', 'View product list'),
+       (7, 'CREATE_PRODUCT', 'Create new product'),
+       (8, 'UPDATE_PRODUCT', 'Update product');
 
 -- =========================
 -- CATEGORY PERMISSION
 -- =========================
-INSERT INTO permissions (permissionid, permissionname, description) VALUES
-(9, 'VIEW_CATEGORY', 'View category list'),
-(10, 'CREATE_CATEGORY', 'Create new category'),
-(11, 'UPDATE_CATEGORY', 'Update category');
+INSERT INTO permissions (permissionid, permissionname, description)
+VALUES (9, 'VIEW_CATEGORY', 'View category list'),
+       (10, 'CREATE_CATEGORY', 'Create new category'),
+       (11, 'UPDATE_CATEGORY', 'Update category');
 
 -- =========================
 -- BRAND PERMISSION
 -- =========================
-INSERT INTO permissions (permissionid, permissionname, description) VALUES
-(12, 'VIEW_BRAND', 'View brand list'),
-(13, 'CREATE_BRAND', 'Create new brand'),
-(14, 'UPDATE_BRAND', 'Update brand');
+INSERT INTO permissions (permissionid, permissionname, description)
+VALUES (12, 'VIEW_BRAND', 'View brand list'),
+       (13, 'CREATE_BRAND', 'Create new brand'),
+       (14, 'UPDATE_BRAND', 'Update brand');
 
 -- =========================
 -- SPECIFICATION PERMISSION
 -- =========================
-INSERT INTO permissions (permissionid, permissionname, description) VALUES
-(15, 'VIEW_SPECIFICATION', 'View specification list'),
-(16, 'CREATE_SPECIFICATION', 'Create specification'),
-(17, 'UPDATE_SPECIFICATION', 'Update specification');
+INSERT INTO permissions (permissionid, permissionname, description)
+VALUES (15, 'VIEW_SPECIFICATION', 'View specification list'),
+       (16, 'CREATE_SPECIFICATION', 'Create specification'),
+       (17, 'UPDATE_SPECIFICATION', 'Update specification');
 
 -- =========================
 -- SALE ORDER PERMISSION
 -- =========================
-INSERT INTO permissions (permissionid, permissionname, description) VALUES
-(18, 'VIEW_SALE_ORDER', 'View sale order list'),
-(19, 'CREATE_SALE_ORDER', 'Create sale order'),
-(20, 'UPDATE_SALE_ORDER', 'Update sale order');
+INSERT INTO permissions (permissionid, permissionname, description)
+VALUES (18, 'VIEW_SALE_ORDER', 'View sale order list'),
+       (19, 'CREATE_SALE_ORDER', 'Create sale order'),
+       (20, 'UPDATE_SALE_ORDER', 'Update sale order');
 
 -- =========================
 -- PURCHASE ORDER PERMISSION
 -- =========================
-INSERT INTO permissions (permissionid, permissionname, description) VALUES
-(21, 'VIEW_PURCHASE_ORDER', 'View purchase order list'),
-(22, 'CREATE_PURCHASE_ORDER', 'Create purchase order'),
-(23, 'UPDATE_PURCHASE_ORDER', 'Update purchase order'),
-(24, 'APPROVE_REJECT_PURCHASE_REQUEST', 'Approve or Reject purchase request');
+INSERT INTO permissions (permissionid, permissionname, description)
+VALUES (21, 'VIEW_PURCHASE_ORDER', 'View purchase order list'),
+       (22, 'CREATE_PURCHASE_ORDER', 'Create purchase order'),
+       (23, 'UPDATE_PURCHASE_ORDER', 'Update purchase order'),
+       (24, 'APPROVE_REJECT_PURCHASE_REQUEST', 'Approve or Reject purchase request');
 
 -- =========================
 -- IMPORT PERMISSION
 -- =========================
-INSERT INTO permissions (permissionid, permissionname, description) VALUES
-(25, 'VIEW_IMPORT_REQUEST', 'View import request list'),
-(26, 'VIEW_IMPORT_HISTORY', 'View import history'),
-(27, 'PROCESS_IMPORT', 'Process import');
+INSERT INTO permissions (permissionid, permissionname, description)
+VALUES (25, 'VIEW_IMPORT_REQUEST', 'View import request list'),
+       (26, 'VIEW_IMPORT_HISTORY', 'View import history'),
+       (27, 'PROCESS_IMPORT', 'Process import');
 
 -- =========================
 -- EXPORT PERMISSION
 -- =========================
-INSERT INTO permissions (permissionid, permissionname, description) VALUES
-(28, 'VIEW_EXPORT_PRODUCT', 'View export product list'),
-(29, 'VIEW_EXPORT_HISTORY', 'View export history'),
-(30, 'PROCESS_EXPORT', 'Process export');
+INSERT INTO permissions (permissionid, permissionname, description)
+VALUES (28, 'VIEW_EXPORT_PRODUCT', 'View export product list'),
+       (29, 'VIEW_EXPORT_HISTORY', 'View export history'),
+       (30, 'PROCESS_EXPORT', 'Process export');
 
 -- =========================
 -- INVENTORY PERMISSION
 -- =========================
-INSERT INTO permissions (permissionid, permissionname, description) VALUES
-(31, 'VIEW_INVENTORY', 'View inventory');
+INSERT INTO permissions (permissionid, permissionname, description)
+VALUES (31, 'VIEW_INVENTORY', 'View inventory');
 
 -- =========================
 -- REPORT PERMISSION
 -- =========================
-INSERT INTO permissions (permissionid, permissionname, description) VALUES
-(32, 'VIEW_REPORT', 'View reports');
+INSERT INTO permissions (permissionid, permissionname, description)
+VALUES (32, 'VIEW_REPORT', 'View reports');
 
 -- =========================
 -- CUSTOMER PERMISSION
 -- =========================
-INSERT INTO permissions (permissionid, permissionname, description) VALUES
-(33, 'VIEW_CUSTOMER', 'View customer list'),
-(34, 'CREATE_CUSTOMER', 'Create customer'),
-(35, 'UPDATE_CUSTOMER', 'Update customer');
+INSERT INTO permissions (permissionid, permissionname, description)
+VALUES (33, 'VIEW_CUSTOMER', 'View customer list'),
+       (34, 'CREATE_CUSTOMER', 'Create customer'),
+       (35, 'UPDATE_CUSTOMER', 'Update customer');
 
 -- =========================
 -- SUPPLIER PERMISSION
 -- =========================
-INSERT INTO permissions (permissionid, permissionname, description) VALUES
-(36, 'VIEW_SUPPLIER', 'View supplier list'),
-(37, 'CREATE_SUPPLIER', 'Create supplier'),
-(38, 'UPDATE_SUPPLIER', 'Update supplier');
+INSERT INTO permissions (permissionid, permissionname, description)
+VALUES (36, 'VIEW_SUPPLIER', 'View supplier list'),
+       (37, 'CREATE_SUPPLIER', 'Create supplier'),
+       (38, 'UPDATE_SUPPLIER', 'Update supplier');
 
 /*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
 UNLOCK
@@ -813,29 +813,29 @@ DROP TABLE IF EXISTS `products`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `products`
 (
-    `productid`      int          NOT NULL AUTO_INCREMENT,
-    `name`           varchar(200) NOT NULL,
-    `description`    text,
-    `img_url`        varchar(500) DEFAULT NULL,
-    `isactive`       tinyint(1) DEFAULT '1',
-    `createdat`      datetime     DEFAULT CURRENT_TIMESTAMP,
-    `updatedat`      datetime     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `ramid`          int          DEFAULT NULL,
-    `romid`          int          DEFAULT NULL,
-    `chipid`         int          DEFAULT NULL,
-    `unitid`         int          NOT NULL,
-    `categoryid`     int          NOT NULL,
-    `brandid`        int          NOT NULL,
-    `modelid`        int          DEFAULT NULL,
-    `sku`            varchar(255) DEFAULT NULL,
+    `productid`   int          NOT NULL AUTO_INCREMENT,
+    `name`        varchar(200) NOT NULL,
+    `description` text,
+    `img_url`     varchar(500) DEFAULT NULL,
+    `isactive`    tinyint(1) DEFAULT '1',
+    `createdat`   datetime     DEFAULT CURRENT_TIMESTAMP,
+    `updatedat`   datetime     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `ramid`       int          DEFAULT NULL,
+    `romid`       int          DEFAULT NULL,
+    `chipid`      int          DEFAULT NULL,
+    `unitid`      int          NOT NULL,
+    `categoryid`  int          NOT NULL,
+    `brandid`     int          NOT NULL,
+    `modelid`     int          DEFAULT NULL,
+    `sku`         varchar(255) DEFAULT NULL,
     PRIMARY KEY (`productid`),
-    KEY              `ramid` (`ramid`),
-    KEY              `romid` (`romid`),
-    KEY              `chipid` (`chipid`),
-    KEY              `unitid` (`unitid`),
-    KEY              `categoryid` (`categoryid`),
-    KEY              `brandid` (`brandid`),
-    KEY              `modelid` (`modelid`),
+    KEY           `ramid` (`ramid`),
+    KEY           `romid` (`romid`),
+    KEY           `chipid` (`chipid`),
+    KEY           `unitid` (`unitid`),
+    KEY           `categoryid` (`categoryid`),
+    KEY           `brandid` (`brandid`),
+    KEY           `modelid` (`modelid`),
     CONSTRAINT `products_ibfk_1` FOREIGN KEY (`ramid`) REFERENCES `rams` (`id`),
     CONSTRAINT `products_ibfk_2` FOREIGN KEY (`romid`) REFERENCES `roms` (`id`),
     CONSTRAINT `products_ibfk_3` FOREIGN KEY (`chipid`) REFERENCES `chips` (`id`),
@@ -854,35 +854,93 @@ LOCK
 TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
 INSERT INTO `products`
-VALUES (1, 'Laptop Dell 14 DC14250', 'Office ', 'assets/img/product/1780336108147_ssss_1_125.webp', 0, '2026-05-27 11:27:22', '2026-06-22 08:41:06', 2, 2, 1, 1, 1, 1, 1, 'D15-23'),
-       (2, 'Asus TUF Gaming T12', 'Gaming updated', 'assets/img/product/1780327162854_laptopleveno.jpg', 1, '2026-05-27 11:27:22', '2026-06-23 10:45:11', 4, 3, 2, 1, 1, 2, 2, 'A12-53'),
-       (3, 'ThinkPad E14 A12-54', 'Business laptop updated', 'assets/img/product/1780327242054_61084_laptop_lenovo_thinkbook_14_g8_irl_core_5_9.jpg', 1, '2026-05-27 11:27:22', '2026-06-22 22:08:45', 3, 2, 3, 1, 1, 3, 3, 'A12-54'),
-       (4, 'Kingston Fury 16GB 32000MHZ', 'RAM DDR4 Tesst update', 'assets/img/product/1780327214479_ktc-hero-ddr5-overview-lg.jpg', 1, '2026-05-27 11:27:22', '2026-06-23 10:41:18', 3, NULL, NULL, 2, 2, 4, NULL, 'B12-423'),
-       (5, 'Samsung 970 EVO 512GB', 'SSD ass', 'assets/img/product/1780365511731_ssss_1_125.webp', 1, '2026-05-27 11:27:22', '2026-06-22 22:24:09', NULL, 2, NULL, 3, 3, 5, NULL, 'B12-45'),
-       (8, 'Asus TUF 7 ', 'con mèo kêu làm sao', 'assets/img/product/1780327319228_61084_laptop_lenovo_thinkbook_14_g8_irl_core_5_9.jpg', 1, '2026-05-28 23:29:54', '2026-06-01 22:21:59', 2, 2, 2, 1, 1, 2, 2, 'B32-12'),
-       (10, 'Asus TUF 13', 'meomeo aa', 'assets/img/product/1780327333216_text_ng_n_2__9_31.webp', 1, '2026-05-29 13:32:34', '2026-06-02 11:50:05', 1, 2, 2, 1, 1, 7, 11, 'C21-23'),
-       (13, 'Laptop HP 15-fd1289TU Ultra 7', '', 'assets/img/product/1780327353097_laptopleveno.jpg', 1, '2026-05-30 16:12:45', '2026-06-02 11:24:31', 3, 2, 1, 1, 4, 2, 8, 'Generatorc412'),
-       (14, 'Laptop ASUS Vivobook S 14 FLIP', 'Laptop ASUS Vivobook S 14 Flip TP3402VA-LZ632W sở hữu bộ CPU Intel Core i5-13420H đi cùng RAM 16GB chuẩn DDR4, cộng thêm ổ cứng 512GB M.2 PCIe 4.0. Mẫu laptop ASUS Vivobook này được trang bị màn hình có độ phân giải WUXGA với kích thước 14 inch. Bên cạnh đó, thiết kế Flip còn cho phép người dùng chuyển đổi laptop và tablet theo nhu cầu.', 'assets/img/product/1780334374996_Laptop_HP_15_fd0079_TU_5_c143cff71c.jpg', 1, '2026-05-31 00:18:47', '2026-06-02 08:55:59', 2, 3, 3, 1, 1, 2, 7, 'LZ632W'),
-       (15, 'Laptop ASUS TUF Gaming F16 FX608JHR', 'Laptop ASUS TUF Gaming F16 FX608JHR-RV037W được tích hợp một CPU Intel Core i7-14650HX 5.2 GHz, cùng với RAM 16GB và có bộ nhớ SSD lớn lên đến 1TB. Máy còn sở hữu VGA NVIDIA GeForce RTX 8GB kết hợp màn hình FHD+ 16 inch và có tần số quét 165Hz. Máy có màu Jaeger Gray, chỉ nặng 2.2 kg, với pin 90WHrs, phù hợp cho chơi game và làm.', 'assets/img/product/1780299967530_laptopleveno.jpg', 1, '2026-05-31 11:20:01', '2026-06-01 14:46:07', 4, 2, 2, 1, 1, 2, 8, 'RV037W'),
-       (16, 'Kingston Fury 16GB', 'RAM DDR4', 'assets/img/product/1780322903782_kingston_8g_3200_compressed_1.webp', 1, '2026-05-31 22:00:03', '2026-06-02 09:31:47', NULL, 3, NULL, 2, 3, 4, NULL, 'KVR32S22S6/4'),
-       (17, 'SSD Samsung 123 120000MHz', 'RAM DDR4 SSD Samsung 123 120000MHz', 'assets/img/product/1780361796964_ssss_1_125.webp', 1, '2026-05-31 22:24:24', '2026-06-22 22:25:41', 3, NULL, NULL, 2, 2, 4, NULL, 'KVR32S22S'),
-       (18, 'RAM Laptop Kingston 4 GB-DDR4-3200 MHz', 'con mèo kêu', 'assets/img/product/1780247214567_Laptop_HP_15_fd0079_TU_5_c143cff71c.jpg', 1, '2026-05-31 22:39:51', '2026-06-02 08:23:16', 2, 2, NULL, 1, 3, 4, NULL, 'KVR32S22S6'),
-       (20, 'RAM Laptop Kingston Sodimm 1.2V', 'RAM Laptop Kingston Sodimm 1.2V 16GB 3200MHz CL22', 'assets/img/product/1780244875864_kingston_8g_3200_compressed_1.webp', 1, '2026-05-31 23:27:55', '2026-06-02 09:22:02', 2, 3, NULL, 1, 3, 4, NULL, 'CL22'),
-       (22, 'SSD Samsung 123', 'RAM DDR4', 'assets/img/product/1780246656870_text_ng_n_15_21_1.webp', 1, '2026-05-31 23:57:36', '2026-05-31 23:57:36', 3, NULL, NULL, 2, 2, 4, NULL, 'KVR32S2'),
-       (23, 'Ổ cứng HDD Enterprise WD Ultrastar DC HC330 10TB 3.5', 'Ổ cứng HDD WD Ultrastar DC HC330 10TB là một ổ cứng dành cho doanh nghiệp với nhiều tính năng nổi bật. Ổ cứng này đáp ứng nhu cầu lưu trữ, tốc độ truy cập dữ liệu, độ bền và ổn định cao của các doanh nghiệp.\r\n\r\n', 'assets/img/product/1780246828025_05-hdd-enterprise-wd-ultrastar-dc-hc330-10tb-35-01.jpg', 1, '2026-06-01 00:00:28', '2026-06-02 09:01:58', NULL, 3, NULL, 3, 3, 5, NULL, 'WUS721010ALE6L4'),
-       (25, 'Laptop ASUS Gaming Vivobook 16X K3605VC-RP431W', 'Laptop ASUS Vivobook 16X K3605VC-RP431W được trang bị vi xử lý Intel Core i5-13420H cho ra hiệu suất ổn định từ công việc cho đến nhu cầu giải trí. Mẫu ASUS Vivobook Gaming này có màn hình lên đến 16 inch cùng tần số quét 144Hz cung cấp hình ảnh sắc nét không bị vỡ. Card đồ hoạ NVIDIA GeForce RTX 3050 4GB GDDR6 là một điểm cộng lớn của dòng laptop này.', 'assets/img/product/1780333162727_text_ng_n_5__9_130.webp', 1, '2026-06-01 23:59:22', '2026-06-02 12:16:17', 3, 2, 2, 1, 4, 1, 1, 'RP431W'),
-       (26, 'CPU AMD Ryzen 7 7800X3D (Tray)', 'asa', 'assets/img/product/1780333276897_cpu-amd-ryzen-7-7800x3d_2__3.webp', 1, '2026-06-02 00:01:16', '2026-06-02 11:10:33', 3, 2, 1, 3, 2, 7, 11, '7800X3D '),
-       (27, 'RAM Laptop Kingston 4-3200 MHz', 'asss', 'assets/img/product/1780333845552_text_ng_n_5__9_130.webp', 1, '2026-06-02 00:10:35', '2026-06-02 00:10:45', 3, 3, 2, 1, 4, 2, 6, 'R2341D'),
-       (28, 'Laptop Acer Gaming Nitro ProPanel ANV15-41-R7CR', 'Laptop Acer Gaming Nitro V 15 ProPanel ANV15-41-R7CR sở hữu cấu hình mạnh mẽ với CPU AMD Ryzen 5 7535HS and card đồ họa NVIDIA GeForce RTX 4050 6GB GDDR6. Màn hình 15.6 inch FHD IPS and tần số quét 180Hz đem lại hình ảnh sắc nét. Ổ cứng 512GB PCIe NVMe SSD and RAM 16GB DDR5, với hệ thống tản nhiệt Dual-fan đảm bảo hiệu suất tối ưu.\r\n\r\n', 'assets/img/product/1780334956211_sssxs_26.png', 1, '2026-06-02 00:29:05', '2026-06-02 00:45:15', 2, 2, 2, 1, 1, 7, 11, 'ANV15-41'),
-       (29, 'Laptop Acer Gaming Nitro ProPanel ANV15-41-R7CR', '', 'assets/img/product/1780336413334_t_i_xu_ng_-_2023-01-02t221507.270_2_1_1_1_1.png', 1, '2026-06-02 00:31:32', '2026-06-02 00:53:33', 2, 2, 2, 1, 1, 7, 11, 'ANV15-41-R5AS'),
-       (30, 'RAM Laptop Transcend DDR5 4800MHz 16GB', 'Ram laptop', 'assets/img/product/1780335486900_ram-transcend-ddr5-4800mhz-16gb_1_.webp', 1, '2026-06-02 00:38:06', '2026-06-02 00:38:06', 3, NULL, NULL, 1, 2, 5, NULL, 'R.TC.04'),
-       (31, 'RAM Laptop Transcend DDR5 4800MHz 16GB', '', 'assets/img/product/1780335748931_ram-transcend-ddr5-4800mhz-16gb_1_.webp', 1, '2026-06-02 00:42:28', '2026-06-02 00:42:28', NULL, 2, NULL, 2, 3, 2, NULL, 'R.TC.'),
-       (32, 'CPU AMD Ryzen 5 5500', '', 'assets/img/product/1780336054684_t_i_xu_ng_-_2023-01-02t221507.270_2_1_1_1_1.png', 0, '2026-06-02 00:47:00', '2026-06-02 00:47:34', 3, 2, 3, 1, 6, 7, 11, 'CPU.AM.09'),
-       (33, 'Laptop ASUS VivoBook 15', 'aa', 'assets/img/product/1780364201177_ssss_2_42.png', 1, '2026-06-02 08:36:41', '2026-06-02 12:16:35', 2, 1, 3, 1, 1, 1, 1, 'BQ021W'),
-       (34, 'Laptop Acer Aspire Lite 16 GEN 2 AL16-52P-76DU', 'Laptop Acer Aspire Lite 16 GEN 2 AL16-52P-76DU sở hữu màn hình 16 inch Full HD+, RAM 16GB DDR5 tốc độ 4800MHz (hỗ trợ nâng cấp tối đa 64GB). Chiếc laptop Acer Aspire được trang bị Intel Core i7-1355U, card đồ họa Intel Iris Xe, cùng loa Stereo and webcam Full HD. Thiết kế gọn nhẹ 1.7kg, tích hợp đầy đủ cổng kết nối giúp sử dụng linh hoạt.', 'assets/img/product/1780375469602_text_ng_n_6__2_234.png', 1, '2026-06-02 11:44:29', '2026-06-02 12:17:03', 3, 2, 2, 1, 7, 7, 13, 'AL16-52P-76DU'),
-       (35, 'Laptop ASUS Vivobook S14 S3407VA', 'Laptop ASUS Vivobook S14 S3407VA-LY146W trang bị vi xử lý Intel Core 5 210H, RAM 16GB DDR5, SSD 512GB cùng với màn hình 14 inch WUXGA sắc nét, chân thực. Máy có thiết kế mỏng nhẹ chỉ 1.4kg, vỏ kim loại bền bỉ, pin lớn 70Wh cho thời gian sử dụng dài. Hỗ trợ Wi-Fi 6, camera IR nhận diện khuôn mặt and bàn phím có đèn nền tích hợp phím Copilot.\r\n', 'assets/img/product/1780378095512_text_ng_n_4__8_52.webp', 0, '2026-06-02 12:28:15', '2026-06-02 12:28:55', 3, 4, 4, 1, 1, 2, 8, 'LY146W'),
-       (36, 'Laptop Acer Gaming Aspire 7 A715-59G-57TU', 'Laptop Acer Gaming Aspire 7 A715-59G-57TU được trang bị vi xử lý Intel Core i5-12450H cân trơn tru mọi tác vụ từ văn phòng cho đến chơi game nặng. Hỗ trợ cho vi xử lý là card đồ hoạ RTX 3050 6GB giúp chơi game nặng mượt mà hơn. Người dùng có thể mở nhiều nội dung hiển thị cùng một lúc với màn hình lên đến 15.6 inch.\r\n\r\n', 'assets/img/product/1780379484406_text_ng_n_14__9_26.webp', 1, '2026-06-02 12:51:24', '2026-06-22 22:18:53', 3, 2, 3, 1, 4, 7, 13, 'A715-59G-57TU'),
-       (37, 'Laptop Acer Aspire Lite 15 AL15-46P-R73C', 'Laptop Acer Aspire Lite 15 AL15-46P-R73C sở hữu hiệu năng ấn tượng nhờ chip AMD Ryzen 3 5400U, RAM 8GB DDR4, cùng bộ nhớ trong SSD 512GB rộng rãi. Máy có màn hình Full HD 15.6 inch, tần số quét 60Hz trong thân máy chỉ 1.45kg. Laptop có pin 53Wh and hệ thống cổng đa dạng gồm: USB-C, USB-A and HDMI.\r\n\r\n', 'assets/img/product/1780379586909_sssxs_1__9.webp', 1, '2026-06-02 12:53:06', '2026-06-23 14:58:54', 3, 2, 3, 1, 4, 7, 13, 'AL15-46P-R73C');
+VALUES (1, 'Laptop Dell 14 DC14250', 'Office ', 'assets/img/product/1780336108147_ssss_1_125.webp', 0,
+        '2026-05-27 11:27:22', '2026-06-22 08:41:06', 2, 2, 1, 1, 1, 1, 1, 'D15-23'),
+       (2, 'Asus TUF Gaming T12', 'Gaming updated', 'assets/img/product/1780327162854_laptopleveno.jpg', 1,
+        '2026-05-27 11:27:22', '2026-06-23 10:45:11', 4, 3, 2, 1, 1, 2, 2, 'A12-53'),
+       (3, 'ThinkPad E14 A12-54', 'Business laptop updated',
+        'assets/img/product/1780327242054_61084_laptop_lenovo_thinkbook_14_g8_irl_core_5_9.jpg', 1,
+        '2026-05-27 11:27:22', '2026-06-22 22:08:45', 3, 2, 3, 1, 1, 3, 3, 'A12-54'),
+       (4, 'Kingston Fury 16GB 32000MHZ', 'RAM DDR4 Tesst update',
+        'assets/img/product/1780327214479_ktc-hero-ddr5-overview-lg.jpg', 1, '2026-05-27 11:27:22',
+        '2026-06-23 10:41:18', 3, NULL, NULL, 2, 2, 4, NULL, 'B12-423'),
+       (5, 'Samsung 970 EVO 512GB', 'SSD ass', 'assets/img/product/1780365511731_ssss_1_125.webp', 1,
+        '2026-05-27 11:27:22', '2026-06-22 22:24:09', NULL, 2, NULL, 3, 3, 5, NULL, 'B12-45'),
+       (8, 'Asus TUF 7 ', 'con mèo kêu làm sao',
+        'assets/img/product/1780327319228_61084_laptop_lenovo_thinkbook_14_g8_irl_core_5_9.jpg', 1,
+        '2026-05-28 23:29:54', '2026-06-01 22:21:59', 2, 2, 2, 1, 1, 2, 2, 'B32-12'),
+       (10, 'Asus TUF 13', 'meomeo aa', 'assets/img/product/1780327333216_text_ng_n_2__9_31.webp', 1,
+        '2026-05-29 13:32:34', '2026-06-02 11:50:05', 1, 2, 2, 1, 1, 7, 11, 'C21-23'),
+       (13, 'Laptop HP 15-fd1289TU Ultra 7', '', 'assets/img/product/1780327353097_laptopleveno.jpg', 1,
+        '2026-05-30 16:12:45', '2026-06-02 11:24:31', 3, 2, 1, 1, 4, 2, 8, 'Generatorc412'),
+       (14, 'Laptop ASUS Vivobook S 14 FLIP',
+        'Laptop ASUS Vivobook S 14 Flip TP3402VA-LZ632W sở hữu bộ CPU Intel Core i5-13420H đi cùng RAM 16GB chuẩn DDR4, cộng thêm ổ cứng 512GB M.2 PCIe 4.0. Mẫu laptop ASUS Vivobook này được trang bị màn hình có độ phân giải WUXGA với kích thước 14 inch. Bên cạnh đó, thiết kế Flip còn cho phép người dùng chuyển đổi laptop và tablet theo nhu cầu.',
+        'assets/img/product/1780334374996_Laptop_HP_15_fd0079_TU_5_c143cff71c.jpg', 1, '2026-05-31 00:18:47',
+        '2026-06-02 08:55:59', 2, 3, 3, 1, 1, 2, 7, 'LZ632W'),
+       (15, 'Laptop ASUS TUF Gaming F16 FX608JHR',
+        'Laptop ASUS TUF Gaming F16 FX608JHR-RV037W được tích hợp một CPU Intel Core i7-14650HX 5.2 GHz, cùng với RAM 16GB và có bộ nhớ SSD lớn lên đến 1TB. Máy còn sở hữu VGA NVIDIA GeForce RTX 8GB kết hợp màn hình FHD+ 16 inch và có tần số quét 165Hz. Máy có màu Jaeger Gray, chỉ nặng 2.2 kg, với pin 90WHrs, phù hợp cho chơi game và làm.',
+        'assets/img/product/1780299967530_laptopleveno.jpg', 1, '2026-05-31 11:20:01', '2026-06-01 14:46:07', 4, 2, 2,
+        1, 1, 2, 8, 'RV037W'),
+       (16, 'Kingston Fury 16GB', 'RAM DDR4', 'assets/img/product/1780322903782_kingston_8g_3200_compressed_1.webp', 1,
+        '2026-05-31 22:00:03', '2026-06-02 09:31:47', NULL, 3, NULL, 2, 3, 4, NULL, 'KVR32S22S6/4'),
+       (17, 'SSD Samsung 123 120000MHz', 'RAM DDR4 SSD Samsung 123 120000MHz',
+        'assets/img/product/1780361796964_ssss_1_125.webp', 1, '2026-05-31 22:24:24', '2026-06-22 22:25:41', 3, NULL,
+        NULL, 2, 2, 4, NULL, 'KVR32S22S'),
+       (18, 'RAM Laptop Kingston 4 GB-DDR4-3200 MHz', 'con mèo kêu',
+        'assets/img/product/1780247214567_Laptop_HP_15_fd0079_TU_5_c143cff71c.jpg', 1, '2026-05-31 22:39:51',
+        '2026-06-02 08:23:16', 2, 2, NULL, 1, 3, 4, NULL, 'KVR32S22S6'),
+       (20, 'RAM Laptop Kingston Sodimm 1.2V', 'RAM Laptop Kingston Sodimm 1.2V 16GB 3200MHz CL22',
+        'assets/img/product/1780244875864_kingston_8g_3200_compressed_1.webp', 1, '2026-05-31 23:27:55',
+        '2026-06-02 09:22:02', 2, 3, NULL, 1, 3, 4, NULL, 'CL22'),
+       (22, 'SSD Samsung 123', 'RAM DDR4', 'assets/img/product/1780246656870_text_ng_n_15_21_1.webp', 1,
+        '2026-05-31 23:57:36', '2026-05-31 23:57:36', 3, NULL, NULL, 2, 2, 4, NULL, 'KVR32S2'),
+       (23, 'Ổ cứng HDD Enterprise WD Ultrastar DC HC330 10TB 3.5',
+        'Ổ cứng HDD WD Ultrastar DC HC330 10TB là một ổ cứng dành cho doanh nghiệp với nhiều tính năng nổi bật. Ổ cứng này đáp ứng nhu cầu lưu trữ, tốc độ truy cập dữ liệu, độ bền và ổn định cao của các doanh nghiệp.\r\n\r\n',
+        'assets/img/product/1780246828025_05-hdd-enterprise-wd-ultrastar-dc-hc330-10tb-35-01.jpg', 1,
+        '2026-06-01 00:00:28', '2026-06-02 09:01:58', NULL, 3, NULL, 3, 3, 5, NULL, 'WUS721010ALE6L4'),
+       (25, 'Laptop ASUS Gaming Vivobook 16X K3605VC-RP431W',
+        'Laptop ASUS Vivobook 16X K3605VC-RP431W được trang bị vi xử lý Intel Core i5-13420H cho ra hiệu suất ổn định từ công việc cho đến nhu cầu giải trí. Mẫu ASUS Vivobook Gaming này có màn hình lên đến 16 inch cùng tần số quét 144Hz cung cấp hình ảnh sắc nét không bị vỡ. Card đồ hoạ NVIDIA GeForce RTX 3050 4GB GDDR6 là một điểm cộng lớn của dòng laptop này.',
+        'assets/img/product/1780333162727_text_ng_n_5__9_130.webp', 1, '2026-06-01 23:59:22', '2026-06-02 12:16:17', 3,
+        2, 2, 1, 4, 1, 1, 'RP431W'),
+       (26, 'CPU AMD Ryzen 7 7800X3D (Tray)', 'asa',
+        'assets/img/product/1780333276897_cpu-amd-ryzen-7-7800x3d_2__3.webp', 1, '2026-06-02 00:01:16',
+        '2026-06-02 11:10:33', 3, 2, 1, 3, 2, 7, 11, '7800X3D '),
+       (27, 'RAM Laptop Kingston 4-3200 MHz', 'asss', 'assets/img/product/1780333845552_text_ng_n_5__9_130.webp', 1,
+        '2026-06-02 00:10:35', '2026-06-02 00:10:45', 3, 3, 2, 1, 4, 2, 6, 'R2341D'),
+       (28, 'Laptop Acer Gaming Nitro ProPanel ANV15-41-R7CR',
+        'Laptop Acer Gaming Nitro V 15 ProPanel ANV15-41-R7CR sở hữu cấu hình mạnh mẽ với CPU AMD Ryzen 5 7535HS and card đồ họa NVIDIA GeForce RTX 4050 6GB GDDR6. Màn hình 15.6 inch FHD IPS and tần số quét 180Hz đem lại hình ảnh sắc nét. Ổ cứng 512GB PCIe NVMe SSD and RAM 16GB DDR5, với hệ thống tản nhiệt Dual-fan đảm bảo hiệu suất tối ưu.\r\n\r\n',
+        'assets/img/product/1780334956211_sssxs_26.png', 1, '2026-06-02 00:29:05', '2026-06-02 00:45:15', 2, 2, 2, 1, 1,
+        7, 11, 'ANV15-41'),
+       (29, 'Laptop Acer Gaming Nitro ProPanel ANV15-41-R7CR', '',
+        'assets/img/product/1780336413334_t_i_xu_ng_-_2023-01-02t221507.270_2_1_1_1_1.png', 1, '2026-06-02 00:31:32',
+        '2026-06-02 00:53:33', 2, 2, 2, 1, 1, 7, 11, 'ANV15-41-R5AS'),
+       (30, 'RAM Laptop Transcend DDR5 4800MHz 16GB', 'Ram laptop',
+        'assets/img/product/1780335486900_ram-transcend-ddr5-4800mhz-16gb_1_.webp', 1, '2026-06-02 00:38:06',
+        '2026-06-02 00:38:06', 3, NULL, NULL, 1, 2, 5, NULL, 'R.TC.04'),
+       (31, 'RAM Laptop Transcend DDR5 4800MHz 16GB', '',
+        'assets/img/product/1780335748931_ram-transcend-ddr5-4800mhz-16gb_1_.webp', 1, '2026-06-02 00:42:28',
+        '2026-06-02 00:42:28', NULL, 2, NULL, 2, 3, 2, NULL, 'R.TC.'),
+       (32, 'CPU AMD Ryzen 5 5500', '',
+        'assets/img/product/1780336054684_t_i_xu_ng_-_2023-01-02t221507.270_2_1_1_1_1.png', 0, '2026-06-02 00:47:00',
+        '2026-06-02 00:47:34', 3, 2, 3, 1, 6, 7, 11, 'CPU.AM.09'),
+       (33, 'Laptop ASUS VivoBook 15', 'aa', 'assets/img/product/1780364201177_ssss_2_42.png', 1, '2026-06-02 08:36:41',
+        '2026-06-02 12:16:35', 2, 1, 3, 1, 1, 1, 1, 'BQ021W'),
+       (34, 'Laptop Acer Aspire Lite 16 GEN 2 AL16-52P-76DU',
+        'Laptop Acer Aspire Lite 16 GEN 2 AL16-52P-76DU sở hữu màn hình 16 inch Full HD+, RAM 16GB DDR5 tốc độ 4800MHz (hỗ trợ nâng cấp tối đa 64GB). Chiếc laptop Acer Aspire được trang bị Intel Core i7-1355U, card đồ họa Intel Iris Xe, cùng loa Stereo and webcam Full HD. Thiết kế gọn nhẹ 1.7kg, tích hợp đầy đủ cổng kết nối giúp sử dụng linh hoạt.',
+        'assets/img/product/1780375469602_text_ng_n_6__2_234.png', 1, '2026-06-02 11:44:29', '2026-06-02 12:17:03', 3,
+        2, 2, 1, 7, 7, 13, 'AL16-52P-76DU'),
+       (35, 'Laptop ASUS Vivobook S14 S3407VA',
+        'Laptop ASUS Vivobook S14 S3407VA-LY146W trang bị vi xử lý Intel Core 5 210H, RAM 16GB DDR5, SSD 512GB cùng với màn hình 14 inch WUXGA sắc nét, chân thực. Máy có thiết kế mỏng nhẹ chỉ 1.4kg, vỏ kim loại bền bỉ, pin lớn 70Wh cho thời gian sử dụng dài. Hỗ trợ Wi-Fi 6, camera IR nhận diện khuôn mặt and bàn phím có đèn nền tích hợp phím Copilot.\r\n',
+        'assets/img/product/1780378095512_text_ng_n_4__8_52.webp', 0, '2026-06-02 12:28:15', '2026-06-02 12:28:55', 3,
+        4, 4, 1, 1, 2, 8, 'LY146W'),
+       (36, 'Laptop Acer Gaming Aspire 7 A715-59G-57TU',
+        'Laptop Acer Gaming Aspire 7 A715-59G-57TU được trang bị vi xử lý Intel Core i5-12450H cân trơn tru mọi tác vụ từ văn phòng cho đến chơi game nặng. Hỗ trợ cho vi xử lý là card đồ hoạ RTX 3050 6GB giúp chơi game nặng mượt mà hơn. Người dùng có thể mở nhiều nội dung hiển thị cùng một lúc với màn hình lên đến 15.6 inch.\r\n\r\n',
+        'assets/img/product/1780379484406_text_ng_n_14__9_26.webp', 1, '2026-06-02 12:51:24', '2026-06-22 22:18:53', 3,
+        2, 3, 1, 4, 7, 13, 'A715-59G-57TU'),
+       (37, 'Laptop Acer Aspire Lite 15 AL15-46P-R73C',
+        'Laptop Acer Aspire Lite 15 AL15-46P-R73C sở hữu hiệu năng ấn tượng nhờ chip AMD Ryzen 3 5400U, RAM 8GB DDR4, cùng bộ nhớ trong SSD 512GB rộng rãi. Máy có màn hình Full HD 15.6 inch, tần số quét 60Hz trong thân máy chỉ 1.45kg. Laptop có pin 53Wh and hệ thống cổng đa dạng gồm: USB-C, USB-A and HDMI.\r\n\r\n',
+        'assets/img/product/1780379586909_sssxs_1__9.webp', 1, '2026-06-02 12:53:06', '2026-06-23 14:58:54', 3, 2, 3, 1,
+        4, 7, 13, 'AL15-46P-R73C');
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK
 TABLES;
@@ -970,13 +1028,14 @@ TABLES;
 DROP TABLE IF EXISTS `inventory`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `inventory` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `product_id` int NOT NULL,
-  `quantity` int DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_inventory_product` (`product_id`),
-  CONSTRAINT `fk_inventory_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`productid`)
+CREATE TABLE `inventory`
+(
+    `id`         int NOT NULL AUTO_INCREMENT,
+    `product_id` int NOT NULL,
+    `quantity`   int DEFAULT '0',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_inventory_product` (`product_id`),
+    CONSTRAINT `fk_inventory_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`productid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -984,40 +1043,42 @@ CREATE TABLE `inventory` (
 -- Dumping data for table `inventory`
 --
 
-LOCK TABLES `inventory` WRITE;
+LOCK
+TABLES `inventory` WRITE;
 /*!40000 ALTER TABLE `inventory` DISABLE KEYS */;
-INSERT INTO `inventory` (product_id, quantity) VALUES
-(1, 0),
-(2, 0),
-(3, 0),
-(4, 0),
-(5, 0),
-(8, 0),
-(10, 0),
-(13, 0),
-(14, 0),
-(15, 0),
-(16, 0),
-(17, 5),
-(18, 0),
-(20, 0),
-(22, 0),
-(23, 0),
-(25, 0),
-(26, 0),
-(27, 0),
-(28, 0),
-(29, 0),
-(30, 0),
-(31, 0),
-(32, 0),
-(33, 0),
-(34, 0),
-(35, 0),
-(36, 0),
-(37, 0);
+INSERT INTO `inventory` (product_id, quantity)
+VALUES (1, 0),
+       (2, 0),
+       (3, 0),
+       (4, 0),
+       (5, 0),
+       (8, 0),
+       (10, 0),
+       (13, 0),
+       (14, 0),
+       (15, 0),
+       (16, 0),
+       (17, 5),
+       (18, 0),
+       (20, 0),
+       (22, 0),
+       (23, 0),
+       (25, 0),
+       (26, 0),
+       (27, 0),
+       (28, 0),
+       (29, 0),
+       (30, 0),
+       (31, 0),
+       (32, 0),
+       (33, 0),
+       (34, 0),
+       (35, 0),
+       (36, 0),
+       (37, 0);
 /*!40000 ALTER TABLE `inventory` ENABLE KEYS */;
-UNLOCK TABLES;
+UNLOCK
+TABLES;
 
 -- Table structure for table `rams`
 --
@@ -1077,11 +1138,81 @@ CREATE TABLE `role_permission`
 -- Dumping data for table `role_permission`
 --
 
-LOCK TABLES `role_permission` WRITE;
+LOCK
+TABLES `role_permission` WRITE;
 /*!40000 ALTER TABLE `role_permission` DISABLE KEYS */;
-INSERT INTO `role_permission` VALUES (72,2,1),(73,2,5),(74,2,6),(75,2,9),(76,2,12),(77,2,15),(78,2,18),(79,2,21),(80,2,24),(81,2,25),(82,2,26),(83,2,28),(84,2,29),(85,2,31),(86,2,32),(87,2,33),(88,2,36),(89,3,1),(90,3,2),(91,3,3),(92,3,4),(93,3,5),(94,3,6),(95,3,7),(96,3,8),(97,3,9),(98,3,10),(99,3,11),(100,3,12),(101,3,13),(102,3,14),(103,3,15),(104,3,16),(105,3,17),(106,3,18),(107,3,21),(108,3,25),(109,3,26),(110,3,27),(111,3,28),(112,3,29),(113,3,30),(114,3,31),(47,4,6),(48,4,7),(49,4,8),(50,4,9),(51,4,10),(52,4,11),(53,4,12),(54,4,13),(55,4,14),(56,4,15),(57,4,16),(58,4,17),(59,4,18),(60,4,19),(61,4,20),(62,4,21),(63,4,22),(64,4,23),(65,4,31),(66,4,33),(67,4,34),(68,4,35),(69,4,36),(70,4,37),(71,4,38);
+INSERT INTO `role_permission`
+VALUES (72, 2, 1),
+       (73, 2, 5),
+       (74, 2, 6),
+       (75, 2, 9),
+       (76, 2, 12),
+       (77, 2, 15),
+       (78, 2, 18),
+       (79, 2, 21),
+       (80, 2, 24),
+       (81, 2, 25),
+       (82, 2, 26),
+       (83, 2, 28),
+       (84, 2, 29),
+       (85, 2, 31),
+       (86, 2, 32),
+       (87, 2, 33),
+       (88, 2, 36),
+       (89, 3, 1),
+       (90, 3, 2),
+       (91, 3, 3),
+       (92, 3, 4),
+       (93, 3, 5),
+       (94, 3, 6),
+       (95, 3, 7),
+       (96, 3, 8),
+       (97, 3, 9),
+       (98, 3, 10),
+       (99, 3, 11),
+       (100, 3, 12),
+       (101, 3, 13),
+       (102, 3, 14),
+       (103, 3, 15),
+       (104, 3, 16),
+       (105, 3, 17),
+       (106, 3, 18),
+       (107, 3, 21),
+       (108, 3, 25),
+       (109, 3, 26),
+       (110, 3, 27),
+       (111, 3, 28),
+       (112, 3, 29),
+       (113, 3, 30),
+       (114, 3, 31),
+       (47, 4, 6),
+       (48, 4, 7),
+       (49, 4, 8),
+       (50, 4, 9),
+       (51, 4, 10),
+       (52, 4, 11),
+       (53, 4, 12),
+       (54, 4, 13),
+       (55, 4, 14),
+       (56, 4, 15),
+       (57, 4, 16),
+       (58, 4, 17),
+       (59, 4, 18),
+       (60, 4, 19),
+       (61, 4, 20),
+       (62, 4, 21),
+       (63, 4, 22),
+       (64, 4, 23),
+       (65, 4, 31),
+       (66, 4, 33),
+       (67, 4, 34),
+       (68, 4, 35),
+       (69, 4, 36),
+       (70, 4, 37),
+       (71, 4, 38);
 /*!40000 ALTER TABLE `role_permission` ENABLE KEYS */;
-UNLOCK TABLES;
+UNLOCK
+TABLES;
 
 --
 -- Table structure for table `roles`
@@ -1341,11 +1472,13 @@ TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 
-DELIMITER //
+DELIMITER
+//
 CREATE TRIGGER after_product_insert
-AFTER INSERT ON products
-FOR EACH ROW
+    AFTER INSERT
+    ON products
+    FOR EACH ROW
 BEGIN
     INSERT INTO inventory (product_id, quantity) VALUES (NEW.productid, 0);
 END//
-DELIMITER ;
+DELIMITER;

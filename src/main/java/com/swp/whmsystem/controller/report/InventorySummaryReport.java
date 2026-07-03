@@ -20,10 +20,10 @@ public class InventorySummaryReport extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_REPORT,
-//                "You don't have permission to view inventory summary reports!")) {
-//            return;
-//        }
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_REPORT,
+                "You don't have permission to view inventory summary reports!")) {
+            return;
+        }
 
         String keyword = request.getParameter("keyword");
         String fromDate = request.getParameter("fromDate");

@@ -211,4 +211,87 @@ public class InventorySummaryDAO {
         }
         return totals;
     }
+
+    public List<InventorySummary> getTop5Import(String openDate, String closeDate) {
+        return getTop5ByType(openDate, closeDate, INCREASED);
+    }
+
+    public List<InventorySummary> getTop5Export(String openDate, String closeDate) {
+        return getTop5ByType(openDate, closeDate, DECREASED);
+    }
+
+    private List<InventorySummary> getTop5ByType(String openDate, String closeDate, String type) {
+        List<InventorySummary> list = new ArrayList<>();
+        boolean hasDate = openDate != null && !openDate.trim().isEmpty()
+                       && closeDate != null && !closeDate.trim().isEmpty();
+
+        Timestamp tStart = null;
+        Timestamp tEnd = null;
+        Timestamp tNowMax = Timestamp.valueOf(LocalDate.now().atTime(LocalTime.MAX));
+
+        if (hasDate) {
+            LocalDate from = DateUtils.parseDate(openDate);
+            LocalDate to = DateUtils.parseDate(closeDate);
+            tStart = Timestamp.valueOf(from.atStartOfDay());
+            tEnd = Timestamp.valueOf(to.atTime(LocalTime.MAX));
+        }
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT p.productid, p.sku, p.name AS product_name, ");
+        sql.append("u.name AS unit_name, ");
+        sql.append("COALESCE(SUM(sm.quantity), 0) AS total_qty ");
+        sql.append("FROM stock_movement sm ");
+        sql.append("JOIN products p ON sm.productid = p.productid ");
+        sql.append("LEFT JOIN units u ON p.unitid = u.id ");
+        sql.append("WHERE sm.type = ? ");
+
+        if (hasDate) {
+            sql.append("AND sm.createdat >= ? AND sm.createdat <= ? ");
+        } else {
+            sql.append("AND sm.createdat <= ? ");
+        }
+
+        sql.append("GROUP BY p.productid, p.sku, p.name, u.name ");
+        sql.append("ORDER BY total_qty DESC ");
+        sql.append("LIMIT 5 ");
+
+        String finalSql = sql.toString();
+
+        System.out.println("[DEBUG] getTop5ByType SQL: " + finalSql);
+        System.out.println("[DEBUG] type=" + type + ", hasDate=" + hasDate);
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(finalSql)) {
+            int idx = 1;
+            ps.setString(idx++, type);
+            if (hasDate) {
+                ps.setTimestamp(idx++, tStart);
+                ps.setTimestamp(idx++, tEnd);
+            } else {
+                ps.setTimestamp(idx++, tNowMax);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    InventorySummary item = new InventorySummary();
+                    item.setProductId(rs.getInt("productid"));
+                    item.setSku(rs.getString("sku"));
+                    item.setProductName(rs.getString("product_name"));
+                    item.setUnit(rs.getString("unit_name"));
+                    int qty = rs.getInt("total_qty");
+                    if (INCREASED.equals(type)) {
+                        item.setImportStock(qty);
+                    } else {
+                        item.setExportStock(qty);
+                    }
+                    list.add(item);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("[DEBUG] getTop5ByType SQL ERROR: " + e.getMessage());
+            e.printStackTrace();
+        }
+        System.out.println("[DEBUG] getTop5ByType result size: " + list.size());
+        return list;
+    }
 }

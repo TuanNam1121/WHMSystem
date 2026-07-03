@@ -9,21 +9,29 @@
                     <a href="home"><img src="assets/img/icons/dashboard.svg" alt="img"><span> Dashboard</span>
                     </a>
                 </li>
-                <li class="submenu">
-                    <a href="javascript:void(0);"><img src="assets/img/icons/product.svg"
-                                                       alt="img"><span> Product</span> <span
-                                                       class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="productlist">Product List</a></li>
-                        <li><a href="categoryList">Category List</a></li>
-                        <li><a href="brandList">Brand List</a></li>
-                        <li><a href="ChipList">Chip List</a></li>
-                        <li><a href="RamList">Ram List</a></li>
-                        <li><a href="StorageList">Storage List</a></li>
-                        <li><a href="ModelList">Model List</a></li>
-                        <li><a href="UnitList">Unit List</a></li>
-                    </ul>
-                </li>
+                <c:if test="${sessionScope.userPermissions.contains('VIEW_PRODUCT') ||
+                              sessionScope.userPermissions.contains('VIEW_CATEGORY') ||
+                              sessionScope.userPermissions.contains('VIEW_BRAND') ||
+                              sessionScope.userPermissions.contains('VIEW_SPECIFICATION')}">
+                      <li class="submenu">
+                          <a href="javascript:void(0);"><img src="assets/img/icons/product.svg"
+                                                             alt="img"><span> Product</span> <span
+                                                             class="menu-arrow"></span></a>
+                          <ul>
+                              <c:if test="${sessionScope.userPermissions.contains('VIEW_PRODUCT')}">
+                                    <li><a href="productlist">Product List</a></li></c:if>
+                                  <c:if test="${sessionScope.userPermissions.contains('VIEW_CATEGORY')}">
+                                    <li><a href="categoryList">Category List</a></li></c:if>
+                                  <c:if test="${sessionScope.userPermissions.contains('VIEW_BRAND')}">
+                                    <li><a href="brandList">Brand List</a></li></c:if>
+                                  <c:if test="${sessionScope.userPermissions.contains('VIEW_SPECIFICATION')}">
+                                    <li><a href="ChipList">Chip List</a></li>
+                                    <li><a href="RamList">Ram List</a></li>
+                                    <li><a href="StorageList">Storage List</a></li>
+                                    <li><a href="ModelList">Model List</a></li>
+                                    <li><a href="UnitList">Unit List</a></li></c:if>
+                              </ul>
+                          </li></c:if>
                 <c:if test="${sessionScope.userPermissions.contains('VIEW_SALE_ORDER')}">
                     <li class="submenu">
                         <a href="javascript:void(0);"><img src="assets/img/icons/sales1.svg"
@@ -33,6 +41,8 @@
                             <li><a href="OrderList">Sales List</a></li>
                         </ul>
                     </li></c:if>
+                    <c:if test="${sessionScope.userPermissions.contains('APPROVE_REJECT_PURCHASE_REQUEST') ||
+                                  sessionScope.userPermissions.contains('VIEW_PURCHASE_ORDER')}">
                     <li class="submenu">
                         <a href="javascript:void(0);"><img src="assets/img/icons/purchase1.svg"
                                                            alt="img"><span> Purchase</span>
@@ -54,7 +64,7 @@
                             </li>
                         </c:if>
                     </ul>
-                </li>
+                </li></c:if>
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="assets/img/icons/expense1.svg"
                                                        alt="img"><span> Import</span>

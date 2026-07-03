@@ -78,7 +78,7 @@ public class InventoryItemDTO {
     }
 
     public String getStatusClass() {
-        if (quantity <= 5) {
+        if (quantity == 0) {
             return "bg-lightred";
         }
         if (quantity <= 10) {

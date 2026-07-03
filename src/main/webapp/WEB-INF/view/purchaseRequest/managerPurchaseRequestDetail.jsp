@@ -181,9 +181,17 @@
                                     </td>
                                     <td class="text-center"><strong>${item.requiredQty}</strong></td>
                                     <td class="text-center">
-                                                            <span
-                                                                    class="badges ${product.totalQuantity <= 10 ? 'bg-lightred' : 'bg-lightgreen'}">${product.totalQuantity}
-                                                                left</span>
+                                        <c:choose>
+                                            <c:when test="${product.totalQuantity == 0}">
+                                                <span class="badges bg-lightred">${product.totalQuantity} left</span>
+                                            </c:when>
+                                            <c:when test="${product.totalQuantity <= 10}">
+                                                <span class="badges bg-lightyellow">${product.totalQuantity} left</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="badges bg-lightgreen">${product.totalQuantity} left</span>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </td>
                                 </tr>
                             </c:forEach>

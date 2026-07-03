@@ -697,7 +697,7 @@
 
                         var importQty = parseInt('${totalImportQty != null ? totalImportQty : 0}') || 0;
                         var exportQty = parseInt('${totalExportQty != null ? totalExportQty : 0}') || 0;
-                        var adjustQty = 0;
+                        var adjustQty = parseInt('${totalAdjustQty != null ? totalAdjustQty : 0}') || 0;
 
                         var total = importQty + exportQty + adjustQty;
                         var canvas = document.getElementById('transactionPieChart');

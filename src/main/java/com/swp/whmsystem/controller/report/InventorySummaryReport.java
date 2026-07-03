@@ -74,6 +74,9 @@ public class InventorySummaryReport extends HttpServlet {
         request.setAttribute("totalExportQty", totalExportQty);
         request.setAttribute("totalClosingStock", totalClosingStock);
 
+        long totalAdjustQty = dao.getTotalAdjustQty(fromDate, toDate);
+        request.setAttribute("totalAdjustQty", totalAdjustQty);
+
         List<InventorySummary> top5Import = dao.getTop5Import(fromDate, toDate);
         List<InventorySummary> top5Export = dao.getTop5Export(fromDate, toDate);
         request.setAttribute("top5Import", top5Import);

@@ -12,7 +12,7 @@
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="assets/img/icons/product.svg"
                                                        alt="img"><span> Product</span> <span
-                            class="menu-arrow"></span></a>
+                                                       class="menu-arrow"></span></a>
                     <ul>
                         <li><a href="productlist">Product List</a></li>
                         <li><a href="categoryList">Category List</a></li>
@@ -24,20 +24,21 @@
                         <li><a href="UnitList">Unit List</a></li>
                     </ul>
                 </li>
-                <li class="submenu">
-                    <a href="javascript:void(0);"><img src="assets/img/icons/sales1.svg"
-                                                       alt="img"><span> Sales</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="OrderList">Sales List</a></li>
-                    </ul>
-                </li>
-                <li class="submenu">
-                    <a href="javascript:void(0);"><img src="assets/img/icons/purchase1.svg"
-                                                       alt="img"><span> Purchase</span>
-                        <span class="menu-arrow"></span></a>
-                    <ul>
-                        <li>
+                <c:if test="${sessionScope.userPermissions.contains('VIEW_SALE_ORDER')}">
+                    <li class="submenu">
+                        <a href="javascript:void(0);"><img src="assets/img/icons/sales1.svg"
+                                                           alt="img"><span> Sales</span> <span
+                                                           class="menu-arrow"></span></a>
+                        <ul>
+                            <li><a href="OrderList">Sales List</a></li>
+                        </ul>
+                    </li></c:if>
+                    <li class="submenu">
+                        <a href="javascript:void(0);"><img src="assets/img/icons/purchase1.svg"
+                                                           alt="img"><span> Purchase</span>
+                            <span class="menu-arrow"></span></a>
+                        <ul>
+                            <li>
                             <c:choose>
                                 <c:when test="${sessionScope.userPermissions.contains('APPROVE_REJECT_PURCHASE_REQUEST')}">
                                     <a href="managerPurchaseRequestList">Purchase List</a>
@@ -59,7 +60,7 @@
                                                        alt="img"><span> Import</span>
                         <c:if test="${requestScope.pendingImportRequestCount > 0}">
                             <span class="sidebar-notification-badge">
-                                    ${requestScope.pendingImportRequestCount}
+                                ${requestScope.pendingImportRequestCount}
                             </span>
                         </c:if>
                         <span class="menu-arrow"></span>
@@ -75,7 +76,7 @@
                                                            alt="img"><span> Export</span>
                             <c:if test="${requestScope.newSaleOrderCount > 0}">
                                 <span class="sidebar-notification-badge">
-                                        ${requestScope.newSaleOrderCount}
+                                    ${requestScope.newSaleOrderCount}
                                 </span>
                             </c:if>
                             <span class="menu-arrow"></span>
@@ -83,27 +84,30 @@
                         <ul>
                             <c:if test="${sessionScope.userPermissions.contains('VIEW_EXPORT_PRODUCT')}">
                                 <li><a href="toExportList">Export Request List</a></li>
-                            </c:if>
-                            <c:if test="${sessionScope.userPermissions.contains('VIEW_EXPORT_HISTORY')}">
+                                </c:if>
+                                <c:if test="${sessionScope.userPermissions.contains('VIEW_EXPORT_HISTORY')}">
                                 <li><a href="exportHistory">Export History</a></li>
-                            </c:if>
+                                </c:if>
 
                         </ul>
                     </li>
                 </c:if>
-                <li class="submenu">
-                    <a href="javascript:void(0);"><img src="assets/img/icons/users1.svg"
-                                                       alt="img"><span> People</span> <span
-                            class="menu-arrow"></span></a>
-                    <ul>
-                        <li><a href="CustomerList">Customer List</a></li>
-                        <li><a href="listSupplier">Supplier List</a></li>
-                    </ul>
-                </li>
+                <c:if test="${sessionScope.userPermissions.contains('VIEW_SUPPLIER') || sessionScope.userPermissions.contains('VIEW_CUSTOMER')}">
+                    <li class="submenu">
+                        <a href="javascript:void(0);"><img src="assets/img/icons/users1.svg"
+                                                           alt="img"><span> People</span> <span
+                                                           class="menu-arrow"></span></a>
+                        <ul>
+                            <c:if test="${sessionScope.userPermissions.contains('VIEW_CUSTOMER')}">
+                                <li><a href="CustomerList">Customer List</a></li></c:if>
+                                <c:if test="${sessionScope.userPermissions.contains('VIEW_SUPPLIER')}">
+                                <li><a href="listSupplier">Supplier List</a></li></c:if>
+                            </ul>
+                        </li></c:if>
 
-                <li>
-                    <a href="inventory"><img src="assets/img/icons/product.svg"><span> Inventory</span></a>
-                </li>
+                    <li>
+                        <a href="inventory"><img src="assets/img/icons/product.svg"><span> Inventory</span></a>
+                    </li>
 
 
                 <c:if test="${sessionScope.userPermissions.contains('VIEW_INVENTORY_AUDIT')}">
@@ -111,7 +115,7 @@
                         <a href="InventoryAuditList"><i data-feather="layers"></i><span> Inventory Audit List</span> </a>
                     </li>
                 </c:if>
-                
+
                 <c:if test="${sessionScope.userPermissions.contains('VIEW_INVENTORY_TRANSACTION')}">
                     <li>
                         <a href="InventoryTransaction"><i data-feather="repeat"></i><span> Inventory Transaction List</span> </a>
@@ -121,25 +125,25 @@
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="assets/img/icons/time.svg"
                                                        alt="img"><span> Report</span> <span
-                            class="menu-arrow"></span></a>
+                                                       class="menu-arrow"></span></a>
                     <ul>
                         <li><a href="inventorySummaryReport">Inventory Report</a></li>
                         <li><a href="ImportExportByDayReport">Daily Transaction Report</a></li>
                         <li><a href="purchasereport.html">Purchase Report</a></li>
                     </ul>
                 </li>
-                
+
                 <c:if test="${sessionScope.user.roleId == 1}">
                     <li class="submenu">
                         <a href="javascript:void(0);"><img src="assets/img/icons/users1.svg"
                                                            alt="img"><span> Admin</span> <span
-                                class="menu-arrow"></span></a>
+                                                           class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="${pageContext.request.contextPath}/AdminDashBoard">Dashboard</a></li>
                             <li><a href="${pageContext.request.contextPath}/ViewUserList">User Management</a></li>
                             <li><a href="${pageContext.request.contextPath}/ViewRoleList">Role Management</a></li>
                             <li><a href="${pageContext.request.contextPath}/ViewPermissionList">Permission
-                                Management</a></li>
+                                    Management</a></li>
                         </ul>
                     </li>
                 </c:if>

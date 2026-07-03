@@ -40,12 +40,14 @@
                             <div class="page-title">
                                 <h4>CUSTOMER LIST</h4>
                             </div>
+                        <c:if test="${sessionScope.userPermissions.contains('CREATE_CUSTOMER')}">
                             <div class="page-btn">
                                 <a href="CreateCustomer" class="btn btn-added" id="btn-create-request">
                                     ADD CUSTOMER
                                 </a>
                             </div>
-                        </div>
+                        </c:if>
+                    </div>
 
                     <c:if test="${not empty requestScope.message}">
                         <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -123,8 +125,12 @@
                                             <th>id</th>
                                             <th>Customer name</th>
                                             <th>Phone</th>
-                                            <th>Update</th>
-                                            <th>Create Order</th>
+                                                <c:if test="${sessionScope.userPermissions.contains('UPDATE_CUSTOMER')}">
+                                                <th>Update</th>
+                                                </c:if>
+                                                <c:if test="${sessionScope.userPermissions.contains('CREATE_SALE_ORDER')}">
+                                                <th>Create Order</th>
+                                                </c:if>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -133,19 +139,21 @@
                                                 <td>${c.id}</td>
                                                 <td><a href="${pageContext.request.contextPath}/ViewCustomer?id=${c.id}">${c.name}</a></td>
                                                 <td>${c.phone}</td>
-                                                <td>
+                                                <c:if test="${sessionScope.userPermissions.contains('UPDATE_CUSTOMER')}">
+                                                    <td>
                                                         <a class="btn btn-added"  id="btn-create-request"
                                                            href="${pageContext.request.contextPath}/UpdateCustomer?id=${c.id}">
                                                             <img src="assets/img/icons/edit.svg" alt="img">
                                                         </a>
-                                                </td>
-                                                <td>
-                                                    <a class="btn btn-added"  id="btn-create-request"
+                                                    </td></c:if>
+                                                <c:if test="${sessionScope.userPermissions.contains('CREATE_SALE_ORDER')}">
+                                                    <td>
+                                                        <a class="btn btn-added"  id="btn-create-request"
                                                            href="${pageContext.request.contextPath}/CreateOder?id=${c.id}">
                                                             <img src="assets/img/icons/plus.svg" alt="img">
                                                         </a>
-                                                </td>
-                                            </tr>
+                                                    </td></c:if>
+                                                </tr>
                                         </c:forEach>
                                     </tbody>
                                 </table>

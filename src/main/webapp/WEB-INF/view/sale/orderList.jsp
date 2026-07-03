@@ -40,11 +40,12 @@
                             <div class="page-title">
                                 <h4>ORDER LIST</h4>
                             </div>
+                        <c:if test="${sessionScope.userPermissions.contains('CREATE_SALE_ORDER')}">
                             <div class="page-btn">
                                 <a href="CustomerList" class="btn btn-added" id="btn-create-request">
                                     <img src="assets/img/icons/plus.svg" alt="img">Create Order
                                 </a>
-                            </div>
+                            </div></c:if>
                         </div>
 
                     <c:if test="${not empty sessionScope.message}">
@@ -165,8 +166,8 @@
                                                        href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=view">
                                                         <img src="assets/img/icons/eye.svg" alt="img">
                                                     </a>
-                                                    <c:if test="${o.status != 'COMPLETED'}">
-                                                        <c:if test="${o.status != 'CANCELLED'}">
+                                                    <c:if test="${o.status == 'NEW'}">
+                                                        <c:if test="${sessionScope.userPermissions.contains('UPDATE_SALE_ORDER')}">
                                                             <a class="me-3"
                                                                href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=update">
                                                                 <img src="assets/img/icons/edit.svg" alt="img">

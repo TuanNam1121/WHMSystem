@@ -174,7 +174,6 @@
                                     <th>SKU</th>
                                     <th>Category</th>
                                     <th>Brand</th>
-                                    <th>Stock</th>
                                     <th>Active</th>
                                     <th>Action</th>
                                 </tr>
@@ -193,19 +192,7 @@
                                         <td>${p.sku}</td>
                                         <td>${p.category.name}</td>
                                         <td>${p.brand.name}</td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${p.totalQuantity == 0}">
-                                                    <span class="badges bg-lightred">Out of stock</span>
-                                                </c:when>
-                                                <c:when test="${p.totalQuantity <= 10}">
-                                                    <span class="badges bg-lightyellow">Low stock</span>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <span class="badges bg-lightgreen">In stock</span>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
+                                        
                                         <td>${p.isActive ? "Active" : "Inactive"}</td>
                                         <td>
 

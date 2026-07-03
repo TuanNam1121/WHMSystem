@@ -152,7 +152,7 @@
                                                 <div class="product-price">
                                                     <input type="text" value="${group[0].importedPrice}"
                                                            id="price-product-${groupIndex}" name="price"
-                                                           onchange="recalcTotal(); syncGroupPrices(${groupIndex})">
+                                                           onchange="recalcTotal(); syncGroupPrices(${groupIndex})" readonly>
                                                 </div>
                                                 <span class="product-currency">VND</span>
                                             </div>

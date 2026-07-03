@@ -482,7 +482,7 @@
                                     <div>
                                         <p>Total Import Value</p>
                                         <h4 id="total-import-value">
-                                            ${totalImportValue}
+                                            <fmt:formatNumber value="${totalImportValue}" pattern="#,###"/>
                                             <small style="font-size:13px; font-weight:500; color:#637381;">đ</small>
                                         </h4>
                                     </div>
@@ -497,7 +497,7 @@
                                     <div>
                                         <p>Total Export Value</p>
                                         <h4 id="total-export-value">
-                                            ${totalExportValue}
+                                             <fmt:formatNumber value="${totalExportValue}" pattern="#,###"/>
                                             <small style="font-size:13px; font-weight:500; color:#637381;">đ</small>
                                         </h4>
                                     </div>

@@ -223,25 +223,30 @@ public class GoodReceiptDAO {
         return -1;
     }
 
-    public List<GoodReceipt> searchProduct(int receiptId, int purchaseid, int supplierId, int processedby, String sortBy) {
+    public List<GoodReceipt> searchProduct(String keyword, int requestid, int supplierId, int processedby, String sortBy) {
         List<GoodReceipt> goodReceipts = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-                "SELECT gr.* "
-                + "FROM good_receipts gr "
-                + "LEFT JOIN purchase_requests pr ON gr.purchaserequestid = pr.id "
-                + "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid "
-                + "WHERE 1 = 1"
+                "SELECT distinct gr.* \n"
+                + "FROM good_receipts gr \n"
+                + "LEFT JOIN purchase_requests pr ON gr.purchaserequestid = pr.id \n"
+                + "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid\n"
+                + "LEFT JOIN good_receipts_items gri ON gr.id = gri.goodreceiptid\n"
+                + "LEFT JOIN products p on p.productid = gri.product_id\n"
+                + "LEFT JOIN product_items pi ON gri.id = pi.goodreceiptsitemid\n"
+                + "WHERE 1 = 1 "
         );
         List<String> parameter = new ArrayList<>();
 
-        if (receiptId != -1) {
-            sql.append(" and gr.id = ? ");
-            parameter.add(String.valueOf(receiptId));
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" and (p.name like ? or pi.serial like ?)");
+            parameter.add("%"+keyword+"%");
+            parameter.add("%"+keyword+"%");
         }
 
-        if (purchaseid != -1) {
-            sql.append(" and purchaserequestid = ? ");
-            parameter.add(String.valueOf(purchaseid));
+        if (requestid != -1) {
+            sql.append(" and (purchaserequestid = ? or gr.id = ?)");
+            parameter.add(String.valueOf(requestid));
+            parameter.add(String.valueOf(requestid));
         }
 
         if (supplierId != -1) {
@@ -262,7 +267,6 @@ public class GoodReceiptDAO {
                     sql.append(" order by created_at desc");
             }
         }
-
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString());) {
             System.out.println(sql.toString());
             for (int i = 0; i < parameter.size(); i++) {
@@ -281,18 +285,9 @@ public class GoodReceiptDAO {
 
     public static void main(String[] args) {
         String date = "2026-07-02";
-        DailyTransactionDAO dao = new DailyTransactionDAO();
-        List<DailyTransaction> list = dao.searchDailyTransaction(date, null, null, null, 1, 10);
-        long totalImportQty = dao.getTotalImportQty(date, null);
-        long totalExportQty = dao.getTotalExportQty(date, null);
-        long totalAdjustQty = dao.getTotalAdjustQty(date, null);
-        long totalImportValue = dao.getTotalImportValue(date, null);
-        long totalExportValue = dao.getTotalExportValue(date, null);
-        System.out.println(totalImportQty);
-        System.out.println(totalExportQty);
-        System.out.println(totalAdjustQty);
-        System.out.println(totalExportValue);
-        System.out.println(totalImportValue);
-
+        GoodReceiptDAO dao = new GoodReceiptDAO();
+        for(GoodReceipt i : dao.searchProduct("D7KR2VN6JF", -1, -1, -1, null)){
+            System.out.println(i.toString());
+        }
     }
 }

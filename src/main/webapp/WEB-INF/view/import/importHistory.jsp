@@ -52,13 +52,13 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <input type="text" name="receiptid" placeholder="Search Receipt Id">
+                                                    <input type="text" name="keyword" placeholder="Search Product Name or Serial" value="${param.keyword}">
                                                 </div>
                                             </div>
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <input type="text" name="purchaseid" placeholder="Search Purchase Request Id">
+                                                    <input type="text" name="purchaseid" placeholder="Search Purchase Request ID or Receipt ID" value="${param.purchaseid}">
                                                 </div>
                                             </div>
                                             

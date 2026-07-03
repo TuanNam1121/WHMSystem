@@ -22,11 +22,6 @@ public class ProductDetails extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.UPDATE_PRODUCT,
-                "You are not authorized to Update products.")) {
-            return;
-        }
-        
         HttpSession session = request.getSession();
         ProductDAO productDAO = new ProductDAO();
         List<ProductItem> productItemList = new ArrayList<>();

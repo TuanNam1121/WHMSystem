@@ -51,13 +51,12 @@ public class ImportHistory extends HttpServlet {
                 "You are not authorized to handle import product")) {
             return;
         }
-        String rawReceiptId = request.getParameter("receiptid");
+        String keyword = request.getParameter("keyword");
         String rawPurchaseId = request.getParameter("purchaseid");
         String rawSupplierId = request.getParameter("supplierid");
         String rawProcessedBy = request.getParameter("processedby");
         String sortBy = request.getParameter("sortBy");
 
-        int receiptId = (rawReceiptId == null || rawReceiptId.isBlank()) ? -1 : Integer.parseInt(rawReceiptId);
         int purchaseid = (rawPurchaseId == null || rawPurchaseId.isBlank()) ? -1 : Integer.parseInt(rawPurchaseId);
         int processedBy = (rawProcessedBy == null || rawProcessedBy.isBlank()) ? -1 : Integer.parseInt(rawProcessedBy);
         int supplierId = (rawSupplierId == null || rawSupplierId.isBlank()) ? -1 : Integer.parseInt(rawSupplierId);
@@ -68,7 +67,7 @@ public class ImportHistory extends HttpServlet {
         HttpSession session = request.getSession();
         List<User> userImporterList = user.getAllUsersHandleGoodReceipt();
         List<Supplier> supplier = supplierDAO.getAllSuppliers();
-        List<GoodReceipt> list = gr.searchProduct(receiptId, purchaseid, supplierId, processedBy, sortBy);
+        List<GoodReceipt> list = gr.searchProduct(keyword, purchaseid, supplierId, processedBy, sortBy);
 
         List<ImportHistoryDTO> returnedList = new ArrayList<>();
         for (GoodReceipt i : list) {

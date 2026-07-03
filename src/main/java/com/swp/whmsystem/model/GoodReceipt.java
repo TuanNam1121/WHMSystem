@@ -62,4 +62,11 @@ public class GoodReceipt {
     public void setNote(String note) {
         this.note = note;
     }
+
+    @Override
+    public String toString() {
+        return "GoodReceipt{" + "id=" + id + ", purchaseRequestId=" + purchaseRequestId + ", processedBy=" + processedBy + ", status=" + status + ", createdAt=" + createdAt + ", note=" + note + '}';
+    }
+    
+    
 }

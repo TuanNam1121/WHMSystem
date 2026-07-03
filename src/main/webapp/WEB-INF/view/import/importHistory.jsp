@@ -133,7 +133,7 @@
                                     <td>${i.supplier}</td>
                                     <td>${i.importBy}</td>
                                     <td>${i.items}</td>
-                                    <td>${i.total}</td>
+                                    <td><fmt:formatNumber value="${i.total}" pattern="#,###"/></td>
                                     <td>
                                         <c:choose>
                                             <c:when

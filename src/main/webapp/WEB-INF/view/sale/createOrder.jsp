@@ -221,12 +221,13 @@
                 renderSelectedItems();
 
                 // Search Product directly in DOM
-                $('#productSearch').on('input', function () {
+                $('.productSearch').on('input', function () {
                     const searchTerm = $(this).val().toLowerCase();
                     $('.product-item').each(function () {
                         const name = $(this).find('.product-name').text().toLowerCase();
                         const sku = $(this).find('.product-sku').text().toLowerCase();
-                        if (name.includes(searchTerm) || sku.includes(searchTerm)) {
+                        const cate = $(this).find('.product-category').text().toLowerCase();
+                        if (name.includes(searchTerm) || sku.includes(searchTerm) || cate.includes(searchTerm)) {
                             $(this).show();
                         } else {
                             $(this).hide();

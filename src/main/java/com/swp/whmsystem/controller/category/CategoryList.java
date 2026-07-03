@@ -22,11 +22,6 @@ public class CategoryList extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_CATEGORY,
-                "You are not authorized to view category.")) {
-            return;
-        }
-
-        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_CATEGORY,
                 "You don't have permission to view the category list!")) {
             return;
         }

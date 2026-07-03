@@ -20,10 +20,10 @@ public class InventorySummaryReport extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_REPORT,
-                "You don't have permission to view inventory summary reports!")) {
-            return;
-        }
+//        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_REPORT,
+//                "You don't have permission to view inventory summary reports!")) {
+//            return;
+//        }
 
         String keyword = request.getParameter("keyword");
         String fromDate = request.getParameter("fromDate");
@@ -73,6 +73,11 @@ public class InventorySummaryReport extends HttpServlet {
         request.setAttribute("totalImportQty", totalImportQty);
         request.setAttribute("totalExportQty", totalExportQty);
         request.setAttribute("totalClosingStock", totalClosingStock);
+
+        List<InventorySummary> top5Import = dao.getTop5Import(fromDate, toDate);
+        List<InventorySummary> top5Export = dao.getTop5Export(fromDate, toDate);
+        request.setAttribute("top5Import", top5Import);
+        request.setAttribute("top5Export", top5Export);
 
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("page", page);

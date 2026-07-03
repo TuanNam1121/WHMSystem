@@ -224,7 +224,7 @@
                                                 ${item.type == 'INCREASED' ? '+' : '-'}<fmt:formatNumber value="${item.quantity}" pattern="#,##0"/>
                                             </td>
                                             <td>
-                                                <a href="${pageContext.request.contextPath}/viewStockMovementDetail?movementId=${item.id}"
+                                                <a href="${pageContext.request.contextPath}/viewStockMovementDetail?movementId=${item.id}&from=inventorySummaryDetail&productId=${product.productId}&fromDate=${param.fromDate}&toDate=${param.toDate}"
                                                    class="btn btn-sm btn-outline-info" title="View Detail">
                                                     <i class="fas fa-eye me-1"></i> View Detail
                                                 </a>

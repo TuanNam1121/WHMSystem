@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
 
-    <link rel="stylesheet" href="assets/css/style.css?v=home-low-stock-compact">
+    <link rel="stylesheet" href="assets/css/style.css?v=home-chart-year-compact">
 </head>
 <body>
 <div id="global-loader">
@@ -156,22 +156,26 @@
                                         <span>Purchase</span>
                                     </li>
                                 </ul>
-                                <div class="dropdown">
+                                <div class="dropdown chart-year-dropdown">
                                     <button class="btn btn-white btn-sm dropdown-toggle" type="button"
-                                            id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                        ${requestScope.chartYear} <img src="assets/img/icons/dropdown.svg" alt="img" class="ms-2">
+                                            id="chartYearDropdown" data-bs-toggle="dropdown"
+                                            data-bs-auto-close="outside" aria-expanded="false">
+                                        <span class="chart-year-label">${requestScope.chartYear}</span>
+                                        <img src="assets/img/icons/dropdown.svg" alt="img" class="ms-2">
                                     </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <li>
-                                            <a href="home?year=${requestScope.chartYear}" class="dropdown-item">${requestScope.chartYear}</a>
-                                        </li>
-                                        <li>
-                                            <a href="home?year=${requestScope.chartYear - 1}" class="dropdown-item">${requestScope.chartYear - 1}</a>
-                                        </li>
-                                        <li>
-                                            <a href="home?year=${requestScope.chartYear - 2}" class="dropdown-item">${requestScope.chartYear - 2}</a>
-                                        </li>
-                                    </ul>
+                                    <div class="dropdown-menu chart-year-menu" aria-labelledby="chartYearDropdown"
+                                         tabindex="0">
+                                        <c:if test="${requestScope.chartYear < 9999}">
+                                            <a href="home?year=${requestScope.chartYear + 1}"
+                                               class="dropdown-item">${requestScope.chartYear + 1}</a>
+                                        </c:if>
+                                        <a href="home?year=${requestScope.chartYear}"
+                                           class="dropdown-item">${requestScope.chartYear}</a>
+                                        <c:if test="${requestScope.chartYear > 2021}">
+                                            <a href="home?year=${requestScope.chartYear - 1}"
+                                               class="dropdown-item">${requestScope.chartYear - 1}</a>
+                                        </c:if>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -299,5 +303,52 @@
 <script src="assets/plugins/apexchart/chart-data.js?v=home-chart-full-tooltip"></script>
 
 <script src="assets/js/script.js"></script>
+<script>
+    const chartYearDropdown = document.querySelector('.chart-year-dropdown');
+    const chartYearMenu = document.querySelector('.chart-year-menu');
+    const chartYearLabel = document.querySelector('.chart-year-label');
+    const initialChartYear = '${requestScope.chartYear}';
+    const minChartYear = 2021;
+    const maxChartYear = 9999;
+    let typedChartYear = '';
+
+    chartYearDropdown?.addEventListener('shown.bs.dropdown', function () {
+        typedChartYear = '';
+        chartYearLabel.textContent = initialChartYear;
+        chartYearMenu?.focus();
+    });
+
+    chartYearDropdown?.addEventListener('hidden.bs.dropdown', function () {
+        typedChartYear = '';
+        chartYearLabel.textContent = initialChartYear;
+    });
+
+    chartYearMenu?.addEventListener('keydown', function (event) {
+        if (/^\d$/.test(event.key)) {
+            event.preventDefault();
+            typedChartYear += event.key;
+            chartYearLabel.textContent = typedChartYear;
+            return;
+        }
+
+        if (event.key === 'Backspace') {
+            event.preventDefault();
+            typedChartYear = typedChartYear.slice(0, -1);
+            chartYearLabel.textContent = typedChartYear || initialChartYear;
+            return;
+        }
+
+        if (event.key === 'Enter' && typedChartYear) {
+            event.preventDefault();
+            const selectedYear = Number(typedChartYear);
+            if (Number.isInteger(selectedYear) && selectedYear >= minChartYear && selectedYear <= maxChartYear) {
+                window.location.href = 'home?year=' + encodeURIComponent(typedChartYear);
+                return;
+            }
+            typedChartYear = '';
+            chartYearLabel.textContent = initialChartYear;
+        }
+    });
+</script>
 </body>
 </html>

@@ -3869,6 +3869,33 @@ span.select2-container.select2-container--default.select2-container--open {
     color: #f90
 }
 
+.chart-year-dropdown {
+    width: 92px
+}
+
+.chart-year-dropdown .dropdown-toggle {
+    width: 100%;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between
+}
+
+.chart-year-dropdown .dropdown-toggle::after {
+    display: none
+}
+
+.chart-year-dropdown .chart-year-menu {
+    width: 100%;
+    min-width: 100%;
+    padding: 6px 0
+}
+
+.chart-year-dropdown .dropdown-item {
+    padding: 8px 14px;
+    text-align: center
+}
+
 .low-stock-scroll thead th {
     position: sticky;
     top: 0;

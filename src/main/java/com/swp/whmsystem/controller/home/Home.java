@@ -16,6 +16,8 @@ import com.swp.whmsystem.model.*;
 
 @WebServlet(name = "Home", urlPatterns = {"/home"})
 public class Home extends HttpServlet {
+    private static final int MIN_CHART_YEAR = 2021;
+    private static final int MAX_CHART_YEAR = 9999;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -80,7 +82,7 @@ public class Home extends HttpServlet {
         }
         try {
             int year = Integer.parseInt(yearRaw.trim());
-            return year > 0 ? year : currentYear;
+            return year >= MIN_CHART_YEAR && year <= MAX_CHART_YEAR ? year : currentYear;
         } catch (NumberFormatException e) {
             return currentYear;
         }

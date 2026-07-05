@@ -362,20 +362,52 @@ public class OrderDAO {
         }
     }
 
-    public List<Order> searchOrder(String customerName, String status, int pageSize, int page) {
+    public List<Order> searchOrder(String customerName, String status, int pageSize, int page, java.sql.Date createdAt) {
 
         try (Connection conn = DBContext.getConnection()) {
             String sql = "select o.* from orders o join customers c on o.customer_id = c.id ";
+            
+            //name exist
             if (customerName != null && !customerName.isBlank()) {
-
                 sql += "where c.name LIKE ? ";
+                
+                //status exist
                 if (!status.equals("ALL")) {
                     sql += "AND ";
                     sql += "o.status = ?";
+                    
+                    //date exist
+                    if(createdAt != null){
+                        sql += " AND ";
+                        sql += "DATE(createdat) = ?";
+                    }
+                    
+                //name exist, status no
+                }else{
+                    if(createdAt != null){
+                        sql += " AND ";
+                        sql += "DATE(createdat) = ?";
+                    }
                 }
+                
             } else if (customerName == null || customerName.isBlank()) {
+                
+                //status exist, name no
                 if (!status.equals("ALL")) {
                     sql += "where o.status = ?";
+                    
+                    //date exist
+                    if(createdAt != null){
+                        sql += " AND ";
+                        sql += "DATE(createdat) = ?";
+                    }
+                }else{
+                    
+                    //only date
+                    if(createdAt != null){
+                        sql += " where ";
+                        sql += "DATE(createdat) = ?";
+                    }
                 }
             }
 
@@ -389,10 +421,25 @@ public class OrderDAO {
                 ps.setString(1, "%" + customerName + "%");
                 if (!status.equals("ALL")) {
                     ps.setString(2, status);
+                    if(createdAt != null){
+                        ps.setDate(3, createdAt);
+                    }
+                }else{
+                    if(createdAt != null){
+                        ps.setDate(2, createdAt);
+                    }
                 }
+                
             } else if (customerName == null || customerName.isBlank()) {
                 if (!status.equals("ALL")) {
                     ps.setString(1, status);
+                    if(createdAt != null){
+                        ps.setDate(2, createdAt);
+                    }
+                }else{
+                    if(createdAt != null){
+                        ps.setDate(1, createdAt);
+                    }
                 }
             }
 
@@ -414,20 +461,52 @@ public class OrderDAO {
         return null;
     }
     
-    public int countSearchOrder(String customerName, String status) {
+    public int countSearchOrder(String customerName, String status, java.sql.Date createdAt) {
 
         try (Connection conn = DBContext.getConnection()) {
             String sql = "select COUNT(*) from orders o join customers c on o.customer_id = c.id ";
+            
+            //name exist
             if (customerName != null && !customerName.isBlank()) {
-
                 sql += "where c.name LIKE ? ";
+                
+                //status exist
                 if (!status.equals("ALL")) {
                     sql += "AND ";
                     sql += "o.status = ?";
+                    
+                    //date exist
+                    if(createdAt != null){
+                        sql += " AND ";
+                        sql += "DATE(createdat) = ?";
+                    }
+                    
+                //name exist, status no
+                }else{
+                    if(createdAt != null){
+                        sql += " AND ";
+                        sql += "DATE(createdat) = ?";
+                    }
                 }
+                
             } else if (customerName == null || customerName.isBlank()) {
+                
+                //status exist, name no
                 if (!status.equals("ALL")) {
                     sql += "where o.status = ?";
+                    
+                    //date exist
+                    if(createdAt != null){
+                        sql += " AND ";
+                        sql += "DATE(createdat) = ?";
+                    }
+                }else{
+                    
+                    //only date
+                    if(createdAt != null){
+                        sql += " where ";
+                        sql += "DATE(createdat) = ?";
+                    }
                 }
             }
 
@@ -437,10 +516,25 @@ public class OrderDAO {
                 ps.setString(1, "%" + customerName + "%");
                 if (!status.equals("ALL")) {
                     ps.setString(2, status);
+                    if(createdAt != null){
+                        ps.setDate(3, createdAt);
+                    }
+                }else{
+                    if(createdAt != null){
+                        ps.setDate(2, createdAt);
+                    }
                 }
+                
             } else if (customerName == null || customerName.isBlank()) {
                 if (!status.equals("ALL")) {
                     ps.setString(1, status);
+                    if(createdAt != null){
+                        ps.setDate(2, createdAt);
+                    }
+                }else{
+                    if(createdAt != null){
+                        ps.setDate(1, createdAt);
+                    }
                 }
             }
 

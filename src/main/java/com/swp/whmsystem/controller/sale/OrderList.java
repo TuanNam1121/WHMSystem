@@ -15,6 +15,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Date;
 
 /**
  *
@@ -91,7 +92,7 @@ public class OrderList extends HttpServlet {
         }
 
         OrderDAO od = new OrderDAO();
-        int totalPages = (Math.ceilDiv(od.countSearchOrder("", "ALL"), pageSize));
+        int totalPages = (Math.ceilDiv(od.countSearchOrder("", "ALL", null), pageSize));
 
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("page", page);
@@ -99,7 +100,7 @@ public class OrderList extends HttpServlet {
 
         CustomerDAO cd = new CustomerDAO();
         request.setAttribute("customers", cd.getAllCustomer());
-        request.setAttribute("orders", od.searchOrder("", "ALL", pageSize, page));
+        request.setAttribute("orders", od.searchOrder("", "ALL", pageSize, page,null));
         request.getRequestDispatcher("WEB-INF/view/sale/orderList.jsp").forward(request, response);
     }
 
@@ -116,7 +117,8 @@ public class OrderList extends HttpServlet {
             throws ServletException, IOException {
         String searchName = request.getParameter("searchName");
         String searchStatus = request.getParameter("searchStatus");
-
+        String searchDate = request.getParameter("searchDate");
+        
         OrderDAO od = new OrderDAO();
         CustomerDAO cd = new CustomerDAO();
 
@@ -144,15 +146,23 @@ public class OrderList extends HttpServlet {
             }
         }
 
-        int totalPages = (Math.ceilDiv(od.countSearchOrder(searchName, searchStatus), pageSize));;
+        java.sql.Date chosenDate = null;
+        try{
+            chosenDate = Date.valueOf(searchDate);
+        }catch(Exception e){
+            System.out.println("no date chosen");
+        }
+        int totalPages = (Math.ceilDiv(od.countSearchOrder(searchName, searchStatus, chosenDate), pageSize));;
 
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);
+        
 
-        request.setAttribute("orders", od.searchOrder(searchName, searchStatus, pageSize, page));
+        request.setAttribute("orders", od.searchOrder(searchName, searchStatus, pageSize, page,chosenDate));
         request.setAttribute("searchName", searchName);
         request.setAttribute("searchStatus", searchStatus);
+        request.setAttribute("searchDate", searchDate);
         request.setAttribute("customers", cd.getAllCustomer());
         request.getRequestDispatcher("WEB-INF/view/sale/orderList.jsp").forward(request, response);
 

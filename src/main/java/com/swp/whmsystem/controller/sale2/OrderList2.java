@@ -88,7 +88,7 @@ public class OrderList2 extends HttpServlet {
         }else{
             request.setAttribute("searchName", searchName);
             request.setAttribute("searchStatus", searchStatus);
-            request.setAttribute("orders", od.searchOrder(searchName, searchStatus, 0, 0));
+            request.setAttribute("orders", od.searchOrder(searchName, searchStatus, 0, 0,null));
             request.setAttribute("customers", cd.getAllCustomer());
         request.getRequestDispatcher("WEB-INF/view/sale2/orderList.jsp").forward(request, response);
         }

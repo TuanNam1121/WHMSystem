@@ -4,6 +4,7 @@
  */
 package com.swp.whmsystem.controller.sale;
 
+import com.swp.whmsystem.dal.BrandDAO;
 import com.swp.whmsystem.dal.CustomerDAO;
 import com.swp.whmsystem.dal.OrderDAO;
 import com.swp.whmsystem.dal.OrderItemDAO;
@@ -86,6 +87,9 @@ public class CreateOder extends HttpServlet {
             return;
         }
         request.setAttribute("customer", customer);
+        
+        BrandDAO bd = new BrandDAO();
+        request.setAttribute("brands", bd.getAllBrand());
         
         ProductDAO pd = new ProductDAO();
         request.setAttribute("products", pd.getProductList());

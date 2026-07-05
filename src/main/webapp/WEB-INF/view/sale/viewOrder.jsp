@@ -92,14 +92,15 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="selected-product-list" >
+                                                    <fmt:setLocale value="en_US"/>
                                                     <c:forEach items="${orderItems}" var="oi">
                                                         <tr>
                                                             <th>${oi.productName}</th>
                                                             <th>${oi.quantity}</th>
                                                             <th>
-                                                                <fmt:formatNumber
-                                                                    value="${oi.price}"
-                                                                    pattern="#,##0.00"/>
+                                                                <div class="input-group input-group-sm" style="width: 150px;">
+                                                                    <fmt:formatNumber value="${oi.price}" pattern="#,###"/> VNĐ
+                                                                </div>
                                                             </th>
                                                         </tr>
                                                     </c:forEach>

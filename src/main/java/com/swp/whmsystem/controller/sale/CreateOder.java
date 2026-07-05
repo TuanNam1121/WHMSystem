@@ -144,6 +144,7 @@ public class CreateOder extends HttpServlet {
 
             if (quantityStr != null && !quantityStr.isBlank() && priceStr != null && !priceStr.isBlank()) {
 
+                priceStr = priceStr.replace(",", "").replace(".", "");
                 int quantity = Integer.parseInt(quantityStr);
                 double price = Double.parseDouble(priceStr);
                 if (quantity > 0 && price > 0) {

@@ -119,7 +119,7 @@
                                 <tr>
                                     <th>id</th>
                                     <th>Customer name</th>
-                                    <th>total price</th>
+                                    <th>total price (VNĐ)</th>
                                     <th>Note</th>
                                     <th>Order date</th>
                                     <th>Created by</th>

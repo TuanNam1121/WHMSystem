@@ -37,6 +37,9 @@
                 font-size: 14px;
                 transition: 0.2s;
             }
+            .enterNumber.price{
+                width: 80%;
+            }
             .productSearch{
                 width: 25%;
                 padding: 8px 12px;
@@ -162,7 +165,7 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div class="col-lg-12">
+                                    <div class="col-lg-12"  style="margin-top:24px">
                                         <input class="btn btn-submit me-2" type="submit" value="UPDATE">
                                         <a href="${pageContext.request.contextPath}/OrderList" class="btn btn-cancel">CANCEL</a>
                                     </div>
@@ -207,7 +210,7 @@
                     </c:if>
                 </c:forEach>
                     quantity: ${oi.quantity},
-                    price: ${oi.price}
+                    price: ${oi.price}.toLocaleString('en-US')
             }<c:if test="${!status.last}">,</c:if>
             </c:forEach>
             ];
@@ -222,8 +225,12 @@
                             <input type="hidden" value="\${item.id}" name="productId">
                             <td>\${item.name}</td>
                             <td>\${item.stock}</td>
-                            <td><input required type="number" name="quantity_\${item.id}" min="1" max="\${item.stock}" value="\${item.quantity}" class="enterNumber"></td>
-                            <td><input required type="number" name="price_\${item.id}" min="1"  value="\${item.price!=null?item.price:''}" class="enterNumber"></td>
+                            <td><input required type="number" name="quantity_\${item.id}" min="1" max="\${item.stock}" value="\${item.quantity}" class="enterNumber quantity"></td>
+                            <td>
+                                <div class="input-group input-group-sm" style="width: 150px;">
+                                    <input required type="text" name="price_\${item.id}" min="1" value="\${item.price}" class="enterNumber price"><span class="input-group-text">VNĐ</span>
+                                </div>
+                            </td>
                             <td>
                                 <a class="delete-set remove-item-btn" href="javascript:void(0);" data-id="\${item.id}">
                                     <img src="${pageContext.request.contextPath}/assets/img/icons/delete.svg" alt="Remove">
@@ -255,15 +262,6 @@
                     // Add Product
                     $(document).on('click', '.add-product-btn', function () {
             const isActive = $(this).data('active');
-                    if (isActive === false || isActive === 'false') {
-            Swal.fire({
-            icon: 'error',
-                    title: 'Cannot Add Product',
-                    text: 'You cannot add an inactive product.',
-                    confirmButtonColor: '#FF9F43'
-            });
-                    return;
-            }
 
             const id = $(this).data('id');
                     const name = $(this).data('name');
@@ -278,11 +276,27 @@
             id: id,
                     name: name,
                     stock: stock,
-                    quantity: 1
+                    quantity: 1,
+                    price: "1,000"
             });
             }
             renderSelectedItems();
             });
+            
+            $(document).on('input', '.enterNumber', function (e) {
+                    let value = $(this).val();
+
+                    // Remove everything except digits
+                    value = value.replace(/[^0-9]/g, '');
+                    
+                    if (value === '') {
+                        $(this).val('');
+                        return;
+                    }
+                    $(this).val(Number(value).toLocaleString('en-US'));
+                });
+                
+                
                     // Remove Product
                     $(document).on('click', '.remove-item-btn', function () {
             const id = $(this).data('id');

@@ -1482,3 +1482,22 @@ BEGIN
     INSERT INTO inventory (product_id, quantity) VALUES (NEW.productid, 0);
 END//
 DELIMITER;
+-- For good_receipts (Prefix: GR)
+ALTER TABLE `good_receipts` 
+ADD COLUMN `code_id` VARCHAR(50) GENERATED ALWAYS AS (CONCAT('GR - ', id)) STORED;
+
+-- For purchase_requests (Prefix: PR)
+ALTER TABLE `purchase_requests` 
+ADD COLUMN `code_id` VARCHAR(50) GENERATED ALWAYS AS (CONCAT('PR - ', id)) STORED;
+
+-- For export_receipts (Prefix: ER)
+ALTER TABLE `export_receipts` 
+ADD COLUMN `code_id` VARCHAR(50) GENERATED ALWAYS AS (CONCAT('ER - ', id)) STORED;
+
+-- For orders (Prefix: ORD)
+ALTER TABLE `orders` 
+ADD COLUMN `code_id` VARCHAR(50) GENERATED ALWAYS AS (CONCAT('ORD - ', id)) STORED;
+
+-- For inventory_audit (Prefix: IA)
+ALTER TABLE `inventory_audit` 
+ADD COLUMN `code_id` VARCHAR(50) GENERATED ALWAYS AS (CONCAT('IA - ', id)) STORED;

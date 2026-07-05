@@ -62,8 +62,39 @@ public class CustomerList extends HttpServlet {
                     "You are not authorized to view customer.")) {
                 return;
             }
+        
+        String pageSizeRaw = request.getParameter("pageSize");
+        String pageRaw = request.getParameter("page");
+        int pageSize = 10;
+        int page = 1;
+
+        if (pageSizeRaw != null && !pageSizeRaw.trim().isEmpty()) {
+            try {
+                int parsedPageSize = Integer.parseInt(pageSizeRaw.trim());
+                if (parsedPageSize > 0 && parsedPageSize <= 100) {
+                    pageSize = parsedPageSize;
+                }
+            } catch (NumberFormatException ignored) {
+                pageSize = 10;
+            }
+        }
+
+        if (pageRaw != null && !pageRaw.trim().isEmpty()) {
+            try {
+                page = Math.max(1, Integer.parseInt(pageRaw.trim()));
+            } catch (NumberFormatException ignored) {
+                page = 1;
+            }
+        }
+        
         CustomerDAO cd = new CustomerDAO();
-        request.setAttribute("customers", cd.getAllCustomer());
+        int totalPages = (Math.ceilDiv(cd.countSearchCustomer(""), pageSize));
+        
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("page", page);
+        request.setAttribute("totalPages", totalPages);
+        
+        request.setAttribute("customers", cd.SearchCustomer("", pageSize, page));
         request.getRequestDispatcher("WEB-INF/view/customer/customerList.jsp").forward(request, response);
     } 
 
@@ -82,8 +113,41 @@ public class CustomerList extends HttpServlet {
             response.sendRedirect("CustomerList");
             return;
         }
+        
+        String pageSizeRaw = request.getParameter("pageSize");
+        String pageRaw = request.getParameter("page");
+        int pageSize = 10;
+        int page = 1;
+
+        if (pageSizeRaw != null && !pageSizeRaw.trim().isEmpty()) {
+            try {
+                int parsedPageSize = Integer.parseInt(pageSizeRaw.trim());
+                if (parsedPageSize > 0 && parsedPageSize <= 100) {
+                    pageSize = parsedPageSize;
+                }
+            } catch (NumberFormatException ignored) {
+                pageSize = 10;
+            }
+        }
+
+        if (pageRaw != null && !pageRaw.trim().isEmpty()) {
+            try {
+                page = Math.max(1, Integer.parseInt(pageRaw.trim()));
+            } catch (NumberFormatException ignored) {
+                page = 1;
+            }
+        }
+        
         CustomerDAO cd = new CustomerDAO();
-        request.setAttribute("customers", cd.SearchCustomer(searchName));
+        int totalPages = (Math.ceilDiv(cd.countSearchCustomer(searchName), pageSize));
+        
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("page", page);
+        request.setAttribute("totalPages", totalPages);
+        
+        request.setAttribute("customers", cd.SearchCustomer(searchName, pageSize, page));
+        
+        
         request.setAttribute("searchName", searchName);
         request.getRequestDispatcher("WEB-INF/view/customer/customerList.jsp").forward(request, response);
     }

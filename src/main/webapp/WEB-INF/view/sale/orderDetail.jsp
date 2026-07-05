@@ -112,6 +112,7 @@
                                                     <th>Name</th>
                                                     <th>SKU</th>
                                                     <th>Category</th>
+                                                    <th>Brand</th>
                                                     <th>Quantity</th>
                                                     <th>Status</th>
                                                     <th>Action</th>
@@ -124,6 +125,7 @@
                                                             <td class="product-name">${p.name}</td>
                                                             <td class="product-sku">${p.sku}</td>
                                                             <td class="product-category">${p.category.name}</td>
+                                                            <td class="product-category">${p.brand.name}</td>
                                                             <td class="product-quantity">${p.totalQuantity}</td>
                                                             <td><span
                                                                     class="badges ${p.isActive ? 'bg-lightgreen' : 'bg-lightred'}">
@@ -135,6 +137,7 @@
                                                                    data-name="${p.name}"
                                                                    data-sku="${p.sku}"
                                                                    data-category="${p.category.name}"
+                                                                   data-brand="${p.brand.name}"
                                                                    data-stock="${p.totalQuantity}"
                                                                    data-active="${p.isActive}"
                                                                    href="javascript:void(0);">
@@ -155,6 +158,7 @@
                                                 style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
                                                 <tr>
                                                     <th>Name</th>
+                                                    <th>Brand</th>
                                                     <th>In Stock</th>
                                                     <th>Quantity</th>
                                                     <th>Price</th>
@@ -206,6 +210,7 @@
                     <c:if test="${p.productId == oi.productId}">
                     id: ${p.productId},
                     name: "${p.name}",
+                    brand: "${p.brand.name}",
                     stock: ${p.totalQuantity},
                     </c:if>
                 </c:forEach>
@@ -224,6 +229,7 @@
                         <tr>
                             <input type="hidden" value="\${item.id}" name="productId">
                             <td>\${item.name}</td>
+                            <td>\${item.brand}</td>
                             <td>\${item.stock}</td>
                             <td><input required type="number" name="quantity_\${item.id}" min="1" max="\${item.stock}" value="\${item.quantity}" class="enterNumber quantity"></td>
                             <td>
@@ -267,6 +273,7 @@
                     const name = $(this).data('name');
                     const sku = $(this).data('sku');
                     const category = $(this).data('category');
+                    const brand = $(this).data('brand');
                     const stock = $(this).data('stock');
                     const existingItem = selectedItems.find(item => item.id === id);
                     if (existingItem) {
@@ -275,6 +282,7 @@
             selectedItems.push({
             id: id,
                     name: name,
+                    brand: brand,
                     stock: stock,
                     quantity: 1,
                     price: "1,000"

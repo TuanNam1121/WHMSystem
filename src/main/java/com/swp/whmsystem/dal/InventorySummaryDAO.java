@@ -212,6 +212,46 @@ public class InventorySummaryDAO {
         return totals;
     }
 
+    public long getTotalAdjustQty(String openDate, String closeDate) {
+        boolean hasDate = openDate != null && !openDate.trim().isEmpty()
+                       && closeDate != null && !closeDate.trim().isEmpty();
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT COALESCE(SUM(sm.quantity), 0) AS adjust_qty ");
+        sql.append("FROM stock_movement sm ");
+        sql.append("WHERE sm.reference_type = 'INVENTORY_AUDIT' ");
+
+        if (hasDate) {
+            sql.append("AND sm.createdat >= ? AND sm.createdat <= ? ");
+        } else {
+            sql.append("AND sm.createdat <= ? ");
+        }
+
+        Timestamp tNowMax = Timestamp.valueOf(LocalDate.now().atTime(LocalTime.MAX));
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int idx = 1;
+            if (hasDate) {
+                LocalDate from = DateUtils.parseDate(openDate);
+                LocalDate to = DateUtils.parseDate(closeDate);
+                ps.setTimestamp(idx++, Timestamp.valueOf(from.atStartOfDay()));
+                ps.setTimestamp(idx++, Timestamp.valueOf(to.atTime(LocalTime.MAX)));
+            } else {
+                ps.setTimestamp(idx++, tNowMax);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong("adjust_qty");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0L;
+    }
+
     public List<InventorySummary> getTop5Import(String openDate, String closeDate) {
         return getTop5ByType(openDate, closeDate, INCREASED);
     }

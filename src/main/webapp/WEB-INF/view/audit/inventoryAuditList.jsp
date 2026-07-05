@@ -52,13 +52,28 @@
                     <div class="card-body">
                         <form id="filterForm" action="InventoryAuditList" method="GET">
                             <div class="row align-items-center mb-4">
-                                <div class="col-md-4">
-                                    <input type="text" name="keyword" class="form-control" placeholder="Search by full name" value="${param.keyword}">
+                                <div class="col-lg col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="searchId"
+                                            value="${param.searchId}"
+                                            placeholder="Search Serial" title="Search Serial">
+                                    </div>
                                 </div>
-                                <div class="col-md-2">
-                                    <button type="submit" class="btn btn-filters">
-                                        <img src="assets/img/icons/search-whites.svg" alt="img">
-                                    </button>
+                                <div class="col-lg col-sm-6 col-12">
+                                    <div class="form-group d-flex align-items-center">
+                                        <input type="date" class="form-control" name="startDate"
+                                            value="${param.startDate}" title="Start Date">
+                                        <span class="px-2">to</span>
+                                        <input type="date" class="form-control" name="endDate"
+                                            value="${param.endDate}" title="End Date">
+                                    </div>
+                                </div>
+                                <div class="col-lg-1 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-filters ms-auto">
+                                            <img src="assets/img/icons/search-whites.svg" alt="img">
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         <div class="table-responsive">

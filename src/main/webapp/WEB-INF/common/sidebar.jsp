@@ -65,6 +65,8 @@
                         </c:if>
                     </ul>
                 </li></c:if>
+                <c:if test="${sessionScope.userPermissions.contains('VIEW_IMPORT_REQUEST') ||
+                              sessionScope.userPermissions.contains('VIEW_IMPORT_HISTORY')}">
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="assets/img/icons/expense1.svg"
                                                        alt="img"><span> Import</span>
@@ -76,10 +78,12 @@
                         <span class="menu-arrow"></span>
                     </a>
                     <ul>
-                        <li><a href="importRequestList">Import Request List</a></li>
-                        <li><a href="ImportHistory">Import History</a></li>
+                    <c:if test="${sessionScope.userPermissions.contains('VIEW_IMPORT_REQUEST')}">
+                        <li><a href="importRequestList">Import Request List</a></li></c:if>
+                    <c:if test="${sessionScope.userPermissions.contains('VIEW_IMPORT_HISTORY')}">
+                        <li><a href="ImportHistory">Import History</a></li></c:if>
                     </ul>
-                </li>
+                </li></c:if>
                 <c:if test="${sessionScope.userPermissions.contains('VIEW_EXPORT_PRODUCT') || sessionScope.userPermissions.contains('VIEW_EXPORT_HISTORY')}">
                     <li class="submenu">
                         <a href="javascript:void(0);"><img src="assets/img/icons/transfer1.svg"
@@ -132,6 +136,7 @@
                     </li>
                 </c:if>
 
+                <c:if test="${sessionScope.userPermissions.contains('VIEW_REPORT')}">
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="assets/img/icons/time.svg"
                                                        alt="img"><span> Report</span> <span
@@ -141,7 +146,7 @@
                         <li><a href="ImportExportByDayReport">Daily Transaction Report</a></li>
                         <li><a href="purchasereport.html">Purchase Report</a></li>
                     </ul>
-                </li>
+                </li></c:if>
 
                 <c:if test="${sessionScope.user.roleId == 1}">
                     <li class="submenu">

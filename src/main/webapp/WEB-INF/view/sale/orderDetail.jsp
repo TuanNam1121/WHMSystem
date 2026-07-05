@@ -27,6 +27,28 @@
         <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
 
         <link rel="stylesheet" href="assets/css/style.css">
+        <style>
+            .enterNumber{
+                width: 50%;
+                height: 70%;
+                padding: 8px 12px;
+                border: 1px solid #ced4da;
+                border-radius: 6px;
+                font-size: 14px;
+                transition: 0.2s;
+            }
+            .enterNumber.price{
+                width: 80%;
+            }
+            .productSearch{
+                width: 25%;
+                padding: 8px 12px;
+                border: 1px solid #ced4da;
+                border-radius: 6px;
+                font-size: 14px;
+                transition: 0.2s;
+            }
+        </style>
     </head>
     <body>
         <div id="global-loader">
@@ -82,11 +104,15 @@
                                     <div class="table-responsive flex-grow-1"
                                          style="max-height: 400px; overflow-y: auto;">
                                         <table class="table table-hover table-nowrap mb-0">
+                                            <div style="position: sticky; top: 0; z-index: 99;">
+                                                <input class="productSearch" type="text" placeholder="search for product...">
+                                            </div>
                                             <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>SKU</th>
                                                     <th>Category</th>
+                                                    <th>Brand</th>
                                                     <th>Quantity</th>
                                                     <th>Status</th>
                                                     <th>Action</th>
@@ -99,6 +125,7 @@
                                                             <td class="product-name">${p.name}</td>
                                                             <td class="product-sku">${p.sku}</td>
                                                             <td class="product-category">${p.category.name}</td>
+                                                            <td class="product-category">${p.brand.name}</td>
                                                             <td class="product-quantity">${p.totalQuantity}</td>
                                                             <td><span
                                                                     class="badges ${p.isActive ? 'bg-lightgreen' : 'bg-lightred'}">
@@ -110,6 +137,7 @@
                                                                    data-name="${p.name}"
                                                                    data-sku="${p.sku}"
                                                                    data-category="${p.category.name}"
+                                                                   data-brand="${p.brand.name}"
                                                                    data-stock="${p.totalQuantity}"
                                                                    data-active="${p.isActive}"
                                                                    href="javascript:void(0);">
@@ -130,6 +158,7 @@
                                                 style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
                                                 <tr>
                                                     <th>Name</th>
+                                                    <th>Brand</th>
                                                     <th>In Stock</th>
                                                     <th>Quantity</th>
                                                     <th>Price</th>
@@ -140,7 +169,7 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div class="col-lg-12">
+                                    <div class="col-lg-12"  style="margin-top:24px">
                                         <input class="btn btn-submit me-2" type="submit" value="UPDATE">
                                         <a href="${pageContext.request.contextPath}/OrderList" class="btn btn-cancel">CANCEL</a>
                                     </div>
@@ -181,11 +210,12 @@
                     <c:if test="${p.productId == oi.productId}">
                     id: ${p.productId},
                     name: "${p.name}",
+                    brand: "${p.brand.name}",
                     stock: ${p.totalQuantity},
                     </c:if>
                 </c:forEach>
                     quantity: ${oi.quantity},
-                    price: ${oi.price}
+                    price: ${oi.price}.toLocaleString('en-US')
             }<c:if test="${!status.last}">,</c:if>
             </c:forEach>
             ];
@@ -199,9 +229,14 @@
                         <tr>
                             <input type="hidden" value="\${item.id}" name="productId">
                             <td>\${item.name}</td>
+                            <td>\${item.brand}</td>
                             <td>\${item.stock}</td>
-                            <td><input required type="number" name="quantity_\${item.id}" min="1" max="\${item.stock}" value="\${item.quantity}"></td>
-                            <td><input required type="number" name="price_\${item.id}" min="1"  value="\${item.price!=null?item.price:''}" ></td>
+                            <td><input required type="number" name="quantity_\${item.id}" min="1" max="\${item.stock}" value="\${item.quantity}" class="enterNumber quantity"></td>
+                            <td>
+                                <div class="input-group input-group-sm" style="width: 150px;">
+                                    <input required type="text" name="price_\${item.id}" min="1" value="\${item.price}" class="enterNumber price"><span class="input-group-text">VNĐ</span>
+                                </div>
+                            </td>
                             <td>
                                 <a class="delete-set remove-item-btn" href="javascript:void(0);" data-id="\${item.id}">
                                     <img src="${pageContext.request.contextPath}/assets/img/icons/delete.svg" alt="Remove">
@@ -216,36 +251,29 @@
 
             // Initial render
             renderSelectedItems();
-                    // Search Product directly in DOM
-                    $('#product-search').on('input', function () {
-            const searchTerm = $(this).val().toLowerCase();
-                    $('.product-item').each(function () {
-            const name = $(this).find('.product-name').text().toLowerCase();
+            // Search Product directly in DOM
+            $('.productSearch').on('input', function () {
+                const searchTerm = $(this).val().toLowerCase();
+                $('.product-item').each(function () {
+                    const name = $(this).find('.product-name').text().toLowerCase();
                     const sku = $(this).find('.product-sku').text().toLowerCase();
-                    if (name.includes(searchTerm) || sku.includes(searchTerm)) {
-            $(this).show();
-            } else {
-            $(this).hide();
-            }
-            });
+                    const cate = $(this).find('.product-category').text().toLowerCase();
+                    if (name.includes(searchTerm) || sku.includes(searchTerm) || cate.includes(searchTerm)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
             });
                     // Add Product
                     $(document).on('click', '.add-product-btn', function () {
             const isActive = $(this).data('active');
-                    if (isActive === false || isActive === 'false') {
-            Swal.fire({
-            icon: 'error',
-                    title: 'Cannot Add Product',
-                    text: 'You cannot add an inactive product.',
-                    confirmButtonColor: '#FF9F43'
-            });
-                    return;
-            }
 
             const id = $(this).data('id');
                     const name = $(this).data('name');
                     const sku = $(this).data('sku');
                     const category = $(this).data('category');
+                    const brand = $(this).data('brand');
                     const stock = $(this).data('stock');
                     const existingItem = selectedItems.find(item => item.id === id);
                     if (existingItem) {
@@ -254,12 +282,29 @@
             selectedItems.push({
             id: id,
                     name: name,
+                    brand: brand,
                     stock: stock,
-                    quantity: 1
+                    quantity: 1,
+                    price: "1,000"
             });
             }
             renderSelectedItems();
             });
+            
+            $(document).on('input', '.enterNumber', function (e) {
+                    let value = $(this).val();
+
+                    // Remove everything except digits
+                    value = value.replace(/[^0-9]/g, '');
+                    
+                    if (value === '') {
+                        $(this).val('');
+                        return;
+                    }
+                    $(this).val(Number(value).toLocaleString('en-US'));
+                });
+                
+                
                     // Remove Product
                     $(document).on('click', '.remove-item-btn', function () {
             const id = $(this).data('id');

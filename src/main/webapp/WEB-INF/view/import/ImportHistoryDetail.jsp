@@ -196,7 +196,7 @@
                                         <td>${i.productName}</td>
                                         <td>${i.serial}</td>
                                         <td>${i.unit}</td>
-                                        <td>${i.importedPrice} VND</td>
+                                        <td><fmt:formatNumber value="${i.importedPrice}" pattern="#,###"/> VND</td>
                                     </tr>
                                 </c:forEach>
                             </tbody>

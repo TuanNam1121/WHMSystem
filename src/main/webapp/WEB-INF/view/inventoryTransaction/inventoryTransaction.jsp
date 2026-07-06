@@ -45,7 +45,7 @@
                     <div class="content">
                         <div class="page-header">
                             <div class="page-title">
-                                <h4>InventoryTransaction</h4>
+                                <h4>Inventory Transaction List</h4>
                             </div>
                         </div>
 
@@ -84,14 +84,18 @@
                                                             <div class="form-group">
                                                                 <input type="text" class="form-control" name="searchId"
                                                                     value="${param.searchId}"
-                                                                    placeholder="Search Serial" title="Search Serial">
+                                                                    placeholder="Search ID or Serial"
+                                                                    title="Search ID or Serial">
                                                             </div>
                                                         </div>
                                                         <div class="col-lg col-sm-6 col-12">
                                                             <div class="form-group d-flex align-items-center">
+                                                                <label class="mb-0 me-2"
+                                                                    style="white-space: nowrap;">From</label>
                                                                 <input type="date" class="form-control" name="startDate"
                                                                     value="${param.startDate}" title="Start Date">
-                                                                <span class="px-2">to</span>
+                                                                <label class="mb-0 mx-2"
+                                                                    style="white-space: nowrap;">To</label>
                                                                 <input type="date" class="form-control" name="endDate"
                                                                     value="${param.endDate}" title="End Date">
                                                             </div>
@@ -125,28 +129,28 @@
                                             <tbody>
                                                 <c:forEach var="item" items="${transactions}">
                                                     <tr>
-                                                        <td>${item.id}</td>
+                                                        <td>${item.code}</td>
                                                         <td>${item.type}</td>
                                                         <td>${not empty item.processor ? item.processor : 'N/A'}</td>
                                                         <td>${item.date}</td>
                                                         <td>
                                                             <c:choose>
                                                                 <c:when test="${item.type == 'AUDIT'}">
-                                                                    <a class="mr-3"
+                                                                    <a class="me-3"
                                                                         href="InventoryAuditDetail?id=${item.id}">
                                                                         <img src="assets/img/icons/eye.svg" alt="img">
                                                                     </a>
                                                                 </c:when>
 
                                                                 <c:when test="${item.type == 'IMPORT'}">
-                                                                    <a class="mr-3"
+                                                                    <a class="me-3"
                                                                         href="ImportHistoryDetail?receiptId=${item.id}">
                                                                         <img src="assets/img/icons/eye.svg" alt="img">
                                                                     </a>
                                                                 </c:when>
 
                                                                 <c:otherwise>
-                                                                    <a class="mr-3"
+                                                                    <a class="me-3"
                                                                         href="exportDetail?orderId=${item.id}">
                                                                         <img src="assets/img/icons/eye.svg" alt="img">
                                                                     </a>

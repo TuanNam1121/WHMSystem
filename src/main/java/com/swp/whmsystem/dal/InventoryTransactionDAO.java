@@ -16,16 +16,17 @@ public class InventoryTransactionDAO {
         String importCondition = "";
         String exportCondition = "";
         if (searchId != null && !searchId.isBlank()) {
-            auditCondition = " AND EXISTS (SELECT 1 FROM inventory_audit_items iai JOIN inventory_audit_item_serials iais ON iais.audit_item_id = iai.id JOIN product_items pi ON pi.id = iais.product_item_id WHERE iai.auditid = ia.id AND pi.serial LIKE ?) ";
-            importCondition = " AND EXISTS (SELECT 1 FROM good_receipts_items gri JOIN product_items pi ON pi.goodreceiptsitemid = gri.id WHERE gri.goodreceiptid = gr.id AND pi.serial LIKE ?) ";
-            exportCondition = " AND EXISTS (SELECT 1 FROM export_receipt_details erd JOIN export_receipt_serials ers ON ers.export_receipt_detail_id = erd.id JOIN product_items pi ON pi.id = ers.product_item_id WHERE erd.export_receipt_id = er.id AND pi.serial LIKE ?) ";
+            auditCondition = " AND (ia.code LIKE ? OR EXISTS (SELECT 1 FROM inventory_audit_items iai JOIN inventory_audit_item_serials iais ON iais.audit_item_id = iai.id JOIN product_items pi ON pi.id = iais.product_item_id WHERE iai.auditid = ia.id AND pi.serial LIKE ?)) ";
+            importCondition = " AND (gr.code LIKE ? OR EXISTS (SELECT 1 FROM good_receipts_items gri JOIN product_items pi ON pi.goodreceiptsitemid = gri.id WHERE gri.goodreceiptid = gr.id AND pi.serial LIKE ?)) ";
+            exportCondition = " AND (er.code LIKE ? OR EXISTS (SELECT 1 FROM export_receipt_details erd JOIN export_receipt_serials ers ON ers.export_receipt_detail_id = erd.id JOIN product_items pi ON pi.id = ers.product_item_id WHERE erd.export_receipt_id = er.id AND pi.serial LIKE ?)) ";
         }
 
         String sql = """
-                SELECT id, type, date, processor
+                SELECT id, code, type, date, processor
                 FROM (
                     SELECT 
-                        ia.id AS id, 
+                        ia.id AS id,
+                        ia.code AS code,
                         'AUDIT' AS type, 
                         ia.updatedat AS date, 
                         u.fullname AS processor
@@ -36,7 +37,8 @@ public class InventoryTransactionDAO {
                     UNION ALL
                     
                     SELECT 
-                        gr.id AS id, 
+                        gr.id AS id,
+                        gr.code AS code,
                         'IMPORT' AS type, 
                         gr.created_at AS date, 
                         u.fullname AS processor
@@ -47,7 +49,8 @@ public class InventoryTransactionDAO {
                     UNION ALL
                     
                     SELECT 
-                        er.order_id AS id, 
+                        er.order_id AS id,
+                        er.code AS code,
                         'EXPORT' AS type, 
                         er.exported_at AS date, 
                         u.fullname AS processor
@@ -74,6 +77,9 @@ public class InventoryTransactionDAO {
                 ps.setString(paramIndex++, searchPattern);
                 ps.setString(paramIndex++, searchPattern);
                 ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
             }
             if (type != null && !type.isBlank()) {
                 ps.setString(paramIndex++, type);
@@ -89,7 +95,8 @@ public class InventoryTransactionDAO {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 list.add(new InventoryTransactionDTO(
-                    rs.getInt("id"), 
+                    rs.getInt("id"),
+                    rs.getString("code"),
                     rs.getString("type"), 
                     rs.getTimestamp("date"),
                     rs.getString("processor")
@@ -107,9 +114,9 @@ public class InventoryTransactionDAO {
         String importCondition = "";
         String exportCondition = "";
         if (searchId != null && !searchId.isBlank()) {
-            auditCondition = " AND EXISTS (SELECT 1 FROM inventory_audit_items iai JOIN inventory_audit_item_serials iais ON iais.audit_item_id = iai.id JOIN product_items pi ON pi.id = iais.product_item_id WHERE iai.auditid = ia.id AND pi.serial LIKE ?) ";
-            importCondition = " AND EXISTS (SELECT 1 FROM good_receipts_items gri JOIN product_items pi ON pi.goodreceiptsitemid = gri.id WHERE gri.goodreceiptid = gr.id AND pi.serial LIKE ?) ";
-            exportCondition = " AND EXISTS (SELECT 1 FROM export_receipt_details erd JOIN export_receipt_serials ers ON ers.export_receipt_detail_id = erd.id JOIN product_items pi ON pi.id = ers.product_item_id WHERE erd.export_receipt_id = er.id AND pi.serial LIKE ?) ";
+            auditCondition = " AND (ia.code LIKE ? OR EXISTS (SELECT 1 FROM inventory_audit_items iai JOIN inventory_audit_item_serials iais ON iais.audit_item_id = iai.id JOIN product_items pi ON pi.id = iais.product_item_id WHERE iai.auditid = ia.id AND pi.serial LIKE ?)) ";
+            importCondition = " AND (gr.code LIKE ? OR EXISTS (SELECT 1 FROM good_receipts_items gri JOIN product_items pi ON pi.goodreceiptsitemid = gri.id WHERE gri.goodreceiptid = gr.id AND pi.serial LIKE ?)) ";
+            exportCondition = " AND (er.code LIKE ? OR EXISTS (SELECT 1 FROM export_receipt_details erd JOIN export_receipt_serials ers ON ers.export_receipt_detail_id = erd.id JOIN product_items pi ON pi.id = ers.product_item_id WHERE erd.export_receipt_id = er.id AND pi.serial LIKE ?)) ";
         }
 
         String sql = """
@@ -135,6 +142,9 @@ public class InventoryTransactionDAO {
             int paramIndex = 1;
             if (searchId != null && !searchId.isBlank()) {
                 String searchPattern = "%" + searchId.trim() + "%";
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
                 ps.setString(paramIndex++, searchPattern);
                 ps.setString(paramIndex++, searchPattern);
                 ps.setString(paramIndex++, searchPattern);

@@ -13,6 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class InventoryTransactionDTO {
     private int id;
+    private String code;
     private String type;
     private Timestamp date;
     private String processor;

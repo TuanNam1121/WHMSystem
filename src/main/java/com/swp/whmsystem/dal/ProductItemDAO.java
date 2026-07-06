@@ -35,7 +35,62 @@ public class ProductItemDAO {
             throw new RuntimeException(e);
         }
     }
+    
+    public List<ProductItem> searchProductItemsByReceiptId(int receiptId, String keyword, String sortBy, int pageSize, int page){
+        List<ProductItem> list = new ArrayList<>();
+        String sql = """
+                     select pi.id, pi.serial, pi.imported_price, pi.export_price, pi.isactive, pi.imported_at, pi.product_id, pi.goodreceiptsitemid, pi.status 
+                     from product_items pi join good_receipts_items gri on pi.goodreceiptsitemid = gri.id join products p on p.productid = pi.product_id where gri.goodreceiptid = ? """;
+        if(keyword != null && !keyword.trim().isEmpty()){
+            sql += " and ( ";
+            sql += " pi.serial like '%" + keyword + "%' or";
+            sql += " p.name like '%" + keyword + "%' )";
+        }
+        
+        if(sortBy != null && !sortBy.trim().isEmpty()){
+            if(sortBy.equals("productName")) sql += " order by p.name desc";
+            else if(sortBy.equals("Serial/IMEI")) sql += " order by pi.serial desc";
+        }
+        
+        int offset = (page - 1) * pageSize;
+        sql += " limit " + pageSize + " offset " + offset;
+        
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, receiptId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                ProductItem p = mapResultsetToProductItem(resultSet);
+                list.add(p);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
 
+    public int countProductItemsByReceiptId(int receiptId, String keyword){
+        String sql = """
+                     select count(*) 
+                     from product_items pi join good_receipts_items gri on pi.goodreceiptsitemid = gri.id join products p on p.productid = pi.product_id where gri.goodreceiptid = ? """;
+        if(keyword != null && !keyword.trim().isEmpty()){
+            sql += " and ( ";
+            sql += " pi.serial like '%" + keyword + "%' or";
+            sql += " p.name like '%" + keyword + "%')";
+        }
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, receiptId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if(resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
+    
     public List<ProductItem> getAllProductItemByGoodReceiptItemId(int goodReceiptItemId) {
         List<ProductItem> list = new ArrayList<>();
         String sql = "select * from product_items where goodreceiptsitemid = ? order by imported_at desc";
@@ -223,7 +278,11 @@ public class ProductItemDAO {
 
     public static void main(String[] args) {
         ProductItemDAO dao = new ProductItemDAO();
-        System.out.println(dao.getExportPriceWithSoldStatus(6));
+        List<ProductItem> productItemList = dao.searchProductItemsByReceiptId(2, null, null, 10, 1);
+        System.out.println(dao.countProductItemsByReceiptId(7, null));
+        for(ProductItem i : productItemList){
+            System.out.println(i);
+        }
     }
 
 }

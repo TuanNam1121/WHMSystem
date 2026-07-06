@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <title>${act.equals("new") ? "Add New User" : "Update User Information"}</title>
+    <title>${act == 'new' ? 'Add New User' : (act == 'view' ? 'View User Information' : 'Update User Information')}</title>
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/animate.css">
@@ -27,8 +27,8 @@
         <div class="content">
             <div class="page-header">
                 <div class="page-title">
-                    <h4>${act == 'new' ? 'Add New User' : 'Update User Information'}</h4>
-                    <h6>${act == 'new' ? 'Create new user profile' : 'Edit user profile'}</h6>
+                    <h4>${act == 'new' ? 'Add New User' : (act == 'view' ? 'View User Information' : 'Update User Information')}</h4>
+                    <h6>${act == 'new' ? 'Create new user profile' : (act == 'view' ? 'View user profile details' : 'Edit user profile')}</h6>
                 </div>
             </div>
 
@@ -54,11 +54,11 @@
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>UserName</label>
-                                    <input type="text" name="username" value="${u.userName != null ? u.userName : ''}" class="form-control" required>
+                                    <input type="text" name="username" value="${u.userName != null ? u.userName : ''}" class="form-control" required ${act == 'view' ? 'readonly' : ''}>
                                 </div>
                                 <div class="form-group">
                                     <label>FullName</label>
-                                    <input type="text" name="fullname" value="${u.fullName != null ? u.fullName : ''}" class="form-control" required>
+                                    <input type="text" name="fullname" value="${u.fullName != null ? u.fullName : ''}" class="form-control" required ${act == 'view' ? 'readonly' : ''}>
                                 </div>
                                 <c:if test="${act == 'new'}">
                                     <div class="form-group">
@@ -68,7 +68,7 @@
                                 </c:if>
                                 <div class="form-group">
                                     <label>Role</label>
-                                    <select name="role" class="select">
+                                    <select name="role" class="select" ${act == 'view' ? 'disabled' : ''}>
                                         <c:forEach items="${rolelist}" var="i">
                                             <option value="${i.roleId}" ${u.roleId == i.roleId ? 'selected' : ''}>
                                                 ${roleDao.getRoleNamFromRoleID(i.roleId)}
@@ -81,43 +81,50 @@
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Phone</label>
-                                    <input type="text" name="phone" value="${u.phone != null ? u.phone : ''}" class="form-control">
+                                    <input type="text" name="phone" value="${u.phone != null ? u.phone : ''}" class="form-control" ${act == 'view' ? 'readonly' : ''}>
                                 </div>
                                 <div class="form-group">
                                     <label>Email</label>
-                                    <input type="email" name="email" value="${u.email != null ? u.email : ''}" class="form-control">
+                                    <input type="email" name="email" value="${u.email != null ? u.email : ''}" class="form-control" ${act == 'view' ? 'readonly' : ''}>
                                 </div>
                                 <div class="form-group">
                                     <label>Gender</label>
                                     <div class="d-flex gap-4 align-items-center border rounded p-3 bg-white">
                                         <div class="form-check">
-                                            <input id="gender-male" class="form-check-input" type="radio" name="gender" value="MALE" ${u.gender == 'MALE' ? 'checked' : ''}>
+                                            <input id="gender-male" class="form-check-input" type="radio" name="gender" value="MALE" ${u.gender == 'MALE' ? 'checked' : ''} ${act == 'view' ? 'disabled' : ''}>
                                             <label for="gender-male" class="form-check-label">Male</label>
                                         </div>
                                         <div class="form-check">
-                                            <input id="gender-female" class="form-check-input" type="radio" name="gender" value="FEMALE" ${u.gender == 'FEMALE' ? 'checked' : ''}>
+                                            <input id="gender-female" class="form-check-input" type="radio" name="gender" value="FEMALE" ${u.gender == 'FEMALE' ? 'checked' : ''} ${act == 'view' ? 'disabled' : ''}>
                                             <label for="gender-female" class="form-check-label">Female</label>
                                         </div>
                                         <div class="form-check">
-                                            <input id="gender-other" class="form-check-input" type="radio" name="gender" value="OTHER" ${u.gender == 'OTHER' ? 'checked' : ''}>
+                                            <input id="gender-other" class="form-check-input" type="radio" name="gender" value="OTHER" ${u.gender == 'OTHER' ? 'checked' : ''} ${act == 'view' ? 'disabled' : ''}>
                                             <label for="gender-other" class="form-check-label">Other</label>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <c:if test="${act == 'update'}">
+                                <c:if test="${act == 'update' || act == 'view'}">
                                     <div class="form-group">
                                         <label>Account Status</label>
                                         <div class="status-toggle d-flex justify-content-between align-items-center">
-                                            <input type="checkbox" id="user_active" class="check" name="active" value="true" ${u.isActive ? 'checked' : ''}>
-                                            <label for="user_active" class="checktoggle">checkbox</label>
+                                            <input type="checkbox" id="user_active" class="check" name="active" value="true" ${u.isActive ? 'checked' : ''} ${act == 'view' ? 'disabled' : ''}>
+                                            <label for="user_active" class="checktoggle"></label>
                                         </div>
                                     </div>
                                 </c:if>
                             </div>
 
                             <div class="col-lg-12 mt-3">
-                                <button type="submit" class="btn btn-submit me-2">${act == 'new' ? 'Create' : 'Update'}</button>
+                                <c:choose>
+                                    <c:when test="${act == 'view'}">
+                                        <a href="UpdateUserInformation?id=${u.id}" class="btn btn-submit me-2">Edit</a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <button type="submit" class="btn btn-submit me-2">${act == 'new' ? 'Create' : 'Update'}</button>
+                                    </c:otherwise>
+                                </c:choose>
                                 <a href="ViewUserList" class="btn btn-cancel">Cancel</a>
                             </div>
                         </div>

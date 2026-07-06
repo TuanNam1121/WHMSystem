@@ -56,11 +56,35 @@ public class ImportHistory extends HttpServlet {
         String rawSupplierId = request.getParameter("supplierid");
         String rawProcessedBy = request.getParameter("processedby");
         String sortBy = request.getParameter("sortBy");
-
+        String pageSizeRaw = request.getParameter("pageSize");
+        String pageRaw = request.getParameter("page");
+        
         int purchaseid = (rawPurchaseId == null || rawPurchaseId.isBlank()) ? -1 : Integer.parseInt(rawPurchaseId);
         int processedBy = (rawProcessedBy == null || rawProcessedBy.isBlank()) ? -1 : Integer.parseInt(rawProcessedBy);
         int supplierId = (rawSupplierId == null || rawSupplierId.isBlank()) ? -1 : Integer.parseInt(rawSupplierId);
 
+        int pageSize = 10;
+        int page = 1;
+        
+        if(pageSizeRaw != null && !pageSizeRaw.trim().isEmpty()){
+            try{
+                int parsedPageSize = Integer.parseInt(pageSizeRaw.trim());
+                if(parsedPageSize > 0 && parsedPageSize <= 100){
+                    pageSize = parsedPageSize;
+                }
+            }catch(NumberFormatException ex){
+                pageSize = 10;
+            }
+        }
+        
+        if(pageRaw != null && !pageRaw.trim().isEmpty()){
+            try{
+                page = Math.max(1, Integer.parseInt(pageRaw.trim()));
+            }catch(NumberFormatException ex){
+                page = 1;
+            }
+        }
+       
         GoodReceiptDAO gr = new GoodReceiptDAO();
         UserDAO user = new UserDAO();
         SupplierDAO supplierDAO = new SupplierDAO();
@@ -68,7 +92,10 @@ public class ImportHistory extends HttpServlet {
         List<User> userImporterList = user.getAllUsersHandleGoodReceipt();
         List<Supplier> supplier = supplierDAO.getAllSuppliers();
         List<GoodReceipt> list = gr.searchProduct(keyword, purchaseid, supplierId, processedBy, sortBy);
-
+        
+        int totalGoodReceipt = gr.countImportHistory(keyword, purchaseid, supplierId, processedBy);
+        int totalPages = Math.max(1, (int) Math.ceil((double) totalGoodReceipt / pageSize));
+        page = Math.min(page, totalPages);
         List<ImportHistoryDTO> returnedList = new ArrayList<>();
         for (GoodReceipt i : list) {
             returnedList.add(toImportHistory(i));
@@ -76,6 +103,9 @@ public class ImportHistory extends HttpServlet {
         session.setAttribute("supplier", supplier);
         session.setAttribute("userList", userImporterList);
         request.setAttribute("list", returnedList);
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("page", page);
+        request.setAttribute("totalPages", totalPages);
         request.getRequestDispatcher("WEB-INF/view/import/importHistory.jsp").forward(request, response);
     }
 

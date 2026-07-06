@@ -53,12 +53,57 @@ public class ImportHistoryDetail extends HttpServlet {
         ProductItemDAO pi = new ProductItemDAO();
         
         ImportHistoryDTO importDetail = toImportHistory(gr.getGoodReceiptByGoodReceipId(receipId));
-        List<ProductItem> productItemList = pi.getAllProductItemByGoodReceiptID(receipId);
+        
+        // Search and pagination parameters
+        String keyword = request.getParameter("keyword");
+        String sortBy = request.getParameter("sortBy");
+        String pageSizeRaw = request.getParameter("pageSize");
+        String pageRaw = request.getParameter("page");
+
+        int pageSize = 10;
+        int page = 1;
+
+        if (pageSizeRaw != null && !pageSizeRaw.trim().isEmpty()) {
+            try {
+                int parsedPageSize = Integer.parseInt(pageSizeRaw.trim());
+                if (parsedPageSize > 0 && parsedPageSize <= 100) {
+                    pageSize = parsedPageSize;
+                }
+            } catch (NumberFormatException ignored) {
+                pageSize = 10;
+            }
+        }
+
+        if (pageRaw != null && !pageRaw.trim().isEmpty()) {
+            try {
+                page = Math.max(1, Integer.parseInt(pageRaw.trim()));
+            } catch (NumberFormatException ignored) {
+                page = 1;
+            }
+        }
+
+        // public int countProductItemsByReceiptId(int receiptId, String keyword)
+        // public List<ProductItem> searchProductItemsByReceiptId(int receiptId, String keyword, String sortBy, int pageSize, int page)
+        
+        int totalItems = pi.countProductItemsByReceiptId(receipId, keyword);
+        int totalPages = Math.max(1, (int) Math.ceil((double) totalItems / pageSize));
+        page = Math.min(page, totalPages);
+
+        List<ProductItem> productItemList = pi.searchProductItemsByReceiptId(receipId, keyword, sortBy, pageSize, page);
+        
         List<ProductItemRowDTO> returnedList = new ArrayList<>();
         for(ProductItem i : productItemList) returnedList.add(toProductItemRowDTO(i));
         
         request.setAttribute("list", returnedList);
         request.setAttribute("detail", importDetail);
+        
+        // Set pagination attributes
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("page", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("sortBy", sortBy);
+        
         }
         catch(Exception ex){
             request.setAttribute("error", ex.getMessage());

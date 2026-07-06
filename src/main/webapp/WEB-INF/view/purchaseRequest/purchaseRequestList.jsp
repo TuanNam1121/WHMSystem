@@ -132,6 +132,7 @@
                         <table class="table" id="purchase-request-table">
                             <thead>
                             <tr>
+                                <th>No.</th>
                                 <th>Request Code</th>
                                 <th>Supplier</th>
                                 <th>Total Price</th>
@@ -141,8 +142,9 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <c:forEach items="${purchaseList}" var="pr">
+                            <c:forEach items="${purchaseList}" var="pr" varStatus="status">
                                 <tr>
+                                    <td>${(page - 1) * pageSize + status.count}</td>
                                     <td class="text-bolds"><fmt:formatNumber value="${pr.id}" pattern="PR-"/></td>
                                     <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
                                         title="<c:out value='${pr.supplierName}'/>">${pr.supplierName}</td>

@@ -65,7 +65,7 @@
                         </div>
                     </div>
 
-                    <form action="createPurchaseRequest" method="get">
+                    <%-- <form action="createPurchaseRequest" method="get"> --%>
 
                         <div class="row align-items-stretch">
                             <div class="col-lg-12 col-md-12 d-flex mb-4">
@@ -79,7 +79,10 @@
                                                            name="productSearch" class="form-control"
                                                            placeholder="Search product name..."
                                                            value="${param.productSearch}">
-                                                    <button type="submit" class="btn btn-primary">
+                                                    <%-- <button type="submit" class="btn btn-primary">
+                                                        <i class="fas fa-search"></i> Search
+                                                    </button> --%>
+                                                    <button type="button" class="btn btn-primary" id="btn-search-product">
                                                         <i class="fas fa-search"></i> Search
                                                     </button>
                                                 </div>
@@ -87,16 +90,16 @@
                                         </div>
                                         <div class="table-responsive flex-grow-1"
                                              style="max-height: 400px; overflow-y: auto;">
-                                            <table class="table table-hover table-nowrap mb-0">
+                                            <table class="table table-hover mb-0" style="table-layout: fixed;">
                                                 <thead
                                                         style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
                                                 <tr>
-                                                    <th>Name</th>
-                                                    <th>SKU</th>
-                                                    <th>Category</th>
-                                                    <th>Quantity</th>
-                                                    <th>Status</th>
-                                                    <th>Action</th>
+                                                    <th style="width: 35%;">Name</th>
+                                                    <th style="width: 15%;">SKU</th>
+                                                    <th style="width: 20%;">Category</th>
+                                                    <th style="width: 10%;">Quantity</th>
+                                                    <th style="width: 10%;">Status</th>
+                                                    <th style="width: 10%;">Action</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody id="product-list-body">
@@ -142,7 +145,7 @@
                                 </div>
                             </div>
                         </div>
-                    </form>
+                    <%-- </form> --%>
 
                     <form action="createPurchaseRequest" method="post">
                         <input type="hidden" id="salesman-id" name="salesmanId" value="${sessionScope.user.id}">
@@ -374,6 +377,23 @@
             item.reqQty = newQty;
             $(this).val(item.reqQty);
             updateTotalAmount();
+        });
+
+        // Frontend search product
+        $('#product-search').on('input', function() {
+            let searchTerm = $(this).val().toLowerCase();
+            $('#product-list-body .product-item').each(function() {
+                let productName = $(this).find('.product-name').text().toLowerCase();
+                if (productName.includes(searchTerm)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+
+        $('#btn-search-product').on('click', function() {
+            $('#product-search').trigger('input');
         });
     });
 </script>

@@ -23,10 +23,6 @@ public class ExportDetail extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_EXPORT_HISTORY,
-                "You don't have permission to view export details!")) {
-            return;
-        }
 
         HttpSession session = request.getSession();
         String orderIdStr = request.getParameter("orderId");

@@ -117,7 +117,7 @@
                                                     <option value="">Choose Model</option>
                                                     <c:forEach var="i" items="${modelList}">
                                                         <option value="${i.id}"
-                                                                data-brand="${transactionExist == null ? i.brand.getId() : ''}" ${p != null && p.model.getId() == i.id ? 'selected' : ''}>${i.name}</option>
+                                                                data-brand="${i.brand.getId()}" ${p != null && p.model.getId() == i.id ? 'selected' : ''}>${i.name}</option>
                                                     </c:forEach>
                                                 </select>
                                             </div>
@@ -225,7 +225,7 @@
             const $brandSelect = $("#brandSelect");
             const $modelSelect = $("#modelSelect");
 
-            const selectedModelId = "${product != null ? product.model.id : ''}";
+            const selectedModelId = "${p != null ? p.model.id : ''}";
 
             const allModelOptions = $modelSelect.find("option[data-brand]").map(function () {
                 return {

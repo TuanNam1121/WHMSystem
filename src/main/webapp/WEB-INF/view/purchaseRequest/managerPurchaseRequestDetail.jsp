@@ -160,6 +160,7 @@
                                 <th>Price</th>
                                 <th class="text-center">Quantity Requested</th>
                                 <th class="text-center">Current Stock</th>
+                                <th style="text-align: right;">Total</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -193,9 +194,22 @@
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
+                                    <td style="text-align: right;">
+                                        <fmt:formatNumber value="${item.price * item.requiredQty}" pattern="#,###" var="formattedRowTotal"/>
+                                        <strong>${fn:replace(formattedRowTotal, ',', '.')}đ</strong>
+                                    </td>
                                 </tr>
                             </c:forEach>
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6" style="text-align: right; font-weight: 600;">Grand Total:</td>
+                                    <td style="text-align: right; font-weight: 700; color: #28C76F; font-size: 16px;">
+                                        <fmt:formatNumber value="${totalAmount}" pattern="#,###" var="formattedGrandTotal"/>
+                                        ${fn:replace(formattedGrandTotal, ',', '.')}đ
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
 

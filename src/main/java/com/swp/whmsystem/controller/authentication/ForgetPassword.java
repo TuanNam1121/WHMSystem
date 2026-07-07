@@ -58,8 +58,7 @@ public class ForgetPassword extends HttpServlet {
         Request req = new Request();
         req.setUserId(user.getId());
         req.setStatus("NEW");
-        req.setMessage("ResetPassword");
-        daoR.addNewRequest(req);
+        daoR.addNewResetPasswordRequest(req);
         
         request.setAttribute("error", "Request sent! Please wait for an email!");
         request.getRequestDispatcher("WEB-INF/view/authentication/login.jsp").forward(request, response);

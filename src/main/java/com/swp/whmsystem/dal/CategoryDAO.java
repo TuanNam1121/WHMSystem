@@ -148,10 +148,7 @@ public class CategoryDAO {
     public List<Category> searchCategory(String keyword, int isActive, String sortBy,
                                          int pageSize, int page) {
         List<Category> categoryList = new ArrayList<>();
-        StringBuilder sql = new StringBuilder(
-                "select c.* from categories c "
-                        + "where 1=1"
-        );
+        StringBuilder sql = new StringBuilder("select c.* from categories c where 1=1");
         List<Object> parameter = new ArrayList<>();
 
         if (keyword != null && !keyword.trim().isEmpty()) {

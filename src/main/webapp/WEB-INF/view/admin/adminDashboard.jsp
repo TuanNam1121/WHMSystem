@@ -7,7 +7,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <meta name="description" content="POS - Bootstrap Admin Template">
-    <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
+    <meta name="keywords"
+          content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
     <title>Admin Dashboard</title>
@@ -28,7 +29,7 @@
 
 <div class="main-wrapper">
     <jsp:include page="/WEB-INF/common/header.jsp"></jsp:include>
-        <jsp:include page="/WEB-INF/common/sidebar.jsp"></jsp:include>
+    <jsp:include page="/WEB-INF/common/sidebar.jsp"></jsp:include>
 
     <div class="page-wrapper">
         <div class="content">
@@ -67,16 +68,20 @@
                                         <td>
                                             <c:choose>
                                                 <c:when test="${r.status == 'NEW'}">
-                                                    <span class="badges bg-lightgreen">${r.status}</span>
+                                                    <span class="badges bg-lightyellow" style="min-width: 100px; display: inline-block; text-align: center;">${r.status}</span>
+                                                </c:when>
+                                                <c:when test="${r.status == 'COMPLETED'}">
+                                                    <span class="badges bg-lightgreen" style="min-width: 100px; display: inline-block; text-align: center;">${r.status}</span>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <span class="badges bg-lightgrey">${r.status}</span>
+                                                    <span class="badges bg-lightgrey" style="min-width: 100px; display: inline-block; text-align: center;">${r.status}</span>
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
                                         <td>
                                             <c:if test="${r.status == 'NEW'}">
-                                                <a class="me-3" href="solverequest?type=${r.message}&userid=${r.userId}">
+                                                <a class="me-3"
+                                                   href="solverequest?type=${r.message}&userid=${r.userId}">
                                                     <img src="assets/img/icons/edit.svg" alt="img"> Solve
                                                 </a>
                                             </c:if>

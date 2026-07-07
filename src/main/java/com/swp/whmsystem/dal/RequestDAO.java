@@ -115,7 +115,7 @@ public class RequestDAO {
         return i;
     }
 
-    public boolean addNewRequest(Request request) {
+    public boolean addNewResetPasswordRequest(Request request) {
         String sql = "Insert into password_resets(userid, status)"
                 + " values (?,?)";
         try (Connection conn = DBContext.getConnection()) {

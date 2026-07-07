@@ -51,7 +51,51 @@ public class SolveRequest extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        UserDAO uDao = new UserDAO();
+        RequestDAO rDao = new RequestDAO();
+
+        String userId_raw = request.getParameter("userId");
+        int userId = Integer.parseInt(userId_raw);
+        User user = uDao.getUserFromId(userId);
+
+        String newPass = request.getParameter("newPass");
+        String cfNewPass = request.getParameter("cfNewPass");
+
+        if (newPass.isEmpty() || cfNewPass.isEmpty()) {
+            request.setAttribute("error", "Please fill out theses fields!");
+            request.setAttribute("userId", userId);
+            request.getRequestDispatcher("WEB-INF/view/admin/changePassByAdmin.jsp").forward(request, response);
+            return;
+        }
+
+        if (!cfNewPass.equals(newPass)) {
+            request.setAttribute("error", "Confirm password does not match!");
+            request.setAttribute("userId", userId);
+            request.getRequestDispatcher("WEB-INF/view/admin/changePassByAdmin.jsp").forward(request, response);
+            return;
+        }
+
+        String hashedNewPass = BCrypt.hashpw(newPass, BCrypt.gensalt(12));
+
+        boolean isUpdated = uDao.updateUserPassword(user.getId(),
+                hashedNewPass);
+
+        if (isUpdated) {
+            user.setPassword(hashedNewPass);
+            Request req = rDao.getLatestRequestByUserId(userId);
+            req.setStatus("COMPLETED");
+            rDao.updateRequestStatus(req.getRequestId(), req.getStatus());
+
+            boolean isEmailSent = EmailApi.sendEmail(user.getEmail(), newPass);
+            if (isEmailSent) {
+                request.setAttribute("message", "Change password successfully and email sent!");
+            } else {
+                request.setAttribute("message", "Error occur in updating!");
+            }
+        } else {
+            request.setAttribute("message", "Error! Please try again!");
+        }
+        request.getRequestDispatcher("AdminDashBoard").forward(request, response);
     }
 
     @Override

@@ -73,16 +73,13 @@ public class CategoryList extends HttpServlet {
         int totalPages = Math.max(1, (int) Math.ceil((double) totalCategories / pageSize));
         page = Math.min(page, totalPages);
 
-        searchedCategoryList = categoryDAO.searchCategory(
-                keyword, isActive, sortBy, pageSize, page
-        );
+        searchedCategoryList = categoryDAO.searchCategory(keyword, isActive, sortBy, pageSize, page);
 
         session.setAttribute("searchedCategoryList", searchedCategoryList);
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);
-        request.setAttribute("focusTable",
-                keyword != null || isActiveRaw != null
+        request.setAttribute("focusTable", keyword != null || isActiveRaw != null
                         || sortBy != null || pageSizeRaw != null || pageRaw != null);
         request.getRequestDispatcher("WEB-INF/view/category/categoryList.jsp").forward(request, response);
     }

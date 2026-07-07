@@ -94,13 +94,6 @@ public class UpdateCategory extends HttpServlet {
         }
 
         if (category.isIsActive() && category.isIsActive() != oldCategory.isIsActive()) {
-//            if (!categoryDAO.reactiveCategory(category.getCategoryId())) {
-//                message = "Đã xảy ra lỗi khi reactive danh mục này!";
-//                request.setAttribute("error", message);
-//                request.setAttribute("category", category);
-//                request.getRequestDispatcher("WEB-INF/view/category/updateCategory.jsp").forward(request, response);
-//                return;
-//            }
             message = "Reactived category " + categoryName + " ! Please double-check the related products in this category!";
         }
 
@@ -109,7 +102,7 @@ public class UpdateCategory extends HttpServlet {
                 request.getSession().setAttribute("error", message);
             response.sendRedirect("categoryList");
         } else {
-            message = "Đã xảy ra lỗi!";
+            message = "Error occured! Please try again!";
             request.setAttribute("error", message);
             request.setAttribute("category", category);
             request.getRequestDispatcher("WEB-INF/view/category/updateCategory.jsp").forward(request, response);

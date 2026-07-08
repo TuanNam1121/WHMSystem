@@ -133,9 +133,15 @@ public class BrandDetail extends HttpServlet {
             Brand oldBrand = bd.getBrandById(Integer.parseInt(id));
             Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
             Part part = request.getPart("image");
+            
+            //check if img imported
             if (part != null && part.getSize() > 0) {
                 String imgUrl = FileUtils.saveFileBrand(part, request);
                 oldBrand.setImg(imgUrl);
+            }else{
+                
+                //just to make sure
+                oldBrand.setImg(oldBrand.getImg());
             }
 
             oldBrand.setName(name);

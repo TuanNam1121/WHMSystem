@@ -66,10 +66,14 @@ public class UserDAO {
 
     public List<User> searchUserPaginated(String keyword, String roleId, String sortBy, int offset, int limit) {
         List<String> acceptedSortField = new ArrayList<>(List.of("roleid", "username", "isactive"));
-        String sql = "Select * from users where roleid != 1";
+        String sql = "Select * from users where roleid != 1 ";
         List<User> list = new ArrayList<>();
         try (Connection conn = DBContext.getConnection()) {
-            if (keyword != null && !keyword.isBlank()) sql += " AND fullname like '%" + keyword + "%' ";
+            if (keyword != null && !keyword.isBlank()){
+                sql += "and (";
+                sql += " fullname like '%" + keyword + "%' ";
+                sql += " or username like '%" + keyword + "%') ";
+            }
             if (roleId != null && !roleId.isBlank()) {
                 int roleIdParse = Integer.parseInt(roleId);
                 sql += " AND roleid = " + roleIdParse + " ";
@@ -465,16 +469,11 @@ public class UserDAO {
     public static void main(String[] args) {
         UserDAO user = new UserDAO();
 
-        List<User> list = user.getAllUsers();
+        List<User> list = user.searchUserPaginated("duc", null, null, 0, 10);
         for (User i : list) {
             System.out.println(i.toString());
         }
 
-        // 2 Nguyen Thi Manager 5 Male 0900000002 manager@gmail.com
-        User a = new User(2, "manager01", "Nguyen Thi Manager", 5, "0900000002", "manager@gmail.com", "Male", true);
-        System.out.println(user.updateUserInformation(a));
-        System.out.println(user.getUserFromId(2));
-
-        System.out.println(user.getUserFullInformation(10));
+        
     }
 }

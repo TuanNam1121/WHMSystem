@@ -243,17 +243,20 @@ public class UpdateProduct extends HttpServlet {
 
         request.setAttribute("mode", "update");
         request.setAttribute("p", product);
+        
         if (ProductValidation.existTransaction(product.getProductId())) {
                 request.setAttribute("transactionExist", "v");
         }
+        
         if (product.isIsActive() != isActive && !inventoryDAO.isHavingProductInInventory(product.getProductId())) {
             product.setIsActive(isActive);
         }
-        else{
+        else if(product.isIsActive() != isActive && inventoryDAO.isHavingProductInInventory(product.getProductId())){
             request.setAttribute("message", "This product is still having items in inventory. Cannot deactive");
             request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);
             return;
         }
+        
         Product skuExistedProduct = productDao.getProductFromSKU(sku);
         if (skuExistedProduct != null && skuExistedProduct.getProductId() != product.getProductId()) {
             request.setAttribute("message", "SKU was existed in other product !");

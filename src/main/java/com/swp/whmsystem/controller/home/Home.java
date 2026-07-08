@@ -32,10 +32,6 @@ public class Home extends HttpServlet {
 
         User user = (User) session.getAttribute("user");
         request.setAttribute("user", user);
-        if (role.getRoleNamFromRoleID(user.getRoleId()).equals("ADMIN")) {
-            response.sendRedirect("AdminDashBoard");
-            return;
-        }
 
         // -------------------------------------------------------------------------------------------------------------
         // First row: financial summary cards.

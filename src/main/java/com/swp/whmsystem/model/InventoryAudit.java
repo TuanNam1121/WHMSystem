@@ -20,4 +20,5 @@ public class InventoryAudit {
     private User creator;
     private User processor;
     private List<InventoryAuditItem> inventoryAuditItems;
+    private String codeId;
 }

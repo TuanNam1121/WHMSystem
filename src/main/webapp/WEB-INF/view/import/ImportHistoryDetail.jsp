@@ -106,20 +106,20 @@
                             <h4 class="mb-0" style="font-size: 22px; font-weight: 700; color: #333;">Import History Detail</h4>
                         </div>
                         <div class="page-btn">
-                            <c:choose>
-                                <c:when test="${param.from == 'inventorySummaryDetail'}">
-                                    <a href="${pageContext.request.contextPath}/inventorySummaryDetail?productId=${param.productId}&fromDate=${param.fromDate}&toDate=${param.toDate}" class="btn btn-cancel" id="btn-back-to-list">
-                                        <i class="fas fa-arrow-left me-2"></i>Back to Transaction History
-                                    </a>
-                                </c:when>
-                                <c:otherwise>
-                                    <a href="ImportHistory" class="btn btn-cancel" id="btn-back-to-list">
-                                        <i class="fas fa-arrow-left me-2"></i>Back to List
-                                    </a>
-                                </c:otherwise>
-                            </c:choose>
-                        </div>
+                        <c:choose>
+                            <c:when test="${param.from == 'inventorySummaryDetail'}">
+                                <a href="${pageContext.request.contextPath}/inventorySummaryDetail?productId=${param.productId}&fromDate=${param.fromDate}&toDate=${param.toDate}" class="btn btn-cancel" id="btn-back-to-list">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to Transaction History
+                                </a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="ImportHistory" class="btn btn-cancel" id="btn-back-to-list">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to List
+                                </a>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
+                </div>
 
                 <c:if test="${not empty message}">
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -179,45 +179,85 @@
                     </div>
                 </div>
 
-                <div class="table-container bg-white">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Serial / IMEI</th>
-                                    <th>Unit</th>
-                                    <th>Imported Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach items="${list}" var="i">
-                                    <tr>
-                                        <td>${i.productName}</td>
-                                        <td>${i.serial}</td>
-                                        <td>${i.unit}</td>
-                                        <td><fmt:formatNumber value="${i.importedPrice}" pattern="#,###"/> VND</td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
+                <form action="ImportHistoryDetail" method="get">
+                    <div class="card mb-0" id="filter_inputs" style="display: block !important;">
+                        <div class="card-body pb-0">
+                            <div class="row">
+                                <div class="col-lg-12 col-sm-12">
+                                    <div class="row">
+                                        <input type="hidden" name="receiptId" value="${detail.receiptId}">
+                                        <div class="col-lg col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <input type="text" name="keyword" placeholder="Search Product Name or Serial" value="${param.keyword}">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <select class="select" name="sortBy">
+                                                    <option value="">Sort</option>                                                        
+                                                    <option value="productName" ${param.sortBy == 'productName' ? 'selected' : ''}>Product Name</option>
+                                                    <option value="Serial/IMEI" ${param.sortBy == 'Serial/IMEI' ? 'selected' : ''}>Serial/IMEI</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-1 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-filters ms-auto"
+                                                        style="border: none; padding: 0;">
+                                                    <img src="assets/img/icons/search-whites.svg" alt="img">
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+
+                    <div class="table-container bg-white">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Serial / IMEI</th>
+                                        <th>Unit</th>
+                                        <th>Imported Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach items="${list}" var="i">
+                                        <tr>
+                                            <td>${i.productName}</td>
+                                            <td>${i.serial}</td>
+                                            <td>${i.unit}</td>
+                                            <td><fmt:formatNumber value="${i.importedPrice}" pattern="#,###"/> VND</td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+                        <jsp:include page="/WEB-INF/common/pagination.jsp"/>
+                </form>
 
             </div>
+
         </div>
+    </div>
 
 
-        <script src="assets/js/jquery-3.6.0.min.js"></script>
-        <script src="assets/js/feather.min.js"></script>
-        <script src="assets/js/jquery.slimscroll.min.js"></script>
-        <script src="assets/js/bootstrap.bundle.min.js"></script>
-        <script src="assets/plugins/select2/js/select2.min.js"></script>
-        <script src="assets/js/moment.min.js"></script>
-        <script src="assets/js/bootstrap-datetimepicker.min.js"></script>
-        <script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
-        <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
-        <script src="assets/js/script.js"></script>
+    <script src="assets/js/jquery-3.6.0.min.js"></script>
+    <script src="assets/js/feather.min.js"></script>
+    <script src="assets/js/jquery.slimscroll.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/plugins/select2/js/select2.min.js"></script>
+    <script src="assets/js/moment.min.js"></script>
+    <script src="assets/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+    <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
+    <script src="assets/js/script.js"></script>
 
-    </body>
+</body>
 </html>

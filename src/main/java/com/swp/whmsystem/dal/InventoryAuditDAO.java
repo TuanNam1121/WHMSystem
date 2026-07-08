@@ -23,7 +23,7 @@ public class InventoryAuditDAO {
         inventoryAudit.setStatus(InventoryAuditStatus.valueOf(rs.getString("status")));
         inventoryAudit.setCreatedAt(rs.getObject("createdat", LocalDateTime.class));
         inventoryAudit.setUpdatedAt(rs.getObject("updatedat", LocalDateTime.class));
-
+        inventoryAudit.setCodeId(rs.getString("code"));
         User creator = new User();
         creator.setId(rs.getInt("createdby"));
         creator.setFullName(rs.getString("creator_fullname"));
@@ -50,7 +50,7 @@ public class InventoryAuditDAO {
                 "LEFT JOIN users u2 ON ia.processedby = u2.userid " +
                 "WHERE 1=1";
         if (searchId != null && !searchId.trim().isEmpty()) {
-            sql += " AND EXISTS (SELECT 1 FROM inventory_audit_items iai JOIN inventory_audit_item_serials iais ON iais.audit_item_id = iai.id JOIN product_items pi ON pi.id = iais.product_item_id WHERE iai.auditid = ia.id AND pi.serial LIKE ?) ";
+            sql += " AND (ia.code LIKE ? OR EXISTS (SELECT 1 FROM inventory_audit_items iai JOIN inventory_audit_item_serials iais ON iais.audit_item_id = iai.id JOIN product_items pi ON pi.id = iais.product_item_id WHERE iai.auditid = ia.id AND pi.serial LIKE ?)) ";
         }
         if (startDate != null && !startDate.trim().isEmpty()) {
             sql += " AND ia.createdat >= ? ";
@@ -65,6 +65,7 @@ public class InventoryAuditDAO {
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             int paramIndex = 1;
             if (searchId != null && !searchId.trim().isEmpty()) {
+                ps.setString(paramIndex++, "%" + searchId.trim() + "%");
                 ps.setString(paramIndex++, "%" + searchId.trim() + "%");
             }
             if (startDate != null && !startDate.trim().isEmpty()) {
@@ -92,7 +93,7 @@ public class InventoryAuditDAO {
     public int countInventoryAuditsByFilter(String searchId, String startDate, String endDate, int userid) {
         String sql = "SELECT COUNT(*) FROM inventory_audit ia JOIN users ON ia.createdby = users.userid WHERE 1=1";
         if (searchId != null && !searchId.trim().isEmpty()) {
-            sql += " AND EXISTS (SELECT 1 FROM inventory_audit_items iai JOIN inventory_audit_item_serials iais ON iais.audit_item_id = iai.id JOIN product_items pi ON pi.id = iais.product_item_id WHERE iai.auditid = ia.id AND pi.serial LIKE ?) ";
+            sql += " AND (ia.code LIKE ? OR EXISTS (SELECT 1 FROM inventory_audit_items iai JOIN inventory_audit_item_serials iais ON iais.audit_item_id = iai.id JOIN product_items pi ON pi.id = iais.product_item_id WHERE iai.auditid = ia.id AND pi.serial LIKE ?)) ";
         }
         if (startDate != null && !startDate.trim().isEmpty()) {
             sql += " AND ia.createdat >= ? ";
@@ -105,6 +106,7 @@ public class InventoryAuditDAO {
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             int paramIndex = 1;
             if (searchId != null && !searchId.trim().isEmpty()) {
+                ps.setString(paramIndex++, "%" + searchId.trim() + "%");
                 ps.setString(paramIndex++, "%" + searchId.trim() + "%");
             }
             if (startDate != null && !startDate.trim().isEmpty()) {

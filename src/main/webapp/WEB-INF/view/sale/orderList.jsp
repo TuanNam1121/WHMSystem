@@ -97,6 +97,14 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                                                
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <input style="width: 100%;height: 40px;padding: 8px 12px;border: 1px solid #ced4da;
+                                                           border-radius: 6px;font-size: 14px;background: #fff;box-sizing: border-box;"
+                                                           name="searchDate" type="date" value="${searchDate}" id="filter-code">
+                                                </div>
+                                            </div>
 
                                             <div class="col-lg-1 col-sm-6 col-12">
                                                 <div class="form-group">

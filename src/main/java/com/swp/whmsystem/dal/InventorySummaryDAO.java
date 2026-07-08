@@ -68,6 +68,30 @@ public class InventorySummaryDAO {
         return 0;
     }
 
+    /**
+     * Get stock at the start of day (0:00) — all movements BEFORE the given date.
+     * This is used for Opening Stock calculation.
+     */
+    public int getStockAtStartOfDay(int productId, LocalDate date) {
+        String sql = "SELECT COALESCE(" +
+                "SUM(CASE WHEN sm.type = 'INCREASED' THEN sm.quantity ELSE 0 END) - " +
+                "SUM(CASE WHEN sm.type = 'DECREASED' THEN sm.quantity ELSE 0 END), 0) AS stock_at_date " +
+                "FROM stock_movement sm WHERE sm.productid = ? AND sm.createdat < ?";
+        try (Connection conn = DBContext.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, productId);
+            ps.setTimestamp(2, Timestamp.valueOf(date.atStartOfDay()));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("stock_at_date");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
+
     public int getImportQtyInRange(int productId, LocalDate openingDate, LocalDate closingDate) {
         return getQtyByType(productId, INCREASED, openingDate, closingDate);
     }
@@ -100,7 +124,7 @@ public class InventorySummaryDAO {
             LocalDate openingDate = DateUtils.parseDate(openDate);
             LocalDate closingDate = DateUtils.parseDate(closeDate);
 
-            is.setOpeningStock(getStockAtDate(productId, openingDate));
+            is.setOpeningStock(getStockAtStartOfDay(productId, openingDate));
             is.setImportStock(getImportQtyInRange(productId, openingDate, closingDate));
             is.setExportStock(getExportQtyInRange(productId, openingDate, closingDate));
             is.setClosingStock(getStockAtDate(productId, closingDate));
@@ -136,7 +160,6 @@ public class InventorySummaryDAO {
         boolean hasDate = openDate != null && !openDate.trim().isEmpty() && closeDate != null && !closeDate.trim().isEmpty();
         
         Timestamp tOpenStart = null;
-        Timestamp tOpenMax = null;
         Timestamp tCloseMax = null;
         Timestamp tNowMax = Timestamp.valueOf(LocalDate.now().atTime(LocalTime.MAX));
 
@@ -144,14 +167,14 @@ public class InventorySummaryDAO {
             LocalDate openingDate = DateUtils.parseDate(openDate);
             LocalDate closingDate = DateUtils.parseDate(closeDate);
             tOpenStart = Timestamp.valueOf(openingDate.atStartOfDay());
-            tOpenMax = Timestamp.valueOf(openingDate.atTime(LocalTime.MAX));
             tCloseMax = Timestamp.valueOf(closingDate.atTime(LocalTime.MAX));
         }
 
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT ");
         if (hasDate) {
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS opening, ");
+            // Opening stock = all movements BEFORE the start of fromDate (0:00)
+            sql.append("COALESCE(SUM(CASE WHEN sm.createdat < ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS opening, ");
             sql.append("COALESCE(SUM(CASE WHEN sm.createdat >= ? AND sm.createdat <= ? AND sm.type='INCREASED' THEN sm.quantity ELSE 0 END), 0) AS import_qty, ");
             sql.append("COALESCE(SUM(CASE WHEN sm.createdat >= ? AND sm.createdat <= ? AND sm.type='DECREASED' THEN sm.quantity ELSE 0 END), 0) AS export_qty, ");
             sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS closing ");
@@ -179,12 +202,12 @@ public class InventorySummaryDAO {
              
             int idx = 1;
             if (hasDate) {
-                ps.setTimestamp(idx++, tOpenMax);
-                ps.setTimestamp(idx++, tOpenStart);
-                ps.setTimestamp(idx++, tCloseMax);
-                ps.setTimestamp(idx++, tOpenStart);
-                ps.setTimestamp(idx++, tCloseMax);
-                ps.setTimestamp(idx++, tCloseMax);
+                ps.setTimestamp(idx++, tOpenStart);  // opening: < fromDate 0:00
+                ps.setTimestamp(idx++, tOpenStart);  // import_qty: >= fromDate 0:00
+                ps.setTimestamp(idx++, tCloseMax);   // import_qty: <= toDate 23:59
+                ps.setTimestamp(idx++, tOpenStart);  // export_qty: >= fromDate 0:00
+                ps.setTimestamp(idx++, tCloseMax);   // export_qty: <= toDate 23:59
+                ps.setTimestamp(idx++, tCloseMax);   // closing: <= toDate 23:59
             } else {
                 ps.setTimestamp(idx++, tNowMax);
                 ps.setTimestamp(idx++, tNowMax);

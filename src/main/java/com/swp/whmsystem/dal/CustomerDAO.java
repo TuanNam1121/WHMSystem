@@ -141,13 +141,51 @@ public class CustomerDAO {
         }
     }
     
-    public List<Customer> SearchCustomer(String search) {
+    
+    
+    public int countSearchCustomer(String search) {
+
+        try (Connection conn = DBContext.getConnection()) {
+            String sql = "select COUNT(*) from customers where name like ? or phone like ?";
+            
+             if(search.equals("")){
+                sql = "select COUNT(*) from customers";
+            }
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            if(!search.equals("")){
+                ps.setString(1, "%" + search + "%");
+                ps.setString(2, "%" + search + "%");
+            }
+            ResultSet rs = ps.executeQuery();
+            int result = 0;
+            if (rs.next()) {
+                result = rs.getInt("COUNT(*)");
+            }
+            return result;
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return 0;
+    }
+    
+    public List<Customer> SearchCustomer(String search, int pageSize, int page) {
 
         try (Connection conn = DBContext.getConnection()) {
         String sql = "select * from customers where name like ? or phone like ?";
+            sql += " limit " + pageSize;
+            sql += " offset " + (pageSize * (page - 1)) + " ";
+            
+            if(search.equals("")){
+                sql = "select * from customers";
+            }
+            
+            
              PreparedStatement ps = conn.prepareStatement(sql);
-             ps.setString(1, "%" + search + "%");
-             ps.setString(2, "%" + search + "%");
+             if(!search.equals("")){
+                ps.setString(1, "%" + search + "%");
+                ps.setString(2, "%" + search + "%");
+            }
              ResultSet rs = ps.executeQuery();
             List<Customer> result = new ArrayList<>();
             while (rs.next()) {

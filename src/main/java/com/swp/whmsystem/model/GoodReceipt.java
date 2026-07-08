@@ -9,11 +9,19 @@ public class GoodReceipt {
     private int processedBy;
     private String status;
     private Timestamp createdAt;
+    private String code;
     private String note;
 
     public GoodReceipt() {
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public int getId() {
         return id;

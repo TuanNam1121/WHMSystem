@@ -144,7 +144,14 @@
                                 </div>
                             </div>
                             <div class="col-lg-12">
-                                <a href="exportHistory" class="btn btn-cancel">Cancel</a>
+                                <c:choose>
+                                    <c:when test="${param.from == 'inventorySummaryDetail'}">
+                                        <a href="${pageContext.request.contextPath}/inventorySummaryDetail?productId=${param.productId}&fromDate=${param.fromDate}&toDate=${param.toDate}" class="btn btn-cancel">Cancel</a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="exportHistory" class="btn btn-cancel">Cancel</a>
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                         </div>
                     </form>

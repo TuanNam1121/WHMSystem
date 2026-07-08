@@ -139,6 +139,7 @@
                             <table class="table custom-datanew" id="manager-purchase-request-table">
                                 <thead>
                                 <tr>
+                                    <th>No.</th>
                                     <th>Request Code</th>
                                     <th>Created By</th>
                                     <th>Supplier</th>
@@ -149,9 +150,10 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <c:forEach items="${purchaseList}" var="pr">
+                                <c:forEach items="${purchaseList}" var="pr" varStatus="status">
                                     <tr>
-                                        <td class="text-bolds"><fmt:formatNumber value="${pr.id}" pattern="000"/></td>
+                                        <td>${(page - 1) * pageSize + status.count}</td>
+                                        <td class="text-bolds"><fmt:formatNumber value="${pr.id}" pattern="PR-"/></td>
                                         <td>${pr.createdByUsername}</td>
                                         <td>${pr.supplierName}</td>
                                         <td><fmt:formatNumber value="${pr.totalPrice}" pattern="#,###"/></td>

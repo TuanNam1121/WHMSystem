@@ -138,10 +138,10 @@ public class AddProduct extends HttpServlet {
         ProductDAO productDao = new ProductDAO();
         Product product = new Product(0, productName, description, sku.toUpperCase(), imgUrl, 0, true, ram, rom, unit, chip, model, category, brand);
         request.setAttribute("mode", "add");
-        request.setAttribute("product", product);
+        request.setAttribute("p", product);
         
         if (productDao.getProductFromSKU(sku) != null) {
-            request.setAttribute("product", product);
+            request.setAttribute("p", product);
             request.setAttribute("message", "SKU was existed !");
             request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);
             return;
@@ -167,7 +167,7 @@ public class AddProduct extends HttpServlet {
             response.sendRedirect("productlist");
         }
         else{
-            request.setAttribute("product", product);
+            request.setAttribute("p", product);
             request.setAttribute("message", "Error in Transaction");
             request.getRequestDispatcher("WEB-INF/view/product/EditProduct.jsp").forward(request, response);
         }

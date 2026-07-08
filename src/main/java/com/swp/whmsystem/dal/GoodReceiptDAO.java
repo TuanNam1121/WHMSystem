@@ -226,15 +226,15 @@ public class GoodReceiptDAO {
     public List<GoodReceipt> searchProduct(String keyword, int requestid, int supplierId, int processedby, String sortBy) {
         List<GoodReceipt> goodReceipts = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-                "SELECT distinct gr.* \n"
-                + "FROM good_receipts gr \n"
-                + "LEFT JOIN purchase_requests pr ON gr.purchaserequestid = pr.id \n"
-                + "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid\n"
-                + "LEFT JOIN good_receipts_items gri ON gr.id = gri.goodreceiptid\n"
-                + "LEFT JOIN products p on p.productid = gri.product_id\n"
-                + "LEFT JOIN product_items pi ON gri.id = pi.goodreceiptsitemid\n"
-                + "WHERE 1 = 1 "
-        );
+                """
+                SELECT distinct gr.* 
+                FROM good_receipts gr 
+                LEFT JOIN purchase_requests pr ON gr.purchaserequestid = pr.id 
+                LEFT JOIN suppliers s ON pr.supplierid = s.supplierid
+                LEFT JOIN good_receipts_items gri ON gr.id = gri.goodreceiptid
+                LEFT JOIN products p on p.productid = gri.product_id
+                LEFT JOIN product_items pi ON gri.id = pi.goodreceiptsitemid
+                WHERE 1 = 1 """);
         List<String> parameter = new ArrayList<>();
 
         if (keyword != null && !keyword.isEmpty()) {
@@ -281,6 +281,53 @@ public class GoodReceiptDAO {
             System.out.println(ex.getMessage());
         }
         return goodReceipts;
+    }
+    
+    public int countImportHistory(String keyword,int purchaseid,int supplierId,int processedBy){
+        StringBuilder sql = new StringBuilder(
+                """
+                SELECT distinct gr.* 
+                FROM good_receipts gr 
+                LEFT JOIN purchase_requests pr ON gr.purchaserequestid = pr.id 
+                LEFT JOIN suppliers s ON pr.supplierid = s.supplierid
+                LEFT JOIN good_receipts_items gri ON gr.id = gri.goodreceiptid
+                LEFT JOIN products p on p.productid = gri.product_id
+                LEFT JOIN product_items pi ON gri.id = pi.goodreceiptsitemid
+                WHERE 1 = 1 """);
+        List<String> parameter = new ArrayList<>();
+
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" and (p.name like ? or pi.serial like ?)");
+            parameter.add("%"+keyword+"%");
+            parameter.add("%"+keyword+"%");
+        }
+
+        if (purchaseid != -1) {
+            sql.append(" and (purchaserequestid = ? or gr.id = ?)");
+            parameter.add(String.valueOf(purchaseid));
+            parameter.add(String.valueOf(purchaseid));
+        }
+
+        if (supplierId != -1) {
+            sql.append(" and (s.supplierid = ?)");
+            parameter.add(String.valueOf(supplierId));
+        }
+
+        if (processedBy != -1) {
+            sql.append(" and processedby = ? ");
+            parameter.add(String.valueOf(processedBy));
+        }
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString());) {
+            System.out.println(sql.toString());
+            for (int i = 0; i < parameter.size(); i++) {
+                ps.setObject(i + 1, parameter.get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) return rs.getInt(1);
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return 0;
     }
 
     public static void main(String[] args) {

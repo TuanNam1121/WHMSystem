@@ -407,4 +407,102 @@ public class PurchaseRequestDAO {
         }
         return 0;
     }
+
+    public List<PurchaseRequest> searchImportRequest(int id, String status, String dateStr, int pageSize, int page) {
+        StringBuilder sql = new StringBuilder("SELECT pr.*, u.username AS createdByUsername, s.suppliername, "
+                + "COALESCE(pr_total.totalPrice, 0) AS totalPrice FROM purchase_requests pr "
+                + "LEFT JOIN users u ON pr.createdby = u.userid "
+                + "LEFT JOIN suppliers s ON pr.supplierid = s.supplierid "
+                + "LEFT JOIN ("
+                + "    SELECT purchaserequestid, SUM(quantity * price) AS totalPrice "
+                + "    FROM purchase_request_items "
+                + "    WHERE isDeleted = 0 "
+                + "    GROUP BY purchaserequestid"
+                + ") pr_total ON pr.id = pr_total.purchaserequestid "
+                + "where pr.isDeleted = 0 and pr.status IN ('APPROVED','PROCESSING')") ;
+        List<Object> parameter = new ArrayList<>();
+        if (id != 0) {
+            sql.append(" and pr.id = ?");
+            parameter.add(id);
+        }
+        if (status != null && !status.isEmpty() && !status.equalsIgnoreCase("Choose Status")) {
+            sql.append(" and pr.status = ?");
+            parameter.add(status.toUpperCase());
+        }
+        if (dateStr != null && !dateStr.isEmpty()) {
+            try {
+                String format = "dd-MM-yyyy";
+                java.util.Date parsedDate = new SimpleDateFormat(format).parse(dateStr);
+                java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
+
+                sql.append(" and DATE(pr.createdat) = ?");
+                parameter.add(sqlDate);
+            } catch (Exception e) {
+                System.out.println("Date parsing error: " + e.getMessage());
+            }
+        }
+        sql.append(" order by pr.id desc");
+
+        int offset = (page - 1) * pageSize;
+        sql.append(" limit ? offset ?");
+        parameter.add(pageSize);
+        parameter.add(offset);
+
+        List<PurchaseRequest> list = new ArrayList<>();
+
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql.toString());
+            for (int i = 0; i < parameter.size(); i++) {
+                preparedStatement.setObject(i + 1, parameter.get(i));
+            }
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                list.add(mapResultSetToPurchaseRequest(resultSet));
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int countImportRequest(int id, String status, String dateStr) {
+        StringBuilder sql = new StringBuilder("SELECT count(*) FROM purchase_requests pr " +
+                "where pr.isDeleted = 0 and pr.status IN ('APPROVED','PROCESSING')") ;
+        List<Object> parameter = new ArrayList<>();
+        if (id != 0) {
+            sql.append(" and pr.id = ?");
+            parameter.add(id);
+        }
+        if (status != null && !status.isEmpty() && !status.equalsIgnoreCase("Choose Status")) {
+            sql.append(" and pr.status = ?");
+            parameter.add(status.toUpperCase());
+        }
+        if (dateStr != null && !dateStr.isEmpty()) {
+            try {
+                String format = "dd-MM-yyyy";
+                java.util.Date parsedDate = new SimpleDateFormat(format).parse(dateStr);
+                java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
+
+                sql.append(" and DATE(pr.createdat) = ?");
+                parameter.add(sqlDate);
+            } catch (Exception e) {
+                System.out.println("Date parsing error: " + e.getMessage());
+            }
+        }
+
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql.toString());
+            for (int i = 0; i < parameter.size(); i++) {
+                preparedStatement.setObject(i + 1, parameter.get(i));
+            }
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
 }
+

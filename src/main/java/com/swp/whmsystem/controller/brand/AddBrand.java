@@ -7,20 +7,29 @@ package com.swp.whmsystem.controller.brand;
 import com.swp.whmsystem.dal.BrandDAO;
 import com.swp.whmsystem.model.Brand;
 import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.FileUtils;
 import com.swp.whmsystem.utils.PermissionConstants;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import java.sql.Timestamp;
 
 /**
  *
  * @author LENOVO
  */
+
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024,
+    maxFileSize = 1024 * 1024 * 10,
+    maxRequestSize = 1024 * 1024 * 50
+)
 @WebServlet(name = "AddBrand", urlPatterns = {"/AddBrand"})
 public class AddBrand extends HttpServlet {
 
@@ -107,6 +116,16 @@ public class AddBrand extends HttpServlet {
          b.setDescription(description);
          b.setCreatedAt(new Timestamp(System.currentTimeMillis()));
          b.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+         
+         
+         // save img imported to system
+         Part part = request.getPart("image");
+            if (part != null && part.getSize() > 0) {
+                String imgUrl = FileUtils.saveFileBrand(part, request);
+                b.setImg(imgUrl);
+            }
+         
+         
          bd.insertBrand(b);
          response.sendRedirect("brandList");
             return;

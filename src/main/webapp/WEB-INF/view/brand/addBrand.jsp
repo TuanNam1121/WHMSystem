@@ -51,7 +51,7 @@
                     <c:if test="${not empty message}">
                         <div class="alert alert-danger" role="alert">${message}</div>
                     </c:if>
-                    <form action="${pageContext.request.contextPath}/AddBrand" method="post">
+                    <form action="${pageContext.request.contextPath}/AddBrand" method="post" enctype="multipart/form-data">
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
@@ -69,6 +69,15 @@
                                             <input class="form-control" type="text" name="description" >
                                         </div>
                                     </div>
+                                    
+                                    <div class="image-upload">
+                                                    <input type="file" name="image" id="imageInput" accept="image/*">
+
+                                                    <div class="image-uploads">
+                                                        <img src="assets/img/icons/upload.svg" alt="img">
+                                                        <h4 id="uploadText">Drag and drop a file to upload</h4>
+                                                    </div>
+                                                </div>
 
                                     <div class="col-lg-12">
                                         <input class="btn btn-submit me-2" type="submit" value="ADD">

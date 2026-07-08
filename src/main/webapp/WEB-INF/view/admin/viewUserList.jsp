@@ -55,19 +55,10 @@
                                         <div class="row">
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <input type="text" name="keyword" value="${param.keyword}" placeholder="Search by name">
+                                                    <input type="text" name="keyword" value="${param.keyword}" placeholder="Search by username or fullname">
                                                 </div>
                                             </div>
-                                            <div class="col-lg col-sm-6 col-12">
-                                                <div class="form-group">
-                                                    <select name="sortBy" class="select">
-                                                        <option value="">Sort</option>
-                                                        <option value="role" ${param.sortBy == 'userid' ? 'selected' : ''}>Role</option>
-                                                        <option value="username" ${param.sortBy == 'username' ? 'selected' : ''}>User Name</option>
-                                                        <option value="isactive" ${param.sortBy == 'isactive' ? 'selected' : ''}>Active</option>
-                                                    </select>
-                                                </div>
-                                            </div>
+                                           
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <select name="roleId" class="select">
@@ -78,6 +69,18 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                                
+                                            <div class="col-lg col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <select name="sortBy" class="select">
+                                                        <option value="">Sort</option>
+                                                        <option value="role" ${param.sortBy == 'userid' ? 'selected' : ''}>Role</option>
+                                                        <option value="username" ${param.sortBy == 'username' ? 'selected' : ''}>User Name</option>
+                                                        <option value="isactive" ${param.sortBy == 'isactive' ? 'selected' : ''}>Active</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                                    
                                             <div class="col-lg-1 col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <button type="submit" class="btn btn-filters ms-auto" style="border: none; padding: 0;">

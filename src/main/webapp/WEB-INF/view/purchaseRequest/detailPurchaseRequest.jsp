@@ -68,12 +68,20 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-lg-12">
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Created By</label>
                                 <input type="text" value="${sessionScope.user.fullName}" disabled
                                        class="form-control"
                                        id="salesman-display">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Supplier</label>
+                                <input type="text" value="${purchaseRequest.supplierName}" disabled
+                                       class="form-control"
+                                       id="supplier-display">
                             </div>
                         </div>
                     </div>
@@ -94,10 +102,19 @@
                                                 <th>Category</th>
                                                 <th>In Stock</th>
                                                 <th style="width: 150px;">Requested Quantity</th>
+                                                <th style="text-align: right;">Total Price</th>
                                             </tr>
                                             </thead>
                                             <tbody id="selected-product-list">
                                             </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="6" style="text-align: right; font-weight: 600;">Grand Total:</td>
+                                                    <td id="grand-total-amount" style="text-align: right; font-weight: 700; color: #28C76F; font-size: 16px;">
+                                                        0đ
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
                                         </table>
                                     </div>
 
@@ -153,17 +170,21 @@
                 sku: "${productMap[item.productId].sku}",
                 category: "${productMap[item.productId].category.name}",
                 stock: ${productMap[item.productId].totalQuantity},
-                reqQty: ${item.requiredQty}
+                reqQty: ${item.requiredQty},
+                price: ${item.price}
             }${!loop.last ? ',' : ''}
             </c:forEach>
         ];
 
         function renderSelectedItems() {
             let html = '';
+            let grandTotal = 0;
             if (selectedItems.length === 0) {
-                html = '<tr><td colspan="5" class="text-center text-muted">No products selected</td></tr>';
+                html = '<tr><td colspan="6" class="text-center text-muted">No products selected</td></tr>';
             } else {
                 selectedItems.forEach((item, index) => {
+                    let itemTotal = item.price * item.reqQty;
+                    grandTotal += itemTotal;
                     html += `
                         <tr>
                             <td>\${item.name}</td>
@@ -171,11 +192,13 @@
                             <td>\${item.category}</td>
                             <td>\${item.stock}</td>
                             <td>\${item.reqQty}</td>
+                            <td style="text-align: right;">\${new Intl.NumberFormat('vi-VN').format(itemTotal)}đ</td>
                         </tr>
                     `;
                 });
             }
             $('#selected-product-list').html(html);
+            $('#grand-total-amount').text(new Intl.NumberFormat('vi-VN').format(grandTotal) + 'đ');
         }
 
         // Initial render

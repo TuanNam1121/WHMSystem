@@ -107,7 +107,7 @@
                                                     <tr class="product-item">
                                                         <td class="product-name">${p.name}</td>
                                                         <td class="product-sku">${p.sku}</td>
-                                                        <td class="product-category">${p.category.name}
+                                                        <td class="product-category">${not empty p.category ? p.category.name : ''}
                                                         </td>
                                                         <td class="product-quantity">${p.totalQuantity}
                                                         </td>
@@ -129,7 +129,7 @@
                                                                data-id="${p.productId}"
                                                                data-name="${p.name}"
                                                                data-sku="${p.sku}"
-                                                               data-category="${p.category.name}"
+                                                               data-category="${not empty p.category ? p.category.name : ''}"
                                                                data-stock="${p.totalQuantity}"
                                                                data-active="${p.isActive}"
                                                                href="javascript:void(0);">

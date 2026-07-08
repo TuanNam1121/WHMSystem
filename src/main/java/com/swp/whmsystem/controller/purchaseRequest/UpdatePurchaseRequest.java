@@ -77,6 +77,10 @@ public class UpdatePurchaseRequest extends HttpServlet {
             request.setAttribute("purchaseRequest", pr);
             request.setAttribute("purchaseItems", items);
             request.setAttribute("productListForPurchase", productList);
+            
+            com.swp.whmsystem.dal.SupplierDAO supplierDAO = new com.swp.whmsystem.dal.SupplierDAO();
+            request.setAttribute("supplierList", supplierDAO.getActiveSuppliers());
+
             request.setAttribute("productMap", productMap);
 
             request.getRequestDispatcher("WEB-INF/view/purchaseRequest/updatePurchaseRequest.jsp").forward(request, response);
@@ -100,6 +104,10 @@ public class UpdatePurchaseRequest extends HttpServlet {
             PurchaseRequest pr = prDAO.getPurchaseRequestById(requestId);
             
             if (pr != null && pr.getStatus().equalsIgnoreCase("NEW")) {
+                String supplierIdStr = request.getParameter("supplierId");
+                if (supplierIdStr != null && !supplierIdStr.trim().isEmpty()) {
+                    pr.setSupplierId(Integer.parseInt(supplierIdStr));
+                }
                 pr.setNote(note);
                 prDAO.updatePurchaseRequest(pr);
 

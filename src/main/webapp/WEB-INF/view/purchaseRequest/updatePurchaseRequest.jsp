@@ -11,7 +11,7 @@
           content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Create Purchase Request - Dreams Pos</title>
+    <title>Update Purchase Request - Dreams Pos</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/img/favicon.jpg">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/bootstrap.min.css">
@@ -54,7 +54,7 @@
                  style="border-radius: 8px;">
                 <i class="fas fa-info-circle me-2" style="font-size: 18px;"></i>
                 <div>
-                    <strong>Request Code: <fmt:formatNumber value="${purchaseRequest.id}" pattern="000"/></strong>
+                    <strong>Request Code: <fmt:formatNumber value="${purchaseRequest.id}" pattern="PR-"/></strong>
                     &nbsp;|&nbsp; Status:
                     <c:choose>
                         <c:when test="${purchaseRequest.status == 'New' || purchaseRequest.status == 'NEW'}">
@@ -83,12 +83,23 @@
             <div class="card">
                 <div class="card-body">
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-lg-6">
                                 <div class="form-group">
                                     <label>Salesman</label>
                                     <input type="text" value="${sessionScope.user.fullName}" disabled
                                            class="form-control"
                                            id="salesman-display">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Supplier <span class="text-danger">*</span></label>
+                                    <select class="select" name="supplierId" required>
+                                        <option value="" disabled>Select a supplier</option>
+                                        <c:forEach items="${requestScope.supplierList}" var="s">
+                                            <option value="${s.supplierId}" ${s.supplierId == purchaseRequest.supplierId ? 'selected' : ''}>${s.supplierName}</option>
+                                        </c:forEach>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -185,9 +196,8 @@
                                                     <th>Name</th>
                                                     <th>SKU</th>
                                                     <th>Category</th>
-                                                    <th>In Stock</th>
+                                                    <th>Price</th>
                                                     <th style="width: 150px;">Required Quantity</th>
-                                                    <th style="width: 150px;">Price</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
@@ -195,7 +205,7 @@
                                                 </tbody>
                                                 <tfoot id="total-amount-footer" style="display: none;">
                                                 <tr>
-                                                    <td colspan="5" class="text-end" style="font-weight: 600; font-size: 16px;">Total Amount:</td>
+                                                    <td colspan="4" class="text-end" style="font-weight: 600; font-size: 16px;">Total Amount:</td>
                                                     <td colspan="2" style="font-weight: 700; font-size: 18px; color: #FF9F43;" id="total-amount-display">0 VNĐ</td>
                                                 </tr>
                                                 </tfoot>
@@ -259,7 +269,7 @@
         function renderSelectedItems() {
             let html = '';
             if (selectedItems.length === 0) {
-                html = '<tr><td colspan="7" class="text-center text-muted">No products selected</td></tr>';
+                html = '<tr><td colspan="6" class="text-center text-muted">No products selected</td></tr>';
             } else {
                 selectedItems.forEach((item, index) => {
                     html += `
@@ -268,10 +278,6 @@
                             <td>\${item.name}</td>
                             <td>\${item.sku}</td>
                             <td>\${item.category}</td>
-                            <td>\${item.stock}</td>
-                            <td>
-                                <input name="selectedQty\${index}" type="number" class="form-control form-control-sm qty-input" data-id="\${item.id}" value="\${item.reqQty}" min="1" style="width: 100px;">
-                            </td>
                             <td>
                                 <input type="hidden" name="selectedPrice\${index}" class="price-hidden-input" value="\${item.price}">
                                 <div class="input-group input-group-sm" style="width: 150px;">
@@ -279,6 +285,10 @@
                                     data-id="\${item.id}" value="\${item.price.toLocaleString('vi-VN')}" required>
                                     <span class="input-group-text">VNĐ</span>
                                 </div>
+                            </td>
+                            <td>
+                                <input name="selectedQty\${index}" type="number" min=1 class="form-control form-control-sm qty-input" 
+                                data-id="\${item.id}" value="\${item.reqQty}" style="width: 100px;">
                             </td>
                             <td>
                                 <a class="delete-set remove-item-btn" href="javascript:void(0);" data-id="\${item.id}">

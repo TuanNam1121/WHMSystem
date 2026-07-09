@@ -21,4 +21,12 @@ public class InventoryAudit {
     private User processor;
     private List<InventoryAuditItem> inventoryAuditItems;
     private String codeId;
+
+    public String getFormattedCreatedAt() {
+        return createdAt != null ? createdAt.format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) : "";
+    }
+
+    public String getFormattedUpdatedAt() {
+        return updatedAt != null ? updatedAt.format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")) : "";
+    }
 }

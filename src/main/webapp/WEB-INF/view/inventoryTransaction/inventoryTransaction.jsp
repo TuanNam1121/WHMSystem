@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
         <!DOCTYPE html>
         <html lang="en">
 
@@ -132,7 +133,7 @@
                                                         <td>${item.code}</td>
                                                         <td>${item.type}</td>
                                                         <td>${not empty item.processor ? item.processor : 'N/A'}</td>
-                                                        <td>${item.date}</td>
+                                                        <td><fmt:formatDate value="${item.date}" pattern="dd-MM-yyyy HH:mm:ss" /></td>
                                                         <td>
                                                             <c:choose>
                                                                 <c:when test="${item.type == 'AUDIT'}">

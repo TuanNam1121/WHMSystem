@@ -521,6 +521,8 @@
                                 <div class="card-body">
                                     <form action="${pageContext.request.contextPath}/inventorySummaryReport"
                                         method="get">
+                                        <input type="hidden" name="sortColumn" id="sortColumn" value="${param.sortColumn}">
+                                        <input type="hidden" name="sortOrder" id="sortOrder" value="${param.sortOrder}">
                                         <!-- Filter Section -->
                                         <div class="card mb-0" id="filter_inputs" style="display: block !important;">
                                             <div class="card-body pb-0">
@@ -530,11 +532,18 @@
                                                             <div class="col-lg col-sm-6 col-12">
                                                                 <div class="form-group">
                                                                     <label>Quarter</label>
-                                                                    <select name="period" id="period-select" class="select">
+                                                                    <select name="period" id="period-select"
+                                                                        class="select">
                                                                         <option value="">Custom</option>
-                                                                        <option value="q1" ${param.period == 'q1' ? 'selected' : ''}>Quarter 1 (Jan - Apr)</option>
-                                                                        <option value="q2" ${param.period == 'q2' ? 'selected' : ''}>Quarter 2 (May - Aug)</option>
-                                                                        <option value="q3" ${param.period == 'q3' ? 'selected' : ''}>Quarter 3 (Sep - Dec)</option>
+                                                                        <option value="q1" ${param.period=='q1'
+                                                                            ? 'selected' : '' }>Quarter 1 (Jan - Apr)
+                                                                        </option>
+                                                                        <option value="q2" ${param.period=='q2'
+                                                                            ? 'selected' : '' }>Quarter 2 (May - Aug)
+                                                                        </option>
+                                                                        <option value="q3" ${param.period=='q3'
+                                                                            ? 'selected' : '' }>Quarter 3 (Sep - Dec)
+                                                                        </option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -542,11 +551,17 @@
                                                                 <div class="form-group">
                                                                     <label>Year</label>
                                                                     <select name="year" id="year-select" class="select">
-                                                                        <c:set var="now" value="<%=new java.util.Date()%>"/>
-                                                                        <fmt:formatDate value="${now}" pattern="yyyy" var="currentYear" />
+                                                                        <c:set var="now"
+                                                                            value="<%=new java.util.Date()%>" />
+                                                                        <fmt:formatDate value="${now}" pattern="yyyy"
+                                                                            var="currentYear" />
                                                                         <c:forEach begin="0" end="20" var="i">
-                                                                            <c:set var="yearVal" value="${currentYear - i}" />
-                                                                            <option value="${yearVal}" ${param.year == yearVal ? 'selected' : (empty param.year && i == 0 ? 'selected' : '')}>${yearVal}</option>
+                                                                            <c:set var="yearVal"
+                                                                                value="${currentYear - i}" />
+                                                                            <option value="${yearVal}"
+                                                                                ${param.year==yearVal ? 'selected' :
+                                                                                (empty param.year && i==0 ? 'selected'
+                                                                                : '' )}>${yearVal}</option>
                                                                         </c:forEach>
                                                                     </select>
                                                                 </div>
@@ -621,10 +636,18 @@
                                                         <th colspan="1">Closing</th>
                                                     </tr>
                                                     <tr>
-                                                        <th>Stock</th>
-                                                        <th>Import</th>
-                                                        <th>Export</th>
-                                                        <th>Stock</th>
+                                                        <th style="cursor: pointer;" onclick="setSort('openingStock')">Stock
+                                                            <i class="fas fa-sort${param.sortColumn == 'openingStock' ? (param.sortOrder == 'desc' ? '-down' : '-up') : ''}"></i>
+                                                        </th>
+                                                        <th style="cursor: pointer;" onclick="setSort('importStock')">Import
+                                                            <i class="fas fa-sort${param.sortColumn == 'importStock' ? (param.sortOrder == 'desc' ? '-down' : '-up') : ''}"></i>
+                                                        </th>
+                                                        <th style="cursor: pointer;" onclick="setSort('exportStock')">Export
+                                                            <i class="fas fa-sort${param.sortColumn == 'exportStock' ? (param.sortOrder == 'desc' ? '-down' : '-up') : ''}"></i>
+                                                        </th>
+                                                        <th style="cursor: pointer;" onclick="setSort('closingStock')">Stock
+                                                            <i class="fas fa-sort${param.sortColumn == 'closingStock' ? (param.sortOrder == 'desc' ? '-down' : '-up') : ''}"></i>
+                                                        </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -704,6 +727,18 @@
                     </script>
                 </c:if>
                 <script>
+                    function setSort(col) {
+                        let currentCol = document.getElementById('sortColumn').value;
+                        let currentOrder = document.getElementById('sortOrder').value;
+                        if (currentCol === col) {
+                            document.getElementById('sortOrder').value = currentOrder === 'asc' ? 'desc' : 'asc';
+                        } else {
+                            document.getElementById('sortColumn').value = col;
+                            document.getElementById('sortOrder').value = 'asc';
+                        }
+                        document.querySelector('form[action$="inventorySummaryReport"]').submit();
+                    }
+
                     document.querySelector('form[action$="inventorySummaryReport"]').addEventListener('submit', function (e) {
                         var fromDateStr = document.querySelector('input[name="fromDate"]').value;
                         var toDateStr = document.querySelector('input[name="toDate"]').value;
@@ -730,13 +765,13 @@
                         }
                     });
 
-                    $(document).ready(function() {
-                        $('#period-select, #year-select').on('change', function() {
+                    $(document).ready(function () {
+                        $('#period-select, #year-select').on('change', function () {
                             var period = $('#period-select').val();
                             var year = $('#year-select').val();
                             var fromDateInput = $('input[name="fromDate"]');
                             var toDateInput = $('input[name="toDate"]');
-                            
+
                             if (period === 'q1') {
                                 fromDateInput.val('01-01-' + year);
                                 toDateInput.val('30-04-' + year);
@@ -748,8 +783,8 @@
                                 toDateInput.val('31-12-' + year);
                             }
                         });
-                        
-                        $('input[name="fromDate"], input[name="toDate"]').on('dp.change change', function() {
+
+                        $('input[name="fromDate"], input[name="toDate"]').on('dp.change change', function () {
                             if ($('#period-select').val() !== '') {
                                 $('#period-select').val('').trigger('change.select2');
                             }

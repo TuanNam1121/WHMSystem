@@ -79,8 +79,6 @@ public class CategoryList extends HttpServlet {
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);
-        request.setAttribute("focusTable", keyword != null || isActiveRaw != null
-                        || sortBy != null || pageSizeRaw != null || pageRaw != null);
         request.getRequestDispatcher("WEB-INF/view/category/categoryList.jsp").forward(request, response);
     }
 

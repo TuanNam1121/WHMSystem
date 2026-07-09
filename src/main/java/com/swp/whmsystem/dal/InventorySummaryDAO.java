@@ -150,6 +150,112 @@ public class InventorySummaryDAO {
         return list;
     }
 
+    public List<InventorySummary> forReport(String openDate, String closeDate, String keyword, int page, int pageSize, String sortColumn, String sortOrder) {
+        List<InventorySummary> list = new ArrayList<>();
+        boolean hasDate = openDate != null && !openDate.trim().isEmpty() && closeDate != null && !closeDate.trim().isEmpty();
+
+        Timestamp tOpenStart = null;
+        Timestamp tCloseMax = null;
+        Timestamp tNowMax = Timestamp.valueOf(LocalDate.now().atTime(LocalTime.MAX));
+
+        if (hasDate) {
+            LocalDate openingDate = DateUtils.parseDate(openDate);
+            LocalDate closingDate = DateUtils.parseDate(closeDate);
+            tOpenStart = Timestamp.valueOf(openingDate.atStartOfDay());
+            tCloseMax = Timestamp.valueOf(closingDate.atTime(LocalTime.MAX));
+        }
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT p.productid, p.sku, p.name AS product_name, c.name AS category_name, u.name AS unit_name, ");
+        
+        if (hasDate) {
+            sql.append("COALESCE(SUM(CASE WHEN sm.createdat < ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS opening_stock, ");
+            sql.append("COALESCE(SUM(CASE WHEN sm.createdat >= ? AND sm.createdat <= ? AND sm.type='INCREASED' THEN sm.quantity ELSE 0 END), 0) AS import_stock, ");
+            sql.append("COALESCE(SUM(CASE WHEN sm.createdat >= ? AND sm.createdat <= ? AND sm.type='DECREASED' THEN sm.quantity ELSE 0 END), 0) AS export_stock, ");
+            sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS closing_stock ");
+        } else {
+            sql.append("0 AS opening_stock, ");
+            sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? AND sm.type='INCREASED' THEN sm.quantity ELSE 0 END), 0) AS import_stock, ");
+            sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? AND sm.type='DECREASED' THEN sm.quantity ELSE 0 END), 0) AS export_stock, ");
+            sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS closing_stock ");
+        }
+
+        sql.append("FROM products p ");
+        sql.append("LEFT JOIN categories c ON p.categoryid = c.categoryid ");
+        sql.append("LEFT JOIN units u ON p.unitid = u.id ");
+
+        sql.append("LEFT JOIN stock_movement sm ON p.productid = sm.productid ");
+        sql.append("WHERE 1=1 ");
+
+        String kw = null;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            kw = "%" + keyword.trim() + "%";
+            sql.append("AND (p.name LIKE ? OR p.sku LIKE ?) ");
+        }
+
+        sql.append("GROUP BY p.productid, p.sku, p.name, c.name, u.name ");
+
+        if (sortColumn != null && !sortColumn.trim().isEmpty()) {
+            String order = "desc".equalsIgnoreCase(sortOrder) ? "DESC" : "ASC";
+            switch (sortColumn) {
+                case "openingStock": sql.append("ORDER BY opening_stock ").append(order).append(", p.productid DESC "); break;
+                case "importStock": sql.append("ORDER BY import_stock ").append(order).append(", p.productid DESC "); break;
+                case "exportStock": sql.append("ORDER BY export_stock ").append(order).append(", p.productid DESC "); break;
+                case "closingStock": sql.append("ORDER BY closing_stock ").append(order).append(", p.productid DESC "); break;
+                default: sql.append("ORDER BY p.productid DESC "); break;
+            }
+        } else {
+            sql.append("ORDER BY p.productid DESC ");
+        }
+
+        sql.append("LIMIT ? OFFSET ?");
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            int idx = 1;
+            if (hasDate) {
+                ps.setTimestamp(idx++, tOpenStart);
+                ps.setTimestamp(idx++, tOpenStart);
+                ps.setTimestamp(idx++, tCloseMax);
+                ps.setTimestamp(idx++, tOpenStart);
+                ps.setTimestamp(idx++, tCloseMax);
+                ps.setTimestamp(idx++, tCloseMax);
+            } else {
+                ps.setTimestamp(idx++, tNowMax);
+                ps.setTimestamp(idx++, tNowMax);
+                ps.setTimestamp(idx++, tNowMax);
+            }
+
+            if (kw != null) {
+                ps.setString(idx++, kw);
+                ps.setString(idx++, kw);
+            }
+
+            ps.setInt(idx++, pageSize);
+            ps.setInt(idx++, (page - 1) * pageSize);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    InventorySummary is = new InventorySummary();
+                    is.setProductId(rs.getInt("productid"));
+                    is.setSku(rs.getString("sku"));
+                    is.setProductName(rs.getString("product_name"));
+                    is.setCategory(rs.getString("category_name"));
+                    is.setUnit(rs.getString("unit_name"));
+                    is.setOpeningStock(rs.getInt("opening_stock"));
+                    is.setImportStock(rs.getInt("import_stock"));
+                    is.setExportStock(rs.getInt("export_stock"));
+                    is.setClosingStock(rs.getInt("closing_stock"));
+                    list.add(is);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public int countAll(String keyword) {
         ProductDAO productDAO = new ProductDAO();
         return productDAO.countProducts(keyword, -1, -1, -1);
@@ -157,8 +263,9 @@ public class InventorySummaryDAO {
 
     public int[] getGrandTotals(String openDate, String closeDate, String keyword) {
         int[] totals = new int[4];
-        boolean hasDate = openDate != null && !openDate.trim().isEmpty() && closeDate != null && !closeDate.trim().isEmpty();
-        
+        boolean hasDate = openDate != null && !openDate.trim().isEmpty() && closeDate != null
+                && !closeDate.trim().isEmpty();
+
         Timestamp tOpenStart = null;
         Timestamp tCloseMax = null;
         Timestamp tNowMax = Timestamp.valueOf(LocalDate.now().atTime(LocalTime.MAX));
@@ -174,17 +281,24 @@ public class InventorySummaryDAO {
         sql.append("SELECT ");
         if (hasDate) {
             // Opening stock = all movements BEFORE the start of fromDate (0:00)
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat < ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS opening, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat >= ? AND sm.createdat <= ? AND sm.type='INCREASED' THEN sm.quantity ELSE 0 END), 0) AS import_qty, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat >= ? AND sm.createdat <= ? AND sm.type='DECREASED' THEN sm.quantity ELSE 0 END), 0) AS export_qty, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS closing ");
+            sql.append(
+                    "COALESCE(SUM(CASE WHEN sm.createdat < ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS opening, ");
+            sql.append(
+                    "COALESCE(SUM(CASE WHEN sm.createdat >= ? AND sm.createdat <= ? AND sm.type='INCREASED' THEN sm.quantity ELSE 0 END), 0) AS import_qty, ");
+            sql.append(
+                    "COALESCE(SUM(CASE WHEN sm.createdat >= ? AND sm.createdat <= ? AND sm.type='DECREASED' THEN sm.quantity ELSE 0 END), 0) AS export_qty, ");
+            sql.append(
+                    "COALESCE(SUM(CASE WHEN sm.createdat <= ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS closing ");
         } else {
             sql.append("0 AS opening, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? AND sm.type='INCREASED' THEN sm.quantity ELSE 0 END), 0) AS import_qty, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? AND sm.type='DECREASED' THEN sm.quantity ELSE 0 END), 0) AS export_qty, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS closing ");
+            sql.append(
+                    "COALESCE(SUM(CASE WHEN sm.createdat <= ? AND sm.type='INCREASED' THEN sm.quantity ELSE 0 END), 0) AS import_qty, ");
+            sql.append(
+                    "COALESCE(SUM(CASE WHEN sm.createdat <= ? AND sm.type='DECREASED' THEN sm.quantity ELSE 0 END), 0) AS export_qty, ");
+            sql.append(
+                    "COALESCE(SUM(CASE WHEN sm.createdat <= ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS closing ");
         }
-        
+
         sql.append("FROM products p ");
         sql.append("LEFT JOIN stock_movement sm ON p.productid = sm.productid ");
         sql.append("LEFT JOIN categories c ON p.categoryid = c.categoryid ");
@@ -198,29 +312,29 @@ public class InventorySummaryDAO {
         }
 
         try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-             
+                PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
             int idx = 1;
             if (hasDate) {
-                ps.setTimestamp(idx++, tOpenStart);  // opening: < fromDate 0:00
-                ps.setTimestamp(idx++, tOpenStart);  // import_qty: >= fromDate 0:00
-                ps.setTimestamp(idx++, tCloseMax);   // import_qty: <= toDate 23:59
-                ps.setTimestamp(idx++, tOpenStart);  // export_qty: >= fromDate 0:00
-                ps.setTimestamp(idx++, tCloseMax);   // export_qty: <= toDate 23:59
-                ps.setTimestamp(idx++, tCloseMax);   // closing: <= toDate 23:59
+                ps.setTimestamp(idx++, tOpenStart); // opening: < fromDate 0:00
+                ps.setTimestamp(idx++, tOpenStart); // import_qty: >= fromDate 0:00
+                ps.setTimestamp(idx++, tCloseMax); // import_qty: <= toDate 23:59
+                ps.setTimestamp(idx++, tOpenStart); // export_qty: >= fromDate 0:00
+                ps.setTimestamp(idx++, tCloseMax); // export_qty: <= toDate 23:59
+                ps.setTimestamp(idx++, tCloseMax); // closing: <= toDate 23:59
             } else {
                 ps.setTimestamp(idx++, tNowMax);
                 ps.setTimestamp(idx++, tNowMax);
                 ps.setTimestamp(idx++, tNowMax);
             }
-            
+
             if (kw != null) {
                 ps.setString(idx++, kw);
                 ps.setString(idx++, kw);
                 ps.setString(idx++, kw);
                 ps.setString(idx++, kw);
             }
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     totals[0] = rs.getInt("opening");
@@ -237,7 +351,7 @@ public class InventorySummaryDAO {
 
     public long getTotalAdjustQty(String openDate, String closeDate) {
         boolean hasDate = openDate != null && !openDate.trim().isEmpty()
-                       && closeDate != null && !closeDate.trim().isEmpty();
+                && closeDate != null && !closeDate.trim().isEmpty();
 
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT COALESCE(SUM(sm.quantity), 0) AS adjust_qty ");
@@ -253,7 +367,7 @@ public class InventorySummaryDAO {
         Timestamp tNowMax = Timestamp.valueOf(LocalDate.now().atTime(LocalTime.MAX));
 
         try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+                PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             int idx = 1;
             if (hasDate) {
                 LocalDate from = DateUtils.parseDate(openDate);
@@ -286,7 +400,7 @@ public class InventorySummaryDAO {
     private List<InventorySummary> getTop5ByType(String openDate, String closeDate, String type) {
         List<InventorySummary> list = new ArrayList<>();
         boolean hasDate = openDate != null && !openDate.trim().isEmpty()
-                       && closeDate != null && !closeDate.trim().isEmpty();
+                && closeDate != null && !closeDate.trim().isEmpty();
 
         Timestamp tStart = null;
         Timestamp tEnd = null;
@@ -324,7 +438,7 @@ public class InventorySummaryDAO {
         System.out.println("[DEBUG] type=" + type + ", hasDate=" + hasDate);
 
         try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(finalSql)) {
+                PreparedStatement ps = conn.prepareStatement(finalSql)) {
             int idx = 1;
             ps.setString(idx++, type);
             if (hasDate) {

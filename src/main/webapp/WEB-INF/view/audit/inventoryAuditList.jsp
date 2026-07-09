@@ -98,8 +98,8 @@
                                                             <td>${audit.creator.fullName}</td>
                                                             <td><span class="badges bg-lightgrey">${audit.status}</span>
                                                             </td>
-                                                            <td>${audit.createdAt}</td>
-                                                            <td>${audit.updatedAt}</td>
+                                                            <td>${audit.formattedCreatedAt}</td>
+                                                            <td>${audit.formattedUpdatedAt}</td>
                                                             <td>
                                                                 <a class="mr-3"
                                                                     href="InventoryAuditDetail?id=${audit.id}">

@@ -82,7 +82,7 @@
                                        style="font-size: 14px; color: #555;">Created At</label>
                                 <div class="form-control-static"
                                      style="font-size: 16px; padding: 8px 0;">
-                                    ${audit.createdAt}
+                                    ${audit.formattedCreatedAt}
                                 </div>
                             </div>
                         </div>
@@ -92,7 +92,7 @@
                                        style="font-size: 14px; color: #555;">Last Updated</label>
                                 <div class="form-control-static"
                                      style="font-size: 16px; padding: 8px 0;">
-                                    ${audit.updatedAt}
+                                    ${audit.formattedUpdatedAt}
                                 </div>
                             </div>
                         </div>

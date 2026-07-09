@@ -80,7 +80,7 @@
                             <div class="form-group">
                                 <label>Created At</label>
                                 <div class="form-control-static">
-                                    ${audit.createdAt}
+                                    ${audit.formattedCreatedAt}
                                 </div>
                             </div>
                         </div>
@@ -88,7 +88,7 @@
                             <div class="form-group">
                                 <label>Last Updated</label>
                                 <div class="form-control-static">
-                                    ${audit.updatedAt}
+                                    ${audit.formattedUpdatedAt}
                                 </div>
                             </div>
                         </div>

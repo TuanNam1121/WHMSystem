@@ -2,6 +2,7 @@ package com.swp.whmsystem.dal;
 
 import com.swp.whmsystem.dto.ExportDetailItemDTO;
 import com.swp.whmsystem.dto.ExportItemDTO;
+import com.swp.whmsystem.dto.ExportReceiptInfoDTO;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -523,6 +524,38 @@ public class ExportItemDAO {
         }
 
         return list;
+    }
+
+    public ExportReceiptInfoDTO getExportReceiptInfoByOrderId(int orderId) {
+        String sql = "SELECT er.id AS receipt_id, er.order_id, o.createdat AS order_created_at, "
+                + "created_user.fullname AS sale_created_by, processed_user.fullname AS sale_processed_by "
+                + "FROM export_receipts er "
+                + "JOIN orders o ON er.order_id = o.id "
+                + "LEFT JOIN users created_user ON o.createdby = created_user.userid "
+                + "LEFT JOIN users processed_user ON o.processedby = processed_user.userid "
+                + "WHERE er.order_id = ?";
+
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, orderId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new ExportReceiptInfoDTO(
+                            rs.getInt("receipt_id"),
+                            rs.getInt("order_id"),
+                            rs.getTimestamp("order_created_at"),
+                            rs.getString("sale_created_by"),
+                            rs.getString("sale_processed_by")
+                    );
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public String getExportReceiptStatusByOrderId(int orderId) {

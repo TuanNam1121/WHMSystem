@@ -23,6 +23,7 @@ public class Order {
     private String creater;
     private String processor;
     private int totalQuantity;
+    private int exportReceiptId;
 
 
     public Order() {
@@ -48,6 +49,14 @@ public class Order {
 
     public void setTotalQuantity(int totalQuantity) {
         this.totalQuantity = totalQuantity;
+    }
+
+    public int getExportReceiptId() {
+        return exportReceiptId;
+    }
+
+    public void setExportReceiptId(int exportReceiptId) {
+        this.exportReceiptId = exportReceiptId;
     }
 
 

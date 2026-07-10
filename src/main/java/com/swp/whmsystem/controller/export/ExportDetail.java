@@ -3,6 +3,7 @@ package com.swp.whmsystem.controller.export;
 import com.swp.whmsystem.dal.ExportItemDAO;
 import com.swp.whmsystem.dal.OrderDAO;
 import com.swp.whmsystem.dto.ExportDetailItemDTO;
+import com.swp.whmsystem.dto.ExportReceiptInfoDTO;
 import com.swp.whmsystem.model.Order;
 import com.swp.whmsystem.utils.AuthorizationUtils;
 import com.swp.whmsystem.utils.PermissionConstants;
@@ -36,6 +37,7 @@ public class ExportDetail extends HttpServlet {
                 ExportItemDAO exportItemDAO = new ExportItemDAO();
                 List<ExportDetailItemDTO> detailList = exportItemDAO.getExportedItemsByOrderId(orderId);
                 String exportReceiptStatus = exportItemDAO.getExportReceiptStatusByOrderId(orderId);
+                ExportReceiptInfoDTO exportReceiptInfo = exportItemDAO.getExportReceiptInfoByOrderId(orderId);
 
                 if (order != null && exportReceiptStatus != null) {
                     order.setStatus(exportReceiptStatus);
@@ -46,6 +48,7 @@ public class ExportDetail extends HttpServlet {
                     session.setAttribute("order", order);
                     session.setAttribute("itemList", detailList);
                     request.setAttribute("grandTotal", grandTotal);
+                    request.setAttribute("exportReceiptInfo", exportReceiptInfo);
                     request.getRequestDispatcher("WEB-INF/view/export/exportDetail.jsp").forward(request, response);
                     return;
                 }

@@ -151,7 +151,7 @@
 
                                                                 <c:otherwise>
                                                                     <a class="me-3"
-                                                                        href="exportDetail?orderId=${item.id}">
+                                                                        href="exportDetail?orderId=${item.id}&from=inventoryTransaction">
                                                                         <img src="assets/img/icons/eye.svg" alt="img">
                                                                     </a>
                                                                 </c:otherwise>

@@ -29,7 +29,8 @@ public class ExportHistory extends HttpServlet {
         OrderDAO orderDAO = new OrderDAO();
         List<Order> orderList = new ArrayList<>();
         String keyword = request.getParameter("keyword");
-        String date = request.getParameter("date");
+        String fromDate = request.getParameter("fromDate");
+        String toDate = request.getParameter("toDate");
         String sortBy = request.getParameter("sortBy");
         String pageSizeRaw = request.getParameter("pageSize");
         String pageRaw = request.getParameter("page");
@@ -56,12 +57,12 @@ public class ExportHistory extends HttpServlet {
             }
         }
 
-        int totalOrders = orderDAO.countExportHistory(keyword, date);
+        int totalOrders = orderDAO.countExportHistory(keyword, fromDate, toDate);
         int totalPages = Math.max(1, (int) Math.ceil((double) totalOrders / pageSize));
         page = Math.min(page, totalPages);
 
         orderList = orderDAO.searchExportHistory(
-                keyword, date, sortBy, pageSize, page
+                keyword, fromDate, toDate, sortBy, pageSize, page
         );
 
         session.setAttribute("orderList", orderList);
@@ -69,7 +70,7 @@ public class ExportHistory extends HttpServlet {
         request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("focusTable",
-                keyword != null || date != null
+                keyword != null || fromDate != null || toDate != null
                         || sortBy != null || pageSizeRaw != null || pageRaw != null);
         request.getRequestDispatcher("WEB-INF/view/export/exportHistory.jsp").forward(request, response);
     }

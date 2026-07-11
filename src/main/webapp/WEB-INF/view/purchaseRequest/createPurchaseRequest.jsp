@@ -293,17 +293,6 @@
 
         // Add Product
         $(document).on('click', '.add-product-btn', function () {
-            // const isActive = $(this).data('active');
-            // if (isActive === false || isActive === 'false') {
-            //     Swal.fire({
-            //         icon: 'error',
-            //         title: 'Cannot Add Product',
-            //         text: 'You cannot add an inactive product.',
-            //         confirmButtonColor: '#FF9F43'
-            //     });
-            //     return;
-            // }
-
             const id = $(this).data('id');
             const name = $(this).data('name');
             const sku = $(this).data('sku');

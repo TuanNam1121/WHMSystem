@@ -21,45 +21,40 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "CreatePurchaseRequest", urlPatterns = { "/createPurchaseRequest" })
+@WebServlet(name = "CreatePurchaseRequest", urlPatterns = {"/createPurchaseRequest"})
 public class CreatePurchaseRequest extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("user");
-            if (user == null) {
-                response.sendRedirect("login");
-                return;
-            }
-            if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_PURCHASE_ORDER,
-                    "You don't have permission to create a purchase request!")) {
-                return;
-            }
-
-            String productSearch = request.getParameter("productSearch");
-
-            ProductDAO productDAO = new ProductDAO();
-            List<Product> productList = new ArrayList<>();
-            if (productSearch == null || productSearch.isEmpty()) {
-                productList = productDAO.getActiveProductList();
-            } else {
-                productList = productDAO.searchActiveProductByName(productSearch);
-            }
-
-            request.setAttribute("productListForPurchase", productList);
-
-            SupplierDAO supplierDAO = new SupplierDAO();
-            request.setAttribute("supplierList", supplierDAO.getActiveSuppliers());
-
-            request.getRequestDispatcher("WEB-INF/view/purchaseRequest/createPurchaseRequest.jsp").forward(request,
-                    response);
-        } catch (Exception e) {
-            System.err.println("ERROR IN CreatePurchaseRequest doGet:");
-            e.printStackTrace();
-            throw e;
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
         }
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_PURCHASE_ORDER,
+                "You don't have permission to create a purchase request!")) {
+            return;
+        }
+
+//        String productSearch = request.getParameter("productSearch");
+
+        ProductDAO productDAO = new ProductDAO();
+        List<Product> productList = new ArrayList<>();
+//        if (productSearch == null || productSearch.isEmpty()) {
+//            productList = productDAO.getActiveProductList();
+//        } else {
+//            productList = productDAO.searchActiveProductByName(productSearch);
+//        }
+        productList = productDAO.getActiveProductList();
+
+        request.setAttribute("productListForPurchase", productList);
+
+        SupplierDAO supplierDAO = new SupplierDAO();
+        request.setAttribute("supplierList", supplierDAO.getActiveSuppliers());
+
+        request.getRequestDispatcher("WEB-INF/view/purchaseRequest/createPurchaseRequest.jsp").forward(request,
+                response);
     }
 
     @Override
@@ -69,6 +64,7 @@ public class CreatePurchaseRequest extends HttpServlet {
                 "You don't have permission to create a purchase request!")) {
             return;
         }
+
         int salesmanId = Integer.parseInt(request.getParameter("salesmanId"));
         String note = request.getParameter("note");
 

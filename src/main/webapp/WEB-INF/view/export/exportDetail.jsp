@@ -47,6 +47,11 @@
                     <h4>Export Product</h4>
                     <h6>Export products from Order.</h6>
                 </div>
+                <div class="page-btn">
+                    <a href="exportHistory" class="btn btn-cancel">
+                        <i class="fas fa-arrow-left me-2"></i>Back to List
+                    </a>
+                </div>
             </div>
 
             <c:if test="${not empty sessionScope.error}">
@@ -67,7 +72,48 @@
 
             <div class="card">
                 <div class="card-body">
+                    <fmt:formatDate value="${exportReceiptInfo.orderCreatedAt}" pattern="dd-MM-yyyy HH:mm:ss"
+                                    var="orderCreatedAtText"/>
                     <div class="row">
+                        <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label>Export Receipt</label>
+                                <input type="text" class="form-control"
+                                       value="ER-${exportReceiptInfo.receiptId}" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label>Sale Order</label>
+                                <input type="text" class="form-control"
+                                       value="ORD-${exportReceiptInfo.orderId}" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label>Order Created At</label>
+                                <input type="text" class="form-control"
+                                       value="${orderCreatedAtText}"
+                                       readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label>Sale Created By</label>
+                                <input type="text" class="form-control"
+                                       value="${not empty exportReceiptInfo.saleCreatedBy ? exportReceiptInfo.saleCreatedBy : '-'}"
+                                       readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label>Sale Processed By</label>
+                                <input type="text" class="form-control"
+                                       value="${not empty exportReceiptInfo.saleProcessedBy ? exportReceiptInfo.saleProcessedBy : '-'}"
+                                       readonly="readonly">
+                            </div>
+                        </div>
+
                         <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Processor</label>
@@ -75,6 +121,7 @@
                                        readonly="readonly">
                             </div>
                         </div>
+
                         <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Customer</label>
@@ -83,6 +130,7 @@
                             </div>
                         </div>
                     </div>
+
 
                     <form action="submitExport" method="post" id="submitExportForm">
                         <div class="row">
@@ -122,7 +170,8 @@
                                     <ul>
                                         <li class="total">
                                             <h4>Grand Total</h4>
-                                            <h5><fmt:formatNumber value="${requestScope.grandTotal}" pattern="#,##"/></h5>
+                                            <h5><fmt:formatNumber value="${requestScope.grandTotal}"
+                                                                  pattern="#,###"/></h5>
                                         </li>
                                     </ul>
                                 </div>
@@ -143,16 +192,7 @@
                                               readonly="readonly">${sessionScope.order.note}</textarea>
                                 </div>
                             </div>
-                            <div class="col-lg-12">
-                                <c:choose>
-                                    <c:when test="${param.from == 'inventorySummaryDetail'}">
-                                        <a href="${pageContext.request.contextPath}/inventorySummaryDetail?productId=${param.productId}&fromDate=${param.fromDate}&toDate=${param.toDate}" class="btn btn-cancel">Cancel</a>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <a href="exportHistory" class="btn btn-cancel">Cancel</a>
-                                    </c:otherwise>
-                                </c:choose>
-                            </div>
+
                         </div>
                     </form>
                 </div>

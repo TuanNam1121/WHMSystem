@@ -56,6 +56,12 @@
                     <h4>Product Details</h4>
                     <h6>Full details of a product</h6>
                 </div>
+
+                <div class="page-btn">
+                    <a href="productlist" class="btn btn-cancel">
+                        <i class="fas fa-arrow-left me-2"></i>Back to List
+                    </a>
+                </div>
             </div>
 
             <div class="row product-detail-summary-row">

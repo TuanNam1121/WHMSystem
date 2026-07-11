@@ -7,8 +7,11 @@ package com.swp.whmsystem.dal;
 import com.swp.whmsystem.dto.OrderItemDetailDTO;
 import com.swp.whmsystem.dto.TopSellingProductDTO;
 import com.swp.whmsystem.model.Order;
+import com.swp.whmsystem.utils.DateUtils;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -278,8 +281,10 @@ public class OrderDAO {
                 while (rs.next()) {
                     Order order = mapResultSetToOrder(rs);
                     CustomerDAO customerDAO = new CustomerDAO();
+                    UserDAO userDAO = new UserDAO();
                     OrderItemDAO orderItemDAO = new OrderItemDAO();
                     order.setCustomer(customerDAO.getCustomerNameById(order.getCustomerId()));
+                    order.setCreater(userDAO.getUserNameById(order.getCreatedBy()));
                     order.setTotalQuantity(orderItemDAO.totalQuantityByOrderId(order.getId()));
                     orderList.add(order);
                 }
@@ -684,7 +689,7 @@ public class OrderDAO {
     }
 
     public List<Order> getExportHistory() {
-        String sql = "select o.id, er.status, o.total_price, o.note, "
+        String sql = "select o.id, er.id as export_receipt_id, er.status, o.total_price, o.note, "
                 + "coalesce(er.exported_at, er.created_at) as orderdate, er.created_at as createdat, "
                 + "er.updated_at as updatedat, er.exported_at as completedat, "
                 + "o.createdby, er.exported_by as processedby, o.customer_id "
@@ -696,6 +701,7 @@ public class OrderDAO {
             List<Order> result = new ArrayList<>();
             while (rs.next()) {
                 Order o = mapResultSetToOrder(rs);
+                o.setExportReceiptId(rs.getInt("export_receipt_id"));
                 UserDAO ud = new UserDAO();
                 CustomerDAO cd = new CustomerDAO();
                 OrderItemDAO oid = new OrderItemDAO();
@@ -712,11 +718,11 @@ public class OrderDAO {
         return null;
     }
 
-    public List<Order> searchExportHistory(String keyword, String date,
+    public List<Order> searchExportHistory(String keyword, String fromDate, String toDate,
                                            String sortBy, int pageSize, int page) {
         List<Order> orderList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-                "select o.id, er.status, o.total_price, o.note, "
+                "select o.id, er.id as export_receipt_id, er.status, o.total_price, o.note, "
                         + "coalesce(er.exported_at, er.created_at) as orderdate, er.created_at as createdat, "
                         + "er.updated_at as updatedat, er.exported_at as completedat, "
                         + "o.createdby, er.exported_by as processedby, o.customer_id "
@@ -740,9 +746,20 @@ public class OrderDAO {
             parameter.add(searchValue);
         }
 
-        if (date != null && !date.trim().isEmpty()) {
-            sql.append(" and date_format(coalesce(er.exported_at, er.created_at), '%d-%m-%Y') = ?");
-            parameter.add(date.trim());
+        if (fromDate != null && !fromDate.trim().isEmpty()) {
+            Timestamp fromTimestamp = parseStartOfDay(fromDate);
+            if (fromTimestamp != null) {
+                sql.append(" and coalesce(er.exported_at, er.created_at) >= ?");
+                parameter.add(fromTimestamp);
+            }
+        }
+
+        if (toDate != null && !toDate.trim().isEmpty()) {
+            Timestamp toTimestamp = parseEndOfDay(toDate);
+            if (toTimestamp != null) {
+                sql.append(" and coalesce(er.exported_at, er.created_at) <= ?");
+                parameter.add(toTimestamp);
+            }
         }
 
         if (sortBy != null && !sortBy.trim().isEmpty()) {
@@ -776,6 +793,7 @@ public class OrderDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Order order = mapResultSetToOrder(rs);
+                    order.setExportReceiptId(rs.getInt("export_receipt_id"));
                     CustomerDAO customerDAO = new CustomerDAO();
                     UserDAO userDAO = new UserDAO();
                     OrderItemDAO orderItemDAO = new OrderItemDAO();
@@ -792,7 +810,7 @@ public class OrderDAO {
         return orderList;
     }
 
-    public int countExportHistory(String keyword, String date) {
+    public int countExportHistory(String keyword, String fromDate, String toDate) {
         StringBuilder sql = new StringBuilder(
                 "select count(*) from orders o "
                         + "join export_receipts er on er.order_id = o.id "
@@ -814,9 +832,20 @@ public class OrderDAO {
             parameters.add(searchValue);
         }
 
-        if (date != null && !date.trim().isEmpty()) {
-            sql.append(" and date_format(coalesce(er.exported_at, er.created_at), '%d-%m-%Y') = ?");
-            parameters.add(date.trim());
+        if (fromDate != null && !fromDate.trim().isEmpty()) {
+            Timestamp fromTimestamp = parseStartOfDay(fromDate);
+            if (fromTimestamp != null) {
+                sql.append(" and coalesce(er.exported_at, er.created_at) >= ?");
+                parameters.add(fromTimestamp);
+            }
+        }
+
+        if (toDate != null && !toDate.trim().isEmpty()) {
+            Timestamp toTimestamp = parseEndOfDay(toDate);
+            if (toTimestamp != null) {
+                sql.append(" and coalesce(er.exported_at, er.created_at) <= ?");
+                parameters.add(toTimestamp);
+            }
         }
 
         try (Connection conn = DBContext.getConnection();
@@ -833,6 +862,16 @@ public class OrderDAO {
             System.out.println(ex.getMessage());
         }
         return 0;
+    }
+
+    private Timestamp parseStartOfDay(String date) {
+        LocalDate localDate = DateUtils.parseDate(date);
+        return localDate == null ? null : Timestamp.valueOf(localDate.atStartOfDay());
+    }
+
+    private Timestamp parseEndOfDay(String date) {
+        LocalDate localDate = DateUtils.parseDate(date);
+        return localDate == null ? null : Timestamp.valueOf(localDate.atTime(LocalTime.MAX));
     }
 
     public static void main(String[] args) {

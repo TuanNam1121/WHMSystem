@@ -127,6 +127,7 @@
                                 <th>No</th>
                                 <th>Date</th>
                                 <th>Customer</th>
+                                <th>Created By</th>
                                 <th>Items</th>
                                 <th>Grand total</th>
                                 <th>Status</th>
@@ -141,6 +142,14 @@
                                         <fmt:formatDate value="${o.orderDate}" pattern="dd-MM-yyyy HH:mm:ss"/>
                                     </td>
                                     <td>${o.customer}</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${not empty o.creater}">
+                                                ${o.creater}
+                                            </c:when>
+                                            <c:otherwise>-</c:otherwise>
+                                        </c:choose>
+                                    </td>
                                     <td>${o.totalQuantity}</td>
                                     <td>
                                         <fmt:formatNumber value="${o.totalPrice}" pattern="#,###"/>

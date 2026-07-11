@@ -228,7 +228,7 @@ CREATE TABLE `export_receipt_serials`
     `product_item_id`          int NOT NULL,
     `created_at`               datetime DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_export_receipt_serial_once` (`product_item_id`),
+    KEY                        `uk_export_receipt_serial_once` (`product_item_id`),
     KEY                        `export_receipt_detail_id` (`export_receipt_detail_id`),
     CONSTRAINT `fk_export_receipt_serials_detail` FOREIGN KEY (`export_receipt_detail_id`) REFERENCES `export_receipt_details` (`id`),
     CONSTRAINT `fk_export_receipt_serials_product_item` FOREIGN KEY (`product_item_id`) REFERENCES `product_items` (`id`)

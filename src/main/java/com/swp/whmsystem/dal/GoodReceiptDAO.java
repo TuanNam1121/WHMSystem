@@ -223,7 +223,7 @@ public class GoodReceiptDAO {
         return -1;
     }
 
-    public List<GoodReceipt> searchProduct(String keyword, int requestid, int supplierId, int processedby, String sortBy) {
+    public List<GoodReceipt> searchProduct(String keyword, String code, int supplierId, int processedby, String sortBy) {
         List<GoodReceipt> goodReceipts = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 """
@@ -243,10 +243,10 @@ public class GoodReceiptDAO {
             parameter.add("%"+keyword+"%");
         }
 
-        if (requestid != -1) {
-            sql.append(" and (purchaserequestid = ? or gr.id = ?)");
-            parameter.add(String.valueOf(requestid));
-            parameter.add(String.valueOf(requestid));
+        if (code != null && !code.isBlank()) {
+            sql.append(" and (gr.code like ? or pr.code like ?)");
+            parameter.add("%" + code + "'%");
+            parameter.add("%" + code + "'%");
         }
 
         if (supplierId != -1) {
@@ -283,7 +283,7 @@ public class GoodReceiptDAO {
         return goodReceipts;
     }
     
-    public int countImportHistory(String keyword,int purchaseid,int supplierId,int processedBy){
+    public int countImportHistory(String keyword,String code,int supplierId,int processedBy){
         StringBuilder sql = new StringBuilder(
                 """
                 SELECT distinct gr.* 
@@ -302,10 +302,10 @@ public class GoodReceiptDAO {
             parameter.add("%"+keyword+"%");
         }
 
-        if (purchaseid != -1) {
-            sql.append(" and (purchaserequestid = ? or gr.id = ?)");
-            parameter.add(String.valueOf(purchaseid));
-            parameter.add(String.valueOf(purchaseid));
+         if (code != null && !code.isBlank()) {
+            sql.append(" and (gr.code like ? or pr.code like ?)");
+            parameter.add("%" + code + "%");
+            parameter.add("%" + code + "%");
         }
 
         if (supplierId != -1) {
@@ -333,7 +333,7 @@ public class GoodReceiptDAO {
     public static void main(String[] args) {
         String date = "2026-07-02";
         GoodReceiptDAO dao = new GoodReceiptDAO();
-        for(GoodReceipt i : dao.searchProduct("D7KR2VN6JF", -1, -1, -1, null)){
+        for(GoodReceipt i : dao.searchProduct(null, "2", -1, -1, null)){
             System.out.println(i.toString());
         }
     }

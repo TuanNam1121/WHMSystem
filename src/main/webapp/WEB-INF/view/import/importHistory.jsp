@@ -58,7 +58,7 @@
 
                                                 <div class="col-lg col-sm-6 col-12">
                                                     <div class="form-group">
-                                                        <input type="text" name="purchaseid" placeholder="Search Purchase Request ID or Receipt ID" value="${param.purchaseid}">
+                                                        <input type="text" name="code" placeholder="Search Purchase Request ID or Receipt ID" value="${param.purchaseid}">
                                                     </div>
                                                 </div>
 

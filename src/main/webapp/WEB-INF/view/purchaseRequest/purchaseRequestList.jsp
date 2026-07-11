@@ -175,7 +175,7 @@
                                     <td>
                                         <c:choose>
                                             <c:when test="${pr.status == 'New' || pr.status == 'NEW'}">
-                                                <a class="me-3" href="updatePurchaseRequest?id=${pr.id}"
+                                                <a class="me-3" href="updatePurchaseRequest?requestId=${pr.id}"
                                                    id="btn-update-pr${pr.id}">
                                                     <img src="assets/img/icons/edit.svg" alt="img">
                                                 </a>

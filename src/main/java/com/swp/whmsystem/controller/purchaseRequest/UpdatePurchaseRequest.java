@@ -37,11 +37,8 @@ public class UpdatePurchaseRequest extends HttpServlet {
             return;
         }
 
-        String idStr = request.getParameter("id");
-        if (idStr == null) {
-            idStr = request.getParameter("requestId");
-        }
-        if (idStr == null) {
+        String idStr = request.getParameter("requestId");
+        if (idStr == null || idStr.trim().isEmpty()) {
             response.sendRedirect("purchaseRequestList");
             return;
         }
@@ -59,17 +56,18 @@ public class UpdatePurchaseRequest extends HttpServlet {
             PurchaseItemDAO piDAO = new PurchaseItemDAO();
             List<PurchaseItem> items = piDAO.getItemsByPurchaseRequestId(id);
 
-            String productSearch = request.getParameter("productSearch");
+//            String productSearch = request.getParameter("productSearch");
             
             ProductDAO productDAO = new ProductDAO();
             List<Product> productList;
-            if (productSearch == null || productSearch.isEmpty()) {
-                productList = productDAO.getProductList();
-            } else {
-                productList = productDAO.searchProductByName(productSearch);
-            }
+//            if (productSearch == null || productSearch.isEmpty()) {
+//                productList = productDAO.getActiveProductList();
+//            } else {
+//                productList = productDAO.searchActiveProductByName(productSearch);
+//            }
+            productList = productDAO.getActiveProductList();
             
-            java.util.Map<Integer, Product> productMap = new java.util.HashMap<>();
+            Map<Integer, Product> productMap = new HashMap<>();
             for (Product p : productList) {
                 productMap.put(p.getProductId(), p);
             }

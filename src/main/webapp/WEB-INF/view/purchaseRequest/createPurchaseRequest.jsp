@@ -373,7 +373,9 @@
             let searchTerm = $(this).val().toLowerCase();
             $('#product-list-body .product-item').each(function() {
                 let productName = $(this).find('.product-name').text().toLowerCase();
-                if (productName.includes(searchTerm)) {
+                let productSku = $(this).find('.product-sku').text().toLowerCase();
+                
+                if (productName.includes(searchTerm) || productSku.includes(searchTerm)) {
                     $(this).show();
                 } else {
                     $(this).hide();

@@ -52,14 +52,13 @@ public class ImportHistory extends HttpServlet {
             return;
         }
         String keyword = request.getParameter("keyword");
-        String rawPurchaseId = request.getParameter("purchaseid");
+        String code = request.getParameter("code");
         String rawSupplierId = request.getParameter("supplierid");
         String rawProcessedBy = request.getParameter("processedby");
         String sortBy = request.getParameter("sortBy");
         String pageSizeRaw = request.getParameter("pageSize");
         String pageRaw = request.getParameter("page");
         
-        int purchaseid = (rawPurchaseId == null || rawPurchaseId.isBlank()) ? -1 : Integer.parseInt(rawPurchaseId);
         int processedBy = (rawProcessedBy == null || rawProcessedBy.isBlank()) ? -1 : Integer.parseInt(rawProcessedBy);
         int supplierId = (rawSupplierId == null || rawSupplierId.isBlank()) ? -1 : Integer.parseInt(rawSupplierId);
 
@@ -91,9 +90,9 @@ public class ImportHistory extends HttpServlet {
         HttpSession session = request.getSession();
         List<User> userImporterList = user.getAllUsersHandleGoodReceipt();
         List<Supplier> supplier = supplierDAO.getAllSuppliers();
-        List<GoodReceipt> list = gr.searchProduct(keyword, purchaseid, supplierId, processedBy, sortBy);
+        List<GoodReceipt> list = gr.searchProduct(keyword, code, supplierId, processedBy, sortBy);
         
-        int totalGoodReceipt = gr.countImportHistory(keyword, purchaseid, supplierId, processedBy);
+        int totalGoodReceipt = gr.countImportHistory(keyword, code, supplierId, processedBy);
         int totalPages = Math.max(1, (int) Math.ceil((double) totalGoodReceipt / pageSize));
         page = Math.min(page, totalPages);
         List<ImportHistoryDTO> returnedList = new ArrayList<>();

@@ -214,7 +214,15 @@ public class GoodReceiptDAO {
             preparedStatement.executeUpdate();
             try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
                 if (rs.next()) {
-                    return rs.getInt(1);
+                    int id = rs.getInt(1);
+                    String code = "GR-" + id;
+                    try (PreparedStatement updatePs = connection.prepareStatement(
+                            "UPDATE good_receipts SET code = ? WHERE id = ?")) {
+                        updatePs.setString(1, code);
+                        updatePs.setInt(2, id);
+                        updatePs.executeUpdate();
+                    }
+                    return id;
                 }
             }
         } catch (SQLException e) {
@@ -223,7 +231,7 @@ public class GoodReceiptDAO {
         return -1;
     }
 
-    public List<GoodReceipt> searchProduct(String keyword, int requestid, int supplierId, int processedby, String sortBy) {
+    public List<GoodReceipt> searchProduct(String keyword, String code, int supplierId, int processedby, String sortBy) {
         List<GoodReceipt> goodReceipts = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 """
@@ -239,14 +247,14 @@ public class GoodReceiptDAO {
 
         if (keyword != null && !keyword.isEmpty()) {
             sql.append(" and (p.name like ? or pi.serial like ?)");
-            parameter.add("%"+keyword+"%");
-            parameter.add("%"+keyword+"%");
+            parameter.add("%" + keyword + "%");
+            parameter.add("%" + keyword + "%");
         }
 
-        if (requestid != -1) {
-            sql.append(" and (purchaserequestid = ? or gr.id = ?)");
-            parameter.add(String.valueOf(requestid));
-            parameter.add(String.valueOf(requestid));
+        if (code != null && !code.isBlank()) {
+            sql.append(" and (gr.code like ? or pr.code like ?)");
+            parameter.add("%" + code + "'%");
+            parameter.add("%" + code + "'%");
         }
 
         if (supplierId != -1) {
@@ -282,8 +290,8 @@ public class GoodReceiptDAO {
         }
         return goodReceipts;
     }
-    
-    public int countImportHistory(String keyword,int purchaseid,int supplierId,int processedBy){
+
+    public int countImportHistory(String keyword, String code, int supplierId, int processedBy) {
         StringBuilder sql = new StringBuilder(
                 """
                 SELECT distinct gr.* 
@@ -298,14 +306,14 @@ public class GoodReceiptDAO {
 
         if (keyword != null && !keyword.isEmpty()) {
             sql.append(" and (p.name like ? or pi.serial like ?)");
-            parameter.add("%"+keyword+"%");
-            parameter.add("%"+keyword+"%");
+            parameter.add("%" + keyword + "%");
+            parameter.add("%" + keyword + "%");
         }
 
-        if (purchaseid != -1) {
-            sql.append(" and (purchaserequestid = ? or gr.id = ?)");
-            parameter.add(String.valueOf(purchaseid));
-            parameter.add(String.valueOf(purchaseid));
+        if (code != null && !code.isBlank()) {
+            sql.append(" and (gr.code like ? or pr.code like ?)");
+            parameter.add("%" + code + "%");
+            parameter.add("%" + code + "%");
         }
 
         if (supplierId != -1) {
@@ -323,7 +331,9 @@ public class GoodReceiptDAO {
                 ps.setObject(i + 1, parameter.get(i));
             }
             ResultSet rs = ps.executeQuery();
-            if(rs.next()) return rs.getInt(1);
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
@@ -333,7 +343,7 @@ public class GoodReceiptDAO {
     public static void main(String[] args) {
         String date = "2026-07-02";
         GoodReceiptDAO dao = new GoodReceiptDAO();
-        for(GoodReceipt i : dao.searchProduct("D7KR2VN6JF", -1, -1, -1, null)){
+        for (GoodReceipt i : dao.searchProduct(null, "2", -1, -1, null)) {
             System.out.println(i.toString());
         }
     }

@@ -5,6 +5,11 @@
 
 package com.swp.whmsystem.controller.admin;
 
+import com.swp.whmsystem.api.EmailApi;
+import com.swp.whmsystem.dal.RequestDAO;
+import com.swp.whmsystem.dal.UserDAO;
+import com.swp.whmsystem.model.Request;
+import com.swp.whmsystem.model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -13,6 +18,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.mindrot.jbcrypt.BCrypt;
 
 @WebServlet(name = "SolveRequest", urlPatterns = {"/solverequest"})
 public class SolveRequest extends HttpServlet {

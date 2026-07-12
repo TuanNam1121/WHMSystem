@@ -55,7 +55,7 @@ public class Home extends HttpServlet {
         request.setAttribute("customerCount", customerDAO.countCustomers());
         request.setAttribute("activeSupplierCount", supplierDAO.countActiveSuppliers());
         request.setAttribute("completedPurchaseInvoiceCount",
-                purchaseRequestDAO.countPurchaseItem(0, 0, "COMPLETED", null));
+                purchaseRequestDAO.countPurchaseItem(0, null, "COMPLETED", null));
         request.setAttribute("completedSaleInvoiceCount", exportItemDAO.countCompletedExportReceipts());
         request.setAttribute("lowStockProducts", inventoryDAO.getLowStockProducts(10));
         request.setAttribute("topSellingProducts", orderDAO.getTopSellingProducts(5));

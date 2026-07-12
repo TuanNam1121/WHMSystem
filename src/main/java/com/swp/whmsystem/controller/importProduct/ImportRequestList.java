@@ -49,7 +49,7 @@ public class ImportRequestList extends HttpServlet {
             String pageSizeRaw = request.getParameter("pageSize");
             String pageRaw = request.getParameter("page");
 
-            String codeStr = request.getParameter("code");
+            String code = request.getParameter("code");
             String status = request.getParameter("status");
             String dateStr = request.getParameter("date");
 
@@ -75,19 +75,10 @@ public class ImportRequestList extends HttpServlet {
                 }
             }
 
-            int id = 0;
-            if (codeStr != null && !codeStr.isEmpty()) {
-                try {
-                    id = Integer.parseInt(codeStr.replace("PR-", "").trim());
-                } catch (NumberFormatException e) {
-                    // ignore
-                }
-            }
-
-            int totalRecords = purchaseRequestDAO.countImportRequest(id, status, dateStr);
+            int totalRecords = purchaseRequestDAO.countImportRequest(code, status, dateStr);
             int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
-            List<PurchaseRequest> purchaseRequests = purchaseRequestDAO.searchImportRequest(id, status, dateStr, pageSize, page);
+            List<PurchaseRequest> purchaseRequests = purchaseRequestDAO.searchImportRequest(code, status, dateStr, pageSize, page);
             List<PurchaseRequestDTO> importRequests = new ArrayList<>();
             for (PurchaseRequest i : purchaseRequests) {
                 importRequests.add(toPurchaseDTO(i));

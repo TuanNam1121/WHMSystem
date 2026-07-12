@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class PurchaseRequestDAO {
-    public java.math.BigDecimal getNewPurchaseOrderTotalPrice() {
+    public BigDecimal getNewPurchaseOrderTotalPrice() {
         String sql = "SELECT COALESCE(SUM(pri.quantity * pri.price), 0) "
                 + "FROM purchase_requests pr "
                 + "JOIN purchase_request_items pri ON pr.id = pri.purchaserequestid "
@@ -17,8 +17,8 @@ public class PurchaseRequestDAO {
                 + "AND pri.isDeleted = 0";
 
         try (Connection connection = DBContext.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                ResultSet resultSet = preparedStatement.executeQuery()) {
             if (resultSet.next()) {
                 java.math.BigDecimal totalPrice = resultSet.getBigDecimal(1);
                 return totalPrice == null ? java.math.BigDecimal.ZERO : totalPrice;
@@ -29,7 +29,7 @@ public class PurchaseRequestDAO {
         return java.math.BigDecimal.ZERO;
     }
 
-    public java.math.BigDecimal getApprovedAndIncompletedPurchaseRequestTotalPrice() {
+    public BigDecimal getApprovedAndIncompletedPurchaseRequestTotalPrice() {
         String sql = "SELECT COALESCE(SUM(pri.quantity * pri.price), 0) "
                 + "FROM purchase_requests pr "
                 + "JOIN purchase_request_items pri ON pr.id = pri.purchaserequestid "
@@ -38,8 +38,8 @@ public class PurchaseRequestDAO {
                 + "AND pri.isDeleted = 0";
 
         try (Connection connection = DBContext.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                ResultSet resultSet = preparedStatement.executeQuery()) {
             if (resultSet.next()) {
                 java.math.BigDecimal totalPrice = resultSet.getBigDecimal(1);
                 return totalPrice == null ? java.math.BigDecimal.ZERO : totalPrice;
@@ -63,7 +63,7 @@ public class PurchaseRequestDAO {
         List<BigDecimal> monthlyTotals = createEmptyMonthlyTotals();
 
         try (Connection connection = DBContext.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, year);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
@@ -106,7 +106,7 @@ public class PurchaseRequestDAO {
             throw new RuntimeException(e);
         }
     }
-    
+
     public List<PurchaseRequest> getApprovedAndIncompletedPurchaseRequest() {
         String sql = "SELECT pr.*, u.username AS createdByUsername, s.suppliername, "
                 + "COALESCE(pr_total.totalPrice, 0) AS totalPrice FROM purchase_requests pr "
@@ -139,8 +139,8 @@ public class PurchaseRequestDAO {
                 + "AND pr.status IN ('APPROVED','PROCESSING')";
 
         try (Connection connection = DBContext.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                ResultSet resultSet = preparedStatement.executeQuery()) {
             if (resultSet.next()) {
                 return resultSet.getInt(1);
             }
@@ -210,6 +210,10 @@ public class PurchaseRequestDAO {
     public PurchaseRequest mapResultSetToPurchaseRequest(ResultSet rs) throws SQLException {
         PurchaseRequest c = new PurchaseRequest();
         c.setId(rs.getInt("id"));
+        try {
+            c.setCode(rs.getString("code"));
+        } catch (SQLException e) {
+        }
         c.setCreatedBy(rs.getInt("createdby"));
         c.setApprovedBy(rs.getInt("approvedby"));
         c.setStatus(rs.getString("status"));
@@ -224,13 +228,11 @@ public class PurchaseRequestDAO {
             c.setCreatedByUsername(rs.getString("createdByUsername"));
             c.setSupplierName(rs.getString("suppliername"));
         } catch (SQLException e) {
-            // Column might not exist in some queries if not updated
         }
         try {
-            java.math.BigDecimal totalPrice = rs.getBigDecimal("totalPrice");
+            BigDecimal totalPrice = rs.getBigDecimal("totalPrice");
             c.setTotalPrice(totalPrice == null ? java.math.BigDecimal.ZERO : totalPrice);
         } catch (SQLException e) {
-            // Column might not exist in some queries if not updated
         }
         return c;
     }
@@ -238,11 +240,31 @@ public class PurchaseRequestDAO {
     public boolean insertPurchaseRequest(PurchaseRequest request) {
         String sql = "insert into purchase_requests (createdby, note, supplierid) values (?, ?, ?)";
         try (Connection connection = DBContext.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql,
+                    PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, request.getCreatedBy());
             preparedStatement.setString(2, request.getNote());
             preparedStatement.setInt(3, request.getSupplierId());
-            return preparedStatement.executeUpdate() > 0;
+            
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int id = generatedKeys.getInt(1);
+                        request.setId(id);
+                        
+                        String code = "PR-" + id;
+                        try (PreparedStatement updatePs = connection.prepareStatement(
+                                "UPDATE purchase_requests SET code = ? WHERE id = ?")) {
+                            updatePs.setString(1, code);
+                            updatePs.setInt(2, id);
+                            updatePs.executeUpdate();
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -251,7 +273,8 @@ public class PurchaseRequestDAO {
     public boolean updatePurchaseRequest(PurchaseRequest request) {
         String sql = "UPDATE purchase_requests SET createdby = ?, approvedby = ?, status = ?, note = ?, supplierid = ? WHERE id = ?";
         try (Connection connection = DBContext.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql,
+                    PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, request.getCreatedBy());
             if (request.getApprovedBy() != 0) {
                 preparedStatement.setInt(2, request.getApprovedBy());
@@ -291,7 +314,8 @@ public class PurchaseRequestDAO {
         }
     }
 
-    public List<PurchaseRequest> searchPurchaseItem(int salemanId, int id, String status, String dateStr, String sort, int pageSize, int page) {
+    public List<PurchaseRequest> searchPurchaseItem(int salemanId, String code, String status, String dateStr, String sort,
+            int pageSize, int page) {
         StringBuilder sql = new StringBuilder("SELECT pr.*, u.username AS createdByUsername, s.suppliername, "
                 + "COALESCE(pr_total.totalPrice, 0) AS totalPrice FROM purchase_requests pr "
                 + "LEFT JOIN users u ON pr.createdby = u.userid "
@@ -302,15 +326,15 @@ public class PurchaseRequestDAO {
                 + "    WHERE isDeleted = 0 "
                 + "    GROUP BY purchaserequestid"
                 + ") pr_total ON pr.id = pr_total.purchaserequestid "
-                + "where pr.isDeleted = 0") ;
+                + "where pr.isDeleted = 0");
         List<Object> parameter = new ArrayList<>();
         if (salemanId != 0) {
             sql.append(" and pr.createdBy = ?");
             parameter.add(salemanId);
         }
-        if (id != 0) {
-            sql.append(" and pr.id = ?");
-            parameter.add(id);
+        if (code != null && !code.isBlank()) {
+            sql.append(" and pr.code like ?");
+            parameter.add("%" + code + "%");
         }
         if (status != null && !status.isEmpty()) {
             sql.append(" and pr.status = ?");
@@ -330,13 +354,26 @@ public class PurchaseRequestDAO {
         }
         if (sort != null && !sort.isEmpty()) {
             switch (sort) {
-                case "id_asc": sql.append(" order by pr.id asc"); break;
-                case "status_desc": sql.append(" order by pr.status desc"); break;
-                case "status_asc": sql.append(" order by pr.status asc"); break;
-                case "date_desc": sql.append(" order by pr.createdat desc"); break;
-                case "date_asc": sql.append(" order by pr.createdat asc"); break;
-                case "id_desc": sql.append(" order by pr.id desc"); break;
-                default: sql.append(" order by pr.id desc");
+                case "id_asc":
+                    sql.append(" order by pr.id asc");
+                    break;
+                case "status_desc":
+                    sql.append(" order by pr.status desc");
+                    break;
+                case "status_asc":
+                    sql.append(" order by pr.status asc");
+                    break;
+                case "date_desc":
+                    sql.append(" order by pr.createdat desc");
+                    break;
+                case "date_asc":
+                    sql.append(" order by pr.createdat asc");
+                    break;
+                case "id_desc":
+                    sql.append(" order by pr.id desc");
+                    break;
+                default:
+                    sql.append(" order by pr.id desc");
             }
         } else {
             sql.append(" order by pr.id desc");
@@ -364,17 +401,17 @@ public class PurchaseRequestDAO {
         }
     }
 
-    public int countPurchaseItem(int salemanId, int id, String status, String dateStr) {
+    public int countPurchaseItem(int salemanId, String code, String status, String dateStr) {
         StringBuilder sql = new StringBuilder("SELECT count(*) FROM purchase_requests pr " +
-                "where pr.isDeleted = 0") ;
+                "where pr.isDeleted = 0");
         List<Object> parameter = new ArrayList<>();
         if (salemanId != 0) {
             sql.append(" and pr.createdBy = ?");
             parameter.add(salemanId);
         }
-        if (id != 0) {
-            sql.append(" and pr.id = ?");
-            parameter.add(id);
+        if (code != null && !code.isBlank()) {
+            sql.append(" and pr.code like ?");
+            parameter.add("%" + code + "%");
         }
         if (status != null && !status.isEmpty()) {
             sql.append(" and pr.status = ?");
@@ -408,7 +445,7 @@ public class PurchaseRequestDAO {
         return 0;
     }
 
-    public List<PurchaseRequest> searchImportRequest(int id, String status, String dateStr, int pageSize, int page) {
+    public List<PurchaseRequest> searchImportRequest(String code, String status, String dateStr, int pageSize, int page) {
         StringBuilder sql = new StringBuilder("SELECT pr.*, u.username AS createdByUsername, s.suppliername, "
                 + "COALESCE(pr_total.totalPrice, 0) AS totalPrice FROM purchase_requests pr "
                 + "LEFT JOIN users u ON pr.createdby = u.userid "
@@ -419,11 +456,11 @@ public class PurchaseRequestDAO {
                 + "    WHERE isDeleted = 0 "
                 + "    GROUP BY purchaserequestid"
                 + ") pr_total ON pr.id = pr_total.purchaserequestid "
-                + "where pr.isDeleted = 0 and pr.status IN ('APPROVED','PROCESSING')") ;
+                + "where pr.isDeleted = 0 and pr.status IN ('APPROVED','PROCESSING')");
         List<Object> parameter = new ArrayList<>();
-        if (id != 0) {
-            sql.append(" and pr.id = ?");
-            parameter.add(id);
+        if (code != null && !code.isBlank()) {
+            sql.append(" and pr.code like ?");
+            parameter.add("%" + code + "%");
         }
         if (status != null && !status.isEmpty() && !status.equalsIgnoreCase("Choose Status")) {
             sql.append(" and pr.status = ?");
@@ -465,13 +502,13 @@ public class PurchaseRequestDAO {
         }
     }
 
-    public int countImportRequest(int id, String status, String dateStr) {
+    public int countImportRequest(String code, String status, String dateStr) {
         StringBuilder sql = new StringBuilder("SELECT count(*) FROM purchase_requests pr " +
-                "where pr.isDeleted = 0 and pr.status IN ('APPROVED','PROCESSING')") ;
+                "where pr.isDeleted = 0 and pr.status IN ('APPROVED','PROCESSING')");
         List<Object> parameter = new ArrayList<>();
-        if (id != 0) {
-            sql.append(" and pr.id = ?");
-            parameter.add(id);
+        if (code != null && !code.isBlank()) {
+            sql.append(" and pr.code like ?");
+            parameter.add("%" + code + "%");
         }
         if (status != null && !status.isEmpty() && !status.equalsIgnoreCase("Choose Status")) {
             sql.append(" and pr.status = ?");
@@ -505,4 +542,3 @@ public class PurchaseRequestDAO {
         return 0;
     }
 }
-

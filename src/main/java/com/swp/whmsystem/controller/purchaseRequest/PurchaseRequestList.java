@@ -33,14 +33,7 @@ public class PurchaseRequestList extends HttpServlet {
             return;
         }
 
-        String codeStr = request.getParameter("code");
-        int code = 0;
-        if (codeStr != null && !codeStr.trim().isEmpty()) {
-            try {
-                code = Integer.parseInt(codeStr.trim());
-            } catch (NumberFormatException e) {
-            }
-        }
+        String code = request.getParameter("code");
         
         String status = request.getParameter("status");
         String dateStr = request.getParameter("date");

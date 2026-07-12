@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "CreatePurchaseRequest", urlPatterns = {"/createPurchaseRequest"})
+@WebServlet(name = "CreatePurchaseRequest", urlPatterns = { "/createPurchaseRequest" })
 public class CreatePurchaseRequest extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -37,15 +37,15 @@ public class CreatePurchaseRequest extends HttpServlet {
             return;
         }
 
-//        String productSearch = request.getParameter("productSearch");
+        // String productSearch = request.getParameter("productSearch");
 
         ProductDAO productDAO = new ProductDAO();
         List<Product> productList = new ArrayList<>();
-//        if (productSearch == null || productSearch.isEmpty()) {
-//            productList = productDAO.getActiveProductList();
-//        } else {
-//            productList = productDAO.searchActiveProductByName(productSearch);
-//        }
+        // if (productSearch == null || productSearch.isEmpty()) {
+        // productList = productDAO.getActiveProductList();
+        // } else {
+        // productList = productDAO.searchActiveProductByName(productSearch);
+        // }
         productList = productDAO.getActiveProductList();
 
         request.setAttribute("productListForPurchase", productList);

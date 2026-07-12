@@ -227,25 +227,6 @@ LOCK TABLES `export_receipts` WRITE;
 INSERT INTO `export_receipts` VALUES (1,2,'COMPLETED',NULL,16,16,'2026-06-30 20:55:27','2026-06-30 20:55:27','2026-07-06 14:35:51','ER-1'),(2,1,'COMPLETED',NULL,16,16,'2026-06-30 21:08:51','2026-06-30 21:08:51','2026-07-06 14:35:51','ER-2'),(3,3,'COMPLETED',NULL,16,16,'2026-07-02 18:02:34','2026-07-02 18:02:34','2026-07-06 14:35:51','ER-3'),(4,4,'COMPLETED',NULL,15,15,'2026-07-03 14:16:56','2026-07-03 14:16:56','2026-07-06 14:35:51','ER-4'),(5,6,'COMPLETED',NULL,15,15,'2026-07-03 17:18:40','2026-07-03 17:18:40','2026-07-06 14:35:51','ER-5');
 /*!40000 ALTER TABLE `export_receipts` ENABLE KEYS */;
 UNLOCK TABLES;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trg_export_receipts_code` AFTER INSERT ON `export_receipts` FOR EACH ROW BEGIN
-    UPDATE export_receipts
-    SET code = CONCAT('ER-', NEW.id)
-    WHERE id = NEW.id;
-END */;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `good_receipts`
@@ -281,25 +262,6 @@ LOCK TABLES `good_receipts` WRITE;
 INSERT INTO `good_receipts` VALUES (1,1,16,'COMPLETED','2026-06-30 20:37:22','2026-06-30 20:37:22',NULL,'GR-1'),(2,3,16,'COMPLETED','2026-06-30 20:38:27','2026-06-30 20:38:27',NULL,'GR-2'),(3,2,16,'COMPLETED','2026-06-30 20:40:11','2026-06-30 20:40:11',NULL,'GR-3'),(4,2,16,'COMPLETED','2026-06-30 20:41:15','2026-06-30 20:41:15',NULL,'GR-4'),(5,3,16,'COMPLETED','2026-06-30 21:04:27','2026-06-30 21:04:27',NULL,'GR-5'),(6,6,16,'COMPLETED','2026-06-30 21:07:45','2026-06-30 21:07:45',NULL,'GR-6'),(7,5,15,'COMPLETED','2026-07-03 14:14:49','2026-07-03 14:14:49',NULL,'GR-7');
 /*!40000 ALTER TABLE `good_receipts` ENABLE KEYS */;
 UNLOCK TABLES;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trg_good_receipts_code` AFTER INSERT ON `good_receipts` FOR EACH ROW BEGIN
-    UPDATE good_receipts
-    SET code = CONCAT('GR-', NEW.id)
-    WHERE id = NEW.id;
-END */;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `good_receipts_items`
@@ -392,25 +354,6 @@ LOCK TABLES `inventory_audit` WRITE;
 INSERT INTO `inventory_audit` VALUES (1,15,14,'COMPLETED','2026-06-30 21:10:01','2026-07-06 14:35:51','IA-1'),(2,14,NULL,'CANCELLED','2026-07-05 09:23:07','2026-07-06 14:35:51','IA-2'),(3,14,14,'COMPLETED','2026-07-05 09:26:07','2026-07-06 14:35:51','IA-3');
 /*!40000 ALTER TABLE `inventory_audit` ENABLE KEYS */;
 UNLOCK TABLES;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trg_inventory_audit_code` AFTER INSERT ON `inventory_audit` FOR EACH ROW BEGIN
-    UPDATE inventory_audit
-    SET code = CONCAT('IA-', NEW.id)
-    WHERE id = NEW.id;
-END */;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `inventory_audit_item_serials`
@@ -602,25 +545,6 @@ LOCK TABLES `orders` WRITE;
 INSERT INTO `orders` VALUES (1,'COMPLETED',25000000.00,'','2026-06-30 20:46:34','2026-06-30 20:46:34','2026-07-06 14:35:51','2026-06-30 21:08:51',16,16,2,'SO-1'),(2,'COMPLETED',15000000.00,'','2026-06-30 20:47:25','2026-06-30 20:47:25','2026-07-06 14:35:51','2026-06-30 20:55:27',16,16,4,'SO-2'),(3,'COMPLETED',150000000.00,'','2026-07-01 13:52:55','2026-07-01 13:52:55','2026-07-06 14:35:51','2026-07-02 18:02:34',16,16,3,'SO-3'),(4,'COMPLETED',150000000.00,'','2026-07-03 14:12:02','2026-07-03 14:12:02','2026-07-06 14:35:51','2026-07-03 14:16:56',16,15,1,'SO-4'),(5,'NEW',40000000.00,'','2026-07-03 16:30:27','2026-07-03 16:30:27','2026-07-06 14:35:51',NULL,16,NULL,1,'SO-5'),(6,'COMPLETED',60000000.00,'','2026-07-03 17:13:12','2026-07-03 17:13:12','2026-07-06 14:35:51','2026-07-03 17:18:40',16,15,1,'SO-6'),(7,'NEW',1000000.00,'','2026-07-04 21:55:48','2026-07-04 21:55:48','2026-07-06 14:35:51',NULL,16,NULL,1,'SO-7'),(8,'NEW',1.00,'Xuất bù vì lần trước xuất bị thiếu (Đã kiểm kê với phiếu AU-3) với mã serial H5MT8ZN3QK','2026-07-05 15:05:52','2026-07-05 15:05:52','2026-07-06 14:35:51',NULL,16,NULL,3,'SO-8');
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trg_orders_code` AFTER INSERT ON `orders` FOR EACH ROW BEGIN
-    UPDATE orders
-    SET code = CONCAT('SO-', NEW.id)
-    WHERE id = NEW.id;
-END */;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `password_resets`
@@ -849,25 +773,6 @@ LOCK TABLES `purchase_requests` WRITE;
 INSERT INTO `purchase_requests` VALUES (1,16,14,'COMPLETED','','2026-06-30 20:33:04','2026-07-06 14:35:51',0,2,'PR-1'),(2,16,14,'COMPLETED','Nhập lô ram mới','2026-06-30 20:33:46','2026-07-06 14:35:51',0,3,'PR-2'),(3,16,14,'COMPLETED','','2026-06-30 20:34:25','2026-07-06 14:35:51',0,1,'PR-3'),(4,16,NULL,'REJECTED','','2026-06-30 20:35:35','2026-07-06 14:35:51',0,1,'PR-4'),(5,16,14,'COMPLETED','','2026-06-30 20:36:17','2026-07-06 14:35:51',0,2,'PR-5'),(6,16,14,'COMPLETED','','2026-06-30 21:06:27','2026-07-06 14:35:51',0,3,'PR-6'),(7,16,14,'APPROVED','','2026-07-03 14:10:37','2026-07-06 14:35:51',0,2,'PR-7'),(8,16,14,'APPROVED','','2026-07-03 16:32:28','2026-07-06 14:35:51',0,3,'PR-8');
 /*!40000 ALTER TABLE `purchase_requests` ENABLE KEYS */;
 UNLOCK TABLES;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trg_purchase_requests_code` AFTER INSERT ON `purchase_requests` FOR EACH ROW BEGIN
-    UPDATE purchase_requests
-    SET code = CONCAT('PR-', NEW.id)
-    WHERE id = NEW.id;
-END */;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `rams`
@@ -1118,4 +1023,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-07-11 20:29:36
+-- Dump completed on 2026-07-12 22:47:48

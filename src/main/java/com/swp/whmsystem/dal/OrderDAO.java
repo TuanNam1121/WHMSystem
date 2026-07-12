@@ -17,6 +17,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -561,7 +562,7 @@ public class OrderDAO {
             String sql = "insert into orders"
                     + " (status,note,orderdate,createdat, updatedat,createdby,customer_id)"
                     + " values (?,?,?,?,?,?,?)";
-            st = conn.prepareStatement(sql);
+            st = conn.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
             st.setString(1, o.getStatus());
             st.setString(2, o.getNote());
             st.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
@@ -571,12 +572,21 @@ public class OrderDAO {
             st.setInt(7, o.getCustomerId());
             st.executeUpdate();
 
-            sql = "select * from orders order by id desc limit 1";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Order od = mapResultSetToOrder(rs);
-                return od;
+            
+            
+             try (ResultSet rs = st.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int id = rs.getInt(1);
+                    String code = "SO-" + id;
+                    try (PreparedStatement updatePs = conn.prepareStatement(
+                            "UPDATE orders SET code = ? WHERE id = ?")) {
+                        updatePs.setString(1, code);
+                        updatePs.setInt(2, id);
+                        updatePs.executeUpdate();
+                    }
+                    o.setId(id);
+                    return o;
+                }
             }
         } catch (Exception exception) {
             exception.printStackTrace();

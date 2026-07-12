@@ -133,25 +133,10 @@ public class CategoryDAO {
         return false;
     }
 
-//    public boolean deleteCategoryById(int categoryId) {
-//        String sql = "delete from Categories where categoryid = ?";
-//        try (Connection connection = DBContext.getConnection()) {
-//            PreparedStatement ps = connection.prepareStatement(sql);
-//            ps.setInt(1, categoryId);
-//            return ps.executeUpdate() == 1;
-//        } catch (SQLException e) {
-//            System.out.println(e.getMessage());
-//        }
-//        return false;
-//    }
-
     public List<Category> searchCategory(String keyword, int isActive, String sortBy,
                                          int pageSize, int page) {
         List<Category> categoryList = new ArrayList<>();
-        StringBuilder sql = new StringBuilder(
-                "select c.* from categories c "
-                        + "where 1=1"
-        );
+        StringBuilder sql = new StringBuilder("select c.* from categories c where 1=1");
         List<Object> parameter = new ArrayList<>();
 
         if (keyword != null && !keyword.trim().isEmpty()) {

@@ -30,6 +30,8 @@ public class InventorySummaryReport extends HttpServlet {
         String toDate = request.getParameter("toDate");
         String pageSizeRaw = request.getParameter("pageSize");
         String pageRaw = request.getParameter("page");
+        String sortColumn = request.getParameter("sortColumn");
+        String sortOrder = request.getParameter("sortOrder");
 
         int pageSize = 10;
         int page = 1;
@@ -60,7 +62,7 @@ public class InventorySummaryReport extends HttpServlet {
             totalPages = 1;
         }
 
-        List<InventorySummary> reportList = dao.showAll(fromDate, toDate, keyword, page, pageSize);
+        List<InventorySummary> reportList = dao.forReport(fromDate, toDate, keyword, page, pageSize, sortColumn, sortOrder);
 
         int[] grandTotals = dao.getGrandTotals(fromDate, toDate, keyword);
         int totalOpeningStock = grandTotals[0];

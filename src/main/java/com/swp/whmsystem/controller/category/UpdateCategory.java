@@ -24,9 +24,13 @@ public class UpdateCategory extends HttpServlet {
             return;
         }
         String id_raw = request.getParameter("cateid");
+        if (id_raw.isEmpty())
+            response.sendRedirect("categoryList");
         int id = Integer.parseInt(id_raw);
         CategoryDAO categoryDAO = new CategoryDAO();
         Category c = categoryDAO.getCategoryById(id);
+        if (c == null)
+            response.sendRedirect("/categoryList");
         request.setAttribute("category", c);
         request.getRequestDispatcher("WEB-INF/view/category/updateCategory.jsp").forward(request, response);
     }
@@ -41,7 +45,8 @@ public class UpdateCategory extends HttpServlet {
         String categoryName = request.getParameter("categoryName");
         String description = request.getParameter("description");
 
-        int id = Integer.parseInt(request.getParameter("categoryid"));
+        String id_raw = request.getParameter("categoryid");
+        int id = Integer.parseInt(id_raw);
         String isActive = request.getParameter("isActive");
         String message = "";
 
@@ -82,6 +87,7 @@ public class UpdateCategory extends HttpServlet {
             return;
         }
 
+        //deactive
         if (!category.isIsActive() && category.isIsActive() != oldCategory.isIsActive()) {
             if (categoryDAO.isCategoryUsed(category.getCategoryId())) {
                 String error = "Cannot disable this Category because it is currently used by a product.";
@@ -93,14 +99,8 @@ public class UpdateCategory extends HttpServlet {
             message = "Category deactivated: " + categoryName + " !";
         }
 
+        //reactive
         if (category.isIsActive() && category.isIsActive() != oldCategory.isIsActive()) {
-//            if (!categoryDAO.reactiveCategory(category.getCategoryId())) {
-//                message = "Đã xảy ra lỗi khi reactive danh mục này!";
-//                request.setAttribute("error", message);
-//                request.setAttribute("category", category);
-//                request.getRequestDispatcher("WEB-INF/view/category/updateCategory.jsp").forward(request, response);
-//                return;
-//            }
             message = "Reactived category " + categoryName + " ! Please double-check the related products in this category!";
         }
 
@@ -109,7 +109,7 @@ public class UpdateCategory extends HttpServlet {
                 request.getSession().setAttribute("error", message);
             response.sendRedirect("categoryList");
         } else {
-            message = "Đã xảy ra lỗi!";
+            message = "Error occured! Please try again!";
             request.setAttribute("error", message);
             request.setAttribute("category", category);
             request.getRequestDispatcher("WEB-INF/view/category/updateCategory.jsp").forward(request, response);

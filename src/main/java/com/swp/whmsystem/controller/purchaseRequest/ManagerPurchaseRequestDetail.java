@@ -57,17 +57,20 @@ public class ManagerPurchaseRequestDetail extends HttpServlet {
             User salesman = userDao.getUserFromId(pr.getCreatedBy());
             List<PurchaseItem> items = piDao.getItemsByPurchaseRequestId(id);
 
+            long totalAmount = 0;
             Map<Integer, Product> productMap = new HashMap<>();
             for (PurchaseItem item : items) {
                 Product p = pDao.getProductFromId(item.getProductId());
                 if (p != null) {
                     productMap.put(item.getProductId(), p);
                 }
+                totalAmount += (long) item.getPrice() * item.getRequiredQty();
             }
             request.setAttribute("purchaseRequest", pr);
             request.setAttribute("salesman", salesman);
             request.setAttribute("purchaseItems", items);
             request.setAttribute("productMap", productMap);
+            request.setAttribute("totalAmount", totalAmount);
         } catch (Exception ex) {
             request.setAttribute("message", ex.getMessage());
         }

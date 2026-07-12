@@ -22,7 +22,7 @@
 </div>
 <div class="main-wrapper">
     <jsp:include page="/WEB-INF/common/header.jsp"></jsp:include>
-        <jsp:include page="/WEB-INF/common/sidebar.jsp"></jsp:include>
+    <jsp:include page="/WEB-INF/common/sidebar.jsp"></jsp:include>
     <div class="page-wrapper">
         <div class="content">
             <div class="page-header">
@@ -47,9 +47,9 @@
                         </div>
                     </c:if>
 
-                    <form action="changepassbyadmin" method="POST">
+                    <form action="solverequest" method="POST">
                         <input type="hidden" name="userId" value="${userId}">
-                        
+
                         <div class="row">
                             <div class="col-12">
                                 <div class="form-group">
@@ -57,7 +57,7 @@
                                     <input type="text" value="${userId}" readonly class="form-control disabled">
                                 </div>
                             </div>
-                            
+
                             <div class="col-12">
                                 <div class="form-group">
                                     <label>New Password</label>

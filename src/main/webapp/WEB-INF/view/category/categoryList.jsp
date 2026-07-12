@@ -180,14 +180,5 @@
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
 <script src="assets/js/script.js"></script>
-<c:if test="${focusTable}">
-    <script>
-        window.addEventListener("load", function () {
-            const table = document.getElementById("category-table");
-            table.scrollIntoView({behavior: "smooth", block: "start"});
-            table.focus({preventScroll: true});
-        });
-    </script>
-</c:if>
 </body>
 </html>

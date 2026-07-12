@@ -66,7 +66,7 @@ public class AddCategory extends HttpServlet {
         if (categoryDAO.addNewCategory(category)) {
             response.sendRedirect("categoryList");
         } else {
-            String message = "Đã xảy ra lỗi!";
+            String message = "Error occured! Please try again!";
             request.setAttribute("error", message);
             request.getRequestDispatcher("WEB-INF/view/category/addCategory.jsp").forward(request, response);
         }

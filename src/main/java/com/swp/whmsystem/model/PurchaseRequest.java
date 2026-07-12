@@ -16,8 +16,17 @@ public class PurchaseRequest {
     private int supplierId;
     private String supplierName;
     private BigDecimal totalPrice = BigDecimal.ZERO;
+    private String code;
 
     public PurchaseRequest() {
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public int getId() {

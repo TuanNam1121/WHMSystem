@@ -11,7 +11,7 @@
           content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Create Purchase Request - Dreams Pos</title>
+    <title>Update Purchase Request - Dreams Pos</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/img/favicon.jpg">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/bootstrap.min.css">
@@ -54,7 +54,7 @@
                  style="border-radius: 8px;">
                 <i class="fas fa-info-circle me-2" style="font-size: 18px;"></i>
                 <div>
-                    <strong>Request Code: <fmt:formatNumber value="${purchaseRequest.id}" pattern="000"/></strong>
+                    <strong>Request Code: <fmt:formatNumber value="${purchaseRequest.id}" pattern="PR-"/></strong>
                     &nbsp;|&nbsp; Status:
                     <c:choose>
                         <c:when test="${purchaseRequest.status == 'New' || purchaseRequest.status == 'NEW'}">
@@ -82,91 +82,105 @@
 
             <div class="card">
                 <div class="card-body">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="form-group">
-                                    <label>Salesman</label>
-                                    <input type="text" value="${sessionScope.user.fullName}" disabled
-                                           class="form-control"
-                                           id="salesman-display">
-                                </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Salesman</label>
+                                <input type="text" value="${sessionScope.user.fullName}" disabled
+                                       class="form-control"
+                                       id="salesman-display">
                             </div>
                         </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Supplier <span class="text-danger">*</span></label>
+                                <select class="select" name="supplierId" required>
+                                    <option value="" disabled>Select a supplier</option>
+                                    <c:forEach items="${requestScope.supplierList}" var="s">
+                                        <option value="${s.supplierId}" ${s.supplierId == purchaseRequest.supplierId ? 'selected' : ''}>${s.supplierName}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-                        <form action="updatePurchaseRequest" method="get">
-                            <input type="hidden" name="requestId" value="${purchaseRequest.id}">
+                    <%--                    <form action="updatePurchaseRequest" method="get">--%>
+                    <%--                        <input type="hidden" name="requestId" value="${purchaseRequest.id}">--%>
 
-                        <div class="row align-items-stretch">
-                            <div class="col-lg-12 col-md-12 d-flex mb-4">
-                                <div class="card bg-light w-100 d-flex flex-column mb-0">
-                                    <div class="card-body p-3 d-flex flex-column">
-                                        <div class="d-flex justify-content-between align-items-center mb-3">
-                                            <h5 class="mb-0" style="font-weight: 600;">Products</h5>
-                                            <div class="search-set m-0">
-                                                <div class="input-group input-group-sm">
-                                                    <input type="text" id="product-search" name="productSearch"
-                                                           class="form-control" placeholder="Search product name..."
-                                                           value="${param.productSearch}">
-                                                    <button type="submit" class="btn btn-primary">
-                                                        <i class="fas fa-search"></i> Search
-                                                    </button>
-                                                </div>
+                    <div class="row align-items-stretch">
+                        <div class="col-lg-12 col-md-12 d-flex mb-4">
+                            <div class="card bg-light w-100 d-flex flex-column mb-0">
+                                <div class="card-body p-3 d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="mb-0" style="font-weight: 600;">Products</h5>
+                                        <div class="search-set m-0">
+                                            <div class="input-group input-group-sm">
+                                                <input type="text" id="product-search" name="productSearch"
+                                                       class="form-control" placeholder="Search product name..."
+                                                       value="${param.productSearch}">
+<%--                                                <button type="submit" class="btn btn-primary">--%>
+<%--                                                    <i class="fas fa-search"></i> Search--%>
+<%--                                                </button>--%>
+                                                <button type="button" class="btn btn-primary" id="btn-search-product">
+                                                    <i class="fas fa-search"></i> Search
+                                                </button>
                                             </div>
                                         </div>
-                                        <div class="table-responsive flex-grow-1"
-                                             style="max-height: 400px; overflow-y: auto;">
-                                            <table class="table table-hover table-nowrap mb-0">
-                                                <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
-                                                <tr>
-                                                    <th>Name</th>
-                                                    <th>SKU</th>
-                                                    <th>Category</th>
-                                                    <th>Quantity</th>
-                                                    <th>Status</th>
-                                                    <th>Action</th>
+                                    </div>
+                                    <div class="table-responsive flex-grow-1"
+                                         style="max-height: 400px; overflow-y: auto;">
+                                        <table class="table table-hover mb-0" style="table-layout: fixed;">
+                                            <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                            <tr>
+                                                <th style="width: 35%;">Name</th>
+                                                <th style="width: 15%;">SKU</th>
+                                                <th style="width: 20%;">Category</th>
+                                                <th style="width: 10%;">Quantity</th>
+                                                <th style="width: 10%;">Status</th>
+                                                <th style="width: 10%;">Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="product-list-body">
+                                            <c:forEach items="${requestScope.productListForPurchase}" var="p">
+                                                <tr class="product-item">
+                                                    <td class="product-name">${p.name}</td>
+                                                    <td class="product-sku">${p.sku}</td>
+                                                    <td class="product-category">${not empty p.category ? p.category.name : ''}</td>
+                                                    <td class="product-quantity">${p.totalQuantity}</td>
+                                                    <td>
+                                                        <c:choose>
+                                                            <c:when test="${p.totalQuantity > 10}">
+                                                                <span class="badges bg-lightgreen">In stock</span>
+                                                            </c:when>
+                                                            <c:when test="${p.totalQuantity > 0}">
+                                                                <span class="badges bg-lightyellow">Low stock</span>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <span class="badges bg-lightred">Out of stock</span>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </td>
+                                                    <td>
+                                                        <a class="btn btn-sm btn-outline-primary add-product-btn"
+                                                           data-id="${p.productId}"
+                                                           data-name="${p.name}"
+                                                           data-sku="${p.sku}"
+                                                           data-category="${not empty p.category ? p.category.name : ''}"
+                                                           data-stock="${p.totalQuantity}"
+                                                           data-active="${p.isActive}"
+                                                           href="javascript:void(0);">
+                                                            <i class="fas fa-plus"></i> Add
+                                                        </a>
+                                                    </td>
                                                 </tr>
-                                                </thead>
-                                                <tbody id="product-list-body">
-                                                <c:forEach items="${requestScope.productListForPurchase}" var="p">
-                                                    <tr class="product-item">
-                                                        <td class="product-name">${p.name}</td>
-                                                        <td class="product-sku">${p.sku}</td>
-                                                        <td class="product-category">${p.category.name}</td>
-                                                        <td class="product-quantity">${p.totalQuantity}</td>
-                                                        <td>
-                                                            <c:choose>
-                                                                <c:when test="${p.totalQuantity > 10}">
-                                                                    <span class="badges bg-lightgreen">In stock</span>
-                                                                </c:when>
-                                                                <c:when test="${p.totalQuantity > 0}">
-                                                                    <span class="badges bg-lightyellow">Low stock</span>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <span class="badges bg-lightred">Out of stock</span>
-                                                                </c:otherwise>
-                                                            </c:choose>
-                                                        </td>
-                                                        <td>
-                                                            <a class="btn btn-sm btn-outline-primary add-product-btn"
-                                                               data-id="${p.productId}"
-                                                               data-name="${p.name}"
-                                                               data-sku="${p.sku}"
-                                                               data-category="${p.category.name}"
-                                                               data-stock="${p.totalQuantity}"
-                                                               data-active="${p.isActive}"
-                                                               href="javascript:void(0);">
-                                                                <i class="fas fa-plus"></i> Add
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                </c:forEach>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                            </c:forEach>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
-                        </form>
+                        </div>
+                        <%--                    </form>--%>
 
                         <form action="updatePurchaseRequest" method="post">
                             <input type="hidden" id="salesman-id" name="salesmanId" value="${sessionScope.user.id}">
@@ -185,9 +199,8 @@
                                                     <th>Name</th>
                                                     <th>SKU</th>
                                                     <th>Category</th>
-                                                    <th>In Stock</th>
+                                                    <th>Price</th>
                                                     <th style="width: 150px;">Required Quantity</th>
-                                                    <th style="width: 150px;">Price</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
@@ -195,8 +208,13 @@
                                                 </tbody>
                                                 <tfoot id="total-amount-footer" style="display: none;">
                                                 <tr>
-                                                    <td colspan="5" class="text-end" style="font-weight: 600; font-size: 16px;">Total Amount:</td>
-                                                    <td colspan="2" style="font-weight: 700; font-size: 18px; color: #FF9F43;" id="total-amount-display">0 VNĐ</td>
+                                                    <td colspan="4" class="text-end"
+                                                        style="font-weight: 600; font-size: 16px;">Total Amount:
+                                                    </td>
+                                                    <td colspan="2"
+                                                        style="font-weight: 700; font-size: 18px; color: #FF9F43;"
+                                                        id="total-amount-display">0 VNĐ
+                                                    </td>
                                                 </tr>
                                                 </tfoot>
                                             </table>
@@ -220,7 +238,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                    </div>
                     </form>
                 </div>
             </div>
@@ -259,7 +277,7 @@
         function renderSelectedItems() {
             let html = '';
             if (selectedItems.length === 0) {
-                html = '<tr><td colspan="7" class="text-center text-muted">No products selected</td></tr>';
+                html = '<tr><td colspan="6" class="text-center text-muted">No products selected</td></tr>';
             } else {
                 selectedItems.forEach((item, index) => {
                     html += `
@@ -268,10 +286,6 @@
                             <td>\${item.name}</td>
                             <td>\${item.sku}</td>
                             <td>\${item.category}</td>
-                            <td>\${item.stock}</td>
-                            <td>
-                                <input name="selectedQty\${index}" type="number" class="form-control form-control-sm qty-input" data-id="\${item.id}" value="\${item.reqQty}" min="1" style="width: 100px;">
-                            </td>
                             <td>
                                 <input type="hidden" name="selectedPrice\${index}" class="price-hidden-input" value="\${item.price}">
                                 <div class="input-group input-group-sm" style="width: 150px;">
@@ -279,6 +293,10 @@
                                     data-id="\${item.id}" value="\${item.price.toLocaleString('vi-VN')}" required>
                                     <span class="input-group-text">VNĐ</span>
                                 </div>
+                            </td>
+                            <td>
+                                <input name="selectedQty\${index}" type="number" min=1 class="form-control form-control-sm qty-input" 
+                                data-id="\${item.id}" value="\${item.reqQty}" style="width: 100px;">
                             </td>
                             <td>
                                 <a class="delete-set remove-item-btn" href="javascript:void(0);" data-id="\${item.id}">
@@ -313,17 +331,6 @@
 
         // Add Product
         $(document).on('click', '.add-product-btn', function () {
-            // const isActive = $(this).data('active');
-            // if (isActive === false || isActive === 'false') {
-            //     Swal.fire({
-            //         icon: 'error',
-            //         title: 'Cannot Add Product',
-            //         text: 'You cannot add an inactive product.',
-            //         confirmButtonColor: '#FF9F43'
-            //     });
-            //     return;
-            // }
-
             const id = $(this).data('id');
             const name = $(this).data('name');
             const sku = $(this).data('sku');
@@ -399,7 +406,24 @@
             updateTotalAmount();
         });
 
+        // Frontend search product
+        $('#product-search').on('input', function () {
+            let searchTerm = $(this).val().toLowerCase();
+            $('#product-list-body .product-item').each(function () {
+                let productName = $(this).find('.product-name').text().toLowerCase();
+                let productSku = $(this).find('.product-sku').text().toLowerCase();
+                
+                if (productName.includes(searchTerm) || productSku.includes(searchTerm)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
 
+        $('#btn-search-product').on('click', function () {
+            $('#product-search').trigger('input');
+        });
     });
 </script>
 </body>

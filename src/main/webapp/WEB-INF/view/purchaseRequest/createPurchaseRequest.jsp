@@ -107,7 +107,7 @@
                                                     <tr class="product-item">
                                                         <td class="product-name">${p.name}</td>
                                                         <td class="product-sku">${p.sku}</td>
-                                                        <td class="product-category">${p.category.name}
+                                                        <td class="product-category">${not empty p.category ? p.category.name : ''}
                                                         </td>
                                                         <td class="product-quantity">${p.totalQuantity}
                                                         </td>
@@ -129,7 +129,7 @@
                                                                data-id="${p.productId}"
                                                                data-name="${p.name}"
                                                                data-sku="${p.sku}"
-                                                               data-category="${p.category.name}"
+                                                               data-category="${not empty p.category ? p.category.name : ''}"
                                                                data-stock="${p.totalQuantity}"
                                                                data-active="${p.isActive}"
                                                                href="javascript:void(0);">
@@ -293,17 +293,6 @@
 
         // Add Product
         $(document).on('click', '.add-product-btn', function () {
-            // const isActive = $(this).data('active');
-            // if (isActive === false || isActive === 'false') {
-            //     Swal.fire({
-            //         icon: 'error',
-            //         title: 'Cannot Add Product',
-            //         text: 'You cannot add an inactive product.',
-            //         confirmButtonColor: '#FF9F43'
-            //     });
-            //     return;
-            // }
-
             const id = $(this).data('id');
             const name = $(this).data('name');
             const sku = $(this).data('sku');
@@ -384,7 +373,9 @@
             let searchTerm = $(this).val().toLowerCase();
             $('#product-list-body .product-item').each(function() {
                 let productName = $(this).find('.product-name').text().toLowerCase();
-                if (productName.includes(searchTerm)) {
+                let productSku = $(this).find('.product-sku').text().toLowerCase();
+                
+                if (productName.includes(searchTerm) || productSku.includes(searchTerm)) {
                     $(this).show();
                 } else {
                     $(this).hide();

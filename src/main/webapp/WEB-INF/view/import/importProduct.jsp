@@ -149,12 +149,6 @@
                                             <div class="product-meta">
                                                 <span class="product-qty">${group.size()}</span>
                                                 <span class="product-unit">${group[0].unit}</span>
-                                                <div class="product-price">
-                                                    <input type="text" value="${group[0].importedPrice}"
-                                                           id="price-product-${groupIndex}" name="price"
-                                                           onchange="recalcTotal(); syncGroupPrices(${groupIndex})" readonly>
-                                                </div>
-                                                <span class="product-currency">VND</span>
                                             </div>
                                         </div>
                                         <div class="product-group-body" id="product-body-${groupIndex}"
@@ -173,11 +167,10 @@
                                                         <span class="serial-qty">1</span>
                                                         <span class="serial-unit">${row.unit}</span>
                                                         <div class="serial-price">
-                                                            <input type="text" value="${row.importedPrice}"
+                                                            <input type="hidden" value="${row.importedPrice}"
                                                                    name="itemPrice" class="item-price-field"
                                                                    data-group="${groupIndex}" readonly>
                                                         </div>
-                                                        <span class="serial-currency">VND</span>
                                                     </div>
                                                 </c:forEach>
                                             </div>

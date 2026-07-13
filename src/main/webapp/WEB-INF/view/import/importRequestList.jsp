@@ -39,8 +39,8 @@
                     <div class="content">
                         <div class="page-header">
                             <div class="page-title">
-                                <h4>IMPORT REQUEST LIST</h4>
-                                <h6>View import requests assigned to you</h6>
+                                <h4>Purchase Order List</h4>
+                                <h6>View purchase orders must be imported</h6>
                             </div>
                         </div>
 

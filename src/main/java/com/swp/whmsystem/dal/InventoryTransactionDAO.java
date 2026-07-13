@@ -22,16 +22,16 @@ public class InventoryTransactionDAO {
         }
 
         String sql = """
-                SELECT id, code, type, date, processor
+                SELECT id, code, type, date, createdBy
                 FROM (
                     SELECT 
                         ia.id AS id,
                         ia.code AS code,
                         'AUDIT' AS type, 
                         ia.updatedat AS date, 
-                        u.fullname AS processor
+                        u.fullname AS createdBy
                     FROM inventory_audit ia
-                    LEFT JOIN users u ON ia.processedby = u.userid
+                    LEFT JOIN users u ON ia.createdby = u.userid
                     WHERE ia.status = 'COMPLETED' """ + auditCondition + """
                     
                     UNION ALL
@@ -41,7 +41,7 @@ public class InventoryTransactionDAO {
                         gr.code AS code,
                         'IMPORT' AS type, 
                         gr.created_at AS date, 
-                        u.fullname AS processor
+                        u.fullname AS createdBy
                     FROM good_receipts gr
                     LEFT JOIN users u ON gr.processedby = u.userid
                     WHERE gr.status = 'COMPLETED' """ + importCondition + """
@@ -53,9 +53,9 @@ public class InventoryTransactionDAO {
                         er.code AS code,
                         'EXPORT' AS type, 
                         er.exported_at AS date, 
-                        u.fullname AS processor
+                        u.fullname AS createdBy
                     FROM export_receipts er
-                    LEFT JOIN users u ON er.exported_by = u.userid
+                    LEFT JOIN users u ON er.created_by = u.userid
                     WHERE er.status = 'COMPLETED' """ + exportCondition + """
                 ) AS combined
                 WHERE 1=1
@@ -99,7 +99,7 @@ public class InventoryTransactionDAO {
                     rs.getString("code"),
                     rs.getString("type"), 
                     rs.getTimestamp("date"),
-                    rs.getString("processor")
+                    rs.getString("createdBy")
                 ));
             }
             return list;

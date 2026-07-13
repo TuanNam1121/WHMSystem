@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,6 +60,9 @@ public class DailyTransactionDAO {
             } else if (sortDir.equals("desc")) {
                 sql += sortDir;
             }
+        }
+        else{
+            sql += "desc";
         }
         int offset = (page - 1) * pageSize;
         sql += " limit ? offset ?";
@@ -149,8 +153,9 @@ public class DailyTransactionDAO {
 
     public static void main(String[] args) {
         DailyTransactionDAO di = new DailyTransactionDAO();
-        // date=2026-06-30&keyword=&sortBy=importQuantity&sortDir=desc&pageSize=10
-        for (DailyTransaction i : di.searchDailyTransaction("2026-06-30", "acer", null, "desc", 1, 10)) {
+        String date = LocalDate.now().toString();
+        //date=2026-07-13&keyword=&sortBy=&sortDir=desc&pageSize=10
+        for (DailyTransaction i : di.searchDailyTransaction("2026-07-13", null, null, null, 1, 10)) {
             System.out.println(i);
         }
         System.out.println(di.countDailyTransaction(null));

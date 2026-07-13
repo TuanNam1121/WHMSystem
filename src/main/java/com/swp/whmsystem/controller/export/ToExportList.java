@@ -29,7 +29,8 @@ public class ToExportList extends HttpServlet {
         OrderDAO orderDAO = new OrderDAO();
         List<Order> orderList = new ArrayList<>();
         String keyword = request.getParameter("keyword");
-        String date = request.getParameter("date");
+        String fromDate = request.getParameter("fromDate");
+        String toDate = request.getParameter("toDate");
         String status = request.getParameter("status");
         String sortBy = request.getParameter("sortBy");
         String pageSizeRaw = request.getParameter("pageSize");
@@ -63,12 +64,12 @@ public class ToExportList extends HttpServlet {
             }
         }
 
-        int totalOrders = orderDAO.countOrdersToExport(keyword, date, status);
+        int totalOrders = orderDAO.countOrdersToExport(keyword, fromDate, toDate, status);
         int totalPages = Math.max(1, (int) Math.ceil((double) totalOrders / pageSize));
         page = Math.min(page, totalPages);
 
         orderList = orderDAO.searchOrdersToExport(
-                keyword, date, status, sortBy, pageSize, page
+                keyword, fromDate, toDate, status, sortBy, pageSize, page
         );
 
         session.setAttribute("orderList", orderList);
@@ -76,7 +77,7 @@ public class ToExportList extends HttpServlet {
         request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("focusTable",
-                keyword != null || date != null || status != null
+                keyword != null || fromDate != null || toDate != null || status != null
                         || sortBy != null || pageSizeRaw != null || pageRaw != null);
         request.getRequestDispatcher("WEB-INF/view/export/toExportList.jsp").forward(request, response);
     }

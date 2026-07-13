@@ -220,8 +220,8 @@ public class OrderDAO {
         return null;
     }
 
-    public List<Order> searchOrdersToExport(String keyword, String date, String status,
-            String sortBy, int pageSize, int page) {
+    public List<Order> searchOrdersToExport(String keyword, String fromDate, String toDate,
+            String status, String sortBy, int pageSize, int page) {
         List<Order> orderList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "select o.id, o.code, coalesce(er.status, o.status) as status, o.total_price, o.note, "
@@ -241,9 +241,20 @@ public class OrderDAO {
             parameter.add("%" + keyword.trim() + "%");
         }
 
-        if (date != null && !date.trim().isEmpty()) {
-            sql.append(" and date_format(o.orderdate, '%d-%m-%Y') = ?");
-            parameter.add(date.trim());
+        if (fromDate != null && !fromDate.trim().isEmpty()) {
+            Timestamp fromTimestamp = parseStartOfDay(fromDate);
+            if (fromTimestamp != null) {
+                sql.append(" and o.orderdate >= ?");
+                parameter.add(fromTimestamp);
+            }
+        }
+
+        if (toDate != null && !toDate.trim().isEmpty()) {
+            Timestamp toTimestamp = parseEndOfDay(toDate);
+            if (toTimestamp != null) {
+                sql.append(" and o.orderdate <= ?");
+                parameter.add(toTimestamp);
+            }
         }
 
         if (status != null && !status.trim().isEmpty()) {
@@ -298,7 +309,7 @@ public class OrderDAO {
         return orderList;
     }
 
-    public int countOrdersToExport(String keyword, String date, String status) {
+    public int countOrdersToExport(String keyword, String fromDate, String toDate, String status) {
         StringBuilder sql = new StringBuilder(
                 "select count(*) from orders o "
                 + "join customers c on o.customer_id = c.id "
@@ -315,9 +326,20 @@ public class OrderDAO {
             parameters.add(searchValue);
         }
 
-        if (date != null && !date.trim().isEmpty()) {
-            sql.append(" and date_format(o.orderdate, '%d-%m-%Y') = ?");
-            parameters.add(date.trim());
+        if (fromDate != null && !fromDate.trim().isEmpty()) {
+            Timestamp fromTimestamp = parseStartOfDay(fromDate);
+            if (fromTimestamp != null) {
+                sql.append(" and o.orderdate >= ?");
+                parameters.add(fromTimestamp);
+            }
+        }
+
+        if (toDate != null && !toDate.trim().isEmpty()) {
+            Timestamp toTimestamp = parseEndOfDay(toDate);
+            if (toTimestamp != null) {
+                sql.append(" and o.orderdate <= ?");
+                parameters.add(toTimestamp);
+            }
         }
 
         if (status != null && !status.trim().isEmpty()) {

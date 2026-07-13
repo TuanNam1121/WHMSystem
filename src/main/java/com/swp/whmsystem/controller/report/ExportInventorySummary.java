@@ -13,6 +13,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.swp.whmsystem.dal.InventorySummaryDAO;
 import com.swp.whmsystem.model.InventorySummary;
@@ -43,6 +45,46 @@ public class ExportInventorySummary extends HttpServlet {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Inventory Summary");
 
+            // Title Style
+            CellStyle titleStyle = workbook.createCellStyle();
+            Font titleFont = workbook.createFont();
+            titleFont.setBold(true);
+            titleFont.setFontHeightInPoints((short) 16);
+            titleStyle.setFont(titleFont);
+            titleStyle.setAlignment(HorizontalAlignment.CENTER);
+
+            // Subtitle Style
+            CellStyle subtitleStyle = workbook.createCellStyle();
+            Font subtitleFont = workbook.createFont();
+            subtitleFont.setItalic(true);
+            subtitleFont.setFontHeightInPoints((short) 12);
+            subtitleStyle.setFont(subtitleFont);
+            subtitleStyle.setAlignment(HorizontalAlignment.CENTER);
+
+            // Row 0: Title
+            Row titleRow = sheet.createRow(0);
+            Cell titleCell = titleRow.createCell(0);
+            titleCell.setCellValue("Inventory Summary Report");
+            titleCell.setCellStyle(titleStyle);
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 7));
+
+            // Row 1: Time period
+            Row periodRow = sheet.createRow(1);
+            Cell periodCell = periodRow.createCell(0);
+            String periodText = "Time Period: ";
+            if (fromDate != null && !fromDate.isEmpty() && toDate != null && !toDate.isEmpty()) {
+                periodText += fromDate + " to " + toDate;
+            } else if (fromDate != null && !fromDate.isEmpty()) {
+                periodText += "From " + fromDate;
+            } else if (toDate != null && !toDate.isEmpty()) {
+                periodText += "Until " + toDate;
+            } else {
+                periodText += "All time";
+            }
+            periodCell.setCellValue(periodText);
+            periodCell.setCellStyle(subtitleStyle);
+            sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 7));
+
             CellStyle headerStyle = workbook.createCellStyle();
             headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
             headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
@@ -63,14 +105,14 @@ public class ExportInventorySummary extends HttpServlet {
             dataStyle.setBorderRight(BorderStyle.THIN);
 
             String[] headers = {"SKU", "Product Name", "Category", "Unit", "Opening Stock", "Import Qty", "Export Qty", "Closing Stock"};
-            Row headerRow = sheet.createRow(0);
+            Row headerRow = sheet.createRow(3);
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);
                 cell.setCellValue(headers[i]);
                 cell.setCellStyle(headerStyle);
             }
 
-            int rowNum = 1;
+            int rowNum = 4;
             int totalOpening = 0, totalImport = 0, totalExport = 0, totalClosing = 0;
             
             for (InventorySummary item : reportList) {

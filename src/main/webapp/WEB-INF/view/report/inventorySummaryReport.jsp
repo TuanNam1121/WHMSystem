@@ -1,3 +1,4 @@
+<%@ page import="java.util.Date" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -368,7 +369,6 @@
                                 </div>
                             </div>
 
-                            <!-- ===== CHARTS + RANKING ===== -->
                             <div class="row mb-3">
                                 <!-- Pie Chart -->
                                 <div class="col-lg-5 col-sm-12 mb-3">
@@ -435,12 +435,9 @@
                                                         <tbody>
                                                             <c:choose>
                                                                 <c:when test="${not empty top5Import}">
-                                                                    <c:forEach items="${top5Import}" var="item"
-                                                                        varStatus="v">
+                                                                    <c:forEach items="${top5Import}" var="item" varStatus="v">
                                                                         <tr>
-                                                                            <td><span
-                                                                                    class="rank-badge rank-${v.index + 1}">${v.index
-                                                                                    + 1}</span></td>
+                                                                            <td><span class="rank-badge rank-${v.index + 1}">${v.index + 1}</span></td>
                                                                             <td>${item.sku}</td>
                                                                             <td class="td-name">${item.productName}</td>
                                                                             <td>${item.unit}</td>
@@ -521,6 +518,7 @@
                                 <div class="card-body">
                                     <form action="${pageContext.request.contextPath}/inventorySummaryReport"
                                         method="get">
+                                        <!-- sort asc desc -->
                                         <input type="hidden" name="sortColumn" id="sortColumn" value="${param.sortColumn}">
                                         <input type="hidden" name="sortOrder" id="sortOrder" value="${param.sortOrder}">
                                         <!-- Filter Section -->
@@ -552,7 +550,7 @@
                                                                     <label>Year</label>
                                                                     <select name="year" id="year-select" class="select">
                                                                         <c:set var="now"
-                                                                            value="<%=new java.util.Date()%>" />
+                                                                            value="<%=new Date()%>" />
                                                                         <fmt:formatDate value="${now}" pattern="yyyy"
                                                                             var="currentYear" />
                                                                         <c:forEach begin="0" end="20" var="i">

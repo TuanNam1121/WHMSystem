@@ -16,5 +16,5 @@ public class InventoryTransactionDTO {
     private String code;
     private String type;
     private Timestamp date;
-    private String processor;
+    private String createdBy;
 }

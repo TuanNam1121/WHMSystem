@@ -121,7 +121,7 @@
                                                 <tr>
                                                     <th>ID</th>
                                                     <th>Type</th>
-                                                    <th>Who Processed</th>
+                                                    <th>Created By</th>
                                                     <th>Time Completed</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -132,7 +132,7 @@
                                                     <tr>
                                                         <td>${item.code}</td>
                                                         <td>${item.type}</td>
-                                                        <td>${not empty item.processor ? item.processor : 'N/A'}</td>
+                                                        <td>${not empty item.createdBy ? item.createdBy : 'N/A'}</td>
                                                         <td><fmt:formatDate value="${item.date}" pattern="dd-MM-yyyy HH:mm:ss" /></td>
                                                         <td>
                                                             <c:choose>

@@ -134,7 +134,7 @@ public class ExportItemDAO {
                                 + "VALUES (?, ?, 'DECREASED', 'EXPORT', ?)";
 
                 int exportReceiptId;
-                String exportReceiptCode = "PX-" + orderId + "-" + System.currentTimeMillis();
+                String exportReceiptCode = "ER-" + orderId + "-" + System.currentTimeMillis();
 
                 try (PreparedStatement updateOrderStatus =
                              conn.prepareStatement(updateOrderStatusSql)) {
@@ -320,7 +320,7 @@ public class ExportItemDAO {
                                 + "VALUES (?, ?)";
 
                 int exportReceiptId;
-                String exportReceiptCode = "PX-DRAFT-" + orderId + "-" + System.currentTimeMillis();
+                String exportReceiptCode = "ER-" + orderId;
 
                 try (PreparedStatement insertExportReceipt =
                              conn.prepareStatement(insertExportReceiptSql, Statement.RETURN_GENERATED_KEYS)) {
@@ -527,7 +527,8 @@ public class ExportItemDAO {
     }
 
     public ExportReceiptInfoDTO getExportReceiptInfoByOrderId(int orderId) {
-        String sql = "SELECT er.id AS receipt_id, er.order_id, o.createdat AS order_created_at, "
+        String sql = "SELECT er.id AS receipt_id, er.code AS receipt_code, er.order_id, "
+                + "o.code AS order_code, o.createdat AS order_created_at, "
                 + "created_user.fullname AS sale_created_by, processed_user.fullname AS sale_processed_by "
                 + "FROM export_receipts er "
                 + "JOIN orders o ON er.order_id = o.id "
@@ -544,7 +545,9 @@ public class ExportItemDAO {
                 if (rs.next()) {
                     return new ExportReceiptInfoDTO(
                             rs.getInt("receipt_id"),
+                            rs.getString("receipt_code"),
                             rs.getInt("order_id"),
+                            rs.getString("order_code"),
                             rs.getTimestamp("order_created_at"),
                             rs.getString("sale_created_by"),
                             rs.getString("sale_processed_by")

@@ -69,7 +69,7 @@
                                                 <div class="form-group">
                                                     <label>Search</label>
                                                     <input type="text" name="keyword" value="${param.keyword}"
-                                                           placeholder="Search order ID, customer, or serial...">
+                                                           placeholder="Search code, customer, or serial...">
                                                 </div>
                                             </div>
 
@@ -140,8 +140,8 @@
                                 <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Export Receipt Id</th>
-                                    <th>Sale Order Id</th>
+                                    <th>Code</th>
+                                    <th>Sale Order</th>
                                     <th>Date</th>
                                     <th>Processed By</th>
                                     <th>Customer</th>
@@ -155,8 +155,26 @@
                                 <c:forEach items="${sessionScope.orderList}" var="o" varStatus="v">
                                     <tr>
                                         <td>${(page - 1) * pageSize + v.index + 1}</td>
-                                        <td>ER-${o.exportReceiptId}</td>
-                                        <td>SO-${o.id}</td>
+                                        <td>
+                                            <a href="${pageContext.request.contextPath}/exportDetail?orderId=${o.id}">
+                                                <c:choose>
+                                                    <c:when test="${not empty o.exportReceiptCode}">
+                                                        ${o.exportReceiptCode}
+                                                    </c:when>
+                                                    <c:otherwise>ER-${o.exportReceiptId}</c:otherwise>
+                                                </c:choose>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=view">
+                                                <c:choose>
+                                                    <c:when test="${not empty o.code}">
+                                                        ${o.code}
+                                                    </c:when>
+                                                    <c:otherwise>SO-${o.id}</c:otherwise>
+                                                </c:choose>
+                                            </a>
+                                        </td>
                                         <td>
                                             <fmt:formatDate value="${o.orderDate}" pattern="dd-MM-yyyy HH:mm:ss"/>
                                         </td>

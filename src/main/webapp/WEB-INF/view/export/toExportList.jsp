@@ -68,7 +68,7 @@
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <input type="text" name="keyword" value="${param.keyword}"
-                                                           placeholder="Search order ID or customer...">
+                                                           placeholder="Search order code or customer...">
                                                 </div>
                                             </div>
 
@@ -88,8 +88,12 @@
                                                 <div class="form-group">
                                                     <select class="select" name="status">
                                                         <option value="">Choose Status</option>
-                                                        <option value="NEW" ${param.status == 'NEW' ? 'selected' : ''}>New</option>
-                                                        <option value="DRAFT" ${param.status == 'DRAFT' ? 'selected' : ''}>Draft</option>
+                                                        <option value="NEW" ${param.status == 'NEW' ? 'selected' : ''}>
+                                                            New
+                                                        </option>
+                                                        <option value="DRAFT" ${param.status == 'DRAFT' ? 'selected' : ''}>
+                                                            Draft
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -98,10 +102,18 @@
                                                 <div class="form-group">
                                                     <select class="select" name="sortBy">
                                                         <option value="">Sort By</option>
-                                                        <option value="dateNewest" ${param.sortBy == 'dateNewest' ? 'selected' : ''}>Date: Newest</option>
-                                                        <option value="dateOldest" ${param.sortBy == 'dateOldest' ? 'selected' : ''}>Date: Oldest</option>
-                                                        <option value="totalLow" ${param.sortBy == 'totalLow' ? 'selected' : ''}>Total: Low to high</option>
-                                                        <option value="totalHigh" ${param.sortBy == 'totalHigh' ? 'selected' : ''}>Total: High to low</option>
+                                                        <option value="dateNewest" ${param.sortBy == 'dateNewest' ? 'selected' : ''}>
+                                                            Date: Newest
+                                                        </option>
+                                                        <option value="dateOldest" ${param.sortBy == 'dateOldest' ? 'selected' : ''}>
+                                                            Date: Oldest
+                                                        </option>
+                                                        <option value="totalLow" ${param.sortBy == 'totalLow' ? 'selected' : ''}>
+                                                            Total: Low to high
+                                                        </option>
+                                                        <option value="totalHigh" ${param.sortBy == 'totalHigh' ? 'selected' : ''}>
+                                                            Total: High to low
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -122,68 +134,79 @@
 
                         <div class="table-responsive" id="to-export-table" tabindex="-1">
                             <table class="table">
-                            <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Date</th>
-                                <th>Customer</th>
-                                <th>Created By</th>
-                                <th>Items</th>
-                                <th>Grand total</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <c:forEach items="${sessionScope.orderList}" var="o" varStatus="v">
+                                <thead>
                                 <tr>
-                                <td>ER-${(page - 1) * pageSize + v.index + 1}</td>
-                                    <td>
-                                        <fmt:formatDate value="${o.orderDate}" pattern="dd-MM-yyyy HH:mm:ss"/>
-                                    </td>
-                                    <td>${o.customer}</td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${not empty o.creater}">
-                                                ${o.creater}
-                                            </c:when>
-                                            <c:otherwise>-</c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td>${o.totalQuantity}</td>
-                                    <td>
-                                        <fmt:formatNumber value="${o.totalPrice}" pattern="#,###"/>
-                                    </td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${o.status == 'COMPLETED'}">
-                                                <span class="badges bg-lightgreen">Completed</span>
-                                            </c:when>
-                                            <c:when test="${o.status == 'NEW'}">
-                                                <span class="badges bg-lightgrey">New</span>
-                                            </c:when>
-                                            <c:when test="${o.status == 'DRAFT'}">
-                                                <span class="badges bg-lightpurple">Draft</span>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="badges bg-lightgrey">${o.status}</span>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <c:if test="${sessionScope.userPermissions.contains('PROCESS_EXPORT') && (o.status == 'NEW' || o.status == 'DRAFT')}">
-                                                <a href="exportProduct?orderId=${o.id}">
-                                                    <button type="button" class="btn btn-primary btn-sm">Process
-                                                    </button>
-                                                </a>
-                                            </c:if>
-                                        </div>
-                                    </td>
+                                    <th>No</th>
+                                    <th>Code</th>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>Created By</th>
+                                    <th>Items</th>
+                                    <th>Grand total</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
-                            </c:forEach>
+                                </thead>
+                                <tbody>
+                                <c:forEach items="${sessionScope.orderList}" var="o" varStatus="v">
+                                    <tr>
+                                        <td>${v.index +1}</td>
+                                        <td>
+                                            <a href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=view">
+                                                <c:choose>
+                                                    <c:when test="${not empty o.code}">
+                                                        ${o.code}
+                                                    </c:when>
+                                                    <c:otherwise>SO-${o.id}</c:otherwise>
+                                                </c:choose>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <fmt:formatDate value="${o.orderDate}" pattern="dd-MM-yyyy HH:mm:ss"/>
+                                        </td>
+                                        <td>${o.customer}</td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${not empty o.creater}">
+                                                    ${o.creater}
+                                                </c:when>
+                                                <c:otherwise>-</c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>${o.totalQuantity}</td>
+                                        <td>
+                                            <fmt:formatNumber value="${o.totalPrice}" pattern="#,###"/>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${o.status == 'COMPLETED'}">
+                                                    <span class="badges bg-lightgreen">Completed</span>
+                                                </c:when>
+                                                <c:when test="${o.status == 'NEW'}">
+                                                    <span class="badges bg-lightgrey">New</span>
+                                                </c:when>
+                                                <c:when test="${o.status == 'DRAFT'}">
+                                                    <span class="badges bg-lightpurple">Draft</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="badges bg-lightgrey">${o.status}</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <c:if test="${sessionScope.userPermissions.contains('PROCESS_EXPORT') && (o.status == 'NEW' || o.status == 'DRAFT')}">
+                                                    <a href="exportProduct?orderId=${o.id}">
+                                                        <button type="button" class="btn btn-primary btn-sm">Process
+                                                        </button>
+                                                    </a>
+                                                </c:if>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
 
-                            </tbody>
+                                </tbody>
                             </table>
                         </div>
                         <jsp:include page="/WEB-INF/common/pagination.jsp"/>

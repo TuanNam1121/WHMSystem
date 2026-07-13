@@ -42,7 +42,8 @@ public class InventoryAuditDAO {
         return inventoryAudit;
     }
 
-    public List<InventoryAudit> getInventoryAuditsByFilter(String searchId, String startDate, String endDate, int offset, int limit, int userid) {
+    public List<InventoryAudit> getInventoryAuditsByFilter(String searchId, String startDate, String endDate,
+            int offset, int limit, int userid) {
         String sql = "SELECT ia.*, u1.userid AS userid, u1.fullname AS creator_fullname, u2.fullname AS processor_fullname "
                 +
                 "FROM inventory_audit ia " +
@@ -198,7 +199,14 @@ public class InventoryAuditDAO {
             if (affectedRows > 0) {
                 try (ResultSet rs = ps.getGeneratedKeys()) {
                     if (rs.next()) {
-                        return rs.getInt(1);
+                        int id = rs.getInt(1);
+                        String updateSql = "UPDATE inventory_audit SET code = ? WHERE id = ?";
+                        try (PreparedStatement updatePs = conn.prepareStatement(updateSql)) {
+                            updatePs.setString(1, "IA-" + id);
+                            updatePs.setInt(2, id);
+                            updatePs.executeUpdate();
+                        }
+                        return id;
                     }
                 }
             }

@@ -109,9 +109,11 @@
                                 <th>SKU</th>
                                 <th>Category</th>
                                 <th>System Qty</th>
-                                <th>Physical Qty</th>
-                                <th>Discrepancy</th>
-                                <th>Reason</th>
+                                <c:if test="${audit.status != 'DRAFT' and audit.status != 'SUBMITTED'}">
+                                    <th>Physical Qty</th>
+                                    <th>Discrepancy</th>
+                                    <th>Reason</th>
+                                </c:if>
                             </tr>
                             </thead>
                             <tbody>
@@ -121,52 +123,56 @@
                                     <td>${item.productSku}</td>
                                     <td>${item.categoryName}</td>
                                     <td>${item.systemQuantity}</td>
-                                    <td>${item.physicalQuantity}</td>
-                                    <td>
-                                        <c:set var="disc"
-                                               value="${item.physicalQuantity - item.systemQuantity}"/>
-                                        <c:choose>
-                                            <c:when test="${disc > 0}">
-                                                <span class="text-success">+${disc}</span>
-                                            </c:when>
-                                            <c:when test="${disc < 0}">
-                                                <span class="text-danger">${disc}</span>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span>0</span>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${not empty item.reason}">
-                                                ${item.reason}
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="text-muted">No reason provided</span>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>
+                                    <c:if test="${audit.status != 'DRAFT' and audit.status != 'SUBMITTED'}">
+                                        <td>${item.physicalQuantity}</td>
+                                        <td>
+                                            <c:set var="disc"
+                                                   value="${item.physicalQuantity - item.systemQuantity}"/>
+                                            <c:choose>
+                                                <c:when test="${disc > 0}">
+                                                    <span class="text-success">+${disc}</span>
+                                                </c:when>
+                                                <c:when test="${disc < 0}">
+                                                    <span class="text-danger">${disc}</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span>0</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${not empty item.reason}">
+                                                    ${item.reason}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="text-muted">No reason provided</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                    </c:if>
                                 </tr>
-                                <tr style="background-color: #f8f9fa;">
-                                    <td colspan="7">
-                                        <div style="font-size: 13px;">
-                                            <strong class="me-2">Serials Adjusted:</strong>
-                                            <c:forEach var="serial" items="${item.serials}">
-                                                <c:choose>
-                                                    <c:when test="${serial.type == 'ADD'}">
-                                                                            <span class="badge bg-success me-1">+
-                                                                                    ${serial.serialNumber}</span>
-                                                    </c:when>
-                                                    <c:when test="${serial.type == 'DELETE'}">
-                                                                            <span class="badge bg-danger me-1">-
-                                                                                    ${serial.serialNumber}</span>
-                                                    </c:when>
-                                                </c:choose>
-                                            </c:forEach>
-                                        </div>
-                                    </td>
-                                </tr>
+                                <c:if test="${audit.status != 'DRAFT' and audit.status != 'SUBMITTED'}">
+                                    <tr style="background-color: #f8f9fa;">
+                                        <td colspan="7">
+                                            <div style="font-size: 13px;">
+                                                <strong class="me-2">Serials Adjusted:</strong>
+                                                <c:forEach var="serial" items="${item.serials}">
+                                                    <c:choose>
+                                                        <c:when test="${serial.type == 'ADD'}">
+                                                                                <span class="badge bg-success me-1">+
+                                                                                        ${serial.serialNumber}</span>
+                                                        </c:when>
+                                                        <c:when test="${serial.type == 'DELETE'}">
+                                                                                <span class="badge bg-danger me-1">-
+                                                                                        ${serial.serialNumber}</span>
+                                                        </c:when>
+                                                    </c:choose>
+                                                </c:forEach>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </c:if>
                             </c:forEach>
                             </tbody>
                         </table>

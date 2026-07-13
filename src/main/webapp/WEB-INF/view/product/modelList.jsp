@@ -10,7 +10,7 @@
           content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Model List</title>
+    <title>Model List - WHM System</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
 

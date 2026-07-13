@@ -11,7 +11,7 @@
     <meta name="keywords" content="admin, bootstrap, business, corporate, pos, supplier">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Supplier List - Dreams Pos</title>
+    <title>Supplier List - WHM System</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">

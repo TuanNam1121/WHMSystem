@@ -16,9 +16,6 @@ import java.util.List;
 
 public class InventorySummaryDAO {
 
-    private static final String INCREASED = "INCREASED";
-    private static final String DECREASED = "DECREASED";
-
     private int getQtyByType(int productId, String type, LocalDate fromDate, LocalDate toDate) {
         StringBuilder sql = new StringBuilder(
                 "SELECT COALESCE(SUM(CASE WHEN sm.type = ? THEN sm.quantity ELSE 0 END), 0) AS qty " +
@@ -48,30 +45,6 @@ public class InventorySummaryDAO {
         return 0;
     }
 
-    public int getStockAtDate(int productId, LocalDate date) {
-        String sql = "SELECT COALESCE(" +
-                "SUM(CASE WHEN sm.type = 'INCREASED' THEN sm.quantity ELSE 0 END) - " +
-                "SUM(CASE WHEN sm.type = 'DECREASED' THEN sm.quantity ELSE 0 END), 0) AS stock_at_date " +
-                "FROM stock_movement sm WHERE sm.productid = ? AND sm.createdat <= ?";
-        try (Connection conn = DBContext.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, productId);
-            ps.setTimestamp(2, Timestamp.valueOf(date.atTime(LocalTime.MAX)));
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("stock_at_date");
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return 0;
-    }
-
-    /**
-     * Get stock at the start of day (0:00) — all movements BEFORE the given date.
-     * This is used for Opening Stock calculation.
-     */
     public int getStockAtStartOfDay(int productId, LocalDate date) {
         String sql = "SELECT COALESCE(" +
                 "SUM(CASE WHEN sm.type = 'INCREASED' THEN sm.quantity ELSE 0 END) - " +
@@ -93,19 +66,19 @@ public class InventorySummaryDAO {
     }
 
     public int getImportQtyInRange(int productId, LocalDate openingDate, LocalDate closingDate) {
-        return getQtyByType(productId, INCREASED, openingDate, closingDate);
+        return getQtyByType(productId, "INCREASED", openingDate, closingDate);
     }
 
     public int getExportQtyInRange(int productId, LocalDate openingDate, LocalDate closingDate) {
-        return getQtyByType(productId, DECREASED, openingDate, closingDate);
+        return getQtyByType(productId, "DECREASED", openingDate, closingDate);
     }
 
     public int getAllImportQty(int productId) {
-        return getQtyByType(productId, INCREASED, null, LocalDate.now());
+        return getQtyByType(productId, "INCREASED", null, LocalDate.now());
     }
 
     public int getAllExportQty(int productId) {
-        return getQtyByType(productId, DECREASED, null, LocalDate.now());
+        return getQtyByType(productId, "DECREASED", null, LocalDate.now());
     }
 
     public InventorySummary toInventorySummary(int productId, String openDate, String closeDate) {
@@ -127,13 +100,13 @@ public class InventorySummaryDAO {
             is.setOpeningStock(getStockAtStartOfDay(productId, openingDate));
             is.setImportStock(getImportQtyInRange(productId, openingDate, closingDate));
             is.setExportStock(getExportQtyInRange(productId, openingDate, closingDate));
-            is.setClosingStock(getStockAtDate(productId, closingDate));
+            is.setClosingStock(getStockAtStartOfDay(productId, closingDate));
 
         } else {
             is.setOpeningStock(0);
             is.setImportStock(getAllImportQty(productId));
             is.setExportStock(getAllExportQty(productId));
-            is.setClosingStock(getStockAtDate(productId, LocalDate.now()));
+            is.setClosingStock(getStockAtStartOfDay(productId, LocalDate.now()));
         }
 
         return is;
@@ -390,11 +363,11 @@ public class InventorySummaryDAO {
     }
 
     public List<InventorySummary> getTop5Import(String openDate, String closeDate) {
-        return getTop5ByType(openDate, closeDate, INCREASED);
+        return getTop5ByType(openDate, closeDate, "INCREASED");
     }
 
     public List<InventorySummary> getTop5Export(String openDate, String closeDate) {
-        return getTop5ByType(openDate, closeDate, DECREASED);
+        return getTop5ByType(openDate, closeDate, "DECREASED");
     }
 
     private List<InventorySummary> getTop5ByType(String openDate, String closeDate, String type) {
@@ -456,7 +429,7 @@ public class InventorySummaryDAO {
                     item.setProductName(rs.getString("product_name"));
                     item.setUnit(rs.getString("unit_name"));
                     int qty = rs.getInt("total_qty");
-                    if (INCREASED.equals(type)) {
+                    if ("INCREASED".equals(type)) {
                         item.setImportStock(qty);
                     } else {
                         item.setExportStock(qty);

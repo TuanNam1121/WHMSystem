@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <title>${act.equals("new") ? "Add New Permission" : "Edit Permission"}</title>
+    <title>${act.equals("new") ? "Add New Permission" : "Edit Permission"} - WHM System</title>
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/animate.css">

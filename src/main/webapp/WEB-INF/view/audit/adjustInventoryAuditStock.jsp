@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <title>Adjust Inventory Audit Stock</title>
+    <title>Adjust Inventory Audit Stock - WHM System</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">

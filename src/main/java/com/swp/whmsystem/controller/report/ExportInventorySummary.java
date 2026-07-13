@@ -23,13 +23,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "ExportInventorySummary", urlPatterns = { "/ExportInventorySummary" })
+@WebServlet(name = "ExportInventorySummary", urlPatterns = {"/ExportInventorySummary"})
 public class ExportInventorySummary extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String keyword = request.getParameter("keyword");
         String fromDate = request.getParameter("fromDate");
         String toDate = request.getParameter("toDate");
@@ -50,7 +50,7 @@ public class ExportInventorySummary extends HttpServlet {
             headerStyle.setBorderBottom(BorderStyle.THIN);
             headerStyle.setBorderLeft(BorderStyle.THIN);
             headerStyle.setBorderRight(BorderStyle.THIN);
-            
+
             Font headerFont = workbook.createFont();
             headerFont.setBold(true);
             headerFont.setFontHeightInPoints((short) 11);
@@ -72,7 +72,7 @@ public class ExportInventorySummary extends HttpServlet {
 
             int rowNum = 1;
             int totalOpening = 0, totalImport = 0, totalExport = 0, totalClosing = 0;
-            
+
             for (InventorySummary item : reportList) {
                 Row row = sheet.createRow(rowNum++);
 
@@ -117,7 +117,7 @@ public class ExportInventorySummary extends HttpServlet {
             Row totalRow = sheet.createRow(rowNum);
             CellStyle totalStyle = workbook.createCellStyle();
             totalStyle.cloneStyleFrom(headerStyle); // Dùng lại style in đậm có viền
-            
+
             Cell cellLabel = totalRow.createCell(0);
             cellLabel.setCellValue("Total");
             cellLabel.setCellStyle(totalStyle);

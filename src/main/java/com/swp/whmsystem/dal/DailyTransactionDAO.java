@@ -85,6 +85,68 @@ public class DailyTransactionDAO {
             throw new RuntimeException(e);
         }
     }
+    
+    public List<DailyTransaction> getDailyTransactionToExport(String date, String keyword, String sortBy, String sortDir) {
+        String sql = """
+                     select p.productid, p.name, p.sku, u.name as unit, date(?) as date , sum(case when sm.type = 'INCREASED' then sm.quantity else 0 end) as 'total_import', sum(case when sm.type = 'DECREASED' then sm.quantity else 0 end) as 'total_export'
+                     from products p
+                     left join stock_movement sm on sm.productid = p.productid and DATE(sm.createdat) = ?
+                     join units u on p.unitid = u.id where 1 = 1 """;
+
+        if (keyword != null && !keyword.isEmpty()) {
+            sql += " and (";
+            sql += " p.name like '%" + keyword.trim() + "%'";
+            sql += " or p.sku like '%" + keyword.trim() + "%'";
+            sql += ")";
+        }
+
+        sql += " group by p.productid ";
+        if (sortBy != null && !sortBy.isEmpty()) {
+            switch (sortBy) {
+                case "sku":
+                    sql += " order by p.sku ";
+                    break;
+                case "name":
+                    sql += " order by p.name ";
+                    break;
+                case "importQuantity":
+                    sql += " order by total_import ";
+                    break;
+                default:
+                    sql += " order by total_export ";
+                    break;
+            }
+        } else {
+            sql += " order by total_import desc, total_export ";
+        }
+
+        if (sortDir != null && !sortDir.isEmpty()) {
+            if (sortDir.equals("asc")) {
+                sql += sortDir;
+            } else if (sortDir.equals("desc")) {
+                sql += sortDir;
+            }
+        }
+        else{
+            sql += "desc";
+        }
+        System.out.println(sql);
+        // group by p.productid  order by total_import  limit 10 offset 0;
+        List<DailyTransaction> list = new ArrayList<>();
+        try (Connection connection = DBContext.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, date);
+            preparedStatement.setString(2, date);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                DailyTransaction p = mapResultSetToDailyTransaction(resultSet);
+                list.add(p);
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public int countDailyTransaction(String keyword) {
         ProductDAO dao = new ProductDAO();

@@ -333,13 +333,10 @@
                                 <h6>View detailed inventory stock-in and stock-out transactions by day</h6>
                             </div>
                             <div class="page-btn d-flex gap-2">
-                                <a href="${pageContext.request.contextPath}/ImportExportByDay?date=${param.date}&keyword=${param.keyword}&sortBy=${param.sortBy}&sortDir=${param.sortDir}"
+                                <a href="${pageContext.request.contextPath}/ExportDailyTransaction?date=${param.date}&keyword=${param.keyword}&sortBy=${param.sortBy}&sortDir=${param.sortDir}"
                                class="btn btn-export" id="btn-export-excel">
                                 <i class="fas fa-file-excel me-1"></i> Export Excel
                             </a>
-                            <button onclick="window.print()" class="btn btn-print" id="btn-print-page">
-                                <i class="fas fa-print me-1"></i> Print
-                            </button>
                         </div>
                     </div>
                     <form action="${pageContext.request.contextPath}/ImportExportByDayReport"

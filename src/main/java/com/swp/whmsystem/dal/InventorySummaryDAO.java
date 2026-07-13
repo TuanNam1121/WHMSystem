@@ -112,6 +112,17 @@ public class InventorySummaryDAO {
         return is;
     }
 
+    public List<InventorySummary> showAll(String openDate, String closeDate, String keyword, int page, int pageSize) {
+        List<InventorySummary> list = new ArrayList<>();
+        ProductDAO productDAO = new ProductDAO();
+        List<Product> productList = productDAO.searchProduct(keyword, -1, -1, -1, null, pageSize, page);
+
+        for (Product product : productList) {
+            list.add(toInventorySummary(product.getProductId(), openDate, closeDate));
+        }
+        return list;
+    }
+
     public List<InventorySummary> forReport(String openDate, String closeDate, String keyword, int page, int pageSize, String sortColumn, String sortOrder) {
         List<InventorySummary> list = new ArrayList<>();
         boolean hasDate = openDate != null && !openDate.trim().isEmpty() && closeDate != null && !closeDate.trim().isEmpty();

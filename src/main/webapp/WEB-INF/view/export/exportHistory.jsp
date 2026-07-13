@@ -67,7 +67,6 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <label>Search</label>
                                                     <input type="text" name="keyword" value="${param.keyword}"
                                                            placeholder="Search code, customer, or serial...">
                                                 </div>
@@ -75,7 +74,6 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <label>From Date</label>
                                                     <div class="input-groupicon">
                                                         <input type="text" name="fromDate" value="${param.fromDate}"
                                                                placeholder="DD-MM-YYYY" class="datetimepicker">
@@ -88,7 +86,6 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <label>To Date</label>
                                                     <div class="input-groupicon">
                                                         <input type="text" name="toDate" value="${param.toDate}"
                                                                placeholder="DD-MM-YYYY" class="datetimepicker">
@@ -101,7 +98,6 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <label>Sort By</label>
                                                     <select class="select" name="sortBy">
                                                         <option value="">Sort By</option>
                                                         <option value="dateNewest" ${param.sortBy == 'dateNewest' ? 'selected' : ''}>
@@ -122,7 +118,6 @@
 
                                             <div class="col-lg-1 col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <label>&nbsp;</label>
                                                     <button type="submit" class="btn btn-filters ms-auto"
                                                             style="border: none; padding: 0;">
                                                         <img src="assets/img/icons/search-whites.svg" alt="img">

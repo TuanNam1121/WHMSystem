@@ -24,6 +24,8 @@ public class Order {
     private String processor;
     private int totalQuantity;
     private int exportReceiptId;
+    private String code;
+    private String exportReceiptCode;
 
 
     public Order() {
@@ -57,6 +59,22 @@ public class Order {
 
     public void setExportReceiptId(int exportReceiptId) {
         this.exportReceiptId = exportReceiptId;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getExportReceiptCode() {
+        return exportReceiptCode;
+    }
+
+    public void setExportReceiptCode(String exportReceiptCode) {
+        this.exportReceiptCode = exportReceiptCode;
     }
 
 

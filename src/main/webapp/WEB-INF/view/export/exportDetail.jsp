@@ -74,19 +74,27 @@
                 <div class="card-body">
                     <fmt:formatDate value="${exportReceiptInfo.orderCreatedAt}" pattern="dd-MM-yyyy HH:mm:ss"
                                     var="orderCreatedAtText"/>
+                    <c:set var="receiptCode" value="ER-${exportReceiptInfo.receiptId}"/>
+                    <c:if test="${not empty exportReceiptInfo.receiptCode}">
+                        <c:set var="receiptCode" value="${exportReceiptInfo.receiptCode}"/>
+                    </c:if>
+                    <c:set var="orderCode" value="SO-${exportReceiptInfo.orderId}"/>
+                    <c:if test="${not empty exportReceiptInfo.orderCode}">
+                        <c:set var="orderCode" value="${exportReceiptInfo.orderCode}"/>
+                    </c:if>
                     <div class="row">
                         <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Export Receipt</label>
                                 <input type="text" class="form-control"
-                                       value="ER-${exportReceiptInfo.receiptId}" readonly="readonly">
+                                       value="${receiptCode}" readonly="readonly">
                             </div>
                         </div>
                         <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Sale Order</label>
                                 <input type="text" class="form-control"
-                                       value="ORD-${exportReceiptInfo.orderId}" readonly="readonly">
+                                       value="${orderCode}" readonly="readonly">
                             </div>
                         </div>
                         <div class="col-lg-3 col-sm-6 col-12">

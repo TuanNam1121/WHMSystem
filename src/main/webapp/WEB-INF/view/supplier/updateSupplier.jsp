@@ -9,7 +9,7 @@
     <meta name="keywords" content="admin, bootstrap, business, corporate, pos, supplier">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Update Supplier - Dreams Pos</title>
+    <title>Update Supplier - WHM System</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">

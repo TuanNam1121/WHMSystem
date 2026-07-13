@@ -7,7 +7,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-        <title>Import / Export Detail Report By Day</title>
+        <title>Import / Export Detail Report By Day - WHM System</title>
         <meta name="description"
               content="Detailed daily import and export inventory report with charts and statistics">
 

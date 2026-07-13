@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 @WebServlet(name = "ImportExcel", urlPatterns = { "/ImportExcel" })
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, // 1 MB
@@ -112,7 +113,7 @@ public class ImportExcelServlet extends HttpServlet {
                 prCell.setCellStyle(productHeaderStyle);
 
                 // Merge columns for product header row
-                sheet.addMergedRegion(new org.apache.poi.ss.util.CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 2));
+                sheet.addMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 2));
 
                 // Write item rows
                 int stt = 1;

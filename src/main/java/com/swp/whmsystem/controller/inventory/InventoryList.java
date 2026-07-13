@@ -19,7 +19,7 @@ public class InventoryList extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         InventoryDAO inventoryDAO = new InventoryDAO();
-        String keyword = request.getParameter("keyword");
+        String keyword = request.getParameter("keyword");  
         String stockStatus = request.getParameter("stockStatus");
         String sortBy = request.getParameter("sortBy");
         String pageSizeRaw = request.getParameter("pageSize");

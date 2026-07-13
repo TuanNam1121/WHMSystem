@@ -88,6 +88,11 @@ public class DailyTransaction {
     public void setTotalExport(Long totalExport) {
         this.totalExport = totalExport;
     }
+
+    @Override
+    public String toString() {
+        return "DailyTransaction{" + "productId=" + productId + ", productName=" + productName + ", sku=" + sku + ", unit=" + unit + ", date=" + date + ", totalImport=" + totalImport + ", totalExport=" + totalExport + '}';
+    }
     
     
     

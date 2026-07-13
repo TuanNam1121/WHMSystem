@@ -67,15 +67,13 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <label>Search</label>
                                                     <input type="text" name="keyword" value="${param.keyword}"
-                                                           placeholder="Search order ID, customer, or serial...">
+                                                           placeholder="Search code, customer, or serial...">
                                                 </div>
                                             </div>
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <label>From Date</label>
                                                     <div class="input-groupicon">
                                                         <input type="text" name="fromDate" value="${param.fromDate}"
                                                                placeholder="DD-MM-YYYY" class="datetimepicker">
@@ -88,7 +86,6 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <label>To Date</label>
                                                     <div class="input-groupicon">
                                                         <input type="text" name="toDate" value="${param.toDate}"
                                                                placeholder="DD-MM-YYYY" class="datetimepicker">
@@ -101,7 +98,6 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <label>Sort By</label>
                                                     <select class="select" name="sortBy">
                                                         <option value="">Sort By</option>
                                                         <option value="dateNewest" ${param.sortBy == 'dateNewest' ? 'selected' : ''}>
@@ -122,7 +118,6 @@
 
                                             <div class="col-lg-1 col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <label>&nbsp;</label>
                                                     <button type="submit" class="btn btn-filters ms-auto"
                                                             style="border: none; padding: 0;">
                                                         <img src="assets/img/icons/search-whites.svg" alt="img">
@@ -140,8 +135,8 @@
                                 <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Export Receipt Id</th>
-                                    <th>Sale Order Id</th>
+                                    <th>Code</th>
+                                    <th>Sale Order</th>
                                     <th>Date</th>
                                     <th>Processed By</th>
                                     <th>Customer</th>
@@ -155,8 +150,26 @@
                                 <c:forEach items="${sessionScope.orderList}" var="o" varStatus="v">
                                     <tr>
                                         <td>${(page - 1) * pageSize + v.index + 1}</td>
-                                        <td>ER-${o.exportReceiptId}</td>
-                                        <td>SO-${o.id}</td>
+                                        <td>
+                                            <a href="${pageContext.request.contextPath}/exportDetail?orderId=${o.id}">
+                                                <c:choose>
+                                                    <c:when test="${not empty o.exportReceiptCode}">
+                                                        ${o.exportReceiptCode}
+                                                    </c:when>
+                                                    <c:otherwise>ER-${o.exportReceiptId}</c:otherwise>
+                                                </c:choose>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=view">
+                                                <c:choose>
+                                                    <c:when test="${not empty o.code}">
+                                                        ${o.code}
+                                                    </c:when>
+                                                    <c:otherwise>SO-${o.id}</c:otherwise>
+                                                </c:choose>
+                                            </a>
+                                        </td>
                                         <td>
                                             <fmt:formatDate value="${o.orderDate}" pattern="dd-MM-yyyy HH:mm:ss"/>
                                         </td>

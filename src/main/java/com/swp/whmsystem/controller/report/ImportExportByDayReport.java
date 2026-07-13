@@ -16,25 +16,11 @@ import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * Servlet for the Import/Export Detail Report by Day page.
- *
- * Query parameters accepted (all optional): date – DD-MM-YYYY : the day to
- * report on keyword – String : search by product name or SKU (LIKE %keyword%)
- * sortBy – String : sku | name | importQty | exportQty sortDir – String : asc |
- * desc page – int : pagination page number (default 1)
- *
- * Attributes set for the JSP: reportList – List of daily import/export rows
- * totalImportQty – long totalExportQty – long totalAdjustQty – long
- * totalImportValue – BigDecimal totalExportValue – BigDecimal page, pageSize –
- * pagination helpers focusTable – boolean (scroll to table after submit)
- *
+/*
  * @author Admin
  */
 @WebServlet(name = "ImportExportByDayReport", urlPatterns = {"/ImportExportByDayReport"})
 public class ImportExportByDayReport extends HttpServlet {
-
-    private static final int DEFAULT_PAGE_SIZE = 15;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -44,21 +30,37 @@ public class ImportExportByDayReport extends HttpServlet {
             String keyword = request.getParameter("keyword");
             String sortBy = request.getParameter("sortBy");
             String sortDir = request.getParameter("sortDir");
+            String pageSizeRaw = request.getParameter("pageSize");
+            String pageRaw = request.getParameter("page");
 
-            int page = 1, pageSize = DEFAULT_PAGE_SIZE;
             try {
                 date = LocalDate.parse(date).toString();
             } catch (Exception e) {
                 date = LocalDate.now().toString();
             }
-            try {
-                page = Integer.parseInt(request.getParameter("page"));
-                pageSize = Integer.parseInt(request.getParameter("pageSize"));
-                if (page < 1) {
+            int pageSize = 10;
+            int page = 1;
+
+            if (pageRaw != null && !pageRaw.trim().isEmpty()) {
+                try {
+                    page = Integer.parseInt(pageRaw);
+                    if (page < 1) {
+                        page = 1;
+                    }
+                } catch (NumberFormatException e) {
                     page = 1;
                 }
-            } catch (NumberFormatException ignored) {
-                page = 1;
+            }
+
+            if (pageSizeRaw != null && !pageSizeRaw.trim().isEmpty()) {
+                try {
+                    int parsedPageSize = Integer.parseInt(pageSizeRaw.trim());
+                    if (parsedPageSize > 0 && parsedPageSize <= 100) {
+                        pageSize = parsedPageSize;
+                    }
+                } catch (NumberFormatException ignored) {
+                    pageSize = 10;
+                }
             }
 
             DailyTransactionDAO dao = new DailyTransactionDAO();
@@ -68,6 +70,8 @@ public class ImportExportByDayReport extends HttpServlet {
             long totalAdjustQty = dao.getTotalAdjustQty(date, keyword);
             long totalImportValue = dao.getTotalImportValue(date, keyword);
             long totalExportValue = dao.getTotalExportValue(date, keyword);
+            int totalRows = dao.countDailyTransaction(keyword);
+            int totalPages = (int) Math.ceil((double) totalRows / pageSize);
             request.setAttribute("totalImportQty", totalImportQty);
             request.setAttribute("totalExportQty", totalExportQty);
             request.setAttribute("totalAdjustQty", totalAdjustQty);
@@ -76,7 +80,7 @@ public class ImportExportByDayReport extends HttpServlet {
             request.setAttribute("list", list);
             request.setAttribute("page", page);
             request.setAttribute("pageSize", pageSize);
-            request.setAttribute("totalPages", dao.countDailyTransaction(keyword) / pageSize);
+            request.setAttribute("totalPages", totalPages);
         } catch (Exception ex) {
             HttpSession session = request.getSession();
             session.setAttribute("message", ex.getMessage());

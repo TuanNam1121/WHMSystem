@@ -220,11 +220,11 @@ public class OrderDAO {
         return null;
     }
 
-    public List<Order> searchOrdersToExport(String keyword, String date, String status,
-            String sortBy, int pageSize, int page) {
+    public List<Order> searchOrdersToExport(String keyword, String fromDate, String toDate,
+            String status, String sortBy, int pageSize, int page) {
         List<Order> orderList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-                "select o.id, coalesce(er.status, o.status) as status, o.total_price, o.note, "
+                "select o.id, o.code, coalesce(er.status, o.status) as status, o.total_price, o.note, "
                 + "o.orderdate, o.createdat, o.updatedat, o.completedat, "
                 + "o.createdby, o.processedby, o.customer_id "
                 + "from orders o "
@@ -235,14 +235,26 @@ public class OrderDAO {
         List<Object> parameter = new ArrayList<>();
 
         if (keyword != null && !keyword.trim().isEmpty()) {
-            sql.append(" and (c.name like ? or o.id like ?)");
+            sql.append(" and (c.name like ? or o.code like ? or o.id like ?)");
+            parameter.add("%" + keyword.trim() + "%");
             parameter.add("%" + keyword.trim() + "%");
             parameter.add("%" + keyword.trim() + "%");
         }
 
-        if (date != null && !date.trim().isEmpty()) {
-            sql.append(" and date_format(o.orderdate, '%d-%m-%Y') = ?");
-            parameter.add(date.trim());
+        if (fromDate != null && !fromDate.trim().isEmpty()) {
+            Timestamp fromTimestamp = parseStartOfDay(fromDate);
+            if (fromTimestamp != null) {
+                sql.append(" and o.orderdate >= ?");
+                parameter.add(fromTimestamp);
+            }
+        }
+
+        if (toDate != null && !toDate.trim().isEmpty()) {
+            Timestamp toTimestamp = parseEndOfDay(toDate);
+            if (toTimestamp != null) {
+                sql.append(" and o.orderdate <= ?");
+                parameter.add(toTimestamp);
+            }
         }
 
         if (status != null && !status.trim().isEmpty()) {
@@ -297,7 +309,7 @@ public class OrderDAO {
         return orderList;
     }
 
-    public int countOrdersToExport(String keyword, String date, String status) {
+    public int countOrdersToExport(String keyword, String fromDate, String toDate, String status) {
         StringBuilder sql = new StringBuilder(
                 "select count(*) from orders o "
                 + "join customers c on o.customer_id = c.id "
@@ -308,14 +320,26 @@ public class OrderDAO {
 
         if (keyword != null && !keyword.trim().isEmpty()) {
             String searchValue = "%" + keyword.trim() + "%";
-            sql.append(" and (c.name like ? or o.id like ?)");
+            sql.append(" and (c.name like ? or o.code like ? or o.id like ?)");
+            parameters.add(searchValue);
             parameters.add(searchValue);
             parameters.add(searchValue);
         }
 
-        if (date != null && !date.trim().isEmpty()) {
-            sql.append(" and date_format(o.orderdate, '%d-%m-%Y') = ?");
-            parameters.add(date.trim());
+        if (fromDate != null && !fromDate.trim().isEmpty()) {
+            Timestamp fromTimestamp = parseStartOfDay(fromDate);
+            if (fromTimestamp != null) {
+                sql.append(" and o.orderdate >= ?");
+                parameters.add(fromTimestamp);
+            }
+        }
+
+        if (toDate != null && !toDate.trim().isEmpty()) {
+            Timestamp toTimestamp = parseEndOfDay(toDate);
+            if (toTimestamp != null) {
+                sql.append(" and o.orderdate <= ?");
+                parameters.add(toTimestamp);
+            }
         }
 
         if (status != null && !status.trim().isEmpty()) {
@@ -663,8 +687,18 @@ public class OrderDAO {
         o.setCreatedBy(rs.getInt("createdby"));
         o.setProcessedBy(rs.getInt("processedby"));
         o.setCustomerId(rs.getInt("customer_id"));
+        o.setCode(getOptionalString(rs, "code"));
+        o.setExportReceiptCode(getOptionalString(rs, "export_receipt_code"));
 
         return o;
+    }
+
+    private String getOptionalString(ResultSet rs, String columnLabel) {
+        try {
+            return rs.getString(columnLabel);
+        } catch (SQLException ignored) {
+            return null;
+        }
     }
 
     public List<OrderItemDetailDTO> getOrderItemsByOrderId(int orderId) {
@@ -699,7 +733,7 @@ public class OrderDAO {
     }
 
     public List<Order> getExportHistory() {
-        String sql = "select o.id, er.id as export_receipt_id, er.status, o.total_price, o.note, "
+        String sql = "select o.id, o.code, er.id as export_receipt_id, er.code as export_receipt_code, er.status, o.total_price, o.note, "
                 + "coalesce(er.exported_at, er.created_at) as orderdate, er.created_at as createdat, "
                 + "er.updated_at as updatedat, er.exported_at as completedat, "
                 + "o.createdby, er.exported_by as processedby, o.customer_id "
@@ -732,7 +766,7 @@ public class OrderDAO {
                                            String sortBy, int pageSize, int page) {
         List<Order> orderList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-                "select o.id, er.id as export_receipt_id, er.status, o.total_price, o.note, "
+                "select o.id, o.code, er.id as export_receipt_id, er.code as export_receipt_code, er.status, o.total_price, o.note, "
                         + "coalesce(er.exported_at, er.created_at) as orderdate, er.created_at as createdat, "
                         + "er.updated_at as updatedat, er.exported_at as completedat, "
                         + "o.createdby, er.exported_by as processedby, o.customer_id "
@@ -745,12 +779,15 @@ public class OrderDAO {
 
         if (keyword != null && !keyword.trim().isEmpty()) {
             String searchValue = "%" + keyword.trim() + "%";
-            sql.append(" and (c.name like ? or o.id like ? or exists ("
+            sql.append(" and (c.name like ? or o.code like ? or er.code like ? or o.id like ? or er.id like ? or exists ("
                     + "select 1 from export_receipt_details erd "
                     + "join export_receipt_serials ers on erd.id = ers.export_receipt_detail_id "
                     + "join product_items pi on ers.product_item_id = pi.id "
                     + "where erd.export_receipt_id = er.id and pi.serial like ?"
                     + "))");
+            parameter.add(searchValue);
+            parameter.add(searchValue);
+            parameter.add(searchValue);
             parameter.add(searchValue);
             parameter.add(searchValue);
             parameter.add(searchValue);
@@ -831,12 +868,15 @@ public class OrderDAO {
 
         if (keyword != null && !keyword.trim().isEmpty()) {
             String searchValue = "%" + keyword.trim() + "%";
-            sql.append(" and (c.name like ? or o.id like ? or exists ("
+            sql.append(" and (c.name like ? or o.code like ? or er.code like ? or o.id like ? or er.id like ? or exists ("
                     + "select 1 from export_receipt_details erd "
                     + "join export_receipt_serials ers on erd.id = ers.export_receipt_detail_id "
                     + "join product_items pi on ers.product_item_id = pi.id "
                     + "where erd.export_receipt_id = er.id and pi.serial like ?"
                     + "))");
+            parameters.add(searchValue);
+            parameters.add(searchValue);
+            parameters.add(searchValue);
             parameters.add(searchValue);
             parameters.add(searchValue);
             parameters.add(searchValue);

@@ -21,7 +21,7 @@ import java.util.List;
 public class ProductDAO {
 
     public boolean addProduct(Product p) {
-        if (p.getCategory().getName().contains("Laptop")) {
+        if (p.getCategory().getCategoryId() == 1) {
             String sql = "insert into products(name, description, img_url, isactive, ramid, romid, chipid, brandid, modelid, unitid, categoryid, sku) values (?,?,?,?,?,?,?,?,?,?,?,?)";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
@@ -40,7 +40,7 @@ public class ProductDAO {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if (p.getCategory().getName().equals("RAM")) {
+        } else if (p.getCategory().getCategoryId() == 2) {
             String sql = "insert into products(name, description, img_url, isactive, ramid, brandid, unitid, categoryid, sku) values (?,?,?,?,?,?,?,?,?)";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
@@ -56,7 +56,7 @@ public class ProductDAO {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if (p.getCategory().getName().equals("ROM")) {
+        } else if (p.getCategory().getCategoryId() == 3) {
             String sql = "insert into products(name, description, img_url, isactive, romid, brandid, unitid, categoryid, sku, price) values (?,?,?,?,?,?,?,?,?)";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
@@ -358,8 +358,8 @@ public class ProductDAO {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if (p.getCategory().getName().equals("ROM")) {
-            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, romid = ?, unitid = ? , categoryid = ? , brandid = ?, sku = ?, ramid = ?, chipid = ?, modelid = ?  WHERE productid = ?";
+        } else if (p.getCategory().getName().equals("Storage")) {
+            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, romid = ?, unitid = ? , categoryid = ? , brandid = ?, sku = ?, ramid = ?, chipid = ?, modelid = ?  WHERE productid = ? ";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
                 ps.setString(2, p.getDescription());
@@ -382,7 +382,7 @@ public class ProductDAO {
         } else {
             String sql = "UPDATE products SET name=?, description=?, img_url=?, isactive=?, "
                     + "ramid=?, romid=?, chipid=?, brandid=?, modelid=?, unitid=?, categoryid=?"
-                    + "WHERE productid=?";
+                    + "WHERE productid = ?";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, p.getName());
                 ps.setString(2, p.getDescription());
@@ -753,24 +753,9 @@ public class ProductDAO {
 
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
-//        RomDAO rom = new RomDAO();
-//        for (Product i : dao.getProductList()) {
-//            System.out.println(i.getImgUrl());
-//        }
-//        Product p1 = dao.getProductFromId(18);
-//        p1.setDescription("con mèo kêu");
-//        p1.setRom(rom.getRomById(2));
-//        dao.updateProduct(p1);
-//        List<Product> testSort = dao.searchProduct(null, -1, -1, -1, "brandAZ", 10, 1);
-//        for (Product p2 : testSort) {
-//            System.out.println(p2);
-//        }
-//
-//        List<ProductItem> testItem = dao.getProductItems(1);
-//        for (ProductItem pi : testItem) {
-//            System.out.println(pi);
-//        }
-        String sku = dao.getSKUFromId(1);
-        System.out.println(sku);
+        Product i = dao.getProductFromSKU("R.TC.");
+        i.setName("ROM SSD 512GB");
+        dao.updateProduct(i);
+        System.out.println(i);
     }
 }

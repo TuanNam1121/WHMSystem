@@ -90,7 +90,7 @@ public class ImportHistory extends HttpServlet {
         HttpSession session = request.getSession();
         List<User> userImporterList = user.getAllUsersHandleGoodReceipt();
         List<Supplier> supplier = supplierDAO.getAllSuppliers();
-        List<GoodReceipt> list = gr.searchProduct(keyword, code, supplierId, processedBy, sortBy);
+        List<GoodReceipt> list = gr.searchProduct(keyword, code, supplierId, processedBy, sortBy, page, pageSize);
         
         int totalGoodReceipt = gr.countImportHistory(keyword, code, supplierId, processedBy);
         int totalPages = Math.max(1, (int) Math.ceil((double) totalGoodReceipt / pageSize));

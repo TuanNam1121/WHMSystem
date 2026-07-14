@@ -103,7 +103,7 @@
                                     <tbody>
                                         <c:forEach items="${customers}" var="c">
                                             <tr>
-                                                <td>${c.id}</td>
+                                                <td>C-${c.id}</td>
                                                 <td><a href="${pageContext.request.contextPath}/ViewCustomer?id=${c.id}">${c.name}</a></td>
                                                 <td>${c.phone}</td>
                                                 <c:if test="${sessionScope.userPermissions.contains('UPDATE_CUSTOMER')}">

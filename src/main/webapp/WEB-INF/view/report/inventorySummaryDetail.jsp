@@ -136,7 +136,6 @@
 
                     <form action="${pageContext.request.contextPath}/inventorySummaryDetail" method="get">
                         <input type="hidden" name="productId" value="${product.productId}">
-                        <!-- Filter Section -->
                         <div class="card mb-3" id="filter_inputs" style="display: block !important;">
                             <div class="card-body pb-0">
                                 <div class="row">
@@ -171,8 +170,8 @@
                                                     <label>Movement Type</label>
                                                     <select name="typeFilter" class="select">
                                                         <option value="ALL" ${typeFilter == 'ALL' ? 'selected' : ''}>All</option>
-                                                        <option value="INCREASED" ${typeFilter == 'INCREASED' ? 'selected' : ''}>Import (Increased)</option>
-                                                        <option value="DECREASED" ${typeFilter == 'DECREASED' ? 'selected' : ''}>Export (Decreased)</option>
+                                                        <option value="INCREASED" ${typeFilter == 'INCREASED' ? 'selected' : ''}>Import</option>
+                                                        <option value="DECREASED" ${typeFilter == 'DECREASED' ? 'selected' : ''}>Export</option>
                                                     </select>
                                                 </div>
                                             </div>

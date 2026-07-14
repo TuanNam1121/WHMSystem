@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,8 +61,8 @@ public class StockMovementDAO {
 
     public List<StockMovement> getStockMovementByProductIdAndDateRange(int productId, String fromDateStr, String toDateStr, String typeFilter) {
         StringBuilder sql = new StringBuilder("SELECT * FROM stock_movement WHERE productid = ?");
-        java.time.LocalDate fromDate = com.swp.whmsystem.utils.DateUtils.parseDate(fromDateStr);
-        java.time.LocalDate toDate = com.swp.whmsystem.utils.DateUtils.parseDate(toDateStr);
+        LocalDate fromDate = com.swp.whmsystem.utils.DateUtils.parseDate(fromDateStr);
+        LocalDate toDate = com.swp.whmsystem.utils.DateUtils.parseDate(toDateStr);
 
         if (fromDate != null) {
             sql.append(" AND createdat >= ?");
@@ -154,20 +155,6 @@ public class StockMovementDAO {
         } catch (Exception e) {
         }
         return s;
-    }
-
-    public boolean goodReceiptExists(int id) {
-        String sql = "SELECT id FROM good_receipts WHERE id = ?";
-        try (Connection connection = DBContext.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     public int getOrderIdByExportReceiptId(int exportReceiptId) {

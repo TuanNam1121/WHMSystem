@@ -37,7 +37,7 @@ public class ExportInventorySummary extends HttpServlet {
         String toDate = request.getParameter("toDate");
 
         InventorySummaryDAO dao = new InventorySummaryDAO();
-        List<InventorySummary> reportList = dao.showAll(fromDate, toDate, keyword, 1, Integer.MAX_VALUE);
+        List<InventorySummary> reportList = dao.forReport(fromDate, toDate, keyword, 1, Integer.MAX_VALUE, null, null);
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=Inventory_Summary_Report.xlsx");

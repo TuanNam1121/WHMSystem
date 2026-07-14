@@ -83,7 +83,7 @@
                                     </div>
 
                                     <div class="col-lg-12">
-                                        <a href="${pageContext.request.contextPath}/UpdateCustomer?id=${customer.id}" class="btn btn-cancel">UPDATE</a>
+                                        <a href="${pageContext.request.contextPath}/UpdateCustomer?id=${customer.id}" class="btn btn-submit">UPDATE</a>
                                         <a href="${pageContext.request.contextPath}/CustomerList" class="btn btn-cancel">DONE</a>
                                     </div>
                                 </div>

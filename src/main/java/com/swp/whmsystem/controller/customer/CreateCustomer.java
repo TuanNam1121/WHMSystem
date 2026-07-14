@@ -82,7 +82,7 @@ public class CreateCustomer extends HttpServlet {
         try{
             int phone = Integer.parseInt(customerPhone);
         }catch(Exception e){
-            request.setAttribute("error", "Phone must be degit");
+            request.setAttribute("error", "Phone must be digit");
             request.getRequestDispatcher("WEB-INF/view/customer/createCustomer.jsp").forward(request, response);
             return;
         }

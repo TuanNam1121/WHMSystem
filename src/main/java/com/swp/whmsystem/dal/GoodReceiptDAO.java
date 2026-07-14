@@ -275,6 +275,9 @@ public class GoodReceiptDAO {
                     sql.append(" order by created_at desc");
             }
         }
+        else{
+            sql.append(" order by created_at desc");
+        }
         
         int offset = pageSize * (page - 1);
         sql.append(" limit ? offset ? ");

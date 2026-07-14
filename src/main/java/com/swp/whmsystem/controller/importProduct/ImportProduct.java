@@ -184,7 +184,7 @@ public class ImportProduct extends HttpServlet {
                 return;
             }
             else {
-                handleImport(purchaseRequestId, handler, invoiceNumber, filledList);
+                handleImport(purchaseRequestId, handler, filledList);
             }
             // clear
             session.removeAttribute("list");
@@ -204,7 +204,7 @@ public class ImportProduct extends HttpServlet {
         }
     }
 
-    void handleImport(Integer prId, int handler, String invoiceNumber, List<ProductItemRowDTO> productItemList) throws SQLException {
+    void handleImport(Integer prId, int handler, List<ProductItemRowDTO> productItemList) throws SQLException {
         PurchaseRequestDAO pr = new PurchaseRequestDAO();
         PurchaseItemDAO purchaseItemDAO = new PurchaseItemDAO();
         GoodReceiptDAO gr = new GoodReceiptDAO();

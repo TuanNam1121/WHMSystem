@@ -160,9 +160,6 @@ public class ImportExcelServlet extends HttpServlet {
                 return;
             }
 
-            // Get invoice number
-            String invoiceNumber = request.getParameter("invoiceNumber");
-
             // Get uploaded file
             Part filePart = request.getPart("excelFile");
             if (filePart == null || filePart.getSize() == 0) {
@@ -291,7 +288,7 @@ public class ImportExcelServlet extends HttpServlet {
 
             // All good - perform the import using shared logic from ImportProduct
             ImportProduct importProduct = new ImportProduct();
-            importProduct.handleImport(purchaseRequestId, handler, invoiceNumber, filledList);
+            importProduct.handleImport(purchaseRequestId, handler, filledList);
 
             // Clear session attributes
             session.removeAttribute("list");

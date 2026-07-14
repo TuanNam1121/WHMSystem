@@ -108,7 +108,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </form>
+                        
 
                         <div class="table-responsive">
                             <table class="table">
@@ -161,6 +161,7 @@
                             </table>
                         </div>
                         <jsp:include page="/WEB-INF/common/pagination.jsp"/>
+                        </form>
                     </div>
                 </div>
 

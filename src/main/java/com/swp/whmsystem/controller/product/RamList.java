@@ -18,7 +18,7 @@ public class RamList extends HttpServlet {
     private RamDAO ramDao;
 
     @Override
-    public void init() {
+    public void init() {             
         ramDao = new RamDAO();
     }
 

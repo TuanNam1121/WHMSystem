@@ -239,15 +239,15 @@
                                     </div>
                                 </div>
 
-                                <c:if test="${purchaseRequest.status == 'New' || purchaseRequest.status == 'NEW'}">
-                                    <form id="action-form" action="managerPurchaseRequestDetail" method="POST">
-                                        <input type="hidden" name="purchaseRequestId" value="${purchaseRequest.id}">
-                                        <div class="row mt-3">
-                                            <div class="col-lg-12 d-flex justify-content-between">
-                                                <a href="managerPurchaseRequestList" class="btn btn-cancel"
-                                                    id="btn-cancel-action" style="padding: 10px 30px;">
-                                                    <i class="fas fa-times me-2"></i>Cancel
-                                                </a>
+                                <form id="action-form" action="managerPurchaseRequestDetail" method="POST">
+                                    <input type="hidden" name="purchaseRequestId" value="${purchaseRequest.id}">
+                                    <div class="row mt-3">
+                                        <div class="col-lg-12 d-flex justify-content-between">
+                                            <a href="managerPurchaseRequestList" class="btn btn-cancel"
+                                                id="btn-cancel-action" style="padding: 10px 30px;">
+                                                <i class="fas fa-times me-2"></i>Cancel
+                                            </a>
+                                            <c:if test="${purchaseRequest.status == 'New' || purchaseRequest.status == 'NEW'}">
                                                 <div>
                                                     <button type="submit" name="buttonSubmit" value="Reject"
                                                         class="btn btn-danger me-2" id="btn-reject-request"
@@ -260,10 +260,10 @@
                                                         <i class="fas fa-check me-2"></i>Accept
                                                     </button>
                                                 </div>
-                                            </div>
+                                            </c:if>
                                         </div>
-                                    </form>
-                                </c:if>
+                                    </div>
+                                </form>
 
                             </div>
                         </div>

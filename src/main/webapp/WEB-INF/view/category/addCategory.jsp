@@ -66,7 +66,7 @@
 
                             <div class="col-lg-12">
                                 <input type="submit" class="btn btn-submit me-2" value="Submit">
-                                <a href="home" class="btn btn-cancel">Cancel</a>
+                                <a href="categoryList" class="btn btn-cancel">Cancel</a>
                             </div>
                         </div>
                     </form>

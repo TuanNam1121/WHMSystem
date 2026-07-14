@@ -109,7 +109,7 @@ public class UpdatePurchaseRequest extends HttpServlet {
                 pr.setNote(note);
                 prDAO.updatePurchaseRequest(pr);
 
-                // Validate items first before deleting existing ones
+                // Validate
                 int i = 0;
                 boolean hasItems = false;
                 while (true) {

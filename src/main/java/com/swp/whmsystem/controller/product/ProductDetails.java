@@ -25,6 +25,7 @@ public class ProductDetails extends HttpServlet {
         HttpSession session = request.getSession();
         ProductDAO productDAO = new ProductDAO();
         List<ProductItem> productItemList = new ArrayList<>();
+
         String productIdRaw = request.getParameter("productId");
         String serial = request.getParameter("serial");
         String date = request.getParameter("date");

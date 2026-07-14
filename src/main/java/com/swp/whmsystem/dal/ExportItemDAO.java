@@ -117,8 +117,10 @@ public class ExportItemDAO {
                                 + "updatedat = CURRENT_TIMESTAMP, completedat = CURRENT_TIMESTAMP "
                                 + "WHERE id = ?";
                 String insertExportReceiptSql =
-                        "INSERT INTO export_receipts(code, order_id, status, created_by, exported_by, exported_at) "
-                                + "VALUES (?, ?, 'COMPLETED', ?, ?, CURRENT_TIMESTAMP)";
+                        "INSERT INTO export_receipts(order_id, status, created_by, exported_by, exported_at) "
+                                + "VALUES (?, 'COMPLETED', ?, ?, CURRENT_TIMESTAMP)";
+                String updateExportReceiptCodeSql =
+                        "UPDATE export_receipts SET code = ? WHERE id = ?";
                 String insertExportReceiptDetailSql =
                         "INSERT INTO export_receipt_details(export_receipt_id, order_item_id, product_id, quantity, unit_price) "
                                 + "VALUES (?, ?, ?, ?, ?)";
@@ -134,7 +136,6 @@ public class ExportItemDAO {
                                 + "VALUES (?, ?, 'DECREASED', 'EXPORT', ?)";
 
                 int exportReceiptId;
-                String exportReceiptCode = "ER-" + orderId + "-" + System.currentTimeMillis();
 
                 try (PreparedStatement updateOrderStatus =
                              conn.prepareStatement(updateOrderStatusSql)) {
@@ -145,10 +146,9 @@ public class ExportItemDAO {
 
                 try (PreparedStatement insertExportReceipt =
                              conn.prepareStatement(insertExportReceiptSql, Statement.RETURN_GENERATED_KEYS)) {
-                    insertExportReceipt.setString(1, exportReceiptCode);
-                    insertExportReceipt.setInt(2, orderId);
+                    insertExportReceipt.setInt(1, orderId);
+                    insertExportReceipt.setInt(2, userId);
                     insertExportReceipt.setInt(3, userId);
-                    insertExportReceipt.setInt(4, userId);
                     insertExportReceipt.executeUpdate();
 
                     try (ResultSet rs = insertExportReceipt.getGeneratedKeys()) {
@@ -157,6 +157,13 @@ public class ExportItemDAO {
                         }
                         exportReceiptId = rs.getInt(1);
                     }
+                }
+
+                try (PreparedStatement updateExportReceiptCode =
+                             conn.prepareStatement(updateExportReceiptCodeSql)) {
+                    updateExportReceiptCode.setString(1, "ER-" + exportReceiptId);
+                    updateExportReceiptCode.setInt(2, exportReceiptId);
+                    updateExportReceiptCode.executeUpdate();
                 }
 
                 List<Integer> productItemIds = new ArrayList<>();
@@ -310,8 +317,10 @@ public class ExportItemDAO {
                                 + "JOIN order_items oi ON pi.product_id = oi.productid "
                                 + "WHERE pi.serial = ? AND p.sku = ? AND oi.orderid = ?";
                 String insertExportReceiptSql =
-                        "INSERT INTO export_receipts(code, order_id, status, created_by) "
-                                + "VALUES (?, ?, 'DRAFT', ?)";
+                        "INSERT INTO export_receipts(order_id, status, created_by) "
+                                + "VALUES (?, 'DRAFT', ?)";
+                String updateExportReceiptCodeSql =
+                        "UPDATE export_receipts SET code = ? WHERE id = ?";
                 String insertExportReceiptDetailSql =
                         "INSERT INTO export_receipt_details(export_receipt_id, order_item_id, product_id, quantity, unit_price) "
                                 + "VALUES (?, ?, ?, ?, ?)";
@@ -320,13 +329,11 @@ public class ExportItemDAO {
                                 + "VALUES (?, ?)";
 
                 int exportReceiptId;
-                String exportReceiptCode = "ER-" + orderId;
 
                 try (PreparedStatement insertExportReceipt =
                              conn.prepareStatement(insertExportReceiptSql, Statement.RETURN_GENERATED_KEYS)) {
-                    insertExportReceipt.setString(1, exportReceiptCode);
-                    insertExportReceipt.setInt(2, orderId);
-                    insertExportReceipt.setInt(3, userId);
+                    insertExportReceipt.setInt(1, orderId);
+                    insertExportReceipt.setInt(2, userId);
                     insertExportReceipt.executeUpdate();
 
                     try (ResultSet rs = insertExportReceipt.getGeneratedKeys()) {
@@ -335,6 +342,13 @@ public class ExportItemDAO {
                         }
                         exportReceiptId = rs.getInt(1);
                     }
+                }
+
+                try (PreparedStatement updateExportReceiptCode =
+                             conn.prepareStatement(updateExportReceiptCodeSql)) {
+                    updateExportReceiptCode.setString(1, "ER-" + exportReceiptId);
+                    updateExportReceiptCode.setInt(2, exportReceiptId);
+                    updateExportReceiptCode.executeUpdate();
                 }
 
                 List<Integer> productItemIds = new ArrayList<>();

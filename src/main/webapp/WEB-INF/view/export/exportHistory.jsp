@@ -76,7 +76,7 @@
                                                 <div class="form-group">
                                                     <div class="input-groupicon">
                                                         <input type="text" name="fromDate" value="${param.fromDate}"
-                                                               placeholder="DD-MM-YYYY" class="datetimepicker">
+                                                               placeholder="From Date" class="datetimepicker">
                                                         <div class="addonset">
                                                             <img src="assets/img/icons/calendars.svg" alt="calendar">
                                                         </div>
@@ -88,7 +88,7 @@
                                                 <div class="form-group">
                                                     <div class="input-groupicon">
                                                         <input type="text" name="toDate" value="${param.toDate}"
-                                                               placeholder="DD-MM-YYYY" class="datetimepicker">
+                                                               placeholder="To Date" class="datetimepicker">
                                                         <div class="addonset">
                                                             <img src="assets/img/icons/calendars.svg" alt="calendar">
                                                         </div>

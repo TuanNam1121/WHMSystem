@@ -97,8 +97,8 @@ public class AddProduct extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        String sku = request.getParameter("sku");
-        String productName = request.getParameter("productName");
+        String sku = request.getParameter("sku").trim();
+        String productName = request.getParameter("productName").trim();
         String categoryId = request.getParameter("category");
         String brandId = request.getParameter("brand");
         String unitr = request.getParameter("unit");

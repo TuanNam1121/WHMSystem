@@ -753,9 +753,7 @@ public class ProductDAO {
 
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
-        Product i = dao.getProductFromSKU("R.TC.");
-        i.setName("ROM SSD 512GB");
-        dao.updateProduct(i);
+        Product i = dao.getProductFromSKU("7800X3D");
         System.out.println(i);
     }
 }

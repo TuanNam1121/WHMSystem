@@ -41,14 +41,18 @@ public class UserDAO {
         String sql = "Select * from users where roleid != 1";
         List<User> list = new ArrayList<>();
         try (Connection conn = DBContext.getConnection()) {
-            if (keyword != null && !keyword.isBlank()) sql += " AND fullname like '%" + keyword + "%' ";
+            if (keyword != null && !keyword.isBlank()) {
+                sql += " AND fullname like '%" + keyword + "%' ";
+            }
             if (roleId != null && !roleId.isBlank()) {
                 int roleIdParse = Integer.parseInt(roleId);
                 sql += " AND roleid = " + roleIdParse + " ";
             }
             if (sortBy != null && acceptedSortField.contains(sortBy)) {
                 sql += " ORDER BY " + sortBy;
-                if (sortBy.equals("isactive")) sql += " DESC";
+                if (sortBy.equals("isactive")) {
+                    sql += " DESC";
+                }
             }
 
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -69,7 +73,7 @@ public class UserDAO {
         String sql = "Select * from users where roleid != 1 ";
         List<User> list = new ArrayList<>();
         try (Connection conn = DBContext.getConnection()) {
-            if (keyword != null && !keyword.isBlank()){
+            if (keyword != null && !keyword.isBlank()) {
                 sql += "and (";
                 sql += " fullname like '%" + keyword + "%' ";
                 sql += " or username like '%" + keyword + "%') ";
@@ -80,7 +84,11 @@ public class UserDAO {
             }
             if (sortBy != null && acceptedSortField.contains(sortBy)) {
                 sql += " ORDER BY " + sortBy;
-                if (sortBy.equals("isactive")) sql += " DESC";
+                if (sortBy.equals("isactive")) {
+                    sql += " DESC";
+                }
+            } else {
+                sql += " ORDER BY userid ASC ";
             }
             sql += " LIMIT ? OFFSET ?";
 
@@ -102,7 +110,9 @@ public class UserDAO {
     public int countUsers(String keyword, String roleId) {
         String sql = "Select count(*) from users where roleid != 1";
         try (Connection conn = DBContext.getConnection()) {
-            if (keyword != null && !keyword.isBlank()) sql += " AND fullname like '%" + keyword + "%' ";
+            if (keyword != null && !keyword.isBlank()) {
+                sql += " AND fullname like '%" + keyword + "%' ";
+            }
             if (roleId != null && !roleId.isBlank()) {
                 int roleIdParse = Integer.parseInt(roleId);
                 sql += " AND roleid = " + roleIdParse + " ";
@@ -117,7 +127,7 @@ public class UserDAO {
         }
         return 0;
     }
-    
+
     public List<User> getAllUsersHandleGoodReceipt() {
         String sql = "select u.* from good_receipts gr join users u on gr.processedby = u.userid group by u.userid";
         List<User> list = new ArrayList<>();
@@ -134,8 +144,7 @@ public class UserDAO {
         }
         return null;
     }
-    
-    
+
     public String getUserNameById(int userId) {
         String sql = "Select fullname from users where userid = ?";
         try (Connection conn = DBContext.getConnection()) {
@@ -216,7 +225,7 @@ public class UserDAO {
         return i;
     }
 
-    public boolean addNewUser(User user) {
+    public String addNewUser(User user) {
         String sql = "Insert into users(username, passwordhash, roleid, phone, email, gender, fullname, isactive, firstname, lastname)"
                 + "values (?,?,?,?,?,?,?,?,?,?)";
         try (Connection conn = DBContext.getConnection()) {
@@ -232,11 +241,13 @@ public class UserDAO {
             ps.setString(9, user.getFirstname());
             ps.setString(10, user.getLastname());
 
-            return ps.executeUpdate() == 1;
+            if (ps.executeUpdate() == 1) {
+                return "true";
+            }
         } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
+            return ex.getMessage();
         }
-        return false;
+        return "false";
     }
 
     public boolean existsByUsername(String username) {
@@ -264,7 +275,6 @@ public class UserDAO {
         }
         return false;
     }
-
 
     public boolean existsByUsernameExceptUserId(String username, int userId) {
         String sql = "SELECT 1 FROM users WHERE LOWER(username) = LOWER(?) AND userid != ?";
@@ -468,12 +478,8 @@ public class UserDAO {
 
     public static void main(String[] args) {
         UserDAO user = new UserDAO();
-
-        List<User> list = user.searchUserPaginated("duc", null, null, 0, 10);
-        for (User i : list) {
-            System.out.println(i.toString());
+        for(User i : user.searchUserPaginated("", "", "", 0, 10)){ 
+            System.out.println(i);
         }
-
-        
     }
 }

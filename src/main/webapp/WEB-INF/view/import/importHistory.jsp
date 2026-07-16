@@ -152,7 +152,7 @@
                                             <td>${i.completedAt}</td>
                                             <td>
                                                 <a class="me-3" href="ImportHistoryDetail?receiptId=${i.receiptId}">
-                                                    <img src="assets/img/icons/edit.svg" alt="img">
+                                                    <img src="assets/img/icons/eye.svg" alt="img">
                                                 </a>
                                             </td>
                                         </tr>

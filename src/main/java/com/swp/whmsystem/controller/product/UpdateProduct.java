@@ -173,6 +173,7 @@ public class UpdateProduct extends HttpServlet {
 
         ProductDAO productDao = new ProductDAO();
         Product product = productDao.getProductFromId(Integer.parseInt(productid));
+        boolean hasTransaction = ProductValidation.existTransaction(product.getProductId());
         String oldCate = product.getCategory().getName();
 
         if (!productName.equals(product.getName())) {
@@ -187,7 +188,7 @@ public class UpdateProduct extends HttpServlet {
 
 
         // Chỉ cho phép sửa các field này khi chưa có transaction
-        if (ProductValidation.existTransaction(product.getProductId())) {
+        if (!hasTransaction) {
             if (unit != null) {
                 product.setUnit(unit);
             }
@@ -244,7 +245,7 @@ public class UpdateProduct extends HttpServlet {
         request.setAttribute("mode", "update");
         request.setAttribute("p", product);
         
-        if (ProductValidation.existTransaction(product.getProductId())) {
+        if (hasTransaction) {
                 request.setAttribute("transactionExist", "v");
         }
         

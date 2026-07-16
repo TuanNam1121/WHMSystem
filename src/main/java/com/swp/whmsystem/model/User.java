@@ -36,7 +36,7 @@ public class User {
         this.isActive = isActive;
     }
 
-    public User(String userName, String fullName, String password, int roleId, String phone, String email, String gender, boolean isActive) {
+    public User(String userName, String fullName, String password, int roleId, String phone, String email, String gender, boolean isActive, String firstName, String lastName) {
         this.userName = userName;
         this.fullName = fullName;
         this.password = password;
@@ -44,6 +44,8 @@ public class User {
         this.phone = phone;
         this.email = email;
         this.gender = gender;
+        this.firstname = firstName;
+        this.lastname = lastName;
         this.isActive = isActive;
     }
 

@@ -101,6 +101,7 @@ public class AddNewUser extends HttpServlet {
         user.setIsActive(true);
         user.setFirstname(firstname);
         user.setLastname(lastname);
+        user.setPassword(password);
         request.setAttribute("u", user);
 
         if (!errors.isEmpty()) {
@@ -109,13 +110,12 @@ public class AddNewUser extends HttpServlet {
             return;
         }
 
-        user.setPassword(password);
-        user.setRoleId(roleId);
-        if (userDao.addNewUser(user)) {
+        String result = userDao.addNewUser(user);
+        if (result.equals("true")) {
             response.sendRedirect("ViewUserList");
         } else {
-            String message = "Đã xảy ra lỗi !";
-            request.setAttribute("error", message);
+            String message = "Đã xảy ra lỗi ! ";
+            request.setAttribute("error", message + result);
             request.getRequestDispatcher("WEB-INF/view/admin/userDetail.jsp").forward(request, response);
         }
     }

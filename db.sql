@@ -1,15 +1,13 @@
-CREATE DATABASE  IF NOT EXISTS `wms` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */;
-USE `wms`;
--- MySQL dump 10.13  Distrib 8.0.13, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.46, for Win64 (x86_64)
 --
 -- Host: localhost    Database: wms
 -- ------------------------------------------------------
--- Server version	8.0.13
+-- Server version	8.0.46
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
- SET NAMES utf8 ;
+/*!50503 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -23,9 +21,9 @@ USE `wms`;
 
 DROP TABLE IF EXISTS `brands`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `brands` (
-  `brandid` int(11) NOT NULL AUTO_INCREMENT,
+  `brandid` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `img_url` varchar(500) DEFAULT NULL,
   `description` text,
@@ -51,9 +49,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `categories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `categories` (
-  `categoryid` int(11) NOT NULL AUTO_INCREMENT,
+  `categoryid` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `description` text,
   `isactive` tinyint(1) DEFAULT '1',
@@ -69,7 +67,7 @@ CREATE TABLE `categories` (
 
 LOCK TABLES `categories` WRITE;
 /*!40000 ALTER TABLE `categories` DISABLE KEYS */;
-INSERT INTO `categories` VALUES (1,'Laptop','Laptop devices',1,'2026-05-27 11:27:22','2026-05-27 11:27:22'),(2,'RAM','Memory module',1,'2026-05-27 11:27:22','2026-05-27 11:27:22'),(3,'Storage','Storage',1,'2026-05-27 11:27:22','2026-07-13 20:56:56'),(4,'Laptop Gaming','Bao gồm các sản phẩm laptop liên quan chuyên cho gaming ',1,'2026-06-01 20:32:50','2026-06-01 20:32:50'),(6,'Chip',' ',1,'2026-06-01 23:59:57','2026-06-01 23:59:57'),(7,'Laptop Work','',1,'2026-06-02 11:17:34','2026-06-02 11:17:52'),(8,'Laptop A','a',1,'2026-06-02 12:30:12','2026-06-02 12:34:10');
+INSERT INTO `categories` VALUES (1,'Laptop','Laptop devices',1,'2026-05-27 11:27:22','2026-05-27 11:27:22'),(2,'RAM','Memory module',1,'2026-05-27 11:27:22','2026-05-27 11:27:22'),(3,'ROM','Storage',0,'2026-05-27 11:27:22','2026-06-02 12:30:23'),(4,'Laptop Gaming','Bao gồm các sản phẩm laptop liên quan chuyên cho gaming ',1,'2026-06-01 20:32:50','2026-06-01 20:32:50'),(6,'Chip',' ',1,'2026-06-01 23:59:57','2026-06-01 23:59:57'),(7,'Laptop Work','',1,'2026-06-02 11:17:34','2026-06-02 11:17:52'),(8,'Laptop A','a',1,'2026-06-02 12:30:12','2026-06-02 12:34:10');
 /*!40000 ALTER TABLE `categories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -79,9 +77,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `chips`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `chips` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `isactive` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
@@ -105,9 +103,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `customers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `customers` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(150) NOT NULL,
   `phone` varchar(20) NOT NULL,
   PRIMARY KEY (`id`)
@@ -125,18 +123,46 @@ INSERT INTO `customers` VALUES (1,'Nguyen Van A','0988888888'),(2,'Tran Thi B','
 UNLOCK TABLES;
 
 --
+-- Table structure for table `daily_stock_balance`
+--
+
+DROP TABLE IF EXISTS `daily_stock_balance`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `daily_stock_balance` (
+  `date` date NOT NULL,
+  `product_id` int NOT NULL,
+  `opening_balance` int NOT NULL DEFAULT '0',
+  `closing_balance` int NOT NULL DEFAULT '0',
+  `cumulative_import` int NOT NULL DEFAULT '0',
+  `cumulative_export` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`date`,`product_id`),
+  KEY `idx_dsb_product_date` (`product_id`,`date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `daily_stock_balance`
+--
+
+LOCK TABLES `daily_stock_balance` WRITE;
+/*!40000 ALTER TABLE `daily_stock_balance` DISABLE KEYS */;
+/*!40000 ALTER TABLE `daily_stock_balance` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `export_receipt_details`
 --
 
 DROP TABLE IF EXISTS `export_receipt_details`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `export_receipt_details` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `export_receipt_id` int(11) NOT NULL,
-  `order_item_id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `export_receipt_id` int NOT NULL,
+  `order_item_id` int NOT NULL,
+  `product_id` int NOT NULL,
+  `quantity` int NOT NULL,
   `unit_price` decimal(15,2) DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -146,7 +172,7 @@ CREATE TABLE `export_receipt_details` (
   CONSTRAINT `fk_export_receipt_details_order_item` FOREIGN KEY (`order_item_id`) REFERENCES `order_items` (`id`),
   CONSTRAINT `fk_export_receipt_details_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`productid`),
   CONSTRAINT `fk_export_receipt_details_receipt` FOREIGN KEY (`export_receipt_id`) REFERENCES `export_receipts` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -155,7 +181,6 @@ CREATE TABLE `export_receipt_details` (
 
 LOCK TABLES `export_receipt_details` WRITE;
 /*!40000 ALTER TABLE `export_receipt_details` DISABLE KEYS */;
-INSERT INTO `export_receipt_details` VALUES (1,1,4,23,5,1000000.00,'2026-06-30 20:55:27'),(2,1,3,22,5,2000000.00,'2026-06-30 20:55:27'),(3,2,6,22,5,5000000.00,'2026-06-30 21:08:51'),(4,3,8,3,3,30000000.00,'2026-07-02 18:02:34'),(5,3,7,2,2,30000000.00,'2026-07-02 18:02:34'),(6,4,10,34,2,25000000.00,'2026-07-03 14:16:56'),(7,4,9,38,5,20000000.00,'2026-07-03 14:16:56'),(8,5,13,3,2,20000000.00,'2026-07-03 17:18:40'),(9,5,12,2,2,10000000.00,'2026-07-03 17:18:40'),(11,7,15,2,1,1.00,'2026-07-13 10:16:23'),(13,9,16,38,5,20000000.00,'2026-07-13 20:47:24'),(14,10,14,31,2,500000.00,'2026-07-13 20:58:35');
 /*!40000 ALTER TABLE `export_receipt_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -165,18 +190,18 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `export_receipt_serials`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `export_receipt_serials` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `export_receipt_detail_id` int(11) NOT NULL,
-  `product_item_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `export_receipt_detail_id` int NOT NULL,
+  `product_item_id` int NOT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `uk_export_receipt_serial_once` (`product_item_id`),
   KEY `export_receipt_detail_id` (`export_receipt_detail_id`),
   CONSTRAINT `fk_export_receipt_serials_detail` FOREIGN KEY (`export_receipt_detail_id`) REFERENCES `export_receipt_details` (`id`),
   CONSTRAINT `fk_export_receipt_serials_product_item` FOREIGN KEY (`product_item_id`) REFERENCES `product_items` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -185,7 +210,6 @@ CREATE TABLE `export_receipt_serials` (
 
 LOCK TABLES `export_receipt_serials` WRITE;
 /*!40000 ALTER TABLE `export_receipt_serials` DISABLE KEYS */;
-INSERT INTO `export_receipt_serials` VALUES (1,1,26,'2026-06-30 20:55:27'),(2,1,27,'2026-06-30 20:55:27'),(3,1,28,'2026-06-30 20:55:27'),(4,1,29,'2026-06-30 20:55:27'),(5,1,30,'2026-06-30 20:55:27'),(6,2,40,'2026-06-30 20:55:27'),(7,2,25,'2026-06-30 20:55:27'),(8,2,23,'2026-06-30 20:55:27'),(9,2,24,'2026-06-30 20:55:27'),(10,2,21,'2026-06-30 20:55:27'),(11,3,39,'2026-06-30 21:08:51'),(12,3,38,'2026-06-30 21:08:51'),(13,3,37,'2026-06-30 21:08:51'),(14,3,36,'2026-06-30 21:08:51'),(15,3,22,'2026-06-30 21:08:51'),(16,4,65,'2026-07-02 18:02:34'),(17,4,64,'2026-07-02 18:02:34'),(18,4,63,'2026-07-02 18:02:34'),(19,5,62,'2026-07-02 18:02:34'),(20,5,58,'2026-07-02 18:02:34'),(21,6,15,'2026-07-03 14:16:56'),(22,6,12,'2026-07-03 14:16:56'),(23,7,80,'2026-07-03 14:16:56'),(24,7,6,'2026-07-03 14:16:56'),(25,7,81,'2026-07-03 14:16:56'),(26,7,68,'2026-07-03 14:16:56'),(27,7,2,'2026-07-03 14:16:56'),(28,8,66,'2026-07-03 17:18:40'),(29,8,67,'2026-07-03 17:18:40'),(30,9,60,'2026-07-03 17:18:40'),(31,9,59,'2026-07-03 17:18:40'),(33,11,62,'2026-07-13 10:16:23'),(39,13,78,'2026-07-13 20:47:24'),(40,13,7,'2026-07-13 20:47:24'),(41,13,5,'2026-07-13 20:47:24'),(42,13,72,'2026-07-13 20:47:24'),(43,13,74,'2026-07-13 20:47:24'),(44,14,56,'2026-07-13 20:58:35'),(45,14,54,'2026-07-13 20:58:35');
 /*!40000 ALTER TABLE `export_receipt_serials` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -195,14 +219,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `export_receipts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `export_receipts` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `order_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `order_id` int NOT NULL,
   `status` enum('DRAFT','COMPLETED') NOT NULL DEFAULT 'DRAFT',
   `note` text,
-  `created_by` int(11) NOT NULL,
-  `exported_by` int(11) DEFAULT NULL,
+  `created_by` int NOT NULL,
+  `exported_by` int DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `exported_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -215,7 +239,7 @@ CREATE TABLE `export_receipts` (
   CONSTRAINT `fk_export_receipts_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`userid`),
   CONSTRAINT `fk_export_receipts_exported_by` FOREIGN KEY (`exported_by`) REFERENCES `users` (`userid`),
   CONSTRAINT `fk_export_receipts_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -224,7 +248,6 @@ CREATE TABLE `export_receipts` (
 
 LOCK TABLES `export_receipts` WRITE;
 /*!40000 ALTER TABLE `export_receipts` DISABLE KEYS */;
-INSERT INTO `export_receipts` VALUES (1,2,'COMPLETED',NULL,16,16,'2026-06-30 20:55:27','2026-06-30 20:55:27','2026-07-06 14:35:51','ER-1'),(2,1,'COMPLETED',NULL,16,16,'2026-06-30 21:08:51','2026-06-30 21:08:51','2026-07-06 14:35:51','ER-2'),(3,3,'COMPLETED',NULL,16,16,'2026-07-02 18:02:34','2026-07-02 18:02:34','2026-07-06 14:35:51','ER-3'),(4,4,'COMPLETED',NULL,15,15,'2026-07-03 14:16:56','2026-07-03 14:16:56','2026-07-06 14:35:51','ER-4'),(5,6,'COMPLETED',NULL,15,15,'2026-07-03 17:18:40','2026-07-03 17:18:40','2026-07-06 14:35:51','ER-5'),(7,8,'COMPLETED',NULL,15,15,'2026-07-13 10:16:23','2026-07-13 10:16:23','2026-07-14 11:15:09','ER-7'),(9,9,'COMPLETED',NULL,15,15,'2026-07-13 20:47:24','2026-07-13 20:47:24','2026-07-14 11:15:09','ER-9'),(10,7,'COMPLETED',NULL,15,15,'2026-07-13 20:58:35','2026-07-13 20:58:35','2026-07-14 11:15:09','ER-10');
 /*!40000 ALTER TABLE `export_receipts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -234,11 +257,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `good_receipts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `good_receipts` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `purchaserequestid` int(11) NOT NULL,
-  `processedby` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `purchaserequestid` int NOT NULL,
+  `processedby` int NOT NULL,
   `status` enum('NEW','INCOMPLETED','COMPLETED') DEFAULT 'NEW',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -250,7 +273,7 @@ CREATE TABLE `good_receipts` (
   KEY `processedby` (`processedby`),
   CONSTRAINT `good_receipts_ibfk_1` FOREIGN KEY (`purchaserequestid`) REFERENCES `purchase_requests` (`id`),
   CONSTRAINT `good_receipts_ibfk_2` FOREIGN KEY (`processedby`) REFERENCES `users` (`userid`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -259,7 +282,6 @@ CREATE TABLE `good_receipts` (
 
 LOCK TABLES `good_receipts` WRITE;
 /*!40000 ALTER TABLE `good_receipts` DISABLE KEYS */;
-INSERT INTO `good_receipts` VALUES (1,1,16,'COMPLETED','2026-06-30 20:37:22','2026-06-30 20:37:22',NULL,'GR-1'),(2,3,16,'COMPLETED','2026-06-30 20:38:27','2026-06-30 20:38:27',NULL,'GR-2'),(3,2,16,'COMPLETED','2026-06-30 20:40:11','2026-06-30 20:40:11',NULL,'GR-3'),(4,2,16,'COMPLETED','2026-06-30 20:41:15','2026-06-30 20:41:15',NULL,'GR-4'),(5,3,16,'COMPLETED','2026-06-30 21:04:27','2026-06-30 21:04:27',NULL,'GR-5'),(6,6,16,'COMPLETED','2026-06-30 21:07:45','2026-06-30 21:07:45',NULL,'GR-6'),(7,5,15,'COMPLETED','2026-07-03 14:14:49','2026-07-03 14:14:49',NULL,'GR-7'),(8,8,15,'COMPLETED','2026-07-12 22:58:44','2026-07-12 22:58:44',NULL,'GR-8'),(9,10,15,'COMPLETED','2026-07-12 23:48:18','2026-07-12 23:48:18',NULL,'GR-9'),(10,10,15,'COMPLETED','2026-07-12 23:48:50','2026-07-12 23:48:50',NULL,'GR-10'),(11,9,15,'COMPLETED','2026-07-13 20:44:03','2026-07-13 20:44:03',NULL,'GR-11'),(12,7,15,'COMPLETED','2026-07-13 20:44:57','2026-07-13 20:44:57',NULL,'GR-12'),(13,13,15,'COMPLETED','2026-07-14 11:59:25','2026-07-14 11:59:25',NULL,'GR-13');
 /*!40000 ALTER TABLE `good_receipts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -269,19 +291,19 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `good_receipts_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `good_receipts_items` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `goodreceiptid` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
-  `actual_quantity` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `goodreceiptid` int NOT NULL,
+  `product_id` int NOT NULL,
+  `actual_quantity` int NOT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `goodreceiptid` (`goodreceiptid`),
   KEY `product_id` (`product_id`),
   CONSTRAINT `good_receipts_items_ibfk_1` FOREIGN KEY (`goodreceiptid`) REFERENCES `good_receipts` (`id`),
   CONSTRAINT `good_receipts_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`productid`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -290,7 +312,6 @@ CREATE TABLE `good_receipts_items` (
 
 LOCK TABLES `good_receipts_items` WRITE;
 /*!40000 ALTER TABLE `good_receipts_items` DISABLE KEYS */;
-INSERT INTO `good_receipts_items` VALUES (1,1,38,10,'2026-06-30 20:37:22'),(2,2,34,5,'2026-06-30 20:38:28'),(3,2,36,5,'2026-06-30 20:38:28'),(4,3,22,5,'2026-06-30 20:40:11'),(5,3,23,10,'2026-06-30 20:40:11'),(6,4,22,5,'2026-06-30 20:41:15'),(7,5,36,7,'2026-06-30 21:04:27'),(8,6,33,5,'2026-06-30 21:07:45'),(9,6,31,5,'2026-06-30 21:07:45'),(10,7,38,15,'2026-07-03 14:14:49'),(11,7,27,10,'2026-07-03 14:14:50'),(12,8,34,1,'2026-07-12 22:58:44'),(13,8,37,1,'2026-07-12 22:58:44'),(14,9,29,10,'2026-07-12 23:48:18'),(15,10,30,5,'2026-07-12 23:48:50'),(16,11,34,1,'2026-07-13 20:44:03'),(17,11,37,1,'2026-07-13 20:44:03'),(18,12,37,5,'2026-07-13 20:44:57'),(19,12,30,5,'2026-07-13 20:44:57'),(20,13,3,10,'2026-07-14 11:59:25');
 /*!40000 ALTER TABLE `good_receipts_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -300,15 +321,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `inventory`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `inventory` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `product_id` int(11) NOT NULL,
-  `quantity` int(11) DEFAULT '0',
+  `id` int NOT NULL AUTO_INCREMENT,
+  `product_id` int NOT NULL,
+  `quantity` int DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_inventory_product` (`product_id`),
   CONSTRAINT `fk_inventory_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`productid`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -317,7 +338,7 @@ CREATE TABLE `inventory` (
 
 LOCK TABLES `inventory` WRITE;
 /*!40000 ALTER TABLE `inventory` DISABLE KEYS */;
-INSERT INTO `inventory` VALUES (1,1,0),(2,2,1),(3,3,10),(4,4,0),(5,5,0),(6,8,0),(7,10,0),(8,13,0),(9,14,0),(10,15,0),(11,16,0),(12,17,0),(13,18,0),(14,20,0),(15,22,0),(16,23,5),(17,25,0),(18,26,0),(19,27,10),(20,28,0),(21,29,10),(22,30,10),(23,31,3),(24,32,0),(25,33,5),(26,34,5),(27,35,0),(28,36,12),(29,37,7),(30,38,15);
+INSERT INTO `inventory` VALUES (1,1,0),(2,2,0),(3,3,0),(4,4,0),(5,5,0),(6,8,0),(7,10,0),(8,13,0),(9,14,0),(10,15,0),(11,16,0),(12,17,0),(13,18,0),(14,20,0),(15,22,0),(16,23,0),(17,25,0),(18,26,0),(19,27,0),(20,28,0),(21,29,0),(22,30,0),(23,31,0),(24,32,0),(25,33,0),(26,34,0),(27,35,0),(28,36,0),(29,37,0),(30,38,0);
 /*!40000 ALTER TABLE `inventory` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -327,11 +348,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `inventory_audit`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `inventory_audit` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `createdby` int(11) NOT NULL,
-  `processedby` int(11) DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `createdby` int NOT NULL,
+  `processedby` int DEFAULT NULL,
   `status` enum('DRAFT','CANCELLED','SUBMITTED','COMPLETED','PENDING','REJECTED') DEFAULT 'DRAFT',
   `createdat` datetime DEFAULT CURRENT_TIMESTAMP,
   `updatedat` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -342,7 +363,7 @@ CREATE TABLE `inventory_audit` (
   KEY `processedby` (`processedby`),
   CONSTRAINT `inventory_audit_ibfk_1` FOREIGN KEY (`createdby`) REFERENCES `users` (`userid`),
   CONSTRAINT `inventory_audit_ibfk_2` FOREIGN KEY (`processedby`) REFERENCES `users` (`userid`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -351,7 +372,6 @@ CREATE TABLE `inventory_audit` (
 
 LOCK TABLES `inventory_audit` WRITE;
 /*!40000 ALTER TABLE `inventory_audit` DISABLE KEYS */;
-INSERT INTO `inventory_audit` VALUES (1,15,14,'COMPLETED','2026-06-30 21:10:01','2026-07-06 14:35:51','IA-1'),(2,14,NULL,'CANCELLED','2026-07-05 09:23:07','2026-07-06 14:35:51','IA-2'),(3,14,14,'COMPLETED','2026-07-05 09:26:07','2026-07-06 14:35:51','IA-3');
 /*!40000 ALTER TABLE `inventory_audit` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -361,18 +381,18 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `inventory_audit_item_serials`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `inventory_audit_item_serials` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `audit_item_id` int(11) NOT NULL,
-  `product_item_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `audit_item_id` int NOT NULL,
+  `product_item_id` int NOT NULL,
   `type` enum('ADD','DELETE') NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_audit_item_serials_item` (`audit_item_id`),
   KEY `fk_audit_item_serials_product_item` (`product_item_id`),
   CONSTRAINT `fk_audit_item_serials_item` FOREIGN KEY (`audit_item_id`) REFERENCES `inventory_audit_items` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_audit_item_serials_product_item` FOREIGN KEY (`product_item_id`) REFERENCES `product_items` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -381,7 +401,6 @@ CREATE TABLE `inventory_audit_item_serials` (
 
 LOCK TABLES `inventory_audit_item_serials` WRITE;
 /*!40000 ALTER TABLE `inventory_audit_item_serials` DISABLE KEYS */;
-INSERT INTO `inventory_audit_item_serials` VALUES (1,1,58,'ADD'),(2,1,59,'ADD'),(3,1,60,'ADD'),(4,1,61,'ADD'),(5,1,62,'ADD'),(6,2,63,'ADD'),(7,2,64,'ADD'),(8,2,65,'ADD'),(9,2,66,'ADD'),(10,2,67,'ADD'),(11,5,62,'ADD');
 /*!40000 ALTER TABLE `inventory_audit_item_serials` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -391,21 +410,21 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `inventory_audit_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `inventory_audit_items` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `auditid` int(11) NOT NULL,
-  `productid` int(11) NOT NULL,
-  `systemquantity` int(11) DEFAULT NULL,
-  `physicalquantity` int(11) DEFAULT NULL,
-  `discrepancy` int(11) DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `auditid` int NOT NULL,
+  `productid` int NOT NULL,
+  `systemquantity` int DEFAULT NULL,
+  `physicalquantity` int DEFAULT NULL,
+  `discrepancy` int DEFAULT NULL,
   `reasons` text,
   PRIMARY KEY (`id`),
   KEY `auditid` (`auditid`),
   KEY `productid` (`productid`),
   CONSTRAINT `inventory_audit_items_ibfk_1` FOREIGN KEY (`auditid`) REFERENCES `inventory_audit` (`id`),
   CONSTRAINT `inventory_audit_items_ibfk_2` FOREIGN KEY (`productid`) REFERENCES `products` (`productid`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -414,7 +433,6 @@ CREATE TABLE `inventory_audit_items` (
 
 LOCK TABLES `inventory_audit_items` WRITE;
 /*!40000 ALTER TABLE `inventory_audit_items` DISABLE KEYS */;
-INSERT INTO `inventory_audit_items` VALUES (1,1,2,0,5,NULL,'Những hàng tồn trước khi có hệ thống'),(2,1,3,0,5,NULL,'Những hàng tồn trước khi có hệ thống'),(3,2,33,5,0,NULL,''),(4,2,34,3,0,NULL,''),(5,3,2,1,2,NULL,'Thừa một cái do xuất thiếu từ bill ER-3'),(6,3,23,5,5,NULL,'');
 /*!40000 ALTER TABLE `inventory_audit_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -424,11 +442,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `models`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `models` (
-  `modelid` int(11) NOT NULL AUTO_INCREMENT,
+  `modelid` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
-  `brandid` int(11) NOT NULL,
+  `brandid` int NOT NULL,
   `isactive` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`modelid`),
   KEY `brandid` (`brandid`),
@@ -452,19 +470,19 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `order_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `order_items` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `orderid` int(11) NOT NULL,
-  `productid` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `orderid` int NOT NULL,
+  `productid` int NOT NULL,
+  `quantity` int NOT NULL,
   `price` decimal(15,2) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `orderid` (`orderid`),
   KEY `productid` (`productid`),
   CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`orderid`) REFERENCES `orders` (`id`),
   CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`productid`) REFERENCES `products` (`productid`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -473,7 +491,6 @@ CREATE TABLE `order_items` (
 
 LOCK TABLES `order_items` WRITE;
 /*!40000 ALTER TABLE `order_items` DISABLE KEYS */;
-INSERT INTO `order_items` VALUES (3,2,22,5,2000000.00),(4,2,23,5,1000000.00),(6,1,22,5,5000000.00),(7,3,2,2,30000000.00),(8,3,3,3,30000000.00),(9,4,38,5,20000000.00),(10,4,34,2,25000000.00),(11,5,38,2,20000000.00),(12,6,2,2,10000000.00),(13,6,3,2,20000000.00),(14,7,31,2,500000.00),(15,8,2,1,1.00),(16,9,38,5,20000000.00);
 /*!40000 ALTER TABLE `order_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -483,11 +500,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `order_items_product_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `order_items_product_items` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `orderitemid` int(11) NOT NULL,
-  `productitemid` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `orderitemid` int NOT NULL,
+  `productitemid` int NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `orderitemid` (`orderitemid`,`productitemid`),
   KEY `productitemid` (`productitemid`),
@@ -511,9 +528,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `orders`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `orders` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `status` enum('NEW','DOING','COMPLETED','CANCELLED') DEFAULT 'NEW',
   `total_price` decimal(15,2) DEFAULT NULL,
   `note` text,
@@ -521,9 +538,9 @@ CREATE TABLE `orders` (
   `createdat` datetime DEFAULT CURRENT_TIMESTAMP,
   `updatedat` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `completedat` datetime DEFAULT NULL,
-  `createdby` int(11) NOT NULL,
-  `processedby` int(11) DEFAULT NULL,
-  `customer_id` int(11) DEFAULT NULL,
+  `createdby` int NOT NULL,
+  `processedby` int DEFAULT NULL,
+  `customer_id` int DEFAULT NULL,
   `code` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `code` (`code`),
@@ -533,7 +550,7 @@ CREATE TABLE `orders` (
   CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`createdby`) REFERENCES `users` (`userid`),
   CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`processedby`) REFERENCES `users` (`userid`),
   CONSTRAINT `orders_ibfk_3` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -542,7 +559,6 @@ CREATE TABLE `orders` (
 
 LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
-INSERT INTO `orders` VALUES (1,'COMPLETED',25000000.00,'','2026-06-30 20:46:34','2026-06-30 20:46:34','2026-07-06 14:35:51','2026-06-30 21:08:51',16,16,2,'SO-1'),(2,'COMPLETED',15000000.00,'','2026-06-30 20:47:25','2026-06-30 20:47:25','2026-07-06 14:35:51','2026-06-30 20:55:27',16,16,4,'SO-2'),(3,'COMPLETED',150000000.00,'','2026-07-01 13:52:55','2026-07-01 13:52:55','2026-07-06 14:35:51','2026-07-02 18:02:34',16,16,3,'SO-3'),(4,'COMPLETED',150000000.00,'','2026-07-03 14:12:02','2026-07-03 14:12:02','2026-07-06 14:35:51','2026-07-03 14:16:56',16,15,1,'SO-4'),(5,'NEW',40000000.00,'','2026-07-03 16:30:27','2026-07-03 16:30:27','2026-07-06 14:35:51',NULL,16,NULL,1,'SO-5'),(6,'COMPLETED',60000000.00,'','2026-07-03 17:13:12','2026-07-03 17:13:12','2026-07-06 14:35:51','2026-07-03 17:18:40',16,15,1,'SO-6'),(7,'COMPLETED',1000000.00,'','2026-07-04 21:55:48','2026-07-04 21:55:48','2026-07-13 20:58:35','2026-07-13 20:58:35',16,15,1,'SO-7'),(8,'COMPLETED',1.00,'Xuất bù vì lần trước xuất bị thiếu (Đã kiểm kê với phiếu AU-3) với mã serial H5MT8ZN3QK','2026-07-05 15:05:52','2026-07-05 15:05:52','2026-07-13 10:16:23','2026-07-13 10:16:23',16,15,3,'SO-8'),(9,'COMPLETED',100000000.00,'','2026-07-13 20:36:38','2026-07-13 20:36:38','2026-07-13 20:47:24','2026-07-13 20:47:24',16,15,2,'SO-9');
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -552,10 +568,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `password_resets`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `password_resets` (
-  `requestid` int(11) NOT NULL AUTO_INCREMENT,
-  `userid` int(11) NOT NULL,
+  `requestid` int NOT NULL AUTO_INCREMENT,
+  `userid` int NOT NULL,
   `status` enum('NEW','COMPLETED') DEFAULT 'NEW',
   `createdat` datetime DEFAULT CURRENT_TIMESTAMP,
   `completedat` datetime DEFAULT NULL,
@@ -580,9 +596,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `permissions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `permissions` (
-  `permissionid` int(11) NOT NULL AUTO_INCREMENT,
+  `permissionid` int NOT NULL AUTO_INCREMENT,
   `permissionname` varchar(100) NOT NULL,
   `description` text,
   PRIMARY KEY (`permissionid`)
@@ -605,16 +621,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `product_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `product_items` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `serial` varchar(100) DEFAULT NULL,
   `imported_price` decimal(15,2) DEFAULT NULL,
   `export_price` decimal(15,2) DEFAULT NULL,
   `isactive` tinyint(1) DEFAULT '1',
   `imported_at` datetime DEFAULT CURRENT_TIMESTAMP,
-  `product_id` int(11) NOT NULL,
-  `goodreceiptsitemid` int(11) DEFAULT NULL,
+  `product_id` int NOT NULL,
+  `goodreceiptsitemid` int DEFAULT NULL,
   `status` enum('AVAILABLE','UNAVAILABLE','SOLD') DEFAULT 'AVAILABLE',
   PRIMARY KEY (`id`),
   UNIQUE KEY `serial` (`serial`),
@@ -622,7 +638,7 @@ CREATE TABLE `product_items` (
   KEY `goodreceiptsitemid` (`goodreceiptsitemid`),
   CONSTRAINT `product_items_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`productid`),
   CONSTRAINT `product_items_ibfk_2` FOREIGN KEY (`goodreceiptsitemid`) REFERENCES `good_receipts_items` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=132 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -631,7 +647,6 @@ CREATE TABLE `product_items` (
 
 LOCK TABLES `product_items` WRITE;
 /*!40000 ALTER TABLE `product_items` DISABLE KEYS */;
-INSERT INTO `product_items` VALUES (1,'X7M2K9Q4PL',15000000.00,NULL,1,'2026-06-30 20:37:22',38,1,'AVAILABLE'),(2,'8NTR5VY2AZ',15000000.00,20000000.00,1,'2026-06-30 20:37:22',38,1,'SOLD'),(3,'Q1LW8JH6XC',15000000.00,NULL,1,'2026-06-30 20:37:22',38,1,'AVAILABLE'),(4,'P9F2RMT7BK',15000000.00,NULL,1,'2026-06-30 20:37:22',38,1,'AVAILABLE'),(5,'H4ZN8QW1VE',15000000.00,20000000.00,1,'2026-06-30 20:37:22',38,1,'SOLD'),(6,'C6TY3LXP9M',15000000.00,20000000.00,1,'2026-06-30 20:37:22',38,1,'SOLD'),(7,'J8AK5NQ2RD',15000000.00,20000000.00,1,'2026-06-30 20:37:22',38,1,'SOLD'),(8,'W2PV7HMX6L',15000000.00,NULL,1,'2026-06-30 20:37:22',38,1,'AVAILABLE'),(9,'M9QC4TZ8FN',15000000.00,NULL,1,'2026-06-30 20:37:22',38,1,'AVAILABLE'),(10,'R5XJ1KVL7P',15000000.00,NULL,1,'2026-06-30 20:37:22',38,1,'AVAILABLE'),(11,'G5LP8YQ3MX',20000000.00,NULL,1,'2026-06-30 20:38:28',34,2,'AVAILABLE'),(12,'D7KR2VN6JF',20000000.00,25000000.00,1,'2026-06-30 20:38:28',34,2,'SOLD'),(13,'X1MT9QW5BZ',20000000.00,NULL,1,'2026-06-30 20:38:28',34,2,'AVAILABLE'),(14,'R8YL4PH2NC',20000000.00,NULL,1,'2026-06-30 20:38:28',34,2,'AVAILABLE'),(15,'F3QV7KX9TD',20000000.00,25000000.00,1,'2026-06-30 20:38:28',34,2,'SOLD'),(16,'K8WQ3MZ7RT',11150000.00,NULL,1,'2026-06-30 20:38:28',36,3,'AVAILABLE'),(17,'P4XN9LJ2VC',11150000.00,NULL,1,'2026-06-30 20:38:28',36,3,'AVAILABLE'),(18,'T7HB5QK8YA',11150000.00,NULL,1,'2026-06-30 20:38:28',36,3,'AVAILABLE'),(19,'N2RM6XF9PL',11150000.00,NULL,1,'2026-06-30 20:38:28',36,3,'AVAILABLE'),(20,'V9CZ4TW1KH',11150000.00,NULL,1,'2026-06-30 20:38:28',36,3,'AVAILABLE'),(21,'C9PV3QK7LX',250000.00,2000000.00,1,'2026-06-30 20:40:11',22,4,'SOLD'),(22,'Y5RM8HN2WD',250000.00,5000000.00,1,'2026-06-30 20:40:11',22,4,'SOLD'),(23,'L1XT6ZQ4PF',250000.00,2000000.00,1,'2026-06-30 20:40:11',22,4,'SOLD'),(24,'V7KC9MJ3RA',250000.00,2000000.00,1,'2026-06-30 20:40:11',22,4,'SOLD'),(25,'F2NW5YP8TH',250000.00,2000000.00,1,'2026-06-30 20:40:11',22,4,'SOLD'),(26,'A7MX9QK2LP',150000.00,1000000.00,1,'2026-06-30 20:40:11',23,5,'SOLD'),(27,'R5VT8NWC3H',150000.00,1000000.00,1,'2026-06-30 20:40:11',23,5,'SOLD'),(28,'K1JZ6PY4XM',150000.00,1000000.00,1,'2026-06-30 20:40:11',23,5,'SOLD'),(29,'T9LQ2RB7VF',150000.00,1000000.00,1,'2026-06-30 20:40:11',23,5,'SOLD'),(30,'H3CN8MW5PK',150000.00,1000000.00,1,'2026-06-30 20:40:11',23,5,'SOLD'),(31,'X6YD1KT9QJ',150000.00,NULL,1,'2026-06-30 20:40:11',23,5,'AVAILABLE'),(32,'P4ZG7HV2RL',150000.00,NULL,1,'2026-06-30 20:40:11',23,5,'AVAILABLE'),(33,'N8WF5XM1TC',150000.00,NULL,1,'2026-06-30 20:40:11',23,5,'AVAILABLE'),(34,'Q2KR9LP6YV',150000.00,NULL,1,'2026-06-30 20:40:11',23,5,'AVAILABLE'),(35,'M7BX4TJ8NH',150000.00,NULL,1,'2026-06-30 20:40:11',23,5,'AVAILABLE'),(36,'U8QK3MXL7P',250000.00,5000000.00,1,'2026-06-30 20:41:15',22,6,'SOLD'),(37,'E5VN9TR2HC',250000.00,5000000.00,1,'2026-06-30 20:41:15',22,6,'SOLD'),(38,'S1YP6JW4KZ',250000.00,5000000.00,1,'2026-06-30 20:41:15',22,6,'SOLD'),(39,'L7XF2QM8RV',250000.00,5000000.00,1,'2026-06-30 20:41:15',22,6,'SOLD'),(40,'A9HC5TN1MW',250000.00,2000000.00,1,'2026-06-30 20:41:15',22,6,'SOLD'),(41,'A7X9K2M4QP',11150000.00,NULL,1,'2026-06-30 21:04:27',36,7,'AVAILABLE'),(42,'N5R8T1W6ZC',11150000.00,NULL,1,'2026-06-30 21:04:27',36,7,'AVAILABLE'),(43,'Q3L7V9B2HJ',11150000.00,NULL,1,'2026-06-30 21:04:27',36,7,'AVAILABLE'),(44,'X8M4P6K1RY',11150000.00,NULL,1,'2026-06-30 21:04:27',36,7,'AVAILABLE'),(45,'C2F9N7D5TW',11150000.00,NULL,1,'2026-06-30 21:04:27',36,7,'AVAILABLE'),(46,'H6J1Q8Z4LX',11150000.00,NULL,1,'2026-06-30 21:04:27',36,7,'AVAILABLE'),(47,'P9W3G5R7MK',11150000.00,NULL,1,'2026-06-30 21:04:27',36,7,'AVAILABLE'),(48,'A7K9-X2QM-8P4L-N5TR',15000000.00,NULL,1,'2026-06-30 21:07:45',33,8,'AVAILABLE'),(49,'M4DZ-7QWX-J8CN-2VPL',15000000.00,NULL,1,'2026-06-30 21:07:45',33,8,'AVAILABLE'),(50,'T9FR-K6PA-X3WM-8QNZ',15000000.00,NULL,1,'2026-06-30 21:07:45',33,8,'AVAILABLE'),(51,'H2LV-9XQC-M7RT-P4KD',15000000.00,NULL,1,'2026-06-30 21:07:45',33,8,'AVAILABLE'),(52,'W8NJ-3PKM-T6QX-R9CV',15000000.00,NULL,1,'2026-06-30 21:07:45',33,8,'AVAILABLE'),(53,'Q5ZT-L8RW-N2XP-K7MF',20000000.00,NULL,1,'2026-06-30 21:07:46',31,9,'AVAILABLE'),(54,'C4YP-V9TK-H6QW-X2RN',20000000.00,500000.00,1,'2026-06-30 21:07:46',31,9,'SOLD'),(55,'R7MX-2LQV-P8KC-T5ZW',20000000.00,NULL,1,'2026-06-30 21:07:46',31,9,'AVAILABLE'),(56,'N3QH-W7XP-K4RM-V8TL',20000000.00,500000.00,1,'2026-06-30 21:07:46',31,9,'SOLD'),(57,'X6PV-T2KN-R9QM-H5WC',20000000.00,NULL,1,'2026-06-30 21:07:46',31,9,'AVAILABLE'),(58,'X7K9M2P4LT',0.00,30000000.00,1,'2026-06-30 21:10:59',2,NULL,'SOLD'),(59,'Q8W3N5RZ1H',0.00,10000000.00,1,'2026-06-30 21:10:59',2,NULL,'SOLD'),(60,'T4YP8K6MNC',0.00,10000000.00,1,'2026-06-30 21:11:00',2,NULL,'SOLD'),(61,'L9VX2Q7RWP',0.00,NULL,1,'2026-06-30 21:11:00',2,NULL,'AVAILABLE'),(62,'H5MT8ZN3QK',0.00,1.00,1,'2026-06-30 21:11:00',2,NULL,'SOLD'),(63,'R2CW9PX6TL',0.00,30000000.00,1,'2026-06-30 21:11:00',3,NULL,'SOLD'),(64,'N7KF4VQ8MY',0.00,30000000.00,1,'2026-06-30 21:11:00',3,NULL,'SOLD'),(65,'P3ZH6TR9WX',0.00,30000000.00,1,'2026-06-30 21:11:00',3,NULL,'SOLD'),(66,'M8QL2YV5KC',0.00,20000000.00,1,'2026-06-30 21:11:00',3,NULL,'SOLD'),(67,'W4RN7XP9TH',0.00,20000000.00,1,'2026-06-30 21:11:00',3,NULL,'SOLD'),(68,'A7K9X2M4QP',15000000.00,20000000.00,1,'2026-07-03 14:14:49',38,10,'SOLD'),(69,'N8D5L1Z7TR',15000000.00,NULL,1,'2026-07-03 14:14:49',38,10,'AVAILABLE'),(70,'Q3W9E6R2TY',15000000.00,NULL,1,'2026-07-03 14:14:49',38,10,'AVAILABLE'),(71,'M5V8C1B7NJ',15000000.00,NULL,1,'2026-07-03 14:14:49',38,10,'AVAILABLE'),(72,'H2P9L4X6KA',15000000.00,20000000.00,1,'2026-07-03 14:14:49',38,10,'SOLD'),(73,'T7Y3U8I1OP',15000000.00,NULL,1,'2026-07-03 14:14:49',38,10,'AVAILABLE'),(74,'F4G9H2J6KL',15000000.00,20000000.00,1,'2026-07-03 14:14:49',38,10,'SOLD'),(75,'Z1X7C5V8BN',15000000.00,NULL,1,'2026-07-03 14:14:49',38,10,'AVAILABLE'),(76,'R6T2Y9U4IO',15000000.00,NULL,1,'2026-07-03 14:14:50',38,10,'AVAILABLE'),(77,'P8A3S7D1FG',15000000.00,NULL,1,'2026-07-03 14:14:50',38,10,'AVAILABLE'),(78,'L5K9J2H6GF',15000000.00,20000000.00,1,'2026-07-03 14:14:50',38,10,'SOLD'),(79,'W4E8R1T7YU',15000000.00,NULL,1,'2026-07-03 14:14:50',38,10,'AVAILABLE'),(80,'C9N3M6Q2ZX',15000000.00,20000000.00,1,'2026-07-03 14:14:50',38,10,'SOLD'),(81,'B7V4P8L1KH',15000000.00,20000000.00,1,'2026-07-03 14:14:50',38,10,'SOLD'),(82,'X2Z5A9S6DF',15000000.00,NULL,1,'2026-07-03 14:14:50',38,10,'AVAILABLE'),(83,'K7M2Q9XP',12000000.00,NULL,1,'2026-07-03 14:14:50',27,11,'AVAILABLE'),(84,'A5T8L3ZW',12000000.00,NULL,1,'2026-07-03 14:14:50',27,11,'AVAILABLE'),(85,'N1R6Y4HC',12000000.00,NULL,1,'2026-07-03 14:14:50',27,11,'AVAILABLE'),(86,'P9V2B7JK',12000000.00,NULL,1,'2026-07-03 14:14:50',27,11,'AVAILABLE'),(87,'D3F8X1MN',12000000.00,NULL,1,'2026-07-03 14:14:50',27,11,'AVAILABLE'),(88,'Q6W4E9RT',12000000.00,NULL,1,'2026-07-03 14:14:50',27,11,'AVAILABLE'),(89,'H2L7Z5CV',12000000.00,NULL,1,'2026-07-03 14:14:50',27,11,'AVAILABLE'),(90,'Y8U1I3OP',12000000.00,NULL,1,'2026-07-03 14:14:50',27,11,'AVAILABLE'),(91,'G4J9K2LS',12000000.00,NULL,1,'2026-07-03 14:14:50',27,11,'AVAILABLE'),(92,'X7C5N8BV',12000000.00,NULL,1,'2026-07-03 14:14:50',27,11,'AVAILABLE'),(93,'BAS12323',15000000.00,NULL,1,'2026-07-12 22:58:44',34,12,'AVAILABLE'),(94,'AVS12234',10000000.00,NULL,1,'2026-07-12 22:58:44',37,13,'AVAILABLE'),(95,'A7X9K2M',15000000.00,NULL,1,'2026-07-12 23:48:18',29,14,'AVAILABLE'),(96,'Q4P8L1N',15000000.00,NULL,1,'2026-07-12 23:48:18',29,14,'AVAILABLE'),(97,'Z6T3W5R',15000000.00,NULL,1,'2026-07-12 23:48:18',29,14,'AVAILABLE'),(98,'H9C2V8B',15000000.00,NULL,1,'2026-07-12 23:48:18',29,14,'AVAILABLE'),(99,'M1J7D4Q',15000000.00,NULL,1,'2026-07-12 23:48:18',29,14,'AVAILABLE'),(100,'K5N8F2X',15000000.00,NULL,1,'2026-07-12 23:48:18',29,14,'AVAILABLE'),(101,'R3Y6P9L',15000000.00,NULL,1,'2026-07-12 23:48:18',29,14,'AVAILABLE'),(102,'T8G1H4W',15000000.00,NULL,1,'2026-07-12 23:48:18',29,14,'AVAILABLE'),(103,'V2M7Q5C',15000000.00,NULL,1,'2026-07-12 23:48:18',29,14,'AVAILABLE'),(104,'X9L3Z8N',15000000.00,NULL,1,'2026-07-12 23:48:18',29,14,'AVAILABLE'),(105,'A7X9K',200000.00,NULL,1,'2026-07-12 23:48:50',30,15,'AVAILABLE'),(106,'M2Q8L',200000.00,NULL,1,'2026-07-12 23:48:50',30,15,'AVAILABLE'),(107,'Z5R1T',200000.00,NULL,1,'2026-07-12 23:48:50',30,15,'AVAILABLE'),(108,'H4V6N',200000.00,NULL,1,'2026-07-12 23:48:50',30,15,'AVAILABLE'),(109,'P9C3W',200000.00,NULL,1,'2026-07-12 23:48:50',30,15,'AVAILABLE'),(110,'X4M8L1N',12000000.00,NULL,1,'2026-07-13 20:44:03',34,16,'AVAILABLE'),(111,'A7K9P2Q',10000000.00,NULL,1,'2026-07-13 20:44:03',37,17,'AVAILABLE'),(112,'B2R7T5Y',12000000.00,NULL,1,'2026-07-13 20:44:57',37,18,'AVAILABLE'),(113,'Q9W3E6R',12000000.00,NULL,1,'2026-07-13 20:44:57',37,18,'AVAILABLE'),(114,'H5J8K2L',12000000.00,NULL,1,'2026-07-13 20:44:57',37,18,'AVAILABLE'),(115,'P1N7M4V',12000000.00,NULL,1,'2026-07-13 20:44:57',37,18,'AVAILABLE'),(116,'C8D2F9G',12000000.00,NULL,1,'2026-07-13 20:44:57',37,18,'AVAILABLE'),(117,'T6Y3U1I',500000.00,NULL,1,'2026-07-13 20:44:57',30,19,'AVAILABLE'),(118,'L4Z8X5C',500000.00,NULL,1,'2026-07-13 20:44:57',30,19,'AVAILABLE'),(119,'V2B7N9M',500000.00,NULL,1,'2026-07-13 20:44:57',30,19,'AVAILABLE'),(120,'R5T1Y8U',500000.00,NULL,1,'2026-07-13 20:44:57',30,19,'AVAILABLE'),(121,'E3W6Q2A',500000.00,NULL,1,'2026-07-13 20:44:57',30,19,'AVAILABLE'),(122,'Q7M2-X9KA-8L3P-T5RD',12000000.00,NULL,1,'2026-07-14 11:59:25',3,20,'AVAILABLE'),(123,'B4NZ-7WQH-J2XF-9KLM',12000000.00,NULL,1,'2026-07-14 11:59:25',3,20,'AVAILABLE'),(124,'Y8CV-P3TR-H6ND-4QWX',12000000.00,NULL,1,'2026-07-14 11:59:26',3,20,'AVAILABLE'),(125,'M5JP-2LKA-Z8RF-X7TC',12000000.00,NULL,1,'2026-07-14 11:59:26',3,20,'AVAILABLE'),(126,'R9HD-W4QM-5NPK-V2XZ',12000000.00,NULL,1,'2026-07-14 11:59:26',3,20,'AVAILABLE'),(127,'T6XB-8QRL-C9MF-J3KW',12000000.00,NULL,1,'2026-07-14 11:59:26',3,20,'AVAILABLE'),(128,'K2VN-H7PD-Y4XT-8LQC',12000000.00,NULL,1,'2026-07-14 11:59:26',3,20,'AVAILABLE'),(129,'F5RW-M8ZJ-2XNH-Q9TP',12000000.00,NULL,1,'2026-07-14 11:59:26',3,20,'AVAILABLE'),(130,'N3LK-V7CF-R5QW-8YJM',12000000.00,NULL,1,'2026-07-14 11:59:26',3,20,'AVAILABLE'),(131,'X8PT-4HZN-K6RD-W2LF',12000000.00,NULL,1,'2026-07-14 11:59:26',3,20,'AVAILABLE');
 /*!40000 ALTER TABLE `product_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -641,22 +656,22 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `products`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `products` (
-  `productid` int(11) NOT NULL AUTO_INCREMENT,
+  `productid` int NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL,
   `description` text,
   `img_url` varchar(500) DEFAULT NULL,
   `isactive` tinyint(1) DEFAULT '1',
   `createdat` datetime DEFAULT CURRENT_TIMESTAMP,
   `updatedat` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `ramid` int(11) DEFAULT NULL,
-  `romid` int(11) DEFAULT NULL,
-  `chipid` int(11) DEFAULT NULL,
-  `unitid` int(11) NOT NULL,
-  `categoryid` int(11) NOT NULL,
-  `brandid` int(11) NOT NULL,
-  `modelid` int(11) DEFAULT NULL,
+  `ramid` int DEFAULT NULL,
+  `romid` int DEFAULT NULL,
+  `chipid` int DEFAULT NULL,
+  `unitid` int NOT NULL,
+  `categoryid` int NOT NULL,
+  `brandid` int NOT NULL,
+  `modelid` int DEFAULT NULL,
   `sku` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`productid`),
   KEY `ramid` (`ramid`),
@@ -682,7 +697,7 @@ CREATE TABLE `products` (
 
 LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` VALUES (1,'Laptop Dell 14 DC14250','Office ','assets/img/product/1780336108147_ssss_1_125.webp',0,'2026-05-27 11:27:22','2026-06-22 08:41:06',2,2,1,1,1,1,1,'D15-23'),(2,'Asus TUF Gaming T12','Gaming updated','assets/img/product/1780327162854_laptopleveno.jpg',1,'2026-05-27 11:27:22','2026-06-23 10:45:11',4,3,2,1,1,2,2,'A12-53'),(3,'ThinkPad E14 A12-54','Business laptop updated','assets/img/product/1780327242054_61084_laptop_lenovo_thinkbook_14_g8_irl_core_5_9.jpg',1,'2026-05-27 11:27:22','2026-06-22 22:08:45',3,2,3,1,1,3,3,'A12-54'),(4,'Kingston Fury 16GB 32000MHZ','RAM DDR4 Tesst update','assets/img/product/1780327214479_ktc-hero-ddr5-overview-lg.jpg',1,'2026-05-27 11:27:22','2026-06-23 10:41:18',3,NULL,NULL,2,2,4,NULL,'B12-423'),(5,'Samsung 970 EVO 512GB','SSD ass','assets/img/product/1780365511731_ssss_1_125.webp',1,'2026-05-27 11:27:22','2026-06-22 22:24:09',NULL,2,NULL,3,3,5,NULL,'B12-45'),(8,'Asus TUF 7 ','con mèo kêu làm sao','assets/img/product/1780327319228_61084_laptop_lenovo_thinkbook_14_g8_irl_core_5_9.jpg',1,'2026-05-28 23:29:54','2026-06-01 22:21:59',2,2,2,1,1,2,2,'B32-12'),(10,'Asus TUF 13','meomeo aa','assets/img/product/1780327333216_text_ng_n_2__9_31.webp',1,'2026-05-29 13:32:34','2026-06-02 11:50:05',1,2,2,1,1,7,11,'C21-23'),(13,'Laptop HP 15-fd1289TU Ultra 7','','assets/img/product/1780327353097_laptopleveno.jpg',1,'2026-05-30 16:12:45','2026-06-02 11:24:31',3,2,1,1,4,2,8,'Generatorc412'),(14,'Laptop ASUS Vivobook S 14 FLIP','Laptop ASUS Vivobook S 14 Flip TP3402VA-LZ632W sở hữu bộ CPU Intel Core i5-13420H đi cùng RAM 16GB chuẩn DDR4, cộng thêm ổ cứng 512GB M.2 PCIe 4.0. Mẫu laptop ASUS Vivobook này được trang bị màn hình có độ phân giải WUXGA với kích thước 14 inch. Bên cạnh đó, thiết kế Flip còn cho phép người dùng chuyển đổi laptop và tablet theo nhu cầu.','assets/img/product/1780334374996_Laptop_HP_15_fd0079_TU_5_c143cff71c.jpg',1,'2026-05-31 00:18:47','2026-06-02 08:55:59',2,3,3,1,1,2,7,'LZ632W'),(15,'Laptop ASUS TUF Gaming F16 FX608JHR','Laptop ASUS TUF Gaming F16 FX608JHR-RV037W được tích hợp một CPU Intel Core i7-14650HX 5.2 GHz, cùng với RAM 16GB và có bộ nhớ SSD lớn lên đến 1TB. Máy còn sở hữu VGA NVIDIA GeForce RTX 8GB kết hợp màn hình FHD+ 16 inch và có tần số quét 165Hz. Máy có màu Jaeger Gray, chỉ nặng 2.2 kg, với pin 90WHrs, phù hợp cho chơi game và làm.','assets/img/product/1780299967530_laptopleveno.jpg',1,'2026-05-31 11:20:01','2026-06-01 14:46:07',4,2,2,1,1,2,8,'RV037W'),(16,'Kingston Fury 16GB','RAM DDR4','assets/img/product/1780322903782_kingston_8g_3200_compressed_1.webp',1,'2026-05-31 22:00:03','2026-06-02 09:31:47',NULL,3,NULL,2,3,4,NULL,'KVR32S22S6/4'),(17,'SSD Samsung 123 120000MHz','RAM DDR4 SSD Samsung 123 120000MHz','assets/img/product/1780361796964_ssss_1_125.webp',1,'2026-05-31 22:24:24','2026-06-22 22:25:41',3,NULL,NULL,2,2,4,NULL,'KVR32S22S'),(18,'RAM Laptop Kingston 4 GB-DDR4-3200 MHz','con mèo kêu','assets/img/product/1780247214567_Laptop_HP_15_fd0079_TU_5_c143cff71c.jpg',1,'2026-05-31 22:39:51','2026-06-02 08:23:16',2,2,NULL,1,3,4,NULL,'KVR32S22S6'),(20,'RAM Laptop Kingston Sodimm 1.2V','RAM Laptop Kingston Sodimm 1.2V 16GB 3200MHz CL22','assets/img/product/1780244875864_kingston_8g_3200_compressed_1.webp',1,'2026-05-31 23:27:55','2026-06-02 09:22:02',2,3,NULL,1,3,4,NULL,'CL22'),(22,'SSD Samsung 123','RAM DDR4','assets/img/product/1780246656870_text_ng_n_15_21_1.webp',1,'2026-05-31 23:57:36','2026-05-31 23:57:36',3,NULL,NULL,2,2,4,NULL,'KVR32S2'),(23,'Ổ cứng HDD Enterprise WD Ultrastar DC HC330 10TB 3.5','Ổ cứng HDD WD Ultrastar DC HC330 10TB là một ổ cứng dành cho doanh nghiệp với nhiều tính năng nổi bật. Ổ cứng này đáp ứng nhu cầu lưu trữ, tốc độ truy cập dữ liệu, độ bền và ổn định cao của các doanh nghiệp.\r\n\r\n','assets/img/product/1780246828025_05-hdd-enterprise-wd-ultrastar-dc-hc330-10tb-35-01.jpg',1,'2026-06-01 00:00:28','2026-06-02 09:01:58',NULL,3,NULL,3,3,5,NULL,'WUS721010ALE6L4'),(25,'Laptop ASUS Gaming Vivobook 16X K3605VC-RP431W','Laptop ASUS Vivobook 16X K3605VC-RP431W được trang bị vi xử lý Intel Core i5-13420H cho ra hiệu suất ổn định từ công việc cho đến nhu cầu giải trí. Mẫu ASUS Vivobook Gaming này có màn hình lên đến 16 inch cùng tần số quét 144Hz cung cấp hình ảnh sắc nét không bị vỡ. Card đồ hoạ NVIDIA GeForce RTX 3050 4GB GDDR6 là một điểm cộng lớn của dòng laptop này.','assets/img/product/1780333162727_text_ng_n_5__9_130.webp',1,'2026-06-01 23:59:22','2026-06-02 12:16:17',3,2,2,1,4,1,1,'RP431W'),(26,'CPU AMD Ryzen 7 7800X3D (Tray)','asa','assets/img/product/1780333276897_cpu-amd-ryzen-7-7800x3d_2__3.webp',1,'2026-06-02 00:01:16','2026-07-14 13:17:05',3,2,1,3,2,7,11,'7800X3D'),(27,'RAM Laptop Kingston 4-3200 MHz','asss','assets/img/product/1780333845552_text_ng_n_5__9_130.webp',1,'2026-06-02 00:10:35','2026-06-02 00:10:45',3,3,2,1,4,2,6,'R2341D'),(28,'Laptop Acer Gaming Nitro ProPanel ANV15-41-R7CR','Laptop Acer Gaming Nitro V 15 ProPanel ANV15-41-R7CR sở hữu cấu hình mạnh mẽ với CPU AMD Ryzen 5 7535HS and card đồ họa NVIDIA GeForce RTX 4050 6GB GDDR6. Màn hình 15.6 inch FHD IPS and tần số quét 180Hz đem lại hình ảnh sắc nét. Ổ cứng 512GB PCIe NVMe SSD and RAM 16GB DDR5, với hệ thống tản nhiệt Dual-fan đảm bảo hiệu suất tối ưu.\r\n\r\n','assets/img/product/1780334956211_sssxs_26.png',1,'2026-06-02 00:29:05','2026-06-02 00:45:15',2,2,2,1,1,7,11,'ANV15-41'),(29,'Laptop Acer Gaming Nitro ProPanel ANV15-41-R7CR','','assets/img/product/1780336413334_t_i_xu_ng_-_2023-01-02t221507.270_2_1_1_1_1.png',1,'2026-06-02 00:31:32','2026-06-02 00:53:33',2,2,2,1,1,7,11,'ANV15-41-R5AS'),(30,'RAM Laptop Transcend DDR5 4800MHz 16GB','Ram laptop','assets/img/product/1780335486900_ram-transcend-ddr5-4800mhz-16gb_1_.webp',1,'2026-06-02 00:38:06','2026-07-05 15:11:35',3,NULL,NULL,1,2,5,NULL,'Q3QWE2'),(31,'ROM SSD 512GB','','assets/img/product/1780335748931_ram-transcend-ddr5-4800mhz-16gb_1_.webp',1,'2026-06-02 00:42:28','2026-07-13 20:57:25',NULL,2,NULL,2,3,2,NULL,'R.TC.'),(32,'CPU AMD Ryzen 5 5500','','assets/img/product/1780336054684_t_i_xu_ng_-_2023-01-02t221507.270_2_1_1_1_1.png',0,'2026-06-02 00:47:00','2026-06-02 00:47:34',3,2,3,1,6,7,11,'CPU.AM.09'),(33,'Laptop ASUS VivoBook 15','aa','assets/img/product/1780364201177_ssss_2_42.png',1,'2026-06-02 08:36:41','2026-06-02 12:16:35',2,1,3,1,1,1,1,'BQ021W'),(34,'Laptop Acer Aspire Lite 16 GEN 2 AL16-52P-76DU','Laptop Acer Aspire Lite 16 GEN 2 AL16-52P-76DU sở hữu màn hình 16 inch Full HD+, RAM 16GB DDR5 tốc độ 4800MHz (hỗ trợ nâng cấp tối đa 64GB). Chiếc laptop Acer Aspire được trang bị Intel Core i7-1355U, card đồ họa Intel Iris Xe, cùng loa Stereo and webcam Full HD. Thiết kế gọn nhẹ 1.7kg, tích hợp đầy đủ cổng kết nối giúp sử dụng linh hoạt.','assets/img/product/1780375469602_text_ng_n_6__2_234.png',1,'2026-06-02 11:44:29','2026-06-02 12:17:03',3,2,2,1,7,7,13,'AL16-52P-76DU'),(35,'Laptop ASUS Vivobook S14 S3407VA','Laptop ASUS Vivobook S14 S3407VA-LY146W trang bị vi xử lý Intel Core 5 210H, RAM 16GB DDR5, SSD 512GB cùng với màn hình 14 inch WUXGA sắc nét, chân thực. Máy có thiết kế mỏng nhẹ chỉ 1.4kg, vỏ kim loại bền bỉ, pin lớn 70Wh cho thời gian sử dụng dài. Hỗ trợ Wi-Fi 6, camera IR nhận diện khuôn mặt and bàn phím có đèn nền tích hợp phím Copilot.\r\n','assets/img/product/1780378095512_text_ng_n_4__8_52.webp',0,'2026-06-02 12:28:15','2026-06-02 12:28:55',3,4,4,1,1,2,8,'LY146W'),(36,'Laptop Acer Gaming Aspire 7 A715-59G-57TU','Laptop Acer Gaming Aspire 7 A715-59G-57TU được trang bị vi xử lý Intel Core i5-12450H cân trơn tru mọi tác vụ từ văn phòng cho đến chơi game nặng. Hỗ trợ cho vi xử lý là card đồ hoạ RTX 3050 6GB giúp chơi game nặng mượt mà hơn. Người dùng có thể mở nhiều nội dung hiển thị cùng một lúc với màn hình lên đến 15.6 inch.\r\n\r\n','assets/img/product/1780379484406_text_ng_n_14__9_26.webp',1,'2026-06-02 12:51:24','2026-06-22 22:18:53',3,2,3,1,4,7,13,'A715-59G-57TU'),(37,'Laptop Acer Aspire Lite 15 AL15-46P-R73C','Laptop Acer Aspire Lite 15 AL15-46P-R73C sở hữu hiệu năng ấn tượng nhờ chip AMD Ryzen 3 5400U, RAM 8GB DDR4, cùng bộ nhớ trong SSD 512GB rộng rãi. Máy có màn hình Full HD 15.6 inch, tần số quét 60Hz trong thân máy chỉ 1.45kg. Laptop có pin 53Wh and hệ thống cổng đa dạng gồm: USB-C, USB-A and HDMI.\r\n\r\n','assets/img/product/1780379586909_sssxs_1__9.webp',1,'2026-06-02 12:53:06','2026-06-23 14:58:54',3,2,3,1,4,7,13,'AL15-46P-R73C'),(38,'Laptop ASUS Vivobook 14','Máy này là máy mới','assets/img/product/1782826321003_laptop_asus_vivobook_14_x1404va-eb509w_-_1.png',1,'2026-06-30 20:32:01','2026-06-30 20:32:21',3,2,3,1,1,2,7,'EB509W');
+INSERT INTO `products` VALUES (1,'Laptop Dell 14 DC14250','Office ','assets/img/product/1780336108147_ssss_1_125.webp',0,'2026-05-27 11:27:22','2026-06-22 08:41:06',2,2,1,1,1,1,1,'D15-23'),(2,'Asus TUF Gaming T12','Gaming updated','assets/img/product/1780327162854_laptopleveno.jpg',1,'2026-05-27 11:27:22','2026-06-23 10:45:11',4,3,2,1,1,2,2,'A12-53'),(3,'ThinkPad E14 A12-54','Business laptop updated','assets/img/product/1780327242054_61084_laptop_lenovo_thinkbook_14_g8_irl_core_5_9.jpg',1,'2026-05-27 11:27:22','2026-06-22 22:08:45',3,2,3,1,1,3,3,'A12-54'),(4,'Kingston Fury 16GB 32000MHZ','RAM DDR4 Tesst update','assets/img/product/1780327214479_ktc-hero-ddr5-overview-lg.jpg',1,'2026-05-27 11:27:22','2026-06-23 10:41:18',3,NULL,NULL,2,2,4,NULL,'B12-423'),(5,'Samsung 970 EVO 512GB','SSD ass','assets/img/product/1780365511731_ssss_1_125.webp',1,'2026-05-27 11:27:22','2026-06-22 22:24:09',NULL,2,NULL,3,3,5,NULL,'B12-45'),(8,'Asus TUF 7 ','con mèo kêu làm sao','assets/img/product/1780327319228_61084_laptop_lenovo_thinkbook_14_g8_irl_core_5_9.jpg',1,'2026-05-28 23:29:54','2026-06-01 22:21:59',2,2,2,1,1,2,2,'B32-12'),(10,'Asus TUF 13','meomeo aa','assets/img/product/1780327333216_text_ng_n_2__9_31.webp',1,'2026-05-29 13:32:34','2026-06-02 11:50:05',1,2,2,1,1,7,11,'C21-23'),(13,'Laptop HP 15-fd1289TU Ultra 7','','assets/img/product/1780327353097_laptopleveno.jpg',1,'2026-05-30 16:12:45','2026-06-02 11:24:31',3,2,1,1,4,2,8,'Generatorc412'),(14,'Laptop ASUS Vivobook S 14 FLIP','Laptop ASUS Vivobook S 14 Flip TP3402VA-LZ632W sở hữu bộ CPU Intel Core i5-13420H đi cùng RAM 16GB chuẩn DDR4, cộng thêm ổ cứng 512GB M.2 PCIe 4.0. Mẫu laptop ASUS Vivobook này được trang bị màn hình có độ phân giải WUXGA với kích thước 14 inch. Bên cạnh đó, thiết kế Flip còn cho phép người dùng chuyển đổi laptop và tablet theo nhu cầu.','assets/img/product/1780334374996_Laptop_HP_15_fd0079_TU_5_c143cff71c.jpg',1,'2026-05-31 00:18:47','2026-06-02 08:55:59',2,3,3,1,1,2,7,'LZ632W'),(15,'Laptop ASUS TUF Gaming F16 FX608JHR','Laptop ASUS TUF Gaming F16 FX608JHR-RV037W được tích hợp một CPU Intel Core i7-14650HX 5.2 GHz, cùng với RAM 16GB và có bộ nhớ SSD lớn lên đến 1TB. Máy còn sở hữu VGA NVIDIA GeForce RTX 8GB kết hợp màn hình FHD+ 16 inch và có tần số quét 165Hz. Máy có màu Jaeger Gray, chỉ nặng 2.2 kg, với pin 90WHrs, phù hợp cho chơi game và làm.','assets/img/product/1780299967530_laptopleveno.jpg',1,'2026-05-31 11:20:01','2026-06-01 14:46:07',4,2,2,1,1,2,8,'RV037W'),(16,'Kingston Fury 16GB','RAM DDR4','assets/img/product/1780322903782_kingston_8g_3200_compressed_1.webp',1,'2026-05-31 22:00:03','2026-06-02 09:31:47',NULL,3,NULL,2,3,4,NULL,'KVR32S22S6/4'),(17,'SSD Samsung 123 120000MHz','RAM DDR4 SSD Samsung 123 120000MHz','assets/img/product/1780361796964_ssss_1_125.webp',1,'2026-05-31 22:24:24','2026-06-22 22:25:41',3,NULL,NULL,2,2,4,NULL,'KVR32S22S'),(18,'RAM Laptop Kingston 4 GB-DDR4-3200 MHz','con mèo kêu','assets/img/product/1780247214567_Laptop_HP_15_fd0079_TU_5_c143cff71c.jpg',1,'2026-05-31 22:39:51','2026-06-02 08:23:16',2,2,NULL,1,3,4,NULL,'KVR32S22S6'),(20,'RAM Laptop Kingston Sodimm 1.2V','RAM Laptop Kingston Sodimm 1.2V 16GB 3200MHz CL22','assets/img/product/1780244875864_kingston_8g_3200_compressed_1.webp',1,'2026-05-31 23:27:55','2026-06-02 09:22:02',2,3,NULL,1,3,4,NULL,'CL22'),(22,'SSD Samsung 123','RAM DDR4','assets/img/product/1780246656870_text_ng_n_15_21_1.webp',1,'2026-05-31 23:57:36','2026-05-31 23:57:36',3,NULL,NULL,2,2,4,NULL,'KVR32S2'),(23,'Ổ cứng HDD Enterprise WD Ultrastar DC HC330 10TB 3.5','Ổ cứng HDD WD Ultrastar DC HC330 10TB là một ổ cứng dành cho doanh nghiệp với nhiều tính năng nổi bật. Ổ cứng này đáp ứng nhu cầu lưu trữ, tốc độ truy cập dữ liệu, độ bền và ổn định cao của các doanh nghiệp.\r\n\r\n','assets/img/product/1780246828025_05-hdd-enterprise-wd-ultrastar-dc-hc330-10tb-35-01.jpg',1,'2026-06-01 00:00:28','2026-06-02 09:01:58',NULL,3,NULL,3,3,5,NULL,'WUS721010ALE6L4'),(25,'Laptop ASUS Gaming Vivobook 16X K3605VC-RP431W','Laptop ASUS Vivobook 16X K3605VC-RP431W được trang bị vi xử lý Intel Core i5-13420H cho ra hiệu suất ổn định từ công việc cho đến nhu cầu giải trí. Mẫu ASUS Vivobook Gaming này có màn hình lên đến 16 inch cùng tần số quét 144Hz cung cấp hình ảnh sắc nét không bị vỡ. Card đồ hoạ NVIDIA GeForce RTX 3050 4GB GDDR6 là một điểm cộng lớn của dòng laptop này.','assets/img/product/1780333162727_text_ng_n_5__9_130.webp',1,'2026-06-01 23:59:22','2026-06-02 12:16:17',3,2,2,1,4,1,1,'RP431W'),(26,'CPU AMD Ryzen 7 7800X3D (Tray)','asa','assets/img/product/1780333276897_cpu-amd-ryzen-7-7800x3d_2__3.webp',1,'2026-06-02 00:01:16','2026-06-02 11:10:33',3,2,1,3,2,7,11,'7800X3D '),(27,'RAM Laptop Kingston 4-3200 MHz','asss','assets/img/product/1780333845552_text_ng_n_5__9_130.webp',1,'2026-06-02 00:10:35','2026-06-02 00:10:45',3,3,2,1,4,2,6,'R2341D'),(28,'Laptop Acer Gaming Nitro ProPanel ANV15-41-R7CR','Laptop Acer Gaming Nitro V 15 ProPanel ANV15-41-R7CR sở hữu cấu hình mạnh mẽ với CPU AMD Ryzen 5 7535HS and card đồ họa NVIDIA GeForce RTX 4050 6GB GDDR6. Màn hình 15.6 inch FHD IPS and tần số quét 180Hz đem lại hình ảnh sắc nét. Ổ cứng 512GB PCIe NVMe SSD and RAM 16GB DDR5, với hệ thống tản nhiệt Dual-fan đảm bảo hiệu suất tối ưu.\r\n\r\n','assets/img/product/1780334956211_sssxs_26.png',1,'2026-06-02 00:29:05','2026-06-02 00:45:15',2,2,2,1,1,7,11,'ANV15-41'),(29,'Laptop Acer Gaming Nitro ProPanel ANV15-41-R7CR','','assets/img/product/1780336413334_t_i_xu_ng_-_2023-01-02t221507.270_2_1_1_1_1.png',1,'2026-06-02 00:31:32','2026-06-02 00:53:33',2,2,2,1,1,7,11,'ANV15-41-R5AS'),(30,'RAM Laptop Transcend DDR5 4800MHz 16GB','Ram laptop','assets/img/product/1780335486900_ram-transcend-ddr5-4800mhz-16gb_1_.webp',1,'2026-06-02 00:38:06','2026-07-05 15:11:35',3,NULL,NULL,1,2,5,NULL,'Q3QWE2'),(31,'RAM Laptop Transcend DDR5 4800MHz 16GB','','assets/img/product/1780335748931_ram-transcend-ddr5-4800mhz-16gb_1_.webp',1,'2026-06-02 00:42:28','2026-06-02 00:42:28',NULL,2,NULL,2,3,2,NULL,'R.TC.'),(32,'CPU AMD Ryzen 5 5500','','assets/img/product/1780336054684_t_i_xu_ng_-_2023-01-02t221507.270_2_1_1_1_1.png',0,'2026-06-02 00:47:00','2026-06-02 00:47:34',3,2,3,1,6,7,11,'CPU.AM.09'),(33,'Laptop ASUS VivoBook 15','aa','assets/img/product/1780364201177_ssss_2_42.png',1,'2026-06-02 08:36:41','2026-06-02 12:16:35',2,1,3,1,1,1,1,'BQ021W'),(34,'Laptop Acer Aspire Lite 16 GEN 2 AL16-52P-76DU','Laptop Acer Aspire Lite 16 GEN 2 AL16-52P-76DU sở hữu màn hình 16 inch Full HD+, RAM 16GB DDR5 tốc độ 4800MHz (hỗ trợ nâng cấp tối đa 64GB). Chiếc laptop Acer Aspire được trang bị Intel Core i7-1355U, card đồ họa Intel Iris Xe, cùng loa Stereo and webcam Full HD. Thiết kế gọn nhẹ 1.7kg, tích hợp đầy đủ cổng kết nối giúp sử dụng linh hoạt.','assets/img/product/1780375469602_text_ng_n_6__2_234.png',1,'2026-06-02 11:44:29','2026-06-02 12:17:03',3,2,2,1,7,7,13,'AL16-52P-76DU'),(35,'Laptop ASUS Vivobook S14 S3407VA','Laptop ASUS Vivobook S14 S3407VA-LY146W trang bị vi xử lý Intel Core 5 210H, RAM 16GB DDR5, SSD 512GB cùng với màn hình 14 inch WUXGA sắc nét, chân thực. Máy có thiết kế mỏng nhẹ chỉ 1.4kg, vỏ kim loại bền bỉ, pin lớn 70Wh cho thời gian sử dụng dài. Hỗ trợ Wi-Fi 6, camera IR nhận diện khuôn mặt and bàn phím có đèn nền tích hợp phím Copilot.\r\n','assets/img/product/1780378095512_text_ng_n_4__8_52.webp',0,'2026-06-02 12:28:15','2026-06-02 12:28:55',3,4,4,1,1,2,8,'LY146W'),(36,'Laptop Acer Gaming Aspire 7 A715-59G-57TU','Laptop Acer Gaming Aspire 7 A715-59G-57TU được trang bị vi xử lý Intel Core i5-12450H cân trơn tru mọi tác vụ từ văn phòng cho đến chơi game nặng. Hỗ trợ cho vi xử lý là card đồ hoạ RTX 3050 6GB giúp chơi game nặng mượt mà hơn. Người dùng có thể mở nhiều nội dung hiển thị cùng một lúc với màn hình lên đến 15.6 inch.\r\n\r\n','assets/img/product/1780379484406_text_ng_n_14__9_26.webp',1,'2026-06-02 12:51:24','2026-06-22 22:18:53',3,2,3,1,4,7,13,'A715-59G-57TU'),(37,'Laptop Acer Aspire Lite 15 AL15-46P-R73C','Laptop Acer Aspire Lite 15 AL15-46P-R73C sở hữu hiệu năng ấn tượng nhờ chip AMD Ryzen 3 5400U, RAM 8GB DDR4, cùng bộ nhớ trong SSD 512GB rộng rãi. Máy có màn hình Full HD 15.6 inch, tần số quét 60Hz trong thân máy chỉ 1.45kg. Laptop có pin 53Wh and hệ thống cổng đa dạng gồm: USB-C, USB-A and HDMI.\r\n\r\n','assets/img/product/1780379586909_sssxs_1__9.webp',1,'2026-06-02 12:53:06','2026-06-23 14:58:54',3,2,3,1,4,7,13,'AL15-46P-R73C'),(38,'Laptop ASUS Vivobook 14','Máy này là máy mới','assets/img/product/1782826321003_laptop_asus_vivobook_14_x1404va-eb509w_-_1.png',1,'2026-06-30 20:32:01','2026-06-30 20:32:21',3,2,3,1,1,2,7,'EB509W');
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -709,12 +724,12 @@ DELIMITER ;
 
 DROP TABLE IF EXISTS `purchase_request_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `purchase_request_items` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `purchaserequestid` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `purchaserequestid` int NOT NULL,
+  `product_id` int NOT NULL,
+  `quantity` int NOT NULL,
   `price` decimal(15,2) DEFAULT NULL,
   `isDeleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
@@ -722,7 +737,7 @@ CREATE TABLE `purchase_request_items` (
   KEY `product_id` (`product_id`),
   CONSTRAINT `purchase_request_items_ibfk_1` FOREIGN KEY (`purchaserequestid`) REFERENCES `purchase_requests` (`id`),
   CONSTRAINT `purchase_request_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`productid`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -731,7 +746,6 @@ CREATE TABLE `purchase_request_items` (
 
 LOCK TABLES `purchase_request_items` WRITE;
 /*!40000 ALTER TABLE `purchase_request_items` DISABLE KEYS */;
-INSERT INTO `purchase_request_items` VALUES (1,1,38,10,15000000.00,0),(2,2,23,10,150000.00,0),(3,2,22,10,250000.00,0),(4,3,36,12,11150000.00,0),(5,3,34,5,20000000.00,0),(6,4,20,10,500000.00,0),(7,4,18,10,250000.00,0),(8,5,38,15,15000000.00,0),(9,5,27,10,12000000.00,0),(10,6,33,5,15000000.00,0),(11,6,31,5,20000000.00,0),(12,7,37,5,12000000.00,0),(13,7,30,5,500000.00,0),(14,8,37,1,10000000.00,0),(15,8,34,1,15000000.00,0),(16,9,37,1,10000000.00,0),(17,9,34,1,12000000.00,0),(18,10,30,5,200000.00,0),(19,10,29,10,15000000.00,0),(20,11,28,15,12500000.00,0),(21,11,26,20,600000.00,0),(22,12,37,20,5000000.00,0),(23,12,34,10,10000000.00,0),(24,13,3,10,12000000.00,0),(25,13,4,20,500000.00,0),(26,14,26,12,100000.00,0),(27,14,25,10,20000000.00,0),(28,15,26,2,10000000.00,0),(29,15,27,5,15000000.00,0);
 /*!40000 ALTER TABLE `purchase_request_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -741,17 +755,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `purchase_requests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `purchase_requests` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `createdby` int(11) NOT NULL,
-  `approvedby` int(11) DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `createdby` int NOT NULL,
+  `approvedby` int DEFAULT NULL,
   `status` enum('NEW','APPROVED','REJECTED','PROCESSING','COMPLETED') DEFAULT 'NEW',
   `note` text,
   `createdat` datetime DEFAULT CURRENT_TIMESTAMP,
   `updatedat` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `isDeleted` tinyint(1) NOT NULL DEFAULT '0',
-  `supplierid` int(11) NOT NULL,
+  `supplierid` int NOT NULL,
   `code` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `code` (`code`),
@@ -761,7 +775,7 @@ CREATE TABLE `purchase_requests` (
   CONSTRAINT `purchase_requests_ibfk_1` FOREIGN KEY (`createdby`) REFERENCES `users` (`userid`),
   CONSTRAINT `purchase_requests_ibfk_2` FOREIGN KEY (`approvedby`) REFERENCES `users` (`userid`),
   CONSTRAINT `purchase_requests_ibfk_3` FOREIGN KEY (`supplierid`) REFERENCES `suppliers` (`supplierid`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -770,7 +784,6 @@ CREATE TABLE `purchase_requests` (
 
 LOCK TABLES `purchase_requests` WRITE;
 /*!40000 ALTER TABLE `purchase_requests` DISABLE KEYS */;
-INSERT INTO `purchase_requests` VALUES (1,16,14,'COMPLETED','','2026-06-30 20:33:04','2026-07-06 14:35:51',0,2,'PR-1'),(2,16,14,'COMPLETED','Nhập lô ram mới','2026-06-30 20:33:46','2026-07-06 14:35:51',0,3,'PR-2'),(3,16,14,'COMPLETED','','2026-06-30 20:34:25','2026-07-06 14:35:51',0,1,'PR-3'),(4,16,NULL,'REJECTED','','2026-06-30 20:35:35','2026-07-06 14:35:51',0,1,'PR-4'),(5,16,14,'COMPLETED','','2026-06-30 20:36:17','2026-07-06 14:35:51',0,2,'PR-5'),(6,16,14,'COMPLETED','','2026-06-30 21:06:27','2026-07-06 14:35:51',0,3,'PR-6'),(7,16,14,'COMPLETED','','2026-07-03 14:10:37','2026-07-13 20:44:57',0,2,'PR-7'),(8,16,14,'COMPLETED','','2026-07-03 16:32:28','2026-07-12 22:58:44',0,3,'PR-8'),(9,16,14,'COMPLETED','','2026-07-12 23:31:44','2026-07-13 20:44:04',0,2,'PR-9'),(10,16,14,'COMPLETED','mua 1 đơn ram mới\r\n','2026-07-12 23:46:13','2026-07-12 23:48:50',0,2,'PR-10'),(11,16,14,'APPROVED','','2026-07-13 20:33:43','2026-07-13 20:38:13',0,3,'PR-11'),(12,16,NULL,'REJECTED','','2026-07-13 20:34:13','2026-07-13 20:39:12',0,3,'PR-12'),(13,16,14,'PROCESSING','','2026-07-14 11:57:16','2026-07-14 11:59:26',0,4,'PR-13'),(14,16,14,'APPROVED','','2026-07-14 11:57:51','2026-07-14 11:58:17',0,3,'PR-14'),(15,16,14,'APPROVED','','2026-07-14 13:06:26','2026-07-14 13:07:06',0,2,'PR-15');
 /*!40000 ALTER TABLE `purchase_requests` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -780,9 +793,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `rams`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `rams` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `size` varchar(20) NOT NULL,
   `isactive` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
@@ -806,17 +819,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `role_permission`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `role_permission` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `roleid` int(11) NOT NULL,
-  `permissionid` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `roleid` int NOT NULL,
+  `permissionid` int NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `roleid` (`roleid`,`permissionid`),
   KEY `permissionid` (`permissionid`),
   CONSTRAINT `role_permission_ibfk_1` FOREIGN KEY (`roleid`) REFERENCES `roles` (`roleid`),
   CONSTRAINT `role_permission_ibfk_2` FOREIGN KEY (`permissionid`) REFERENCES `permissions` (`permissionid`)
-) ENGINE=InnoDB AUTO_INCREMENT=176 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=174 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -825,7 +838,7 @@ CREATE TABLE `role_permission` (
 
 LOCK TABLES `role_permission` WRITE;
 /*!40000 ALTER TABLE `role_permission` DISABLE KEYS */;
-INSERT INTO `role_permission` VALUES (72,2,1),(172,2,2),(115,2,4),(73,2,5),(74,2,6),(75,2,9),(76,2,12),(77,2,15),(174,2,18),(79,2,21),(80,2,24),(81,2,25),(82,2,26),(83,2,28),(84,2,29),(85,2,31),(143,2,32),(87,2,33),(88,2,36),(146,3,1),(173,3,2),(148,3,3),(149,3,4),(150,3,5),(151,3,6),(152,3,7),(153,3,8),(154,3,9),(155,3,10),(156,3,11),(157,3,12),(158,3,13),(159,3,14),(160,3,15),(161,3,16),(162,3,17),(164,3,25),(165,3,26),(166,3,27),(167,3,28),(168,3,29),(169,3,30),(170,3,31),(171,3,32),(117,4,5),(118,4,6),(119,4,7),(120,4,8),(121,4,9),(122,4,10),(123,4,11),(124,4,12),(125,4,13),(126,4,14),(127,4,15),(128,4,16),(129,4,17),(175,4,18),(131,4,19),(132,4,20),(133,4,21),(134,4,22),(135,4,23),(136,4,31),(145,4,32),(137,4,33),(138,4,34),(139,4,35),(140,4,36),(141,4,37),(142,4,38);
+INSERT INTO `role_permission` VALUES (72,2,1),(172,2,2),(115,2,4),(73,2,5),(74,2,6),(75,2,9),(76,2,12),(77,2,15),(78,2,18),(79,2,21),(80,2,24),(81,2,25),(82,2,26),(83,2,28),(84,2,29),(85,2,31),(143,2,32),(87,2,33),(88,2,36),(146,3,1),(173,3,2),(148,3,3),(149,3,4),(150,3,5),(151,3,6),(152,3,7),(153,3,8),(154,3,9),(155,3,10),(156,3,11),(157,3,12),(158,3,13),(159,3,14),(160,3,15),(161,3,16),(162,3,17),(163,3,18),(164,3,25),(165,3,26),(166,3,27),(167,3,28),(168,3,29),(169,3,30),(170,3,31),(171,3,32),(117,4,5),(118,4,6),(119,4,7),(120,4,8),(121,4,9),(122,4,10),(123,4,11),(124,4,12),(125,4,13),(126,4,14),(127,4,15),(128,4,16),(129,4,17),(130,4,18),(131,4,19),(132,4,20),(133,4,21),(134,4,22),(135,4,23),(136,4,31),(145,4,32),(137,4,33),(138,4,34),(139,4,35),(140,4,36),(141,4,37),(142,4,38);
 /*!40000 ALTER TABLE `role_permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -835,9 +848,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `roles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `roles` (
-  `roleid` int(11) NOT NULL AUTO_INCREMENT,
+  `roleid` int NOT NULL AUTO_INCREMENT,
   `rolename` varchar(50) NOT NULL,
   `isactive` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`roleid`)
@@ -860,9 +873,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `roms`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `roms` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `size` varchar(20) NOT NULL,
   `isactive` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
@@ -886,20 +899,20 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `stock_movement`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `stock_movement` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `productid` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `productid` int NOT NULL,
+  `quantity` int NOT NULL,
   `type` enum('INCREASED','DECREASED') NOT NULL,
   `reference_type` enum('INVENTORY_AUDIT','IMPORT','EXPORT') NOT NULL,
-  `reference_id` int(11) DEFAULT NULL,
+  `reference_id` int DEFAULT NULL,
   `createdat` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `productid` (`productid`),
   KEY `idx_stock_movement_reference` (`reference_type`,`reference_id`),
   CONSTRAINT `stock_movement_ibfk_1` FOREIGN KEY (`productid`) REFERENCES `products` (`productid`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -908,9 +921,60 @@ CREATE TABLE `stock_movement` (
 
 LOCK TABLES `stock_movement` WRITE;
 /*!40000 ALTER TABLE `stock_movement` DISABLE KEYS */;
-INSERT INTO `stock_movement` VALUES (1,38,10,'INCREASED','IMPORT',1,'2026-06-30 20:37:22'),(2,34,5,'INCREASED','IMPORT',2,'2026-06-30 20:38:28'),(3,36,5,'INCREASED','IMPORT',2,'2026-06-30 20:38:28'),(4,22,5,'INCREASED','IMPORT',3,'2026-06-30 20:40:11'),(5,23,10,'INCREASED','IMPORT',3,'2026-06-30 20:40:11'),(6,22,5,'INCREASED','IMPORT',4,'2026-06-30 20:41:15'),(7,23,5,'DECREASED','EXPORT',1,'2026-06-30 20:55:27'),(8,22,5,'DECREASED','EXPORT',1,'2026-06-30 20:55:27'),(9,36,7,'INCREASED','IMPORT',5,'2026-06-30 21:04:27'),(10,33,5,'INCREASED','IMPORT',6,'2026-06-30 21:07:45'),(11,31,5,'INCREASED','IMPORT',6,'2026-06-30 21:07:46'),(12,22,5,'DECREASED','EXPORT',2,'2026-06-30 21:08:51'),(13,2,5,'INCREASED','INVENTORY_AUDIT',1,'2026-06-30 21:14:28'),(14,3,5,'INCREASED','INVENTORY_AUDIT',1,'2026-06-30 21:14:28'),(15,3,3,'DECREASED','EXPORT',3,'2026-07-02 18:02:34'),(16,2,2,'DECREASED','EXPORT',3,'2026-07-02 18:02:34'),(17,38,15,'INCREASED','IMPORT',7,'2026-07-03 14:14:50'),(18,27,10,'INCREASED','IMPORT',7,'2026-07-03 14:14:50'),(19,34,2,'DECREASED','EXPORT',4,'2026-07-03 14:16:56'),(20,38,5,'DECREASED','EXPORT',4,'2026-07-03 14:16:56'),(21,3,2,'DECREASED','EXPORT',5,'2026-07-03 17:18:40'),(22,2,2,'DECREASED','EXPORT',5,'2026-07-03 17:18:40'),(23,2,1,'INCREASED','INVENTORY_AUDIT',3,'2026-07-05 09:35:27'),(24,34,1,'INCREASED','IMPORT',8,'2026-07-12 22:58:44'),(25,37,1,'INCREASED','IMPORT',8,'2026-07-12 22:58:44'),(26,29,10,'INCREASED','IMPORT',9,'2026-07-12 23:48:18'),(27,30,5,'INCREASED','IMPORT',10,'2026-07-12 23:48:50'),(28,2,1,'DECREASED','EXPORT',7,'2026-07-13 10:16:23'),(29,34,1,'INCREASED','IMPORT',11,'2026-07-13 20:44:03'),(30,37,1,'INCREASED','IMPORT',11,'2026-07-13 20:44:03'),(31,37,5,'INCREASED','IMPORT',12,'2026-07-13 20:44:57'),(32,30,5,'INCREASED','IMPORT',12,'2026-07-13 20:44:57'),(33,38,5,'DECREASED','EXPORT',9,'2026-07-13 20:47:24'),(34,31,2,'DECREASED','EXPORT',10,'2026-07-13 20:58:35'),(35,3,10,'INCREASED','IMPORT',13,'2026-07-14 11:59:26');
 /*!40000 ALTER TABLE `stock_movement` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `after_stock_movement_insert` AFTER INSERT ON `stock_movement` FOR EACH ROW BEGIN
+    DECLARE v_date            DATE;
+    DECLARE v_prev_closing    INT DEFAULT 0;
+    DECLARE v_prev_cum_import INT DEFAULT 0;
+    DECLARE v_prev_cum_export INT DEFAULT 0;
+
+    SET v_date = DATE(NEW.createdat);
+
+    -- Look up the most recent previous day's closing prefix sums for this product.
+    -- With idx_dsb_product_date (product_id, date) this is a single index seek.
+    SELECT closing_balance, cumulative_import, cumulative_export
+    INTO   v_prev_closing, v_prev_cum_import, v_prev_cum_export
+    FROM   daily_stock_balance
+    WHERE  product_id = NEW.productid
+      AND  date < v_date
+    ORDER  BY date DESC
+    LIMIT  1;
+
+    -- Insert today's row if it doesn't exist, otherwise add to it.
+    INSERT INTO daily_stock_balance
+        (date, product_id,
+         opening_balance,
+         closing_balance,
+         cumulative_import, cumulative_export)
+    VALUES (
+        v_date,
+        NEW.productid,
+        v_prev_closing,
+        v_prev_closing + IF(NEW.type = 'INCREASED', NEW.quantity, -NEW.quantity),
+        v_prev_cum_import + IF(NEW.type = 'INCREASED', NEW.quantity, 0),
+        v_prev_cum_export + IF(NEW.type = 'DECREASED', NEW.quantity, 0)
+    )
+    ON DUPLICATE KEY UPDATE
+        -- opening_balance stays fixed (first movement of the day already set it)
+        closing_balance   = closing_balance   + IF(NEW.type = 'INCREASED', NEW.quantity, -NEW.quantity),
+        cumulative_import = cumulative_import + IF(NEW.type = 'INCREASED', NEW.quantity, 0),
+        cumulative_export = cumulative_export + IF(NEW.type = 'DECREASED', NEW.quantity, 0);
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `suppliers`
@@ -918,9 +982,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `suppliers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `suppliers` (
-  `supplierid` int(11) NOT NULL AUTO_INCREMENT,
+  `supplierid` int NOT NULL AUTO_INCREMENT,
   `suppliername` varchar(255) NOT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `email` varchar(100) NOT NULL,
@@ -948,9 +1012,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `units`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `units` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `isactive` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
@@ -974,13 +1038,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
-  `userid` int(11) NOT NULL AUTO_INCREMENT,
+  `userid` int NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL,
   `fullname` varchar(150) NOT NULL,
   `passwordhash` varchar(255) NOT NULL,
-  `roleid` int(11) NOT NULL,
+  `roleid` int NOT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `gender` enum('MALE','FEMALE','OTHER') DEFAULT NULL,
@@ -1005,14 +1069,6 @@ LOCK TABLES `users` WRITE;
 INSERT INTO `users` VALUES (2,'manager01','Nguyen Thi Manager 1','manager123hash',2,'0900000002','manager@gmail.com','MALE',1,'Nguyen Thi','Manager'),(3,'staff01','Tran Van Staff','staff123hash',3,'0900000003','staff@gmail.com','MALE',1,'Tran Van','Staff'),(4,'customer01','Le Customer','customer123hash',4,'0900000004','customer@gmail.com','OTHER',0,'Le','Customer'),(5,'nam1','Nguyễn Tuấn Nam','$2a$12$ijZe3yxmOyjx19zGgdRnZ.3h13ud0QYDho4YaDgEAjljFvDjlltsG',5,'0982699381','emnam2k5@gmail.com','MALE',1,'Nguyễn Tuấn','Nam'),(6,'admin0','System Admin','$2a$05$ViJOaXoxE8h3Y1XxHZ5O0efAw9flQgH4pkX82AGi3aR3TOGJEiK8.',1,'0982699382','stdsddaff1@gmail.com','MALE',1,'System','Admin'),(7,'linh','Tran Phuong Linh','$2a$05$SSR/XL0QK7SXrPLdL8ki1uWs3IlfkYVuAaK8qDREBxelF7aM4hjoG',2,'0900000005','1243@gmail.com','MALE',0,'Tran Phuong','Linh'),(8,'meomeo123','Quang Hung MasterD','$2a$05$Ghax46XQdit.TPqhSoB.Ee9gYoBWZjvI.VRGEp0HxsNbObXgEUFa2',3,'0900000006','staff1@gmail.com','FEMALE',1,'Quang Hung','MasterD'),(9,'NamNT123','Nguyễn Thành Nam','$2a$12$HVFkUoHr/R2lUW9BHIWacOVC8vHh3AT.rpqU69ObsBHR2avbZKhWW',3,'0900000007','nam2k5@gmail.com','MALE',1,'Nguyễn Thành','Nam'),(11,'nam12','Quang Hung MasterD','$2a$12$nQfTxq2ybyDLlzkqwICpguBnuEKlk.ZQZ1Y4GPI4qoGihW6jB9U/a',3,'0912345678','staff12@gmail.com','MALE',1,'Test','Nguyen'),(12,'po122','Tran Duc Duy','$2a$12$UPOyr4qmHE.MDxfEGyq.aOAHWAUYpBeCa1UCl612dF.KIGa.hrF0y',4,'0900000089','admin12@gmail.com','MALE',1,'Duy','Tran Duc'),(13,'admin','Admin','$2a$12$ijZe3yxmOyjx19zGgdRnZ.3h13ud0QYDho4YaDgEAjljFvDjlltsG',1,'0900000010','audit_admin@gmail.com','MALE',1,'Audit','Admin'),(14,'manager','Manager','$2a$12$ijZe3yxmOyjx19zGgdRnZ.3h13ud0QYDho4YaDgEAjljFvDjlltsG',2,'0900000011','audit_manager@gmail.com','MALE',1,'Audit','Manager'),(15,'warehouse','Warehouse Staff','$2a$12$ijZe3yxmOyjx19zGgdRnZ.3h13ud0QYDho4YaDgEAjljFvDjlltsG',3,'0900000012','audit_staff@gmail.com','MALE',1,'Audit','Staff'),(16,'saleman','Saleman Staff','$2a$12$ijZe3yxmOyjx19zGgdRnZ.3h13ud0QYDho4YaDgEAjljFvDjlltsG',4,'0900000212','audsi_staff@gmail.com','MALE',1,'Nguyen Tuan','Nam'),(17,'tung','Tran Thanh Tung','$2a$12$Jt1ki.DA8zjeyJLU2EDTHeTlHDtd59S0m/sEQtf4h/IgefF4r0wuW',2,'0966244761','trthtung231@gmail.com','MALE',1,'Tung','Tran'),(18,'ducanh','Duc Anh','$2a$12$q3.HklFPX.EVDoGlhfF2EOTI99m/RyXZl4W2Z8hw0J5uN7WAPF7Ie',2,'0988888818','ducanh@gmail.com','MALE',1,'Duc','Anh');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping events for database 'wms'
---
-
---
--- Dumping routines for database 'wms'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -1023,4 +1079,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-07-16 19:37:22
+-- Dump completed on 2026-07-17 21:18:27

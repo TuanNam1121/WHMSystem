@@ -5,6 +5,7 @@ import com.swp.whmsystem.model.Product;
 import com.swp.whmsystem.utils.DateUtils;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,36 +23,43 @@ public class InventorySummaryDAO {
         boolean hasCloseDate = closeDate != null && !closeDate.trim().isEmpty();
         boolean hasDate = hasOpenDate || hasCloseDate;
 
-        Timestamp tOpenStart = null;
-        Timestamp tCloseMax = null;
-        Timestamp tNowMax = Timestamp.valueOf(LocalDate.now().atTime(LocalTime.MAX));
-
-        if (hasDate) {
-            LocalDate openingDate = hasOpenDate ? DateUtils.parseDate(openDate) : LocalDate.of(2000, 1, 1);
-            LocalDate closingDate = hasCloseDate ? DateUtils.parseDate(closeDate) : LocalDate.now();
-            tOpenStart = Timestamp.valueOf(openingDate.atStartOfDay());
-            tCloseMax = Timestamp.valueOf(closingDate.atTime(LocalTime.MAX));
-        }
+        LocalDate fromDate = hasDate ? (hasOpenDate ? DateUtils.parseDate(openDate) : LocalDate.of(2000, 1, 1)) : null;
+        LocalDate toDate   = hasDate ? (hasCloseDate ? DateUtils.parseDate(closeDate) : LocalDate.now()) : null;
 
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT p.productid, p.sku, p.name AS product_name, c.name AS category_name, u.name AS unit_name, ");
-        
+
         if (hasDate) {
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat < ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS opening_stock, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat >= ? AND sm.createdat <= ? AND sm.type='INCREASED' THEN sm.quantity ELSE 0 END), 0) AS import_stock, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat >= ? AND sm.createdat <= ? AND sm.type='DECREASED' THEN sm.quantity ELSE 0 END), 0) AS export_stock, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS closing_stock ");
+            sql.append("COALESCE(dsb_a.closing_balance,    0)                                                          AS opening_stock, ");
+            sql.append("COALESCE(dsb_b.cumulative_import  - COALESCE(dsb_a.cumulative_import, 0), 0)                   AS import_stock, ");
+            sql.append("COALESCE(dsb_b.cumulative_export  - COALESCE(dsb_a.cumulative_export, 0), 0)                   AS export_stock, ");
+            sql.append("COALESCE(dsb_b.closing_balance, COALESCE(dsb_a.closing_balance, 0))                            AS closing_stock ");
         } else {
-            sql.append("0 AS opening_stock, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? AND sm.type='INCREASED' THEN sm.quantity ELSE 0 END), 0) AS import_stock, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? AND sm.type='DECREASED' THEN sm.quantity ELSE 0 END), 0) AS export_stock, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS closing_stock ");
+            sql.append("0                                     AS opening_stock, ");
+            sql.append("COALESCE(dsb.cumulative_import, 0)    AS import_stock, ");
+            sql.append("COALESCE(dsb.cumulative_export, 0)    AS export_stock, ");
+            sql.append("COALESCE(dsb.closing_balance,   0)    AS closing_stock ");
         }
 
         sql.append("FROM products p ");
         sql.append("LEFT JOIN categories c ON p.categoryid = c.categoryid ");
         sql.append("LEFT JOIN units u ON p.unitid = u.id ");
-        sql.append("LEFT JOIN stock_movement sm ON p.productid = sm.productid ");
+
+        if (hasDate) {
+            sql.append("LEFT JOIN daily_stock_balance dsb_b ");
+            sql.append("       ON dsb_b.product_id = p.productid AND dsb_b.date = ");
+            sql.append("          (SELECT MAX(date) FROM daily_stock_balance ");
+            sql.append("            WHERE product_id = p.productid AND date >= ? AND date <= ?) ");
+            sql.append("LEFT JOIN daily_stock_balance dsb_a ");
+            sql.append("       ON dsb_a.product_id = p.productid AND dsb_a.date = ");
+            sql.append("          (SELECT MAX(date) FROM daily_stock_balance ");
+            sql.append("            WHERE product_id = p.productid AND date < ?) ");
+        } else {
+            sql.append("LEFT JOIN daily_stock_balance dsb ");
+            sql.append("       ON dsb.product_id = p.productid AND dsb.date = ");
+            sql.append("          (SELECT MAX(date) FROM daily_stock_balance WHERE product_id = p.productid) ");
+        }
+
         sql.append("WHERE 1=1 ");
 
         String kw = null;
@@ -60,16 +68,14 @@ public class InventorySummaryDAO {
             sql.append("AND (p.name LIKE ? OR p.sku LIKE ?) ");
         }
 
-        sql.append("GROUP BY p.productid, p.sku, p.name, c.name, u.name ");
-
         if (sortColumn != null && !sortColumn.trim().isEmpty()) {
             String order = "desc".equalsIgnoreCase(sortOrder) ? "DESC" : "ASC";
             switch (sortColumn) {
                 case "openingStock": sql.append("ORDER BY opening_stock ").append(order).append(", p.productid DESC "); break;
-                case "importStock": sql.append("ORDER BY import_stock ").append(order).append(", p.productid DESC "); break;
-                case "exportStock": sql.append("ORDER BY export_stock ").append(order).append(", p.productid DESC "); break;
+                case "importStock":  sql.append("ORDER BY import_stock ").append(order).append(", p.productid DESC "); break;
+                case "exportStock":  sql.append("ORDER BY export_stock ").append(order).append(", p.productid DESC "); break;
                 case "closingStock": sql.append("ORDER BY closing_stock ").append(order).append(", p.productid DESC "); break;
-                default: sql.append("ORDER BY p.productid DESC "); break;
+                default:             sql.append("ORDER BY p.productid DESC "); break;
             }
         } else {
             sql.append("ORDER BY p.productid DESC ");
@@ -82,23 +88,14 @@ public class InventorySummaryDAO {
 
             int idx = 1;
             if (hasDate) {
-                ps.setTimestamp(idx++, tOpenStart);
-                ps.setTimestamp(idx++, tOpenStart);
-                ps.setTimestamp(idx++, tCloseMax);
-                ps.setTimestamp(idx++, tOpenStart);
-                ps.setTimestamp(idx++, tCloseMax);
-                ps.setTimestamp(idx++, tCloseMax);
-            } else {
-                ps.setTimestamp(idx++, tNowMax);
-                ps.setTimestamp(idx++, tNowMax);
-                ps.setTimestamp(idx++, tNowMax);
+                ps.setDate(idx++, Date.valueOf(fromDate));
+                ps.setDate(idx++, Date.valueOf(toDate));
+                ps.setDate(idx++, Date.valueOf(fromDate));
             }
-
             if (kw != null) {
                 ps.setString(idx++, kw);
                 ps.setString(idx++, kw);
             }
-
             ps.setInt(idx++, pageSize);
             ps.setInt(idx++, (page - 1) * pageSize);
 
@@ -155,33 +152,40 @@ public class InventorySummaryDAO {
         boolean hasCloseDate = closeDate != null && !closeDate.trim().isEmpty();
         boolean hasDate = hasOpenDate || hasCloseDate;
 
-        Timestamp tOpenStart = null;
-        Timestamp tCloseMax = null;
-        Timestamp tNowMax = Timestamp.valueOf(LocalDate.now().atTime(LocalTime.MAX));
-
-        if (hasDate) {
-            LocalDate openingDate = hasOpenDate ? DateUtils.parseDate(openDate) : LocalDate.of(2000, 1, 1);
-            LocalDate closingDate = hasCloseDate ? DateUtils.parseDate(closeDate) : LocalDate.now();
-            tOpenStart = Timestamp.valueOf(openingDate.atStartOfDay());
-            tCloseMax = Timestamp.valueOf(closingDate.atTime(LocalTime.MAX));
-        }
+        LocalDate fromDate = hasDate ? (hasOpenDate ? DateUtils.parseDate(openDate) : LocalDate.of(2000, 1, 1)) : null;
+        LocalDate toDate   = hasDate ? (hasCloseDate ? DateUtils.parseDate(closeDate) : LocalDate.now()) : null;
 
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT ");
         if (hasDate) {
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat < ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS opening, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat >= ? AND sm.createdat <= ? AND sm.type='INCREASED' THEN sm.quantity ELSE 0 END), 0) AS import_qty, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat >= ? AND sm.createdat <= ? AND sm.type='DECREASED' THEN sm.quantity ELSE 0 END), 0) AS export_qty, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS closing ");
+            sql.append("COALESCE(SUM(COALESCE(dsb_a.closing_balance, 0)), 0) AS opening, ");
+            sql.append("COALESCE(SUM(COALESCE(dsb_b.cumulative_import  - COALESCE(dsb_a.cumulative_import, 0), 0)), 0) AS import_qty, ");
+            sql.append("COALESCE(SUM(COALESCE(dsb_b.cumulative_export  - COALESCE(dsb_a.cumulative_export, 0), 0)), 0) AS export_qty, ");
+            sql.append("COALESCE(SUM(COALESCE(dsb_b.closing_balance, COALESCE(dsb_a.closing_balance, 0))), 0) AS closing ");
         } else {
             sql.append("0 AS opening, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? AND sm.type='INCREASED' THEN sm.quantity ELSE 0 END), 0) AS import_qty, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? AND sm.type='DECREASED' THEN sm.quantity ELSE 0 END), 0) AS export_qty, ");
-            sql.append("COALESCE(SUM(CASE WHEN sm.createdat <= ? THEN (CASE WHEN sm.type='INCREASED' THEN sm.quantity ELSE -sm.quantity END) ELSE 0 END), 0) AS closing ");
+            sql.append("COALESCE(SUM(COALESCE(dsb.cumulative_import, 0)), 0) AS import_qty, ");
+            sql.append("COALESCE(SUM(COALESCE(dsb.cumulative_export, 0)), 0) AS export_qty, ");
+            sql.append("COALESCE(SUM(COALESCE(dsb.closing_balance,   0)), 0) AS closing ");
         }
 
         sql.append("FROM products p ");
-        sql.append("LEFT JOIN stock_movement sm ON p.productid = sm.productid ");
+
+        if (hasDate) {
+            sql.append("LEFT JOIN daily_stock_balance dsb_b ");
+            sql.append("       ON dsb_b.product_id = p.productid AND dsb_b.date = ");
+            sql.append("          (SELECT MAX(date) FROM daily_stock_balance ");
+            sql.append("            WHERE product_id = p.productid AND date >= ? AND date <= ?) ");
+            sql.append("LEFT JOIN daily_stock_balance dsb_a ");
+            sql.append("       ON dsb_a.product_id = p.productid AND dsb_a.date = ");
+            sql.append("          (SELECT MAX(date) FROM daily_stock_balance ");
+            sql.append("            WHERE product_id = p.productid AND date < ?) ");
+        } else {
+            sql.append("LEFT JOIN daily_stock_balance dsb ");
+            sql.append("       ON dsb.product_id = p.productid AND dsb.date = ");
+            sql.append("          (SELECT MAX(date) FROM daily_stock_balance WHERE product_id = p.productid) ");
+        }
+
         sql.append("WHERE 1=1 ");
 
         String kw = null;
@@ -195,18 +199,10 @@ public class InventorySummaryDAO {
 
             int idx = 1;
             if (hasDate) {
-                ps.setTimestamp(idx++, tOpenStart); // opening: < fromDate 0:00
-                ps.setTimestamp(idx++, tOpenStart); // import_qty: >= fromDate 0:00
-                ps.setTimestamp(idx++, tCloseMax);  // import_qty: <= toDate 23:59
-                ps.setTimestamp(idx++, tOpenStart); // export_qty: >= fromDate 0:00
-                ps.setTimestamp(idx++, tCloseMax);  // export_qty: <= toDate 23:59
-                ps.setTimestamp(idx++, tCloseMax);  // closing: <= toDate 23:59
-            } else {
-                ps.setTimestamp(idx++, tNowMax);
-                ps.setTimestamp(idx++, tNowMax);
-                ps.setTimestamp(idx++, tNowMax);
+                ps.setDate(idx++, Date.valueOf(fromDate));
+                ps.setDate(idx++, Date.valueOf(toDate));
+                ps.setDate(idx++, Date.valueOf(fromDate));
             }
-
             if (kw != null) {
                 ps.setString(idx++, kw);
                 ps.setString(idx++, kw);
@@ -310,13 +306,8 @@ public class InventorySummaryDAO {
         sql.append("ORDER BY total_qty DESC ");
         sql.append("LIMIT 5 ");
 
-        String finalSql = sql.toString();
-
-        System.out.println("[DEBUG] getTop5ByType SQL: " + finalSql);
-        System.out.println("[DEBUG] type=" + type + ", hasDate=" + hasDate);
-
         try (Connection conn = DBContext.getConnection();
-                PreparedStatement ps = conn.prepareStatement(finalSql)) {
+                PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             int idx = 1;
             ps.setString(idx++, type);
             if (hasDate) {
@@ -343,10 +334,8 @@ public class InventorySummaryDAO {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("[DEBUG] getTop5ByType SQL ERROR: " + e.getMessage());
             e.printStackTrace();
         }
-        System.out.println("[DEBUG] getTop5ByType result size: " + list.size());
         return list;
     }
 }

@@ -99,6 +99,10 @@ public class CreateCustomer extends HttpServlet {
             
             request.setAttribute("message", "added successfully");
             request.setAttribute("customers", cd.getAllCustomer());
+            request.setAttribute("pageSize", 10);
+            request.setAttribute("page", 1);
+            int totalPages = (Math.ceilDiv(cd.countSearchCustomer(""), 10));
+            request.setAttribute("totalPages", totalPages);
         request.getRequestDispatcher("WEB-INF/view/customer/customerList.jsp").forward(request, response);
         return;
         }

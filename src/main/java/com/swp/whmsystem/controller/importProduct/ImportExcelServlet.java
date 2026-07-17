@@ -205,8 +205,7 @@ public class ImportExcelServlet extends HttpServlet {
                 int lastRow = sheet.getLastRowNum();
                 for (int i = 1; i <= lastRow; i++) {
                     Row row = sheet.getRow(i);
-                    if (row == null)
-                        continue;
+                    if (row == null) continue;
 
                     Cell sttCell = row.getCell(0);
                     String sttVal = (sttCell != null) ? getCellStringValue(sttCell).trim() : "";

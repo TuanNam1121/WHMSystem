@@ -215,11 +215,11 @@
                                         onclick="document.getElementById('submitActionInput').value='COMPLETE'">
                                     Submit
                                 </button>
-                                <button type="submit"
+<!--                                <button type="submit"
                                         class="btn btn-draft me-2"
                                         onclick="document.getElementById('submitActionInput').value='DRAFT'">
                                     Save Draft
-                                </button>
+                                </button>-->
                                 <a href="cancelExport" class="btn btn-cancel">Back</a>
                             </div>
                         </div>

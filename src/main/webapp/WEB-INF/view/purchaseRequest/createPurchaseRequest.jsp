@@ -155,9 +155,9 @@
                                 <div class="form-group">
                                     <label>Supplier <span class="text-danger">*</span></label>
                                     <select class="select" name="supplierId" required>
-                                        <option value="" disabled selected>Select a supplier</option>
+                                        <option value="" disabled ${empty param.supplierId ? 'selected' : ''}>Select a supplier</option>
                                         <c:forEach items="${requestScope.supplierList}" var="s">
-                                            <option value="${s.supplierId}">${s.supplierName}</option>
+                                            <option value="${s.supplierId}" ${param.supplierId == s.supplierId ? 'selected' : ''}>${s.supplierName}</option>
                                         </c:forEach>
                                     </select>
                                 </div>

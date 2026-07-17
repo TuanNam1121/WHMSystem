@@ -4,10 +4,7 @@ import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.dal.PurchaseItemDAO;
 import com.swp.whmsystem.dal.PurchaseRequestDAO;
 import com.swp.whmsystem.dal.SupplierDAO;
-import com.swp.whmsystem.model.Product;
-import com.swp.whmsystem.model.PurchaseItem;
-import com.swp.whmsystem.model.PurchaseRequest;
-import com.swp.whmsystem.model.User;
+import com.swp.whmsystem.model.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,7 +15,6 @@ import com.swp.whmsystem.utils.AuthorizationUtils;
 import com.swp.whmsystem.utils.PermissionConstants;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "CreatePurchaseRequest", urlPatterns = { "/createPurchaseRequest" })
@@ -37,20 +33,28 @@ public class CreatePurchaseRequest extends HttpServlet {
             return;
         }
 
-        // String productSearch = request.getParameter("productSearch");
+        SupplierDAO supplierDAO = new SupplierDAO();
+        String supplierIdParam = request.getParameter("supplierId");
+        if (supplierIdParam != null && !supplierIdParam.trim().isEmpty()) {
+            try {
+                int supplierId = Integer.parseInt(supplierIdParam);
+                Supplier supplier = supplierDAO.getSupplierById(supplierId);
+                if (supplier == null || !supplier.isActive()) {
+                    session.setAttribute("error", "The selected supplier is inactive or does not exist! Can not create purchase request with this supplier!");
+                    response.sendRedirect("listSupplier");
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                session.setAttribute("error", "Invalid supplier ID!");
+                response.sendRedirect("listSupplier");
+                return;
+            }
+        }
 
         ProductDAO productDAO = new ProductDAO();
-        List<Product> productList = new ArrayList<>();
-        // if (productSearch == null || productSearch.isEmpty()) {
-        // productList = productDAO.getActiveProductList();
-        // } else {
-        // productList = productDAO.searchActiveProductByName(productSearch);
-        // }
-        productList = productDAO.getActiveProductList();
+        List<Product> productList = productDAO.getActiveProductList();
 
         request.setAttribute("productListForPurchase", productList);
-
-        SupplierDAO supplierDAO = new SupplierDAO();
         request.setAttribute("supplierList", supplierDAO.getActiveSuppliers());
 
         request.getRequestDispatcher("WEB-INF/view/purchaseRequest/createPurchaseRequest.jsp").forward(request,

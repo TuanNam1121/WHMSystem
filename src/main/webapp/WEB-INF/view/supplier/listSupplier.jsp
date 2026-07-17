@@ -120,7 +120,7 @@
                                     <td class="text-bolds">
                                         <fmt:formatNumber value="${sup.supplierId}" pattern="000"/>
                                     </td>
-                                    <td>${sup.supplierName}</td>
+                                    <td><a href="createPurchaseRequest?supplierId=${sup.supplierId}">${sup.supplierName}</a></td>
                                     <td>${sup.phone}</td>
                                     <td>${sup.email}</td>
                                     <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"

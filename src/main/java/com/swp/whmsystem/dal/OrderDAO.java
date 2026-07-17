@@ -265,7 +265,7 @@ public class OrderDAO {
         if (sortBy != null && !sortBy.trim().isEmpty()) {
             switch (sortBy) {
                 case "dateNewest":
-                    sql.append(" order by o.orderdate desc");
+                    sql.append(" order by o.orderdate desc, o.id desc");
                     break;
                 case "dateOldest":
                     sql.append(" order by o.orderdate asc");
@@ -278,7 +278,7 @@ public class OrderDAO {
                     break;
             }
         } else {
-            sql.append(" order by o.id desc");
+            sql.append(" order by o.orderdate desc, o.id desc");
         }
 
         int offset = (page - 1) * pageSize;
@@ -739,7 +739,7 @@ public class OrderDAO {
                 + "o.createdby, er.exported_by as processedby, o.customer_id "
                 + "from export_receipts er "
                 + "join orders o on er.order_id = o.id "
-                + "order by er.id desc";
+                + "order by coalesce(er.exported_at, er.created_at) desc, er.id desc";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             List<Order> result = new ArrayList<>();
@@ -812,7 +812,7 @@ public class OrderDAO {
         if (sortBy != null && !sortBy.trim().isEmpty()) {
             switch (sortBy) {
                 case "dateNewest":
-                    sql.append(" order by coalesce(er.exported_at, er.created_at) desc");
+                    sql.append(" order by coalesce(er.exported_at, er.created_at) desc, er.id desc");
                     break;
                 case "dateOldest":
                     sql.append(" order by coalesce(er.exported_at, er.created_at) asc");
@@ -825,7 +825,7 @@ public class OrderDAO {
                     break;
             }
         } else {
-            sql.append(" order by o.id desc");
+            sql.append(" order by coalesce(er.exported_at, er.created_at) desc, er.id desc");
         }
 
         int offset = (page - 1) * pageSize;

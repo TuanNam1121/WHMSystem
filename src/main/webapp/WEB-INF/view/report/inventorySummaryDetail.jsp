@@ -116,9 +116,18 @@
                     <h6>Detailed import and export transactions for selected product</h6>
                 </div>
                 <div class="page-btn">
-                    <a href="${pageContext.request.contextPath}/inventorySummaryReport?fromDate=${param.fromDate}&toDate=${param.toDate}" class="btn btn-back">
-                        <i class="fas fa-arrow-left me-1"></i> Back to Summary Report
-                    </a>
+                    <c:choose>
+                        <c:when test="${param.source == 'dailyTransaction'}">
+                            <a href="${pageContext.request.contextPath}/ImportExportByDayReport?date=${param.backDate}&keyword=${param.keyword}&sortBy=${param.sortBy}&sortDir=${param.sortDir}&page=${param.page}&pageSize=${param.pageSize}" class="btn btn-back">
+                                <i class="fas fa-arrow-left me-1"></i> Back to Daily Transaction
+                            </a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${pageContext.request.contextPath}/inventorySummaryReport?fromDate=${param.fromDate}&toDate=${param.toDate}" class="btn btn-back">
+                                <i class="fas fa-arrow-left me-1"></i> Back to Summary Report
+                            </a>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </div>
 
@@ -136,6 +145,13 @@
 
                     <form action="${pageContext.request.contextPath}/inventorySummaryDetail" method="get">
                         <input type="hidden" name="productId" value="${product.productId}">
+                        <input type="hidden" name="source" value="${param.source}">
+                        <input type="hidden" name="backDate" value="${param.backDate}">
+                        <input type="hidden" name="keyword" value="${param.keyword}">
+                        <input type="hidden" name="sortBy" value="${param.sortBy}">
+                        <input type="hidden" name="sortDir" value="${param.sortDir}">
+                        <input type="hidden" name="page" value="${param.page}">
+                        <input type="hidden" name="pageSize" value="${param.pageSize}">
                         <div class="card mb-3" id="filter_inputs" style="display: block !important;">
                             <div class="card-body pb-0">
                                 <div class="row">

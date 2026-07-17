@@ -153,7 +153,6 @@ public class ImportProduct extends HttpServlet {
             }
 
             // read arrays directly from form submission
-            String invoiceNumber = request.getParameter("invoiceNumber");
             String[] productIds = request.getParameterValues("productId");
             String[] serials = request.getParameterValues("serial");
             String[] itemPrices = request.getParameterValues("itemPrice");

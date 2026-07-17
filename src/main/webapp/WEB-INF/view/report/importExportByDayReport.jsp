@@ -579,7 +579,7 @@
                                                                         ${item.sku}
                                                                     </span>
                                                                 </td>
-                                                                <td class="td-name"><a href="${pageContext.request.contextPath}/ConvertDetailReport?productId=${item.productId}&fromDate=${param.date}&toDate=${param.date}"
+                                                                <td class="td-name"><a href="${pageContext.request.contextPath}/ConvertDetailReport?productId=${item.productId}&fromDate=${param.date}&toDate=${param.date}&source=dailyTransaction&backDate=${param.date}&keyword=${param.keyword}&sortBy=${param.sortBy}&sortDir=${param.sortDir}&page=${page}&pageSize=${pageSize}"
                                                                                        class="text-dark fw-bold"
                                                                                        style="text-decoration: none;"
                                                                                        title="View import/export transactions history">

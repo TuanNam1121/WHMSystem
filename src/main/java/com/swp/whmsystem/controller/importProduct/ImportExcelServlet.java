@@ -262,7 +262,7 @@ public class ImportExcelServlet extends HttpServlet {
             if (!errors.isEmpty()) {
                 StringBuilder errorMsg = new StringBuilder("Excel import failed. Errors found:<br>");
                 for (String err : errors) {
-                    errorMsg.append("• ").append(err).append("<br>");
+                    errorMsg.append("•").append(err).append("<br>");
                 }   
                 session.setAttribute("message", errorMsg.toString());
                 session.setAttribute("messageType", "danger");
@@ -298,8 +298,7 @@ public class ImportExcelServlet extends HttpServlet {
             session.removeAttribute("creator");
             session.removeAttribute("totalItem");
 
-            session.setAttribute("message", "Excel import saved successfully! " + filledList.size()
-                    + " items imported. Inventory has been updated.");
+            session.setAttribute("message", "Import saved successfully! Inventory has been updated.");
             session.setAttribute("messageType", "success");
             response.sendRedirect(request.getContextPath() + "/importRequestList");
 
@@ -317,25 +316,30 @@ public class ImportExcelServlet extends HttpServlet {
         if (cell == null)
             return "";
         switch (cell.getCellType()) {
-            case STRING:
+            case STRING -> {
                 return cell.getStringCellValue();
-            case NUMERIC:
+            }
+            case NUMERIC -> {
                 // Avoid scientific notation for numbers used as SKU/Serial
                 double numVal = cell.getNumericCellValue();
                 if (numVal == Math.floor(numVal) && !Double.isInfinite(numVal)) {
                     return String.valueOf((long) numVal);
                 }
                 return String.valueOf(numVal);
-            case BOOLEAN:
+            }
+            case BOOLEAN -> {
                 return String.valueOf(cell.getBooleanCellValue());
-            case FORMULA:
+            }
+            case FORMULA -> {
                 try {
                     return cell.getStringCellValue();
                 } catch (Exception e) {
                     return String.valueOf(cell.getNumericCellValue());
                 }
-            default:
+            }
+            default -> {
                 return "";
+            }
         }
     }
 }

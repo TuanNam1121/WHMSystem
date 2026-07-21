@@ -48,9 +48,23 @@
                     <h6>Export products from Order.</h6>
                 </div>
                 <div class="page-btn">
-                    <a href="exportHistory" class="btn btn-cancel">
-                        <i class="fas fa-arrow-left me-2"></i>Back to List
-                    </a>
+                    <c:choose>
+                        <c:when test="${param.from == 'inventorySummaryDetail'}">
+                            <c:url var="backToTransactionHistoryUrl" value="/inventorySummaryDetail">
+                                <c:param name="productId" value="${param.productId}"/>
+                                <c:param name="fromDate" value="${param.fromDate}"/>
+                                <c:param name="toDate" value="${param.toDate}"/>
+                            </c:url>
+                            <a href="${backToTransactionHistoryUrl}" class="btn btn-cancel">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Transaction History
+                            </a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${pageContext.request.contextPath}/exportHistory" class="btn btn-cancel">
+                                <i class="fas fa-arrow-left me-2"></i>Back to List
+                            </a>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </div>
 

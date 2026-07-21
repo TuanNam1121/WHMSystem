@@ -1,3 +1,5 @@
+/* Mã điều khiển giao diện chung của project. */
+
 $(document).ready(function () {
     var $wrapper = $('.main-wrapper');
     var $slimScrolls = $('.slimscroll');

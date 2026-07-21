@@ -16,6 +16,285 @@ import java.util.List;
 
 public class InventorySummaryDAO {
 
+    public List<InventorySummary> forMovementReport(String movementType, String referenceType,
+            String fromDate, String toDate, String keyword, int page, int pageSize,
+            String sortOrder) {
+        List<InventorySummary> list = new ArrayList<>();
+        Timestamp from = toStartTimestamp(fromDate);
+        Timestamp to = toEndTimestamp(toDate);
+        String keywordPattern = toKeywordPattern(keyword);
+        String order = "asc".equalsIgnoreCase(sortOrder) ? "ASC" : "DESC";
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT p.productid, p.sku, p.name AS product_name, ")
+                .append("c.name AS category_name, u.name AS unit_name, ")
+                .append("COALESCE(SUM(sm.quantity), 0) AS report_quantity ")
+                .append("FROM products p ")
+                .append("LEFT JOIN categories c ON p.categoryid = c.categoryid ")
+                .append("LEFT JOIN units u ON p.unitid = u.id ")
+                .append("JOIN stock_movement sm ON p.productid = sm.productid ")
+                .append("AND sm.type = ? AND sm.reference_type = ? ")
+                .append("AND sm.createdat >= ? AND sm.createdat <= ? ")
+                .append("WHERE 1=1 ");
+        if (keywordPattern != null) {
+            sql.append("AND (p.name LIKE ? OR p.sku LIKE ?) ");
+        }
+        sql.append("GROUP BY p.productid, p.sku, p.name, c.name, u.name ")
+                .append("ORDER BY report_quantity ").append(order)
+                .append(", p.productid DESC LIMIT ? OFFSET ?");
+
+        try (Connection conn = DBContext.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int index = 1;
+            ps.setString(index++, movementType);
+            ps.setString(index++, referenceType);
+            ps.setTimestamp(index++, from);
+            ps.setTimestamp(index++, to);
+            if (keywordPattern != null) {
+                ps.setString(index++, keywordPattern);
+                ps.setString(index++, keywordPattern);
+            }
+            ps.setInt(index++, pageSize);
+            ps.setInt(index, (page - 1) * pageSize);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    InventorySummary item = mapSpecializedReportItem(rs);
+                    int quantity = rs.getInt("report_quantity");
+                    if ("INCREASED".equals(movementType)) {
+                        item.setImportStock(quantity);
+                    } else {
+                        item.setExportStock(quantity);
+                    }
+                    list.add(item);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public int countMovementReport(String movementType, String referenceType,
+            String fromDate, String toDate, String keyword) {
+        Timestamp from = toStartTimestamp(fromDate);
+        Timestamp to = toEndTimestamp(toDate);
+        String keywordPattern = toKeywordPattern(keyword);
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT COUNT(DISTINCT p.productid) ")
+                .append("FROM products p ")
+                .append("JOIN stock_movement sm ON p.productid = sm.productid ")
+                .append("AND sm.type = ? AND sm.reference_type = ? ")
+                .append("AND sm.createdat >= ? AND sm.createdat <= ? ")
+                .append("WHERE 1=1 ");
+        if (keywordPattern != null) {
+            sql.append("AND (p.name LIKE ? OR p.sku LIKE ?) ");
+        }
+        return executeSpecializedCount(sql.toString(), movementType, referenceType,
+                from, to, keywordPattern);
+    }
+
+    public long getMovementReportTotal(String movementType, String referenceType,
+            String fromDate, String toDate, String keyword) {
+        Timestamp from = toStartTimestamp(fromDate);
+        Timestamp to = toEndTimestamp(toDate);
+        String keywordPattern = toKeywordPattern(keyword);
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT COALESCE(SUM(sm.quantity), 0) ")
+                .append("FROM products p ")
+                .append("JOIN stock_movement sm ON p.productid = sm.productid ")
+                .append("AND sm.type = ? AND sm.reference_type = ? ")
+                .append("AND sm.createdat >= ? AND sm.createdat <= ? ")
+                .append("WHERE 1=1 ");
+        if (keywordPattern != null) {
+            sql.append("AND (p.name LIKE ? OR p.sku LIKE ?) ");
+        }
+        return executeSpecializedTotal(sql.toString(), movementType, referenceType,
+                from, to, keywordPattern);
+    }
+
+    public List<InventorySummary> forStockReport(String fromDate, String toDate, String keyword,
+            int page, int pageSize, String sortColumn, String sortOrder) {
+        List<InventorySummary> list = new ArrayList<>();
+        Timestamp from = toStartTimestamp(fromDate);
+        Timestamp to = toEndTimestamp(toDate);
+        String keywordPattern = toKeywordPattern(keyword);
+        String order = "asc".equalsIgnoreCase(sortOrder) ? "ASC" : "DESC";
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT p.productid, p.sku, p.name AS product_name, ")
+                .append("c.name AS category_name, u.name AS unit_name, ")
+                .append("COALESCE(SUM(CASE WHEN sm.createdat < ? ")
+                .append("THEN CASE WHEN sm.type = 'INCREASED' THEN sm.quantity ELSE -sm.quantity END ")
+                .append("ELSE 0 END), 0) AS opening_stock, ")
+                .append("COALESCE(SUM(CASE WHEN sm.createdat <= ? ")
+                .append("THEN CASE WHEN sm.type = 'INCREASED' THEN sm.quantity ELSE -sm.quantity END ")
+                .append("ELSE 0 END), 0) AS closing_stock ")
+                .append("FROM products p ")
+                .append("LEFT JOIN categories c ON p.categoryid = c.categoryid ")
+                .append("LEFT JOIN units u ON p.unitid = u.id ")
+                .append("LEFT JOIN stock_movement sm ON p.productid = sm.productid ")
+                .append("WHERE 1=1 ");
+        if (keywordPattern != null) {
+            sql.append("AND (p.name LIKE ? OR p.sku LIKE ?) ");
+        }
+        sql.append("GROUP BY p.productid, p.sku, p.name, c.name, u.name ");
+        String sortExpression = "openingStock".equals(sortColumn) ? "opening_stock" : "closing_stock";
+        sql.append("ORDER BY ").append(sortExpression).append(" ").append(order)
+                .append(", p.productid DESC LIMIT ? OFFSET ?");
+
+        try (Connection conn = DBContext.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int index = 1;
+            ps.setTimestamp(index++, from);
+            ps.setTimestamp(index++, to);
+            if (keywordPattern != null) {
+                ps.setString(index++, keywordPattern);
+                ps.setString(index++, keywordPattern);
+            }
+            ps.setInt(index++, pageSize);
+            ps.setInt(index, (page - 1) * pageSize);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    InventorySummary item = mapSpecializedReportItem(rs);
+                    item.setOpeningStock(rs.getInt("opening_stock"));
+                    item.setClosingStock(rs.getInt("closing_stock"));
+                    list.add(item);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public int countStockReport(String keyword) {
+        String keywordPattern = toKeywordPattern(keyword);
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM products p WHERE 1=1 ");
+        if (keywordPattern != null) {
+            sql.append("AND (p.name LIKE ? OR p.sku LIKE ?) ");
+        }
+        try (Connection conn = DBContext.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            if (keywordPattern != null) {
+                ps.setString(1, keywordPattern);
+                ps.setString(2, keywordPattern);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public long[] getStockReportTotals(String fromDate, String toDate, String keyword) {
+        long[] totals = new long[2];
+        Timestamp from = toStartTimestamp(fromDate);
+        Timestamp to = toEndTimestamp(toDate);
+        String keywordPattern = toKeywordPattern(keyword);
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT ")
+                .append("COALESCE(SUM(CASE WHEN sm.createdat < ? ")
+                .append("THEN CASE WHEN sm.type = 'INCREASED' THEN sm.quantity ELSE -sm.quantity END ")
+                .append("ELSE 0 END), 0) AS total_opening, ")
+                .append("COALESCE(SUM(CASE WHEN sm.createdat <= ? ")
+                .append("THEN CASE WHEN sm.type = 'INCREASED' THEN sm.quantity ELSE -sm.quantity END ")
+                .append("ELSE 0 END), 0) AS total_closing ")
+                .append("FROM products p LEFT JOIN stock_movement sm ON p.productid = sm.productid ")
+                .append("WHERE 1=1 ");
+        if (keywordPattern != null) {
+            sql.append("AND (p.name LIKE ? OR p.sku LIKE ?) ");
+        }
+        try (Connection conn = DBContext.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int index = 1;
+            ps.setTimestamp(index++, from);
+            ps.setTimestamp(index++, to);
+            if (keywordPattern != null) {
+                ps.setString(index++, keywordPattern);
+                ps.setString(index, keywordPattern);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    totals[0] = rs.getLong("total_opening");
+                    totals[1] = rs.getLong("total_closing");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totals;
+    }
+
+    private int executeSpecializedCount(String sql, String movementType, String referenceType,
+            Timestamp from, Timestamp to, String keywordPattern) {
+        try (Connection conn = DBContext.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            setMovementParameters(ps, movementType, referenceType, from, to, keywordPattern);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    private long executeSpecializedTotal(String sql, String movementType, String referenceType,
+            Timestamp from, Timestamp to, String keywordPattern) {
+        try (Connection conn = DBContext.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            setMovementParameters(ps, movementType, referenceType, from, to, keywordPattern);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getLong(1) : 0L;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0L;
+        }
+    }
+
+    private void setMovementParameters(PreparedStatement ps, String movementType,
+            String referenceType, Timestamp from, Timestamp to, String keywordPattern)
+            throws SQLException {
+        int index = 1;
+        ps.setString(index++, movementType);
+        ps.setString(index++, referenceType);
+        ps.setTimestamp(index++, from);
+        ps.setTimestamp(index++, to);
+        if (keywordPattern != null) {
+            ps.setString(index++, keywordPattern);
+            ps.setString(index, keywordPattern);
+        }
+    }
+
+    private InventorySummary mapSpecializedReportItem(ResultSet rs) throws SQLException {
+        InventorySummary item = new InventorySummary();
+        item.setProductId(rs.getInt("productid"));
+        item.setSku(rs.getString("sku"));
+        item.setProductName(rs.getString("product_name"));
+        item.setCategory(rs.getString("category_name"));
+        item.setUnit(rs.getString("unit_name"));
+        return item;
+    }
+
+    private Timestamp toStartTimestamp(String date) {
+        LocalDate parsed = DateUtils.parseDate(date);
+        LocalDate value = parsed == null ? LocalDate.of(2000, 1, 1) : parsed;
+        return Timestamp.valueOf(value.atStartOfDay());
+    }
+
+    private Timestamp toEndTimestamp(String date) {
+        LocalDate parsed = DateUtils.parseDate(date);
+        LocalDate value = parsed == null ? LocalDate.now() : parsed;
+        return Timestamp.valueOf(value.atTime(LocalTime.MAX));
+    }
+
+    private String toKeywordPattern(String keyword) {
+        return keyword == null || keyword.trim().isEmpty() ? null : "%" + keyword.trim() + "%";
+    }
+
     public List<InventorySummary> forReport(String openDate, String closeDate, String keyword, int page, int pageSize, String sortColumn, String sortOrder) {
         List<InventorySummary> list = new ArrayList<>();
         boolean hasOpenDate = openDate != null && !openDate.trim().isEmpty();

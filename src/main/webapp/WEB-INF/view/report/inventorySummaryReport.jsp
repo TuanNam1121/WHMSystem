@@ -760,8 +760,24 @@
                         type: 'error',
                         confirmButtonClass: 'btn btn-primary'
                     });
+                    return;
                 }
             }
+        }
+
+        var selectedYear = document.getElementById('year-select').value;
+        var fromYear = fromDateStr ? fromDateStr.split('-')[2] : null;
+        var toYear = toDateStr ? toDateStr.split('-')[2] : null;
+
+        if ((fromYear && fromYear !== selectedYear) || (toYear && toYear !== selectedYear)) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Invalid Year!',
+                text: 'From Date and To Date must match the selected Year.',
+                icon: 'error',
+                type: 'error',
+                confirmButtonClass: 'btn btn-primary'
+            });
         }
     });
 
@@ -787,6 +803,18 @@
         $('input[name="fromDate"], input[name="toDate"]').on('dp.change change', function () {
             if ($('#period-select').val() !== '') {
                 $('#period-select').val('').trigger('change.select2');
+            }
+
+            // Sync Year dropdown to match fromDate's year
+            var fromVal = $('input[name="fromDate"]').val();
+            if (fromVal) {
+                var parts = fromVal.split('-');
+                if (parts.length === 3) {
+                    var yearFromDate = parts[2];
+                    if ($('#year-select option[value="' + yearFromDate + '"]').length > 0) {
+                        $('#year-select').val(yearFromDate).trigger('change.select2');
+                    }
+                }
             }
         });
     });

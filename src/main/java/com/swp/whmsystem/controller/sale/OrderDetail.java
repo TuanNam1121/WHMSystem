@@ -149,6 +149,11 @@ public class OrderDetail extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //check if session timeout
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.UPDATE_SALE_ORDER,
+                "You are not authorized to update sale order.")) {
+            return;
+        }
 
         String note = request.getParameter("note");
         String orderidStr = request.getParameter("orderid");

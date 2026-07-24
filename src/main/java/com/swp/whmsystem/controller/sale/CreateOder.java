@@ -107,6 +107,11 @@ public class CreateOder extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //check if session timeout
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.CREATE_SALE_ORDER,
+                "You are not authorized to create sale order.")) {
+            return;
+        }
         String customerId = request.getParameter("customerId");
         String note = request.getParameter("note");
 
@@ -115,14 +120,48 @@ public class CreateOder extends HttpServlet {
 
 
         HttpSession session = request.getSession();
-        if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect("noPermission");
-            return;
-        }
         User user = (User) session.getAttribute("user");
 
         OrderDAO od = new OrderDAO();
         OrderItemDAO oid = new OrderItemDAO();
+
+
+
+        String[] productIds = request.getParameterValues("productId");
+        ProductDAO pd = new ProductDAO();
+
+        //customer does not exist
+        if(customer == null){
+            response.sendRedirect("CustomerList");
+            return;
+        }
+
+        //nothing chosen
+        if(productIds == null){
+            request.setAttribute("customer", customer);
+            request.setAttribute("message", "must contain at least 1 product");
+            request.setAttribute("products", pd.getProductList());
+            request.getRequestDispatcher("WEB-INF/view/sale/createOrder.jsp").forward(request, response);
+            return;
+        }
+
+        //check quantity in stock and product status
+        for (String pid : productIds) {
+            int productId = Integer.parseInt(pid);
+            String quantityStr = request.getParameter("quantity_" + productId);
+            String priceStr = request.getParameter("price_" + productId);
+            Product p = pd.getProductFromId(productId);
+
+            if(p == null || !p.isIsActive() || p.getTotalQuantity() < Integer.parseInt(quantityStr)){
+                request.setAttribute("customer", customer);
+                request.setAttribute("message", !p.isIsActive()?"cannot choose inactive product":"number of product in stock has changed");
+                request.setAttribute("products", pd.getProductList());
+                request.getRequestDispatcher("WEB-INF/view/sale/createOrder.jsp").forward(request, response);
+                return;
+            }
+        }
+
+        //valid input
         Order order = new Order();
         order.setStatus("NEW");
         order.setNote(note);
@@ -130,11 +169,6 @@ public class CreateOder extends HttpServlet {
         order.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         order.setCreatedBy(user.getId());
         order.setCustomerId(customer.getId());
-
-
-        String[] productIds = request.getParameterValues("productId");
-        ProductDAO pd = new ProductDAO();
-        
         Order createdOrder = od.insertOrder(order);
         double total = 0;
 

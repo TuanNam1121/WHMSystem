@@ -11,10 +11,7 @@ import com.swp.whmsystem.dal.OrderItemDAO;
 import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.dal.ProductItemDAO;
 import com.swp.whmsystem.dto.ExportDetailItemDTO;
-import com.swp.whmsystem.model.Customer;
-import com.swp.whmsystem.model.Order;
-import com.swp.whmsystem.model.OrderItem;
-import com.swp.whmsystem.model.User;
+import com.swp.whmsystem.model.*;
 import com.swp.whmsystem.utils.AuthorizationUtils;
 import com.swp.whmsystem.utils.PermissionConstants;
 import java.io.IOException;
@@ -152,6 +149,11 @@ public class OrderDetail extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //check if session timeout
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.UPDATE_SALE_ORDER,
+                "You are not authorized to update sale order.")) {
+            return;
+        }
 
         String note = request.getParameter("note");
         String orderidStr = request.getParameter("orderid");
@@ -161,13 +163,58 @@ public class OrderDetail extends HttpServlet {
         Order order = od.getOrderById(orderid);
         order.setNote(note);
 
+        //check order status
+        if(order.getStatus().toLowerCase().equals("completed")){
+            CustomerDAO cd = new CustomerDAO();
+            request.setAttribute("order", order);
+            request.setAttribute("customers", cd.getAllCustomer());
+            request.setAttribute("message", "this order is exported");
+            ExportItemDAO exportItemDAO = new ExportItemDAO();
+            List<ExportDetailItemDTO> detailList = exportItemDAO.getExportedItemsByOrderId(orderid);
+            request.setAttribute("itemList", detailList);
+            request.getRequestDispatcher("WEB-INF/view/sale/viewOrder.jsp").forward(request, response);
+            return;
+        }
+
         String[] productIds = request.getParameterValues("productId");
         ProductDAO pd = new ProductDAO();
         OrderItemDAO oid = new OrderItemDAO();
 
+        //nothing chosen
+        if(productIds == null){
+            request.setAttribute("order", order);
+            CustomerDAO cd = new CustomerDAO();
+            request.setAttribute("customers", cd.getAllCustomer());
+            request.setAttribute("message", "must contain at least 1 product");
+            request.setAttribute("products", pd.getProductList());
+            request.setAttribute("orderItems", oid.getOrderItemByOrderId(orderid));
+            request.getRequestDispatcher("WEB-INF/view/sale/orderDetail.jsp").forward(request, response);
+            return;
+        }
+
+        //check quantity in stock and product status
+        for (String pid : productIds) {
+            int productId = Integer.parseInt(pid);
+            String quantityStr = request.getParameter("quantity_" + productId);
+            String priceStr = request.getParameter("price_" + productId);
+            Product p = pd.getProductFromId(productId);
+
+            if(!p.isIsActive() || p.getTotalQuantity() < Integer.parseInt(quantityStr)){
+                request.setAttribute("order", order);
+                CustomerDAO cd = new CustomerDAO();
+                request.setAttribute("customers", cd.getAllCustomer());
+                request.setAttribute("message", !pd.getProductFromId(productId).isIsActive()?"cannot choose inactive product":"number of product in stock has changed");
+                request.setAttribute("products", pd.getProductList());
+                request.setAttribute("orderItems", oid.getOrderItemByOrderId(orderid));
+                request.getRequestDispatcher("WEB-INF/view/sale/orderDetail.jsp").forward(request, response);
+                return;
+            }
+        }
+
+        //valid input
         oid.deleteOrderItem(orderid);
         double total = 0;
-
+        // take quantity + price
         for (String pid : productIds) {
 
             int productId = Integer.parseInt(pid);

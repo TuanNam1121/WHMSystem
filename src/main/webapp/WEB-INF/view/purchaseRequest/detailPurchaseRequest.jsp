@@ -47,13 +47,13 @@
                             <span class="badges bg-lightyellow">${purchaseRequest.status}</span>
                         </c:when>
                         <c:when test="${purchaseRequest.status == 'Approved' || purchaseRequest.status == 'APPROVED'}">
-                            <span class="badges bg-lightgreen">${purchaseRequest.status}</span>
+                            <span class="badges bg-lightyellow">${purchaseRequest.status}</span>
                         </c:when>
                         <c:when test="${purchaseRequest.status == 'Rejected' || purchaseRequest.status == 'REJECTED'}">
                             <span class="badges bg-lightred">${purchaseRequest.status}</span>
                         </c:when>
                         <c:when test="${purchaseRequest.status == 'Processing' || purchaseRequest.status == 'PROCESSING'}">
-                            <span class="badges bg-lightpurple">${purchaseRequest.status}</span>
+                            <span class="badges bg-lightyellow">${purchaseRequest.status}</span>
                         </c:when>
                         <c:when test="${purchaseRequest.status == 'Completed' || purchaseRequest.status == 'COMPLETED'}">
                             <span class="badges bg-lightgreen">${purchaseRequest.status}</span>

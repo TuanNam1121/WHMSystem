@@ -129,7 +129,7 @@
                                                     </c:when>
                                                     <c:when
                                                         test="${ir.status == 'PROCESSING'}">
-                                                        <span class="badges bg-lightgreen">${ir.status}</span>
+                                                        <span class="badges bg-lightyellow">${ir.status}</span>
                                                     </c:when>
                                                 </c:choose>
                                             </td>

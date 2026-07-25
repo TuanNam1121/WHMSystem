@@ -20,7 +20,6 @@ public class ManagerPurchaseRequestList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         if (user == null) {
@@ -31,6 +30,8 @@ public class ManagerPurchaseRequestList extends HttpServlet {
                 "You don't have permission to manage purchase requests!")) {
             return;
         }
+
+        PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
 
         String code = request.getParameter("code");
         

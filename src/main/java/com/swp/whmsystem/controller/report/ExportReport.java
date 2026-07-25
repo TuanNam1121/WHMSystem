@@ -12,8 +12,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "StockReportController", urlPatterns = {"/stockReport"})
-public class StockReportController extends HttpServlet {
+@WebServlet(name = "ExportReport", urlPatterns = {"/exportReport"})
+public class ExportReport extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -26,7 +26,6 @@ public class StockReportController extends HttpServlet {
         String keyword = request.getParameter("keyword");
         String fromDate = request.getParameter("fromDate");
         String toDate = request.getParameter("toDate");
-        String sortColumn = request.getParameter("sortColumn");
         String sortOrder = request.getParameter("sortOrder");
         
         String pageSizeRaw = request.getParameter("pageSize");
@@ -55,10 +54,8 @@ public class StockReportController extends HttpServlet {
         }
 
         InventorySummaryDAO dao = new InventorySummaryDAO();
-        int totalRecords = dao.countStockReport(keyword);
-        long[] stockTotals = dao.getStockReportTotals(fromDate, toDate, keyword);
-        long totalOpeningStock = stockTotals[0];
-        long totalClosingStock = stockTotals[1];
+        int totalRecords = dao.countMovementReport("DECREASED", "EXPORT", fromDate, toDate, keyword);
+        long totalQuantity = dao.getMovementReportTotal("DECREASED", "EXPORT", fromDate, toDate, keyword);
 
         int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
         if (totalPages == 0) {
@@ -67,23 +64,23 @@ public class StockReportController extends HttpServlet {
         
         page = Math.min(page, totalPages);
 
-        List<InventorySummary> reportList = dao.forStockReport(fromDate, toDate, keyword, page, pageSize, sortColumn, sortOrder);
+        List<InventorySummary> reportList = dao.forMovementReport("DECREASED", "EXPORT", fromDate, toDate, keyword, page, pageSize, sortOrder);
 
         request.setAttribute("reportList", reportList);
-        request.setAttribute("totalOpeningStock", totalOpeningStock);
-        request.setAttribute("totalClosingStock", totalClosingStock);
+        request.setAttribute("totalQuantity", totalQuantity);
         request.setAttribute("totalRecords", totalRecords);
         request.setAttribute("page", page);
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("totalPages", totalPages);
-        request.setAttribute("reportType", "stock");
-        request.setAttribute("reportTitle", "Stock Report");
-        request.setAttribute("reportSubtitle", "View opening and closing stock by date");
-        request.setAttribute("reportPath", "stockReport");
-        request.setAttribute("excelPath", "ExportStockReport");
+        request.setAttribute("reportType", "export");
+        request.setAttribute("reportTitle", "Export Report");
+        request.setAttribute("reportSubtitle", "View exported quantities by product");
+        request.setAttribute("quantityLabel", "Export Qty");
+        request.setAttribute("reportPath", "exportReport");
+        request.setAttribute("excelPath", "ExportExportReport");
         request.setAttribute("showDateFilter", true);
         request.setAttribute("focusTable", request.getQueryString() != null);
-        request.getRequestDispatcher("/WEB-INF/view/report/stockReport.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/view/report/movementReport.jsp").forward(request, response);
     }
 
     @Override

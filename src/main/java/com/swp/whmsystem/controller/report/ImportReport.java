@@ -12,8 +12,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "ExportReportController", urlPatterns = {"/exportReport"})
-public class ExportReportController extends HttpServlet {
+@WebServlet(name = "ImportReport", urlPatterns = {"/importReport"})
+public class ImportReport extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -54,8 +54,8 @@ public class ExportReportController extends HttpServlet {
         }
 
         InventorySummaryDAO dao = new InventorySummaryDAO();
-        int totalRecords = dao.countMovementReport("DECREASED", "EXPORT", fromDate, toDate, keyword);
-        long totalQuantity = dao.getMovementReportTotal("DECREASED", "EXPORT", fromDate, toDate, keyword);
+        int totalRecords = dao.countMovementReport("INCREASED", "IMPORT", fromDate, toDate, keyword);
+        long totalQuantity = dao.getMovementReportTotal("INCREASED", "IMPORT", fromDate, toDate, keyword);
 
         int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
         if (totalPages == 0) {
@@ -64,7 +64,7 @@ public class ExportReportController extends HttpServlet {
         
         page = Math.min(page, totalPages);
 
-        List<InventorySummary> reportList = dao.forMovementReport("DECREASED", "EXPORT", fromDate, toDate, keyword, page, pageSize, sortOrder);
+        List<InventorySummary> reportList = dao.forMovementReport("INCREASED", "IMPORT", fromDate, toDate, keyword, page, pageSize, sortOrder);
 
         request.setAttribute("reportList", reportList);
         request.setAttribute("totalQuantity", totalQuantity);
@@ -72,12 +72,12 @@ public class ExportReportController extends HttpServlet {
         request.setAttribute("page", page);
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("totalPages", totalPages);
-        request.setAttribute("reportType", "export");
-        request.setAttribute("reportTitle", "Export Report");
-        request.setAttribute("reportSubtitle", "View exported quantities by product");
-        request.setAttribute("quantityLabel", "Export Qty");
-        request.setAttribute("reportPath", "exportReport");
-        request.setAttribute("excelPath", "ExportExportReport");
+        request.setAttribute("reportType", "import");
+        request.setAttribute("reportTitle", "Import Report");
+        request.setAttribute("reportSubtitle", "View imported quantities by product");
+        request.setAttribute("quantityLabel", "Import Qty");
+        request.setAttribute("reportPath", "importReport");
+        request.setAttribute("excelPath", "ExportImportReport");
         request.setAttribute("showDateFilter", true);
         request.setAttribute("focusTable", request.getQueryString() != null);
         request.getRequestDispatcher("/WEB-INF/view/report/movementReport.jsp").forward(request, response);

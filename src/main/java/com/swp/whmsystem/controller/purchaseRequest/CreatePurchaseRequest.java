@@ -33,6 +33,7 @@ public class CreatePurchaseRequest extends HttpServlet {
             return;
         }
 
+        //from supplier list
         SupplierDAO supplierDAO = new SupplierDAO();
         String supplierIdParam = request.getParameter("supplierId");
         if (supplierIdParam != null && !supplierIdParam.trim().isEmpty()) {

@@ -3,6 +3,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
@@ -13,14 +14,20 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Update Purchase Request - WHM System</title>
 
-    <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/img/favicon.jpg">
+    <link rel="shortcut icon" type="image/x-icon"
+          href="${pageContext.request.contextPath}/assets/img/favicon.jpg">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/assets/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/animate.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/plugins/select2/css/select2.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/plugins/fontawesome/css/fontawesome.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/plugins/fontawesome/css/all.min.css">
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/assets/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/assets/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/assets/plugins/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/assets/plugins/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
 </head>
 
@@ -46,37 +53,46 @@
             <c:if test="${not empty error}">
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
                     <strong>${error}</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
                 </div>
             </c:if>
 
-            <div class="alert alert-warning d-flex align-items-center mb-3" role="alert" id="status-banner"
-                 style="border-radius: 8px;">
+            <div class="alert alert-warning d-flex align-items-center mb-3" role="alert"
+                 id="status-banner" style="border-radius: 8px;">
                 <i class="fas fa-info-circle me-2" style="font-size: 18px;"></i>
                 <div>
-                    <strong>Request Code: <fmt:formatNumber value="${purchaseRequest.id}" pattern="PR-"/></strong>
+                    <strong>Request Code:
+                        <fmt:formatNumber value="${purchaseRequest.id}" pattern="PR-"/>
+                    </strong>
                     &nbsp;|&nbsp; Status:
                     <c:choose>
-                        <c:when test="${purchaseRequest.status == 'New' || purchaseRequest.status == 'NEW'}">
+                        <c:when
+                                test="${purchaseRequest.status == 'New' || purchaseRequest.status == 'NEW'}">
                             <span class="badges bg-lightyellow">${purchaseRequest.status}</span>
                         </c:when>
-                        <c:when test="${purchaseRequest.status == 'Approved' || purchaseRequest.status == 'APPROVED'}">
+                        <c:when
+                                test="${purchaseRequest.status == 'Approved' || purchaseRequest.status == 'APPROVED'}">
                             <span class="badges bg-lightgreen">${purchaseRequest.status}</span>
                         </c:when>
-                        <c:when test="${purchaseRequest.status == 'Rejected' || purchaseRequest.status == 'REJECTED'}">
+                        <c:when
+                                test="${purchaseRequest.status == 'Rejected' || purchaseRequest.status == 'REJECTED'}">
                             <span class="badges bg-lightred">${purchaseRequest.status}</span>
                         </c:when>
-                        <c:when test="${purchaseRequest.status == 'Processing' || purchaseRequest.status == 'PROCESSING'}">
+                        <c:when
+                                test="${purchaseRequest.status == 'Processing' || purchaseRequest.status == 'PROCESSING'}">
                             <span class="badges bg-lightpurple">${purchaseRequest.status}</span>
                         </c:when>
-                        <c:when test="${purchaseRequest.status == 'Completed' || purchaseRequest.status == 'COMPLETED'}">
+                        <c:when
+                                test="${purchaseRequest.status == 'Completed' || purchaseRequest.status == 'COMPLETED'}">
                             <span class="badges bg-lightgreen">${purchaseRequest.status}</span>
                         </c:when>
                         <c:otherwise>
                             <span class="badges bg-lightgrey">${purchaseRequest.status}</span>
                         </c:otherwise>
                     </c:choose>
-                    &nbsp;|&nbsp; You can edit this request because it has not been approved by Manager yet.
+                    &nbsp;|&nbsp; You can edit this request because it has not been approved by Manager
+                    yet.
                 </div>
             </div>
 
@@ -87,8 +103,7 @@
                             <div class="form-group">
                                 <label>Salesman</label>
                                 <input type="text" value="${sessionScope.user.fullName}" disabled
-                                       class="form-control"
-                                       id="salesman-display">
+                                       class="form-control" id="salesman-display">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -97,40 +112,51 @@
                                 <select class="select" name="supplierId" required>
                                     <option value="" disabled>Select a supplier</option>
                                     <c:forEach items="${requestScope.supplierList}" var="s">
-                                        <option value="${s.supplierId}" ${s.supplierId == purchaseRequest.supplierId ? 'selected' : ''}>${s.supplierName}</option>
+                                        <option value="${s.supplierId}"
+                                            ${s.supplierId==purchaseRequest.supplierId ? 'selected' : ''
+                                                    }>${s.supplierName}</option>
                                     </c:forEach>
                                 </select>
                             </div>
                         </div>
                     </div>
 
-                    <%--                    <form action="updatePurchaseRequest" method="get">--%>
-                    <%--                        <input type="hidden" name="requestId" value="${purchaseRequest.id}">--%>
+                    <%-- <form action="updatePurchaseRequest" method="get">--%>
+                    <%-- <input type="hidden" name="requestId" value="${purchaseRequest.id}">--%>
 
                     <div class="row align-items-stretch">
                         <div class="col-lg-12 col-md-12 d-flex mb-4">
                             <div class="card bg-light w-100 d-flex flex-column mb-0">
                                 <div class="card-body p-3 d-flex flex-column">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div
+                                            class="d-flex justify-content-between align-items-center mb-3">
                                         <h5 class="mb-0" style="font-weight: 600;">Products</h5>
                                         <div class="search-set m-0">
                                             <div class="input-group input-group-sm">
-                                                <input type="text" id="product-search" name="productSearch"
-                                                       class="form-control" placeholder="Search product name..."
+                                                <input type="text" id="product-search"
+                                                       name="productSearch" class="form-control"
+                                                       placeholder="Search product name..."
                                                        value="${param.productSearch}">
-<%--                                                <button type="submit" class="btn btn-primary">--%>
-<%--                                                    <i class="fas fa-search"></i> Search--%>
-<%--                                                </button>--%>
-                                                <button type="button" class="btn btn-primary" id="btn-search-product">
-                                                    <i class="fas fa-search"></i> Search
+                                                <%-- <button type="submit"
+                                                    class="btn btn-primary">--%>
+                                                <%-- <i class="fas fa-search"></i>
+                                                    Search--%>
+                                                <%-- </button>--%>
+                                                <button type="button"
+                                                        class="btn btn-primary"
+                                                        id="btn-search-product">
+                                                    <i class="fas fa-search"></i>
+                                                    Search
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="table-responsive flex-grow-1"
                                          style="max-height: 400px; overflow-y: auto;">
-                                        <table class="table table-hover mb-0" style="table-layout: fixed;">
-                                            <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                        <table class="table table-hover mb-0"
+                                               style="table-layout: fixed;">
+                                            <thead
+                                                    style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
                                             <tr>
                                                 <th style="width: 35%;">Name</th>
                                                 <th style="width: 15%;">SKU</th>
@@ -141,22 +167,35 @@
                                             </tr>
                                             </thead>
                                             <tbody id="product-list-body">
-                                            <c:forEach items="${requestScope.productListForPurchase}" var="p">
+                                            <c:forEach
+                                                    items="${requestScope.productListForPurchase}"
+                                                    var="p">
                                                 <tr class="product-item">
                                                     <td class="product-name">${p.name}</td>
                                                     <td class="product-sku">${p.sku}</td>
-                                                    <td class="product-category">${not empty p.category ? p.category.name : ''}</td>
-                                                    <td class="product-quantity">${p.totalQuantity}</td>
+                                                    <td class="product-category">${not empty
+                                                            p.category ? p.category.name : ''}
+                                                    </td>
+                                                    <td class="product-quantity">
+                                                            ${p.totalQuantity}</td>
                                                     <td>
                                                         <c:choose>
-                                                            <c:when test="${p.totalQuantity > 10}">
-                                                                <span class="badges bg-lightgreen">In stock</span>
+                                                            <c:when
+                                                                    test="${p.totalQuantity > 10}">
+                                                                                            <span
+                                                                                                    class="badges bg-lightgreen">In
+                                                                                                stock</span>
                                                             </c:when>
-                                                            <c:when test="${p.totalQuantity > 0}">
-                                                                <span class="badges bg-lightyellow">Low stock</span>
+                                                            <c:when
+                                                                    test="${p.totalQuantity > 0}">
+                                                                                            <span
+                                                                                                    class="badges bg-lightyellow">Low
+                                                                                                stock</span>
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <span class="badges bg-lightred">Out of stock</span>
+                                                                                            <span
+                                                                                                    class="badges bg-lightred">Out
+                                                                                                of stock</span>
                                                             </c:otherwise>
                                                         </c:choose>
                                                     </td>
@@ -180,16 +219,19 @@
                                 </div>
                             </div>
                         </div>
-                        <%--                    </form>--%>
+                        <%-- </form>--%>
 
                         <form action="updatePurchaseRequest" method="post">
-                            <input type="hidden" id="salesman-id" name="salesmanId" value="${sessionScope.user.id}">
-                            <input type="hidden" name="requestId" value="${purchaseRequest.id}">
+                            <input type="hidden" id="salesman-id" name="salesmanId"
+                                   value="${sessionScope.user.id}">
+                            <input type="hidden" name="requestId"
+                                   value="${purchaseRequest.id}">
 
                             <div class="col-lg-12 col-md-12 d-flex mb-4">
                                 <div class="card bg-light w-100 d-flex flex-column mb-0">
                                     <div class="card-body p-3 d-flex flex-column">
-                                        <h5 class="mb-3" style="font-weight: 600;">Selected Items</h5>
+                                        <h5 class="mb-3" style="font-weight: 600;">Selected
+                                            Items</h5>
                                         <div class="table-responsive flex-grow-1"
                                              style="max-height: 250px; overflow-y: auto;">
                                             <table class="table table-hover mb-0">
@@ -200,16 +242,20 @@
                                                     <th>SKU</th>
                                                     <th>Category</th>
                                                     <th>Price</th>
-                                                    <th style="width: 150px;">Required Quantity</th>
+                                                    <th style="width: 150px;">Required
+                                                        Quantity
+                                                    </th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody id="selected-product-list">
                                                 </tbody>
-                                                <tfoot id="total-amount-footer" style="display: none;">
+                                                <tfoot id="total-amount-footer"
+                                                       style="display: none;">
                                                 <tr>
                                                     <td colspan="4" class="text-end"
-                                                        style="font-weight: 600; font-size: 16px;">Total Amount:
+                                                        style="font-weight: 600; font-size: 16px;">
+                                                        Total Amount:
                                                     </td>
                                                     <td colspan="2"
                                                         style="font-weight: 700; font-size: 18px; color: #FF9F43;"
@@ -223,16 +269,20 @@
                                         <div class="mt-auto pt-3">
                                             <div class="form-group mb-3">
                                                 <label>Note</label>
-                                                <textarea class="form-control" rows="2" name="note"
+                                                <textarea class="form-control" rows="2"
+                                                          name="note"
                                                           placeholder="Enter note for this purchase request..."
                                                           id="request-note">${purchaseRequest.note}</textarea>
                                             </div>
 
                                             <div class="text-end">
-                                                <a href="purchaseRequestList" class="btn btn-cancel"
+                                                <a href="purchaseRequestList"
+                                                   class="btn btn-cancel"
                                                    id="btn-cancel-create">Cancel</a>
-                                                <input type="submit" class="btn btn-submit me-2"
-                                                       id="btn-send-request" value="Update Request">
+                                                <input type="submit"
+                                                       class="btn btn-submit me-2"
+                                                       id="btn-send-request"
+                                                       value="Update Request">
                                             </div>
                                         </div>
                                     </div>
@@ -254,7 +304,8 @@
 <script src="${pageContext.request.contextPath}/assets/plugins/select2/js/select2.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/moment.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/bootstrap-datetimepicker.min.js"></script>
-<script src="${pageContext.request.contextPath}/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+<script
+        src="${pageContext.request.contextPath}/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/plugins/sweetalert/sweetalerts.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/script.js"></script>
 
@@ -412,7 +463,7 @@
             $('#product-list-body .product-item').each(function () {
                 let productName = $(this).find('.product-name').text().toLowerCase();
                 let productSku = $(this).find('.product-sku').text().toLowerCase();
-                
+
                 if (productName.includes(searchTerm) || productSku.includes(searchTerm)) {
                     $(this).show();
                 } else {

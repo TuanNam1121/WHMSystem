@@ -125,19 +125,5 @@
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
 <script src="assets/js/script.js"></script>
-<script>
-    function setStatus(isActive) {
-        document.getElementById('isActiveInput').value = isActive;
-        var btnActive = document.getElementById('btnActive');
-        var btnInactive = document.getElementById('btnInactive');
-        if (isActive) {
-            btnActive.className = 'btn btn-success';
-            btnInactive.className = 'btn btn-outline-danger';
-        } else {
-            btnActive.className = 'btn btn-outline-success';
-            btnInactive.className = 'btn btn-danger';
-        }
-    }
-</script>
 </body>
 </html>

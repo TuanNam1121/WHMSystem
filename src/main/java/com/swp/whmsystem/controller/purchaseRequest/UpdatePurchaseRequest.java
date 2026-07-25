@@ -56,15 +56,8 @@ public class UpdatePurchaseRequest extends HttpServlet {
             PurchaseItemDAO piDAO = new PurchaseItemDAO();
             List<PurchaseItem> items = piDAO.getItemsByPurchaseRequestId(id);
 
-//            String productSearch = request.getParameter("productSearch");
-            
             ProductDAO productDAO = new ProductDAO();
             List<Product> productList;
-//            if (productSearch == null || productSearch.isEmpty()) {
-//                productList = productDAO.getActiveProductList();
-//            } else {
-//                productList = productDAO.searchActiveProductByName(productSearch);
-//            }
             productList = productDAO.getActiveProductList();
             
             Map<Integer, Product> productMap = new HashMap<>();
@@ -146,7 +139,6 @@ public class UpdatePurchaseRequest extends HttpServlet {
                     i++;
                 }
 
-                // Delete existing items and insert new ones
                 PurchaseItemDAO piDAO = new PurchaseItemDAO();
                 piDAO.deletePurchaseItemByRequestId(requestId);
 

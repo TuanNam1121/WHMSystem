@@ -717,16 +717,8 @@
 <script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 <script src="assets/js/script.js"></script>
-<c:if test="${focusTable}">
-    <script>
-        window.addEventListener("load", function () {
-            const table = document.getElementById("inventory-summary-table");
-            table.scrollIntoView({behavior: "smooth", block: "start"});
-            table.focus({preventScroll: true});
-        });
-    </script>
-</c:if>
 <script>
+    //set các kiểu sort cho cột
     function setSort(col) {
         let currentCol = document.getElementById('sortColumn').value;
         let currentOrder = document.getElementById('sortOrder').value;
@@ -739,6 +731,7 @@
         document.querySelector('form[action$="inventorySummaryReport"]').submit();
     }
 
+    //validate toDate > fromDate
     document.querySelector('form[action$="inventorySummaryReport"]').addEventListener('submit', function (e) {
         var fromDateStr = document.querySelector('input[name="fromDate"]').value;
         var toDateStr = document.querySelector('input[name="toDate"]').value;
@@ -765,6 +758,7 @@
             }
         }
 
+        //validate year != fromDate,
         var selectedYear = document.getElementById('year-select').value;
         var fromYear = fromDateStr ? fromDateStr.split('-')[2] : null;
         var toYear = toDateStr ? toDateStr.split('-')[2] : null;
@@ -781,6 +775,7 @@
         }
     });
 
+    //tự động điền khi chọn quarter
     $(document).ready(function () {
         $('#period-select, #year-select').on('change', function () {
             var period = $('#period-select').val();

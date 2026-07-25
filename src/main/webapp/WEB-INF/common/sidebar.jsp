@@ -5,7 +5,7 @@
     <div class="sidebar-inner slimscroll">
         <div id="sidebar-menu" class="sidebar-menu">
             <ul>
-                <li class="active">
+                <li>
                     <a href="home"><img src="assets/img/icons/dashboard.svg" alt="img"><span> Dashboard</span>
                     </a>
                 </li>
@@ -147,7 +147,6 @@
                         <li><a href="${pageContext.request.contextPath}/exportReport">Export Report</a></li>
                         <li><a href="${pageContext.request.contextPath}/stockReport">Stock Report</a></li>
                         <li><a href="${pageContext.request.contextPath}/ImportExportByDayReport">Daily Transaction Report</a></li>
-                        <li><a href="${pageContext.request.contextPath}/purchasereport.html">Purchase Report</a></li>
                     </ul>
                 </li></c:if>
 

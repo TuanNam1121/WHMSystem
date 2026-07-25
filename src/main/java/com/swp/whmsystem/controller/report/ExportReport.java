@@ -1,38 +1,36 @@
 package com.swp.whmsystem.controller.report;
 
-import java.io.IOException;
-import java.util.List;
-
 import com.swp.whmsystem.dal.InventorySummaryDAO;
 import com.swp.whmsystem.model.InventorySummary;
 import com.swp.whmsystem.utils.AuthorizationUtils;
 import com.swp.whmsystem.utils.PermissionConstants;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 
-@WebServlet(name = "InventorySummaryReport", urlPatterns = { "/inventorySummaryReport" })
-public class InventorySummaryReport extends HttpServlet {
+@WebServlet(name = "ExportReport", urlPatterns = {"/exportReport"})
+public class ExportReport extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_REPORT,
-                "You don't have permission to view inventory summary reports!")) {
+                "You don't have permission to view reports!")) {
             return;
         }
 
         String keyword = request.getParameter("keyword");
         String fromDate = request.getParameter("fromDate");
         String toDate = request.getParameter("toDate");
+        String sortOrder = request.getParameter("sortOrder");
+        
         String pageSizeRaw = request.getParameter("pageSize");
         String pageRaw = request.getParameter("page");
-        String sortColumn = request.getParameter("sortColumn");
-        String sortOrder = request.getParameter("sortOrder");
-
+        
         int pageSize = 10;
         int page = 1;
 
@@ -56,49 +54,38 @@ public class InventorySummaryReport extends HttpServlet {
         }
 
         InventorySummaryDAO dao = new InventorySummaryDAO();
-        int totalRecords = dao.countAll(keyword);
+        int totalRecords = dao.countMovementReport("DECREASED", "EXPORT", fromDate, toDate, keyword);
+        long totalQuantity = dao.getMovementReportTotal("DECREASED", "EXPORT", fromDate, toDate, keyword);
+
         int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
         if (totalPages == 0) {
             totalPages = 1;
         }
+        
+        page = Math.min(page, totalPages);
 
-        List<InventorySummary> reportList = dao.forReport(fromDate, toDate, keyword, page, pageSize, sortColumn, sortOrder);
-
-        int[] grandTotals = dao.getGrandTotals(fromDate, toDate, keyword);
-        int totalOpeningStock = grandTotals[0];
-        int totalImportQty = grandTotals[1];
-        int totalExportQty = grandTotals[2];
-        int totalClosingStock = grandTotals[3];
+        List<InventorySummary> reportList = dao.forMovementReport("DECREASED", "EXPORT", fromDate, toDate, keyword, page, pageSize, sortOrder);
 
         request.setAttribute("reportList", reportList);
-        request.setAttribute("totalOpeningStock", totalOpeningStock);
-        request.setAttribute("totalImportQty", totalImportQty);
-        request.setAttribute("totalExportQty", totalExportQty);
-        request.setAttribute("totalClosingStock", totalClosingStock);
-
-        long totalAdjustQty = dao.getTotalAdjustQty(fromDate, toDate);
-        request.setAttribute("totalAdjustQty", totalAdjustQty);
-
-        List<InventorySummary> top5Import = dao.getTop5Import(fromDate, toDate);
-        List<InventorySummary> top5Export = dao.getTop5Export(fromDate, toDate);
-        request.setAttribute("top5Import", top5Import);
-        request.setAttribute("top5Export", top5Export);
-
-        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("totalQuantity", totalQuantity);
+        request.setAttribute("totalRecords", totalRecords);
         request.setAttribute("page", page);
+        request.setAttribute("pageSize", pageSize);
         request.setAttribute("totalPages", totalPages);
-
-        request.getRequestDispatcher("WEB-INF/view/report/inventorySummaryReport.jsp").forward(request, response);
+        request.setAttribute("reportType", "export");
+        request.setAttribute("reportTitle", "Export Report");
+        request.setAttribute("reportSubtitle", "View exported quantities by product");
+        request.setAttribute("quantityLabel", "Export Qty");
+        request.setAttribute("reportPath", "exportReport");
+        request.setAttribute("excelPath", "ExportExportReport");
+        request.setAttribute("showDateFilter", true);
+        request.setAttribute("focusTable", request.getQueryString() != null);
+        request.getRequestDispatcher("/WEB-INF/view/report/movementReport.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-    }
-
-    @Override
-    public String getServletInfo() {
-        return "Inventory Summary Report Servlet";
+        doGet(request, response);
     }
 }

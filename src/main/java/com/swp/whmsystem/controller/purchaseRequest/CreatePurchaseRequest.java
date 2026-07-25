@@ -33,6 +33,7 @@ public class CreatePurchaseRequest extends HttpServlet {
             return;
         }
 
+        //from supplier list
         SupplierDAO supplierDAO = new SupplierDAO();
         String supplierIdParam = request.getParameter("supplierId");
         if (supplierIdParam != null && !supplierIdParam.trim().isEmpty()) {
@@ -41,12 +42,12 @@ public class CreatePurchaseRequest extends HttpServlet {
                 Supplier supplier = supplierDAO.getSupplierById(supplierId);
                 if (supplier == null || !supplier.isActive()) {
                     session.setAttribute("error", "The selected supplier is inactive or does not exist! Can not create purchase request with this supplier!");
-                    response.sendRedirect("listSupplier");
+                    response.sendRedirect("ListSupplier");
                     return;
                 }
             } catch (NumberFormatException e) {
                 session.setAttribute("error", "Invalid supplier ID!");
-                response.sendRedirect("listSupplier");
+                response.sendRedirect("ListSupplier");
                 return;
             }
         }

@@ -2,6 +2,7 @@ package com.swp.whmsystem.controller.supplier;
 
 import com.swp.whmsystem.dal.SupplierDAO;
 import com.swp.whmsystem.model.Supplier;
+import com.swp.whmsystem.model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,11 +12,26 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
+import jakarta.servlet.http.HttpSession;
+
 @WebServlet(name = "ListSupplier", urlPatterns = {"/listSupplier"})
-public class listSupplier extends HttpServlet {
+public class ListSupplier extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_SUPPLIER,
+                "You are not authorized to View suppliers.")) {
+            return;
+        }
+
         String code = request.getParameter("code");
         String name = request.getParameter("name");
         String active = request.getParameter("active");

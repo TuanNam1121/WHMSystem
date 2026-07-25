@@ -2,6 +2,7 @@ package com.swp.whmsystem.controller.report;
 
 import java.io.IOException;
 
+import com.swp.whmsystem.dal.InventorySummaryDAO;
 import com.swp.whmsystem.dal.StockMovementDAO;
 import com.swp.whmsystem.model.StockMovement;
 import jakarta.servlet.ServletException;
@@ -25,6 +26,7 @@ public class ViewStockMovementDetail extends HttpServlet {
         try {
             int movementId = Integer.parseInt(movementIdRaw.trim());
             StockMovementDAO dao = new StockMovementDAO();
+            InventorySummaryDAO inventorySummaryDAO = new InventorySummaryDAO();
             StockMovement sm = dao.getStockMovementById(movementId);
 
             if (sm != null) {
@@ -53,7 +55,7 @@ public class ViewStockMovementDetail extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + "/ImportHistoryDetail?receiptId=" + refId + backParams);
                     return;
                 } else if ("EXPORT".equalsIgnoreCase(refType)) {
-                    int orderId = dao.getOrderIdByExportReceiptId(refId);
+                    int orderId = inventorySummaryDAO.getOrderIdByExportReceiptId(refId);
                     if (orderId > 0) {
                         response.sendRedirect(request.getContextPath() + "/exportDetail?orderId=" + orderId + backParams);
                         return;

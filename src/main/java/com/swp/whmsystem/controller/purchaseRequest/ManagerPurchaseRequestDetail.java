@@ -82,26 +82,22 @@ public class ManagerPurchaseRequestDetail extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.APPROVE_REJECT_PURCHASE_REQUEST,
+                "You don't have permission to manage purchase requests!")) {
+            return;
+        }
+
         String button = request.getParameter("buttonSubmit");
         int purReqId = Integer.parseInt(request.getParameter("purchaseRequestId"));
         PurchaseRequestDAO purchaseRequestDAO = new PurchaseRequestDAO();
         PurchaseRequest purchaseRequest = purchaseRequestDAO.getPurchaseRequestById(purReqId);
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-
-        try {
-            if (user == null) {
-                response.sendRedirect("login");
-                return;
-            }
-            if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.APPROVE_REJECT_PURCHASE_REQUEST,
-                    "You don't have permission to manage purchase requests!")) {
-                return;
-            }
-        } catch (Exception e) {
-            response.sendRedirect("login");
-            return;
-        }
 
         if (button.equalsIgnoreCase("Reject")) {
             purchaseRequest.setStatus("REJECTED");

@@ -1,7 +1,6 @@
 package com.swp.whmsystem.controller.report;
 
 import com.swp.whmsystem.dal.InventorySummaryDAO;
-import com.swp.whmsystem.enums.SpecializedReportType;
 import com.swp.whmsystem.model.InventorySummary;
 import com.swp.whmsystem.utils.AuthorizationUtils;
 import com.swp.whmsystem.utils.DateUtils;
@@ -35,7 +34,27 @@ public class ExportSpecializedInventoryReport extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        SpecializedReportType reportType = SpecializedReportType.fromServletPath(request.getServletPath());
+        String servletPath = request.getServletPath();
+        String reportType = "stock";
+        String title = "Stock Report";
+        String quantityLabel = "";
+        String movementType = "";
+        String referenceType = "";
+
+        if ("/ExportImportReport".equals(servletPath)) {
+            reportType = "import";
+            title = "Import Report";
+            quantityLabel = "Import Qty";
+            movementType = "INCREASED";
+            referenceType = "IMPORT";
+        } else if ("/ExportExportReport".equals(servletPath)) {
+            reportType = "export";
+            title = "Export Report";
+            quantityLabel = "Export Qty";
+            movementType = "DECREASED";
+            referenceType = "EXPORT";
+        }
+
         if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_REPORT,
                 "You don't have permission to export reports!")) {
             return;
@@ -50,25 +69,27 @@ public class ExportSpecializedInventoryReport extends HttpServlet {
         }
 
         InventorySummaryDAO dao = new InventorySummaryDAO();
-        List<InventorySummary> reportList = reportType.isMovementReport()
-                ? dao.forMovementReport(reportType.getMovementType(), reportType.getReferenceType(),
-                        fromDate, toDate, keyword, 1, Integer.MAX_VALUE, "desc")
-                : dao.forStockReport(fromDate, toDate, keyword, 1, Integer.MAX_VALUE,
-                        "closingStock", "desc");
+        List<InventorySummary> reportList;
+        
+        if ("stock".equals(reportType)) {
+            reportList = dao.forStockReport(fromDate, toDate, keyword, 1, Integer.MAX_VALUE, "closingStock", "desc");
+        } else {
+            reportList = dao.forMovementReport(movementType, referenceType, fromDate, toDate, keyword, 1, Integer.MAX_VALUE, "desc");
+        }
 
-        String fileName = reportType.getTitle().replace(' ', '_') + ".xlsx";
+        String fileName = title.replace(' ', '_') + ".xlsx";
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
 
         try (Workbook workbook = new XSSFWorkbook()) {
-            writeWorkbook(workbook, reportType, reportList, fromDate, toDate);
+            writeWorkbook(workbook, reportType, title, quantityLabel, reportList, fromDate, toDate);
             workbook.write(response.getOutputStream());
         }
     }
 
-    private void writeWorkbook(Workbook workbook, SpecializedReportType reportType,
+    private void writeWorkbook(Workbook workbook, String reportType, String title, String quantityLabel,
             List<InventorySummary> reportList, String fromDate, String toDate) {
-        Sheet sheet = workbook.createSheet(reportType.getTitle());
+        Sheet sheet = workbook.createSheet(title);
         CellStyle titleStyle = createTitleStyle(workbook);
         CellStyle subtitleStyle = createSubtitleStyle(workbook);
         CellStyle headerStyle = createHeaderStyle(workbook);
@@ -76,9 +97,9 @@ public class ExportSpecializedInventoryReport extends HttpServlet {
 
         Row titleRow = sheet.createRow(0);
         Cell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue(reportType.getTitle());
+        titleCell.setCellValue(title);
         titleCell.setCellStyle(titleStyle);
-        int lastColumn = reportType == SpecializedReportType.STOCK ? 6 : 5;
+        int lastColumn = "stock".equals(reportType) ? 6 : 5;
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, lastColumn));
 
         Row periodRow = sheet.createRow(1);
@@ -87,11 +108,9 @@ public class ExportSpecializedInventoryReport extends HttpServlet {
         periodCell.setCellStyle(subtitleStyle);
         sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, lastColumn));
 
-        String[] headers = reportType == SpecializedReportType.STOCK
-                ? new String[] {"No.", "SKU", "Product Name", "Category", "Unit",
-                        "Opening Stock", "Closing Stock"}
-                : new String[] {"No.", "SKU", "Product Name", "Category", "Unit",
-                        reportType.getQuantityLabel()};
+        String[] headers = "stock".equals(reportType)
+                ? new String[] {"No.", "SKU", "Product Name", "Category", "Unit", "Opening Stock", "Closing Stock"}
+                : new String[] {"No.", "SKU", "Product Name", "Category", "Unit", quantityLabel};
         Row headerRow = sheet.createRow(3);
         for (int column = 0; column < headers.length; column++) {
             Cell cell = headerRow.createCell(column);
@@ -113,7 +132,7 @@ public class ExportSpecializedInventoryReport extends HttpServlet {
             setCell(row, 2, item.getProductName(), dataStyle);
             setCell(row, 3, item.getCategory(), dataStyle);
             setCell(row, 4, item.getUnit(), dataStyle);
-            if (reportType == SpecializedReportType.STOCK) {
+            if ("stock".equals(reportType)) {
                 setCell(row, 5, item.getOpeningStock(), dataStyle);
                 setCell(row, 6, item.getClosingStock(), dataStyle);
             } else {
@@ -128,7 +147,7 @@ public class ExportSpecializedInventoryReport extends HttpServlet {
         for (int column = 1; column < 5; column++) {
             totalRow.createCell(column).setCellStyle(headerStyle);
         }
-        if (reportType == SpecializedReportType.STOCK) {
+        if ("stock".equals(reportType)) {
             Cell totalOpeningCell = totalRow.createCell(5);
             totalOpeningCell.setCellValue(totalOpening);
             totalOpeningCell.setCellStyle(headerStyle);
@@ -146,12 +165,10 @@ public class ExportSpecializedInventoryReport extends HttpServlet {
         }
     }
 
-    private int getQuantity(SpecializedReportType reportType, InventorySummary item) {
-        return switch (reportType) {
-            case IMPORT -> item.getImportStock();
-            case EXPORT -> item.getExportStock();
-            case STOCK -> item.getClosingStock();
-        };
+    private int getQuantity(String reportType, InventorySummary item) {
+        if ("import".equals(reportType)) return item.getImportStock();
+        if ("export".equals(reportType)) return item.getExportStock();
+        return item.getClosingStock();
     }
 
     private boolean isValidDateRange(String fromDate, String toDate) {

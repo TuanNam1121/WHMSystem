@@ -217,6 +217,16 @@ $(document).ready(function () {
                 $(this).next('ul').slideUp(350);
             }
         });
+        
+        var currentPath = window.location.pathname;
+        $('#sidebar-menu a').each(function() {
+            var href = $(this).attr('href');
+            if (href && href !== 'javascript:void(0);' && href !== '#' && currentPath.endsWith(href)) {
+                $(this).closest('li').addClass('active');
+                $(this).addClass('active');
+            }
+        });
+        
         $('#sidebar-menu ul li.submenu a.active').parents('li:last').children('a:first').addClass('active').trigger('click');
     }
 

@@ -3970,12 +3970,12 @@ span.select2-container.select2-container--default.select2-container--open {
 }
 
 .sidebar .sidebar-menu > ul > li.submenu ul li a.active {
-    color: #092c4c
+    color: #ff9f43
 }
 
 .sidebar .sidebar-menu > ul > li.submenu ul li a.active:after {
-    background: #092c4c;
-    border: 1px solid #092c4c
+    background: #ff9f43;
+    border: 1px solid #ff9f43
 }
 
 .sidebar .sidebar-menu > ul > li.submenu ul li a::after {

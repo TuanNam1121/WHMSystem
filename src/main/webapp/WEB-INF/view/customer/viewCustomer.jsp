@@ -123,7 +123,7 @@
                                                         </c:when>
                                                         <c:when
                                                             test="${o.status == 'DOING' || o.status == 'Doing'}">
-                                                            <span class="badges bg-lightpurple">${o.status}</span>
+                                                            <span class="badges bg-lightyellow">${o.status}</span>
                                                         </c:when>
                                                         <c:when
                                                             test="${o.status == 'COMPLETED' || o.status== 'Completed'}">

@@ -5,7 +5,7 @@
     <div class="sidebar-inner slimscroll">
         <div id="sidebar-menu" class="sidebar-menu">
             <ul>
-                <li class="active">
+                <li>
                     <a href="home"><img src="assets/img/icons/dashboard.svg" alt="img"><span> Dashboard</span>
                     </a>
                 </li>
@@ -147,7 +147,6 @@
                         <li><a href="${pageContext.request.contextPath}/exportReport">Export Report</a></li>
                         <li><a href="${pageContext.request.contextPath}/stockReport">Stock Report</a></li>
                         <li><a href="${pageContext.request.contextPath}/ImportExportByDayReport">Daily Transaction Report</a></li>
-                        <li><a href="${pageContext.request.contextPath}/purchasereport.html">Purchase Report</a></li>
                     </ul>
                 </li></c:if>
 
@@ -169,3 +168,43 @@
         </div>
     </div>
 </div>
+
+<style>
+.sidebar .sidebar-menu > ul > li.submenu ul li a.active {
+    color: #ff9f43 !important;
+}
+.sidebar .sidebar-menu > ul > li.submenu ul li a.active:after {
+    background: #ff9f43 !important;
+    border: 1px solid #ff9f43 !important;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        var currentPath = window.location.pathname;
+        var links = document.querySelectorAll('#sidebar-menu a');
+        
+        links.forEach(function(link) {
+            var href = link.getAttribute('href');
+            if (href && href !== 'javascript:void(0);' && href !== '#' && currentPath.endsWith(href)) {
+                link.classList.add('active');
+                
+                var parentLi = link.closest('li');
+                if (parentLi) {
+                    parentLi.classList.add('active');
+                }
+                
+                var submenuLi = link.closest('li.submenu');
+                if (submenuLi) {
+                    var parentA = submenuLi.querySelector('a');
+                    if (parentA) parentA.classList.add('active');
+                    
+                    var submenuUl = submenuLi.querySelector('ul');
+                    if (submenuUl) submenuUl.style.display = 'block';
+                }
+            }
+        });
+    }, 150);
+});
+</script>

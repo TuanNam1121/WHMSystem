@@ -68,7 +68,7 @@
                                                             </c:when>
                                                             <c:when
                                                                 test="${purchaseRequest.status == 'Approved' || purchaseRequest.status == 'APPROVED'}">
-                                                                <span class="badges bg-lightgreen"
+                                                                <span class="badges bg-lightyellow"
                                                                     style="font-size: 14px; padding: 6px 16px;">${purchaseRequest.status}</span>
                                                             </c:when>
                                                             <c:when
@@ -78,7 +78,7 @@
                                                             </c:when>
                                                             <c:when
                                                                 test="${purchaseRequest.status == 'Processing' || purchaseRequest.status == 'PROCESSING'}">
-                                                                <span class="badges bg-lightpurple"
+                                                                <span class="badges bg-lightyellow"
                                                                     style="font-size: 14px; padding: 6px 16px;">${purchaseRequest.status}</span>
                                                             </c:when>
                                                             <c:when

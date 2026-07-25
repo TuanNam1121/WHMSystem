@@ -7,6 +7,8 @@ import com.swp.whmsystem.model.Product;
 import com.swp.whmsystem.model.PurchaseItem;
 import com.swp.whmsystem.model.PurchaseRequest;
 import com.swp.whmsystem.model.User;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -30,8 +32,8 @@ public class DetailPurchaseRequest extends HttpServlet {
             response.sendRedirect("login");
             return;
         }
-        if (user.getRoleId() != 4) {
-            response.sendRedirect("home");
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_PURCHASE_ORDER,
+                "You don't have permission to view your purchase requests!")) {
             return;
         }
 

@@ -717,16 +717,8 @@
 <script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 <script src="assets/js/script.js"></script>
-<c:if test="${focusTable}">
-    <script>
-        window.addEventListener("load", function () {
-            const table = document.getElementById("inventory-summary-table");
-            table.scrollIntoView({behavior: "smooth", block: "start"});
-            table.focus({preventScroll: true});
-        });
-    </script>
-</c:if>
 <script>
+    //set các kiểu sort cho cột
     function setSort(col) {
         let currentCol = document.getElementById('sortColumn').value;
         let currentOrder = document.getElementById('sortOrder').value;
@@ -739,6 +731,7 @@
         document.querySelector('form[action$="inventorySummaryReport"]').submit();
     }
 
+    //validate toDate > fromDate
     document.querySelector('form[action$="inventorySummaryReport"]').addEventListener('submit', function (e) {
         var fromDateStr = document.querySelector('input[name="fromDate"]').value;
         var toDateStr = document.querySelector('input[name="toDate"]').value;
@@ -760,11 +753,29 @@
                         type: 'error',
                         confirmButtonClass: 'btn btn-primary'
                     });
+                    return;
                 }
             }
         }
+
+        //validate year != fromDate,
+        var selectedYear = document.getElementById('year-select').value;
+        var fromYear = fromDateStr ? fromDateStr.split('-')[2] : null;
+        var toYear = toDateStr ? toDateStr.split('-')[2] : null;
+
+        if ((fromYear && fromYear !== selectedYear) || (toYear && toYear !== selectedYear)) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Invalid Year!',
+                text: 'From Date and To Date must match the selected Year.',
+                icon: 'error',
+                type: 'error',
+                confirmButtonClass: 'btn btn-primary'
+            });
+        }
     });
 
+    //tự động điền khi chọn quarter
     $(document).ready(function () {
         $('#period-select, #year-select').on('change', function () {
             var period = $('#period-select').val();
@@ -787,6 +798,18 @@
         $('input[name="fromDate"], input[name="toDate"]').on('dp.change change', function () {
             if ($('#period-select').val() !== '') {
                 $('#period-select').val('').trigger('change.select2');
+            }
+
+            // Sync Year dropdown to match fromDate's year
+            var fromVal = $('input[name="fromDate"]').val();
+            if (fromVal) {
+                var parts = fromVal.split('-');
+                if (parts.length === 3) {
+                    var yearFromDate = parts[2];
+                    if ($('#year-select option[value="' + yearFromDate + '"]').length > 0) {
+                        $('#year-select').val(yearFromDate).trigger('change.select2');
+                    }
+                }
             }
         });
     });

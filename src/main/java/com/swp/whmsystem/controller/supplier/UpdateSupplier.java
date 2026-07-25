@@ -2,6 +2,7 @@ package com.swp.whmsystem.controller.supplier;
 
 import com.swp.whmsystem.dal.SupplierDAO;
 import com.swp.whmsystem.model.Supplier;
+import com.swp.whmsystem.model.User;
 import com.swp.whmsystem.utils.UserFormValidation;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,11 +12,26 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.PermissionConstants;
+import jakarta.servlet.http.HttpSession;
+
 @WebServlet(name = "UpdateSupplier", urlPatterns = {"/updateSupplier"})
-public class updateSupplier extends HttpServlet {
+public class UpdateSupplier extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.UPDATE_SUPPLIER,
+                "You are not authorized to Update suppliers.")) {
+            return;
+        }
+
         String idStr = request.getParameter("id");
         if (idStr == null || idStr.isEmpty()) {
             response.sendRedirect("listSupplier");
@@ -41,6 +57,17 @@ public class updateSupplier extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.UPDATE_SUPPLIER,
+                "You are not authorized to Update suppliers.")) {
+            return;
+        }
+
         String idStr = request.getParameter("supplierId");
         String supplierName = request.getParameter("supplierName");
         String phone = request.getParameter("phone");
@@ -60,8 +87,23 @@ public class updateSupplier extends HttpServlet {
         Supplier existingSupplierByName = supplierDAO.getSupplierByName(supplierName);
         if (existingSupplierByName != null && existingSupplierByName.getSupplierId() != supplierId) {
             request.setAttribute("error", "The supplier name has already existed! Please input another one!");
-            // Set id parameter back so doGet works correctly
             request.setAttribute("id", String.valueOf(supplierId));
+            request.getRequestDispatcher("/WEB-INF/view/supplier/updateSupplier.jsp").forward(request, response);
+            return;
+        }
+
+        Supplier existingSupplierByPhone = supplierDAO.getSupplierByPhone(phone);
+        if (existingSupplierByPhone != null && existingSupplierByPhone.getSupplierId() != supplierId) {
+            request.setAttribute("error", "The phone number has already existed! Please input another one!");
+            request.setAttribute("id", supplierId);
+            request.getRequestDispatcher("/WEB-INF/view/supplier/updateSupplier.jsp").forward(request, response);
+            return;
+        }
+
+        Supplier existingSupplierByEmail = supplierDAO.getSupplierByEmail(email);
+        if (existingSupplierByEmail != null && existingSupplierByEmail.getSupplierId() != supplierId) {
+            request.setAttribute("error", "The email has already existed! Please input another one!");
+            request.setAttribute("id", supplierId);
             request.getRequestDispatcher("/WEB-INF/view/supplier/updateSupplier.jsp").forward(request, response);
             return;
         }

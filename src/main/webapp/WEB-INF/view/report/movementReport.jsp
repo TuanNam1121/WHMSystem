@@ -42,8 +42,21 @@
 
         .report-summary-card p { color: #637381; margin: 0 0 4px; }
         .report-summary-card h4 { font-size: 24px; margin: 0; }
-        .btn-export-report { background: #28a745; border: 0; color: #fff; }
-        .btn-export-report:hover { background: #218838; color: #fff; }
+        .btn-export {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-export:hover {
+            background-color: #218838;
+            color: #fff;
+        }
 
         .specialized-report-table thead th {
             background: #ff9f43;
@@ -87,7 +100,7 @@
                     <c:param name="toDate" value="${param.toDate}"/>
                 </c:url>
                 <div class="page-btn">
-                    <a href="${excelUrl}" class="btn btn-export-report">
+                    <a href="${excelUrl}" class="btn btn-export">
                         <i class="fas fa-file-excel me-1"></i> Export Excel
                     </a>
                 </div>
@@ -104,30 +117,12 @@
                             </c:choose>
                         </div>
                         <div>
-                            <c:choose>
-                                <c:when test="${reportType == 'stock'}">
-                                    <p>Total Opening Stock</p>
-                                    <h4><fmt:formatNumber value="${totalOpeningStock}" pattern="#,##0"/></h4>
-                                </c:when>
-                                <c:otherwise>
-                                    <p>Total <c:out value="${quantityLabel}"/></p>
-                                    <h4><fmt:formatNumber value="${totalQuantity}" pattern="#,##0"/></h4>
-                                </c:otherwise>
-                            </c:choose>
+                            <p>Total <c:out value="${quantityLabel}"/></p>
+                            <h4><fmt:formatNumber value="${totalQuantity}" pattern="#,##0"/></h4>
                         </div>
                     </div>
                 </div>
-                <c:if test="${reportType == 'stock'}">
-                    <div class="col-lg-4 col-sm-6 col-12 mb-3">
-                        <div class="report-summary-card">
-                            <div class="report-summary-icon"><i class="fas fa-box-open"></i></div>
-                            <div>
-                                <p>Total Closing Stock</p>
-                                <h4><fmt:formatNumber value="${totalClosingStock}" pattern="#,##0"/></h4>
-                            </div>
-                        </div>
-                    </div>
-                </c:if>
+
                 <div class="col-lg-4 col-sm-6 col-12 mb-3">
                     <div class="report-summary-card">
                         <div class="report-summary-icon"><i class="fas fa-list"></i></div>
@@ -194,8 +189,8 @@
                                                    placeholder="SKU or product name...">
                                         </div>
                                     </div>
-                                    <div class="col-lg-1 col-sm-6 col-12">
-                                        <div class="form-group">
+                                    <div class="col-lg-1 col-sm-6 col-12 ms-lg-auto">
+                                        <div class="form-group d-flex justify-content-lg-end">
                                             <button type="submit" class="btn btn-filters" aria-label="Search">
                                                 <img src="${pageContext.request.contextPath}/assets/img/icons/search-whites.svg"
                                                      alt="search">
@@ -215,24 +210,10 @@
                                     <th>Product Name</th>
                                     <th>Category</th>
                                     <th>Unit</th>
-                                    <c:choose>
-                                        <c:when test="${reportType == 'stock'}">
-                                            <th style="cursor:pointer" onclick="toggleQuantitySort('openingStock')">
-                                                Opening Stock
-                                                <i class="fas fa-sort${param.sortColumn == 'openingStock' ? (param.sortOrder == 'asc' ? '-up' : '-down') : ''}"></i>
-                                            </th>
-                                            <th style="cursor:pointer" onclick="toggleQuantitySort('closingStock')">
-                                                Closing Stock
-                                                <i class="fas fa-sort${param.sortColumn == 'closingStock' ? (param.sortOrder == 'asc' ? '-up' : '-down') : ''}"></i>
-                                            </th>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <th style="cursor:pointer" onclick="toggleQuantitySort('quantity')">
-                                                <c:out value="${quantityLabel}"/>
-                                                <i class="fas fa-sort${param.sortOrder == 'asc' ? '-up' : '-down'}"></i>
-                                            </th>
-                                        </c:otherwise>
-                                    </c:choose>
+                                    <th style="cursor:pointer" onclick="toggleQuantitySort('quantity')">
+                                        <c:out value="${quantityLabel}"/>
+                                        <i class="fas fa-sort${param.sortOrder == 'asc' ? '-up' : '-down'}"></i>
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -251,21 +232,12 @@
                                                 <c:when test="${reportType == 'export'}">
                                                     <fmt:formatNumber value="${item.exportStock}" pattern="#,##0"/>
                                                 </c:when>
-                                                <c:when test="${reportType == 'stock'}">
-                                                    <fmt:formatNumber value="${item.openingStock}" pattern="#,##0"/>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <fmt:formatNumber value="${item.closingStock}" pattern="#,##0"/>
-                                                </c:otherwise>
                                             </c:choose>
                                         </td>
-                                        <c:if test="${reportType == 'stock'}">
-                                            <td><fmt:formatNumber value="${item.closingStock}" pattern="#,##0"/></td>
-                                        </c:if>
                                     </tr>
                                 </c:forEach>
                                 <c:if test="${empty reportList}">
-                                    <tr><td colspan="${reportType == 'stock' ? 7 : 6}"
+                                    <tr><td colspan="6"
                                             class="text-center py-4 text-muted">No data to display</td></tr>
                                 </c:if>
                                 </tbody>
@@ -285,6 +257,8 @@
 <script src="${pageContext.request.contextPath}/assets/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/moment.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/bootstrap-datetimepicker.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/plugins/sweetalert/sweetalerts.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/script.js"></script>
 <script>
     function toggleQuantitySort(column) {
@@ -311,7 +285,13 @@
         const to = parseDate(toInput.value);
         if (from && to && from > to) {
             event.preventDefault();
-            alert('From Date cannot be after To Date.');
+            Swal.fire({
+                title: 'Invalid Date Range!',
+                text: 'From Date cannot be after To Date.',
+                icon: 'error',
+                type: 'error',
+                confirmButtonClass: 'btn btn-primary'
+            });
         }
     });
 </script>

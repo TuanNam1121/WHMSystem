@@ -221,7 +221,14 @@
                                     <tr>
                                         <td>${(page - 1) * pageSize + status.index + 1}</td>
                                         <td><c:out value="${item.sku}"/></td>
-                                        <td><c:out value="${item.productName}"/></td>
+                                        <td>
+                                            <a href="${pageContext.request.contextPath}/inventorySummaryDetail?productId=${item.productId}&fromDate=${param.fromDate}&toDate=${param.toDate}&typeFilter=${reportType == 'import' ? 'INCREASED' : 'DECREASED'}&source=${reportType == 'import' ? 'importReport' : 'exportReport'}"
+                                               class="text-dark fw-bold"
+                                               style="text-decoration: none;"
+                                               title="View import/export transactions history">
+                                                <c:out value="${item.productName}"/>
+                                            </a>
+                                        </td>
                                         <td><c:out value="${item.category}"/></td>
                                         <td><c:out value="${item.unit}"/></td>
                                         <td>

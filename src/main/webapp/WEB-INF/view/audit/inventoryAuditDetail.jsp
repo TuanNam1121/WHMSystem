@@ -41,9 +41,23 @@
                     <h6>Review details for audit request #${audit.id}</h6>
                 </div>
                 <div class="page-btn">
-                    <a href="InventoryAuditList" class="btn btn-added">
-                        <img src="assets/img/icons/return1.svg" alt="img" class="mr-2">Back to List
-                    </a>
+                    <c:choose>
+                        <c:when test="${param.from == 'inventorySummaryDetail'}">
+                            <c:url var="backToTransactionHistoryUrl" value="/inventorySummaryDetail">
+                                <c:param name="productId" value="${param.productId}"/>
+                                <c:param name="fromDate" value="${param.fromDate}"/>
+                                <c:param name="toDate" value="${param.toDate}"/>
+                            </c:url>
+                            <a href="${backToTransactionHistoryUrl}" class="btn btn-cancel">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Transaction History
+                            </a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="InventoryAuditList" class="btn btn-added">
+                                <img src="assets/img/icons/return1.svg" alt="img" class="mr-2">Back to List
+                            </a>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </div>
 

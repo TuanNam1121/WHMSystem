@@ -656,7 +656,7 @@
                                         <td>${(page - 1) * pageSize + v.index + 1}</td>
                                         <td>${item.sku}</td>
                                         <td>
-                                            <a href="${pageContext.request.contextPath}/inventorySummaryDetail?productId=${item.productId}&fromDate=${param.fromDate}&toDate=${param.toDate}"
+                                            <a href="${pageContext.request.contextPath}/inventorySummaryDetail?productId=${item.productId}&fromDate=${param.fromDate}&toDate=${param.toDate}&source=inventorySummary"
                                                class="text-dark fw-bold"
                                                style="text-decoration: none;"
                                                title="View import/export transactions history">

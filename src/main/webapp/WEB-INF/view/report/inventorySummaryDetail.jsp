@@ -122,6 +122,33 @@
                                 <i class="fas fa-arrow-left me-1"></i> Back to Daily Transaction
                             </a>
                         </c:when>
+                        <c:when test="${param.source == 'importReport'}">
+                            <c:url var="backUrl" value="/importReport">
+                                <c:param name="fromDate" value="${param.fromDate}"/>
+                                <c:param name="toDate" value="${param.toDate}"/>
+                            </c:url>
+                            <a href="${backUrl}" class="btn btn-back">
+                                <i class="fas fa-arrow-left me-1"></i> Back to Import Report
+                            </a>
+                        </c:when>
+                        <c:when test="${param.source == 'exportReport'}">
+                            <c:url var="backUrl" value="/exportReport">
+                                <c:param name="fromDate" value="${param.fromDate}"/>
+                                <c:param name="toDate" value="${param.toDate}"/>
+                            </c:url>
+                            <a href="${backUrl}" class="btn btn-back">
+                                <i class="fas fa-arrow-left me-1"></i> Back to Export Report
+                            </a>
+                        </c:when>
+                        <c:when test="${param.source == 'stockReport'}">
+                            <c:url var="backUrl" value="/stockReport">
+                                <c:param name="fromDate" value="${param.fromDate}"/>
+                                <c:param name="toDate" value="${param.toDate}"/>
+                            </c:url>
+                            <a href="${backUrl}" class="btn btn-back">
+                                <i class="fas fa-arrow-left me-1"></i> Back to Stock Report
+                            </a>
+                        </c:when>
                         <c:otherwise>
                             <a href="${pageContext.request.contextPath}/inventorySummaryReport?fromDate=${param.fromDate}&toDate=${param.toDate}" class="btn btn-back">
                                 <i class="fas fa-arrow-left me-1"></i> Back to Summary Report

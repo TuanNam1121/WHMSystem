@@ -96,7 +96,24 @@
                                                         <tr>
                                                             <td>${audit.codeId}</td>
                                                             <td>${audit.creator.fullName}</td>
-                                                            <td><span class="badges bg-lightgrey">${audit.status}</span>
+                                                            <td>
+                                                                <c:choose>
+                                                                    <c:when test="${audit.status == 'COMPLETED'}">
+                                                                        <span class="badges bg-lightgreen">${audit.status}</span>
+                                                                    </c:when>
+                                                                    <c:when test="${audit.status == 'CANCELLED'}">
+                                                                        <span class="badges bg-lightred">${audit.status}</span>
+                                                                    </c:when>
+                                                                    <c:when test="${audit.status == 'PENDING'}">
+                                                                        <span class="badges bg-lightyellow">${audit.status}</span>
+                                                                    </c:when>
+                                                                    <c:when test="${audit.status == 'SUBMITTED'}">
+                                                                        <span class="badges bg-lightyellow">${audit.status}</span>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <span class="badges bg-lightgrey">${audit.status}</span>
+                                                                    </c:otherwise>
+                                                                </c:choose>
                                                             </td>
                                                             <td>${audit.formattedCreatedAt}</td>
                                                             <td>${audit.formattedUpdatedAt}</td>

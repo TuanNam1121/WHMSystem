@@ -42,6 +42,11 @@
                                     ${error}
                             </div>
                         </c:if>
+                        <c:if test="${not empty success}">
+                            <div class="alert alert-success" role="alert">
+                                    ${success}
+                            </div>
+                        </c:if>
 
                         <div class="form-login">
                             <label>Username</label>
@@ -60,37 +65,13 @@
                         </div>
                         <div class="form-login">
                             <div class="alreadyuser">
-                                <h4><a href="forgetpassword" class="hover-a">Forgot Password?</a></h4>
+                                <h4><a href="forgetPassword" class="hover-a">Forgot Password?</a></h4>
                             </div>
                         </div>
                         <div class="form-login">
                             <button type="submit" class="btn btn-login">Login</button>
                         </div>
                     </form>
-
-                    <%--<div class="signinform text-center">
-                        <h4>Don’t have an account? <a href="signup.html" class="hover-a">Sign Up</a></h4>
-                    </div>--%>
-
-                    <%--<div class="form-setlogin">
-                        <h4>Or sign up with</h4>
-                    </div>
-                    <div class="form-sociallink">
-                        <ul>
-                            <li>
-                                <a href="javascript:void(0);">
-                                    <img src="assets/img/icons/google.png" class="me-2" alt="google">
-                                    Sign Up using Google
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);">
-                                    <img src="assets/img/icons/facebook.png" class="me-2" alt="google">
-                                    Sign Up using Facebook
-                                </a>
-                            </li>
-                        </ul>
-                    </div>--%>
 
                 </div>
             </div>

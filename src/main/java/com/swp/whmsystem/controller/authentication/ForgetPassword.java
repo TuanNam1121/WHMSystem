@@ -60,7 +60,7 @@ public class ForgetPassword extends HttpServlet {
         req.setStatus("NEW");
         daoR.addNewResetPasswordRequest(req);
         
-        request.setAttribute("error", "Request sent! Please wait for an email!");
+        request.setAttribute("success", "Request sent! Please wait for an email!");
         request.getRequestDispatcher("WEB-INF/view/authentication/login.jsp").forward(request, response);
     }
 

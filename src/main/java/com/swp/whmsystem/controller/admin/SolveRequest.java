@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.mindrot.jbcrypt.BCrypt;
 
-@WebServlet(name = "SolveRequest", urlPatterns = {"/solverequest"})
+@WebServlet(name = "SolveRequest", urlPatterns = {"/solveRequest"})
 public class SolveRequest extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

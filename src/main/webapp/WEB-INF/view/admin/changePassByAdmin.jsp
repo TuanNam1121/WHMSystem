@@ -34,12 +34,6 @@
 
             <div class="card" style="max-width: 600px;">
                 <div class="card-body">
-                    <c:if test="${not empty message}">
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <strong>${message}</strong>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    </c:if>
                     <c:if test="${not empty error}">
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <strong>${error}</strong>

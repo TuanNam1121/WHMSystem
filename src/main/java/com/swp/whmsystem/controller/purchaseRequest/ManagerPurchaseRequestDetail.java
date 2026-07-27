@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 @WebServlet(name = "ManagerPurchaseRequestDetail", urlPatterns = {"/managerPurchaseRequestDetail"})
 public class ManagerPurchaseRequestDetail extends HttpServlet {
@@ -58,18 +59,16 @@ public class ManagerPurchaseRequestDetail extends HttpServlet {
             List<PurchaseItem> items = piDao.getItemsByPurchaseRequestId(id);
 
             long totalAmount = 0;
-            Map<Integer, Product> productMap = new HashMap<>();
+            List<Product> productList = new ArrayList<>();
             for (PurchaseItem item : items) {
                 Product p = pDao.getProductFromId(item.getProductId());
-                if (p != null) {
-                    productMap.put(item.getProductId(), p);
-                }
+                productList.add(p);
                 totalAmount += (long) item.getPrice() * item.getRequiredQty();
             }
             request.setAttribute("purchaseRequest", pr);
             request.setAttribute("salesman", salesman);
             request.setAttribute("purchaseItems", items);
-            request.setAttribute("productMap", productMap);
+            request.setAttribute("productList", productList);
             request.setAttribute("totalAmount", totalAmount);
         } catch (Exception ex) {
             request.setAttribute("message", ex.getMessage());
@@ -102,11 +101,13 @@ public class ManagerPurchaseRequestDetail extends HttpServlet {
         if (button.equalsIgnoreCase("Reject")) {
             purchaseRequest.setStatus("REJECTED");
             purchaseRequestDAO.updatePurchaseRequest(purchaseRequest);
+            session.setAttribute("message", "Purchase request PR-" + purReqId + " has been rejected successfully.");
             response.sendRedirect("managerPurchaseRequestList");
         } else {
             purchaseRequest.setApprovedBy(user.getId());
             purchaseRequest.setStatus("APPROVED");
             purchaseRequestDAO.updatePurchaseRequest(purchaseRequest);
+            session.setAttribute("message", "Purchase request PR-" + purReqId + " has been approved successfully.");
             response.sendRedirect("managerPurchaseRequestList");
         }
     }

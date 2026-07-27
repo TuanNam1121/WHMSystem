@@ -120,18 +120,13 @@
                                                     <td>
                                                         <c:choose>
                                                             <c:when test="${p.totalQuantity > 10}">
-                                                                                    <span
-                                                                                            class="badges bg-lightgreen">In
-                                                                                        stock</span>
+                                                                <span class="badges bg-lightgreen">In stock</span>
                                                             </c:when>
                                                             <c:when test="${p.totalQuantity > 0}">
-                                                                                    <span
-                                                                                            class="badges bg-lightyellow">Low
-                                                                                        stock</span>
+                                                                <span class="badges bg-lightyellow">Low stock</span>
                                                             </c:when>
                                                             <c:otherwise>
-                                                                                    <span class="badges bg-lightred">Out
-                                                                                        of stock</span>
+                                                                <span class="badges bg-lightred">Out of stock</span>
                                                             </c:otherwise>
                                                         </c:choose>
                                                     </td>
@@ -172,8 +167,7 @@
                                         </option>
                                         <c:forEach items="${requestScope.supplierList}" var="s">
                                             <option value="${s.supplierId}"
-                                                ${param.supplierId==s.supplierId ? 'selected' : ''
-                                                        }>${s.supplierName}</option>
+                                                ${param.supplierId==s.supplierId ? 'selected' : ''}>${s.supplierName}</option>
                                         </c:forEach>
                                     </select>
                                 </div>
@@ -189,8 +183,7 @@
                                         <div class="table-responsive flex-grow-1"
                                              style="max-height: 250px; overflow-y: auto;">
                                             <table class="table table-hover mb-0">
-                                                <thead
-                                                        style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                                <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>SKU</th>

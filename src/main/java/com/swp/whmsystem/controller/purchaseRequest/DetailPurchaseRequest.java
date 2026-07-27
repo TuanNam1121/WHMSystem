@@ -17,9 +17,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @WebServlet(name = "DetailPurchaseRequest", urlPatterns = {"/detailPurchaseRequest"})
 public class DetailPurchaseRequest extends HttpServlet {
@@ -52,18 +51,20 @@ public class DetailPurchaseRequest extends HttpServlet {
             List<PurchaseItem> items = piDAO.getItemsByPurchaseRequestId(id);
 
             ProductDAO productDAO = new ProductDAO();
-            List<Product> productList = productDAO.getProductList();
-            
-            Map<Integer, Product> productMap = new HashMap<>();
-            for (Product p : productList) {
-                productMap.put(p.getProductId(), p);
+
+            List<Product> orderedProducts = new ArrayList<>();
+            long totalAmount = 0;
+            for (PurchaseItem item : items) {
+                Product p = productDAO.getProductFromId(item.getProductId());
+                orderedProducts.add(p);
+                totalAmount += (long) item.getPrice() * item.getRequiredQty();
             }
 
             request.setAttribute("purchaseRequest", pr);
             request.setAttribute("purchaseItems", items);
-            request.setAttribute("productListForPurchase", productList);
-            request.setAttribute("productMap", productMap);
-            
+            request.setAttribute("orderedProducts", orderedProducts);
+            request.setAttribute("totalAmount", totalAmount);
+
             request.getRequestDispatcher("WEB-INF/view/purchaseRequest/detailPurchaseRequest.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             response.sendRedirect("purchaseRequestList");

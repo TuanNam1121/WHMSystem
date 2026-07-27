@@ -178,6 +178,8 @@ public class CustomerDAO {
             
             if(search.equals("")){
                 sql = "select * from customers";
+                sql += " limit " + pageSize;
+                sql += " offset " + (pageSize * (page - 1)) + " ";
             }
             
             

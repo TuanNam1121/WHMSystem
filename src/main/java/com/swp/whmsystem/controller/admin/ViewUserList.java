@@ -14,8 +14,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "ViewUserList", urlPatterns = {"/ViewUserList"})
@@ -58,10 +56,6 @@ public class ViewUserList extends HttpServlet {
         request.setAttribute("roleList", roleList);
         request.setAttribute("roleDao", role);
         request.setAttribute("userlist", userList);
-        
-        request.setAttribute("keyword", keyword);
-        request.setAttribute("sortBy", sortBy);
-        request.setAttribute("roleId", roleId);
         
         request.setAttribute("page", page);
         request.setAttribute("pageSize", pageSize);

@@ -131,10 +131,7 @@
                                         </td>
                                         <td>
                                             <a class="me-3" href="${pageContext.request.contextPath}/UpdateUserInformation?id=${u.id}">
-                                                <img src="assets/img/icons/edit.svg" alt="img">
-                                            </a>
-                                            <a class="me-3" href="${pageContext.request.contextPath}/ViewUserInformation?id=${u.id}">
-                                                <img src="assets/img/icons/eye.svg" alt="img">
+                                                <u>Details</u>
                                             </a>
                                         </td>
                                     </tr>

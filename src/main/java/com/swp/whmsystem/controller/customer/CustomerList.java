@@ -110,8 +110,7 @@ public class CustomerList extends HttpServlet {
     throws ServletException, IOException {
         String searchName = request.getParameter("searchName");
         if(searchName==null || searchName.isBlank()){
-            response.sendRedirect("CustomerList");
-            return;
+            searchName = "";
         }
         
         String pageSizeRaw = request.getParameter("pageSize");

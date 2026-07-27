@@ -63,7 +63,7 @@
                                 <c:if test="${act == 'new'}">
                                     <div class="form-group">
                                         <label>Password</label>
-                                        <input type="password" name="password" class="form-control" required>
+                                        <input type="password" value="${u.password != null ? u.password : ''}" name="password" class="form-control" required>
                                     </div>
                                 </c:if>
                                 <div class="form-group">

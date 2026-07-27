@@ -275,6 +275,19 @@ public class UserDAO {
         }
         return false;
     }
+    
+    public boolean existsByPhoneNumber(String phone) {
+        String sql = "SELECT 1 FROM users WHERE LOWER(phone) = LOWER(?)";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, phone);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return false;
+    }
 
     public boolean existsByUsernameExceptUserId(String username, int userId) {
         String sql = "SELECT 1 FROM users WHERE LOWER(username) = LOWER(?) AND userid != ?";

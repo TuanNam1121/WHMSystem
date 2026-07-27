@@ -43,6 +43,10 @@ public final class UserFormValidation {
             return false;
         }
         String trimmed = fullName.trim();
+        
+        for(char i : trimmed.toCharArray()){
+            if(!(Character.isAlphabetic(i) || i == ' ')) return false;
+        }
         return trimmed.length() >= 2 && trimmed.length() <= 60;
     }
 

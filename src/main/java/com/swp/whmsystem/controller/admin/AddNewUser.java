@@ -51,11 +51,12 @@ public class AddNewUser extends HttpServlet {
 
         String userName = UserFormValidation.trimToNull(request.getParameter("username"));
         String fullname = UserFormValidation.trimToNull(request.getParameter("fullname"));
-        String password = request.getParameter("password");
+        String password = UserFormValidation.trimToNull(request.getParameter("password"));
         Integer roleId = UserFormValidation.parsePositiveInt(request.getParameter("role"));
         String phone = UserFormValidation.trimToNull(request.getParameter("phone"));
         String email = UserFormValidation.trimToNull(request.getParameter("email"));
         String gender = UserFormValidation.trimToNull(request.getParameter("gender"));
+        
         String firstname = userDao.getFirstnameFromFullname(fullname);
         String lastname = userDao.getLastnameFromFullname(fullname);
 
@@ -64,7 +65,7 @@ public class AddNewUser extends HttpServlet {
             errors.add("Username is required (3-30 chars, letters/numbers only).");
         }
         if (!UserFormValidation.isValidFullName(fullname)) {
-            errors.add("Full name is required (2-60 chars).");
+            errors.add("Full name is required (2-60 chars and alphabetic).");
         }
         if (!UserFormValidation.isValidPassword(password)) {
             errors.add("Password is required (min 6 chars).");
@@ -88,6 +89,9 @@ public class AddNewUser extends HttpServlet {
             }
             if (userDao.existsByEmail(email)) {
                 errors.add("Email already exists.");
+            }
+            if(userDao.existsByPhoneNumber(phone)){
+                errors.add("Phone already exists.");
             }
         }
 

@@ -150,20 +150,18 @@
 <script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
-<script src="assets/js/script.js">
-    window.addEventListener('load', function () {
-        // Äá»£i 50 mili-giÃ¢y sau khi trang load xong Ä‘á»ƒ Chrome Ä‘iá»n báº­y vÃ o trÆ°á»›c
-        setTimeout(finalClearAutofill, 50);
-    });
+<%--<script src="assets/js/script.js">--%>
+<%--    window.addEventListener('load', function () {--%>
+<%--        setTimeout(finalClearAutofill, 50);--%>
+<%--    });--%>
 
-    function finalClearAutofill() {
-        // TÃ¬m Ã´ input username vÃ  password theo name
-        var usernameInput = document.querySelector('input[name="username"]');
-        var passwordInput = document.querySelector('input[name="password"]');
+<%--    function finalClearAutofill() {--%>
+<%--        var usernameInput = document.querySelector('input[name="username"]');--%>
+<%--        var passwordInput = document.querySelector('input[name="password"]');--%>
 
-        if (usernameInput) usernameInput.value = '';
-        if (passwordInput) passwordInput.value = '';
-    }
-</script>
+<%--        if (usernameInput) usernameInput.value = '';--%>
+<%--        if (passwordInput) passwordInput.value = '';--%>
+<%--    }--%>
+<%--</script>--%>
 </body>
 </html>

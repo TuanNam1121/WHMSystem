@@ -95,7 +95,6 @@
                             </div>
                             <div class="col-lg-12">
                                 <input type="submit" class="btn btn-submit me-2" value="Submit">
-                                <!--<a href="javascript:void(0);" >Submit</a>-->
                                 <a href="categoryList" class="btn btn-cancel">Cancel</a>
                             </div>
                         </div>

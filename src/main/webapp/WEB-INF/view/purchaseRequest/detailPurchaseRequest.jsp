@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -106,12 +107,27 @@
                                             </tr>
                                             </thead>
                                             <tbody id="selected-product-list">
+                                                <c:forEach items="${purchaseItems}" var="item" varStatus="loop">
+                                                    <c:set var="product" value="${orderedProducts[loop.index]}" />
+                                                    <tr>
+                                                        <td>${product.name}</td>
+                                                        <td>${product.sku}</td>
+                                                        <td>${product.category.name}</td>
+                                                        <td>${product.totalQuantity}</td>
+                                                        <td>${item.requiredQty}</td>
+                                                        <td style="text-align: right;">
+                                                            <fmt:formatNumber value="${item.price * item.requiredQty}" pattern="#,###" var="formattedTotal" />
+                                                            ${fn:replace(formattedTotal, ',', '.')}đ
+                                                        </td>
+                                                    </tr>
+                                                </c:forEach>
                                             </tbody>
                                             <tfoot>
                                                 <tr>
                                                     <td colspan="6" style="text-align: right; font-weight: 600;">Grand Total:</td>
                                                     <td id="grand-total-amount" style="text-align: right; font-weight: 700; color: #28C76F; font-size: 16px;">
-                                                        0đ
+                                                        <fmt:formatNumber value="${totalAmount}" pattern="#,###" var="formattedGrandTotal" />
+                                                        ${fn:replace(formattedGrandTotal, ',', '.')}đ
                                                     </td>
                                                 </tr>
                                             </tfoot>
@@ -160,51 +176,7 @@
 <script src="${pageContext.request.contextPath}/assets/plugins/sweetalert/sweetalerts.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/script.js"></script>
 
-<script>
-    $(document).ready(function () {
-        let selectedItems = [
-            <c:forEach items="${purchaseItems}" var="item" varStatus="loop">
-            {
-                id: ${item.productId},
-                name: "${productMap[item.productId].name}",
-                sku: "${productMap[item.productId].sku}",
-                category: "${productMap[item.productId].category.name}",
-                stock: ${productMap[item.productId].totalQuantity},
-                reqQty: ${item.requiredQty},
-                price: ${item.price}
-            }${!loop.last ? ',' : ''}
-            </c:forEach>
-        ];
 
-        function renderSelectedItems() {
-            let html = '';
-            let grandTotal = 0;
-            if (selectedItems.length === 0) {
-                html = '<tr><td colspan="6" class="text-center text-muted">No products selected</td></tr>';
-            } else {
-                selectedItems.forEach((item, index) => {
-                    let itemTotal = item.price * item.reqQty;
-                    grandTotal += itemTotal;
-                    html += `
-                        <tr>
-                            <td>\${item.name}</td>
-                            <td>\${item.sku}</td>
-                            <td>\${item.category}</td>
-                            <td>\${item.stock}</td>
-                            <td>\${item.reqQty}</td>
-                            <td style="text-align: right;">\${new Intl.NumberFormat('vi-VN').format(itemTotal)}đ</td>
-                        </tr>
-                    `;
-                });
-            }
-            $('#selected-product-list').html(html);
-            $('#grand-total-amount').text(new Intl.NumberFormat('vi-VN').format(grandTotal) + 'đ');
-        }
-
-        // Initial render
-        renderSelectedItems();
-    });
-</script>
 </body>
 
 </html>

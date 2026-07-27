@@ -81,7 +81,7 @@
                                         <td>
                                             <c:if test="${r.status == 'NEW'}">
                                                 <a class="me-3"
-                                                   href="solverequest?userid=${r.userId}">
+                                                   href="solveRequest?userid=${r.userId}">
                                                     <img src="assets/img/icons/edit.svg" alt="img"> Solve
                                                 </a>
                                             </c:if>

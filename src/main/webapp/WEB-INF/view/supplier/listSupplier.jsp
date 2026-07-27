@@ -42,9 +42,11 @@
                     <h6>Manage your suppliers</h6>
                 </div>
                 <div class="page-btn">
-                    <a href="createSupplier" class="btn btn-added" id="btn-create-supplier">
-                        <img src="assets/img/icons/plus.svg" alt="img">Add Supplier
-                    </a>
+                    <c:if test="${sessionScope.userPermissions.contains('CREATE_SUPPLIER')}">
+                        <a href="createSupplier" class="btn btn-added" id="btn-create-supplier">
+                            <img src="assets/img/icons/plus.svg" alt="img">Add Supplier
+                        </a>
+                    </c:if>
                 </div>
             </div>
 

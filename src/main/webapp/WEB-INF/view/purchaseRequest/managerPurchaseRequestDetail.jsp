@@ -159,7 +159,7 @@
                                                 </thead>
                                                 <tbody>
                                                     <c:forEach items="${purchaseItems}" var="item" varStatus="status">
-                                                        <c:set var="product" value="${productMap[item.productId]}" />
+                                                        <c:set var="product" value="${productList[status.index]}" />
                                                         <tr>
                                                             <td>${status.index + 1}</td>
                                                             <td class="productimgname">

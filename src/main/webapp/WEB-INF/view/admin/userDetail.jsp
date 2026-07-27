@@ -54,11 +54,11 @@
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>UserName</label>
-                                    <input type="text" name="username" value="${u.userName != null ? u.userName : ''}" class="form-control" required ${act == 'view' ? 'readonly' : ''}>
+                                    <input type="text" name="username" value="${u.userName != null ? u.userName : ''}" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label>FullName</label>
-                                    <input type="text" name="fullname" value="${u.fullName != null ? u.fullName : ''}" class="form-control" required ${act == 'view' ? 'readonly' : ''}>
+                                    <input type="text" name="fullname" value="${u.fullName != null ? u.fullName : ''}" class="form-control">
                                 </div>
                                 <c:if test="${act == 'new'}">
                                     <div class="form-group">
@@ -81,21 +81,21 @@
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Phone</label>
-                                    <input type="text" name="phone" value="${u.phone != null ? u.phone : ''}" class="form-control" ${act == 'view' ? 'readonly' : ''}>
+                                    <input type="text" name="phone" value="${u.phone != null ? u.phone : ''}" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label>Email</label>
-                                    <input type="email" name="email" value="${u.email != null ? u.email : ''}" class="form-control" ${act == 'view' ? 'readonly' : ''}>
+                                    <input type="email" name="email" value="${u.email != null ? u.email : ''}" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label>Gender</label>
                                     <div class="d-flex gap-4 align-items-center border rounded p-3 bg-white">
                                         <div class="form-check">
-                                            <input id="gender-male" class="form-check-input" type="radio" name="gender" value="MALE" ${u.gender == 'MALE' ? 'checked' : ''} ${act == 'view' ? 'disabled' : ''}>
+                                            <input id="gender-male" class="form-check-input" type="radio" name="gender" value="MALE" ${u.gender == 'MALE' ? 'checked' : ''}>
                                             <label for="gender-male" class="form-check-label">Male</label>
                                         </div>
                                         <div class="form-check">
-                                            <input id="gender-female" class="form-check-input" type="radio" name="gender" value="FEMALE" ${u.gender == 'FEMALE' ? 'checked' : ''} ${act == 'view' ? 'disabled' : ''}>
+                                            <input id="gender-female" class="form-check-input" type="radio" name="gender" value="FEMALE" ${u.gender == 'FEMALE' ? 'checked' : ''}>
                                             <label for="gender-female" class="form-check-label">Female</label>
                                         </div>
                                         <div class="form-check">

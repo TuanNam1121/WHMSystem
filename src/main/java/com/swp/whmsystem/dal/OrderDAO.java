@@ -36,7 +36,10 @@ public class OrderDAO {
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 BigDecimal totalPrice = rs.getBigDecimal(1);
-                return totalPrice == null ? BigDecimal.ZERO : totalPrice;
+                if (totalPrice == null) {
+                    return BigDecimal.ZERO;
+                }
+                return totalPrice;
             }
         } catch (SQLException ex) {
             System.err.println(ex.getMessage());
@@ -50,7 +53,10 @@ public class OrderDAO {
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 BigDecimal totalPrice = rs.getBigDecimal(1);
-                return totalPrice == null ? BigDecimal.ZERO : totalPrice;
+                if (totalPrice == null) {
+                    return BigDecimal.ZERO;
+                }
+                return totalPrice;
             }
         } catch (SQLException ex) {
             System.err.println(ex.getMessage());
@@ -87,7 +93,10 @@ public class OrderDAO {
                     int month = rs.getInt("monthNumber");
                     if (month >= 1 && month <= 12) {
                         BigDecimal totalPrice = rs.getBigDecimal("totalPrice");
-                        monthlyTotals.set(month - 1, totalPrice == null ? BigDecimal.ZERO : totalPrice);
+                        if (totalPrice == null) {
+                            totalPrice = BigDecimal.ZERO;
+                        }
+                        monthlyTotals.set(month - 1, totalPrice);
                     }
                 }
             }
@@ -129,7 +138,10 @@ public class OrderDAO {
                     item.setTotalItemSold(rs.getInt("total_item_sold"));
 
                     BigDecimal totalPrice = rs.getBigDecimal("total_price");
-                    item.setTotalPrice(totalPrice == null ? BigDecimal.ZERO : totalPrice);
+                    if (totalPrice == null) {
+                        totalPrice = BigDecimal.ZERO;
+                    }
+                    item.setTotalPrice(totalPrice);
                     topProducts.add(item);
                 }
             }
@@ -221,15 +233,14 @@ public class OrderDAO {
     }
 
     public List<Order> searchOrdersToExport(String keyword, String fromDate, String toDate,
-            String status, String sortBy, int pageSize, int page) {
+            String sortBy, int pageSize, int page) {
         List<Order> orderList = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-                "select o.id, o.code, coalesce(er.status, o.status) as status, o.total_price, o.note, "
+                "select o.id, o.code, o.status, o.total_price, o.note, "
                 + "o.orderdate, o.createdat, o.updatedat, o.completedat, "
                 + "o.createdby, o.processedby, o.customer_id "
                 + "from orders o "
                 + "join customers c on o.customer_id = c.id "
-                + "left join export_receipts er on er.order_id = o.id and er.status = 'DRAFT' "
                 + "where o.status = 'NEW'"
         );
         List<Object> parameter = new ArrayList<>();
@@ -255,11 +266,6 @@ public class OrderDAO {
                 sql.append(" and o.orderdate <= ?");
                 parameter.add(toTimestamp);
             }
-        }
-
-        if (status != null && !status.trim().isEmpty()) {
-            sql.append(" and coalesce(er.status, o.status) = ?");
-            parameter.add(status);
         }
 
         if (sortBy != null && !sortBy.trim().isEmpty()) {
@@ -309,11 +315,10 @@ public class OrderDAO {
         return orderList;
     }
 
-    public int countOrdersToExport(String keyword, String fromDate, String toDate, String status) {
+    public int countOrdersToExport(String keyword, String fromDate, String toDate) {
         StringBuilder sql = new StringBuilder(
                 "select count(*) from orders o "
                 + "join customers c on o.customer_id = c.id "
-                + "left join export_receipts er on er.order_id = o.id and er.status = 'DRAFT' "
                 + "where o.status = 'NEW'"
         );
         List<Object> parameters = new ArrayList<>();
@@ -340,11 +345,6 @@ public class OrderDAO {
                 sql.append(" and o.orderdate <= ?");
                 parameters.add(toTimestamp);
             }
-        }
-
-        if (status != null && !status.trim().isEmpty()) {
-            sql.append(" and coalesce(er.status, o.status) = ?");
-            parameters.add(status);
         }
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
@@ -732,36 +732,6 @@ public class OrderDAO {
         return list;
     }
 
-    public List<Order> getExportHistory() {
-        String sql = "select o.id, o.code, er.id as export_receipt_id, er.code as export_receipt_code, er.status, o.total_price, o.note, "
-                + "coalesce(er.exported_at, er.created_at) as orderdate, er.created_at as createdat, "
-                + "er.updated_at as updatedat, er.exported_at as completedat, "
-                + "o.createdby, er.exported_by as processedby, o.customer_id "
-                + "from export_receipts er "
-                + "join orders o on er.order_id = o.id "
-                + "order by coalesce(er.exported_at, er.created_at) desc, er.id desc";
-
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            List<Order> result = new ArrayList<>();
-            while (rs.next()) {
-                Order o = mapResultSetToOrder(rs);
-                o.setExportReceiptId(rs.getInt("export_receipt_id"));
-                UserDAO ud = new UserDAO();
-                CustomerDAO cd = new CustomerDAO();
-                OrderItemDAO oid = new OrderItemDAO();
-                o.setCustomer(cd.getCustomerNameById(o.getCustomerId()));
-                o.setCreater(ud.getUserNameById(o.getCreatedBy()));
-                o.setProcessor(ud.getUserNameById(o.getProcessedBy()));
-                o.setTotalQuantity(oid.totalQuantityByOrderId(o.getId()));
-                result.add(o);
-            }
-            return result;
-        } catch (SQLException ex) {
-            System.err.println(ex.getMessage());
-        }
-        return null;
-    }
-
     public List<Order> searchExportHistory(String keyword, String fromDate, String toDate,
                                            String sortBy, int pageSize, int page) {
         List<Order> orderList = new ArrayList<>();
@@ -916,20 +886,18 @@ public class OrderDAO {
 
     private Timestamp parseStartOfDay(String date) {
         LocalDate localDate = DateUtils.parseDate(date);
-        return localDate == null ? null : Timestamp.valueOf(localDate.atStartOfDay());
+        if (localDate == null) {
+            return null;
+        }
+        return Timestamp.valueOf(localDate.atStartOfDay());
     }
 
     private Timestamp parseEndOfDay(String date) {
         LocalDate localDate = DateUtils.parseDate(date);
-        return localDate == null ? null : Timestamp.valueOf(localDate.atTime(LocalTime.MAX));
-    }
-
-    public static void main(String[] args) {
-        OrderDAO orderDAO = new OrderDAO();
-        List<OrderItemDetailDTO> orderList = orderDAO.getOrderItemsByOrderId(3);
-        for (OrderItemDetailDTO o : orderList) {
-            System.out.println(o);
+        if (localDate == null) {
+            return null;
         }
+        return Timestamp.valueOf(localDate.atTime(LocalTime.MAX));
     }
 
 }

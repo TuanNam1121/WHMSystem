@@ -116,15 +116,23 @@
 
                         <form action="exportProduct" method="post" id="scanBarcodeForm">
                             <input type="hidden" name="orderId" value="${sessionScope.order.id}">
-                            <div id="scanError"
-                                 class="alert alert-danger ${empty sessionScope.error ? 'd-none' : ''}"
-                                 role="alert">${sessionScope.error}</div>
+                            <c:choose>
+                                <c:when test="${not empty sessionScope.error}">
+                                    <div id="scanError" class="alert alert-danger"
+                                         role="alert">${sessionScope.error}</div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div id="scanError" class="alert alert-danger d-none"
+                                         role="alert"></div>
+                                </c:otherwise>
+                            </c:choose>
                             <c:remove var="error" scope="session"/>
                             <div class="col-lg-12 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label>Scan Serial Number</label>
                                     <div class="input-groupicon">
                                         <input type="text" name="serial" id="serialInput"
+                                               maxlength="100"
                                                placeholder="Scan serial number and wait..." autofocus required>
                                         <div class="addonset">
                                             <img src="assets/img/icons/scanners.svg" alt="img">
@@ -141,16 +149,15 @@
                         <input type="hidden" name="orderId" value="${sessionScope.order.id}">
                         <input type="hidden" name="submitAction" id="submitActionInput" value="COMPLETE">
                         <div class="row">
-                            <div class="table-responsive export-scan-table-scroll" id="scannedProductTable" tabindex="-1">
+                            <div class="table-responsive export-scan-table-scroll" id="scannedProductTable"
+                                 tabindex="-1">
                                 <table class="table">
                                     <thead>
                                     <tr>
                                         <th>Product Name</th>
                                         <th>S/N</th>
-                                        <th>QTY</th>
                                         <th>Price</th>
-                                        <th>Stock</th>
-                                        <th></th>
+                                        <th>Action</th>
                                     </tr>
                                     </thead>
                                     <tbody id="scannedProductBody">
@@ -167,13 +174,11 @@
                                                 <input type="hidden" name="sn"
                                                        data-temp-id="${s.tempId}"
                                                        value="${s.serial}">
-                                                ${s.serial}
+                                                    ${s.serial}
                                             </td>
-                                            <td>${s.qty}</td>
                                             <td>
                                                 <fmt:formatNumber value="${s.price}" pattern="#,###"/>
                                             </td>
-                                            <td>${s.stock}</td>
                                             <td>
                                                 <a href="removeItem?tempId=${s.tempId}&orderId=${sessionScope.order.id}"
                                                    class="delete-set">
@@ -211,15 +216,9 @@
                             </div>
                             <div class="col-lg-12">
                                 <button type="submit"
-                                        class="btn btn-submit me-2" id="btnSubmitExport"
-                                        onclick="document.getElementById('submitActionInput').value='COMPLETE'">
+                                        class="btn btn-submit me-2" id="btnSubmitExport">
                                     Submit
                                 </button>
-<!--                                <button type="submit"
-                                        class="btn btn-draft me-2"
-                                        onclick="document.getElementById('submitActionInput').value='DRAFT'">
-                                    Save Draft
-                                </button>-->
                                 <a href="cancelExport" class="btn btn-cancel">Back</a>
                             </div>
                         </div>
@@ -277,7 +276,7 @@
 
                     row.remove();
                     grandTotal.textContent =
-                            Number(data.grandTotal).toLocaleString("en-US");
+                        Number(data.grandTotal).toLocaleString("en-US");
                     scanError.classList.add("d-none");
                     serialInput.focus({preventScroll: true});
                 })
@@ -294,7 +293,10 @@
 
     function escapeHtml(value) {
         const div = document.createElement("div");
-        div.textContent = value == null ? "" : value;
+        if (value == null) {
+            value = "";
+        }
+        div.textContent = value;
         return div.innerHTML;
     }
 
@@ -303,23 +305,23 @@
         row.className = "bor-b1";
         row.innerHTML =
             '<td class="productimgname">' +
-                '<a class="product-img"><img src="' + escapeHtml(item.imgUrl) + '" alt="product"></a>' +
-                '<a href="javascript:void(0);">' + escapeHtml(item.name) + '</a>' +
+            '<a class="product-img"><img src="' + escapeHtml(item.imgUrl) + '" alt="product"></a>' +
+            '<a href="javascript:void(0);">' + escapeHtml(item.name) + '</a>' +
             '</td>' +
             '<td>' +
-                '<input type="hidden" name="tempIds" value="' + escapeHtml(item.tempId) + '">' +
-                '<input type="hidden" name="sn" data-temp-id="' + escapeHtml(item.tempId) + '" ' +
-                    'value="' + escapeHtml(item.serial) + '">' +
-                escapeHtml(item.serial) +
+            '<input type="hidden" name="tempIds" value="' + escapeHtml(item.tempId) + '">' +
+            '<input type="hidden" name="sn" data-temp-id="' + escapeHtml(item.tempId) + '" ' +
+            'value="' + escapeHtml(item.serial) + '">' +
+            escapeHtml(item.serial) +
             '</td>' +
             '<td>' + item.qty + '</td>' +
             '<td>' + Number(item.price).toLocaleString("en-US") + '</td>' +
             '<td>' + item.stock + '</td>' +
             '<td>' +
-                '<a href="removeItem?tempId=' + encodeURIComponent(item.tempId) +
-                    '&orderId=' + encodeURIComponent(orderId) + '" class="delete-set">' +
-                    '<img src="assets/img/icons/delete.svg" alt="svg">' +
-                '</a>' +
+            '<a href="removeItem?tempId=' + encodeURIComponent(item.tempId) +
+            '&orderId=' + encodeURIComponent(orderId) + '" class="delete-set">' +
+            '<img src="assets/img/icons/delete.svg" alt="svg">' +
+            '</a>' +
             '</td>';
 
         scannedBody.prepend(row);
@@ -357,35 +359,35 @@
             headers: {"Content-Type": "application/x-www-form-urlencoded"},
             body: formData.toString()
         })
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            if (!data.success) {
-                showScanError(data.message);
-                serialInput.select();
-                return;
-            }
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                if (!data.success) {
+                    showScanError(data.message);
+                    serialInput.select();
+                    return;
+                }
 
-            scanError.classList.add("d-none");
-            addProductToTable(data.item);
-            grandTotal.textContent = Number(data.grandTotal).toLocaleString("en-US");
-            serialInput.value = "";
+                scanError.classList.add("d-none");
+                addProductToTable(data.item);
+                grandTotal.textContent = Number(data.grandTotal).toLocaleString("en-US");
+                serialInput.value = "";
 
-            scannedTable.scrollIntoView({behavior: "smooth", block: "center"});
-            scannedTable.focus({preventScroll: true});
+                scannedTable.scrollIntoView({behavior: "smooth", block: "center"});
+                scannedTable.focus({preventScroll: true});
 
-            setTimeout(function () {
+                setTimeout(function () {
+                    serialInput.focus({preventScroll: true});
+                }, 400);
+            })
+            .catch(function () {
+                showScanError("Cannot add product. Please try again.");
+            })
+            .finally(function () {
+                serialInput.disabled = false;
                 serialInput.focus({preventScroll: true});
-            }, 400);
-        })
-        .catch(function () {
-            showScanError("Cannot add product. Please try again.");
-        })
-        .finally(function () {
-            serialInput.disabled = false;
-            serialInput.focus({preventScroll: true});
-        });
+            });
     });
 </script>
 </body>

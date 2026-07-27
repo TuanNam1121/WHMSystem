@@ -9,6 +9,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,6 +59,9 @@
 
             <div class="card">
                 <div class="card-body">
+                    <c:if test="${not empty requestScope.error}">
+                        <div class="alert alert-danger">${requestScope.error}</div>
+                    </c:if>
                     <form action="exportHistory" method="get">
                         <div class="card mb-0" id="filter_inputs" style="display: block !important;">
                             <div class="card-body pb-0">
@@ -67,7 +71,8 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <input type="text" name="keyword" value="${param.keyword}"
+                                                    <input type="text" name="keyword" maxlength="100"
+                                                           value="${fn:escapeXml(param.keyword)}"
                                                            placeholder="Search code, customer, or serial...">
                                                 </div>
                                             </div>
@@ -75,7 +80,8 @@
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <div class="input-groupicon">
-                                                        <input type="text" name="fromDate" value="${param.fromDate}"
+                                                        <input type="text" name="fromDate" maxlength="10"
+                                                               value="${fn:escapeXml(param.fromDate)}"
                                                                placeholder="From Date" class="datetimepicker">
                                                         <div class="addonset">
                                                             <img src="assets/img/icons/calendars.svg" alt="calendar">
@@ -87,7 +93,8 @@
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <div class="input-groupicon">
-                                                        <input type="text" name="toDate" value="${param.toDate}"
+                                                        <input type="text" name="toDate" maxlength="10"
+                                                               value="${fn:escapeXml(param.toDate)}"
                                                                placeholder="To Date" class="datetimepicker">
                                                         <div class="addonset">
                                                             <img src="assets/img/icons/calendars.svg" alt="calendar">
@@ -98,18 +105,34 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
+                                                    <c:set var="dateNewestSelected" value=""/>
+                                                    <c:set var="dateOldestSelected" value=""/>
+                                                    <c:set var="totalLowSelected" value=""/>
+                                                    <c:set var="totalHighSelected" value=""/>
+                                                    <c:if test="${param.sortBy == 'dateNewest'}">
+                                                        <c:set var="dateNewestSelected" value="selected"/>
+                                                    </c:if>
+                                                    <c:if test="${param.sortBy == 'dateOldest'}">
+                                                        <c:set var="dateOldestSelected" value="selected"/>
+                                                    </c:if>
+                                                    <c:if test="${param.sortBy == 'totalLow'}">
+                                                        <c:set var="totalLowSelected" value="selected"/>
+                                                    </c:if>
+                                                    <c:if test="${param.sortBy == 'totalHigh'}">
+                                                        <c:set var="totalHighSelected" value="selected"/>
+                                                    </c:if>
                                                     <select class="select" name="sortBy">
                                                         <option value="">Sort By</option>
-                                                        <option value="dateNewest" ${param.sortBy == 'dateNewest' ? 'selected' : ''}>
+                                                        <option value="dateNewest" ${dateNewestSelected}>
                                                             Date: Newest
                                                         </option>
-                                                        <option value="dateOldest" ${param.sortBy == 'dateOldest' ? 'selected' : ''}>
+                                                        <option value="dateOldest" ${dateOldestSelected}>
                                                             Date: Oldest
                                                         </option>
-                                                        <option value="totalLow" ${param.sortBy == 'totalLow' ? 'selected' : ''}>
+                                                        <option value="totalLow" ${totalLowSelected}>
                                                             Total: Low to high
                                                         </option>
-                                                        <option value="totalHigh" ${param.sortBy == 'totalHigh' ? 'selected' : ''}>
+                                                        <option value="totalHigh" ${totalHighSelected}>
                                                             Total: High to low
                                                         </option>
                                                     </select>
@@ -161,14 +184,22 @@
                                             </a>
                                         </td>
                                         <td>
-                                            <a href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=view">
-                                                <c:choose>
-                                                    <c:when test="${not empty o.code}">
-                                                        ${o.code}
-                                                    </c:when>
-                                                    <c:otherwise>SO-${o.id}</c:otherwise>
-                                                </c:choose>
-                                            </a>
+                                            <c:choose>
+                                                <c:when test="${sessionScope.userPermissions.contains('VIEW_SALE_ORDER')}">
+                                                    <a href="${pageContext.request.contextPath}/OrderDetail?id=${o.id}&action=view">
+                                                        <c:choose>
+                                                            <c:when test="${not empty o.code}">${o.code}</c:when>
+                                                            <c:otherwise>SO-${o.id}</c:otherwise>
+                                                        </c:choose>
+                                                    </a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:choose>
+                                                        <c:when test="${not empty o.code}">${o.code}</c:when>
+                                                        <c:otherwise>SO-${o.id}</c:otherwise>
+                                                    </c:choose>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </td>
                                         <td>
                                             <fmt:formatDate value="${o.orderDate}" pattern="dd-MM-yyyy HH:mm:ss"/>
@@ -190,9 +221,6 @@
                                             <c:choose>
                                                 <c:when test="${o.status == 'COMPLETED'}">
                                                     <span class="badges bg-lightgreen">Completed</span>
-                                                </c:when>
-                                                <c:when test="${o.status == 'DRAFT'}">
-                                                    <span class="badges bg-lightyellow">Draft</span>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <span class="badges bg-lightgrey">${o.status}</span>

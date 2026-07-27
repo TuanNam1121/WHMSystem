@@ -28,34 +28,6 @@ public class ExportItemDAO {
         return 0;
     }
 
-    public ExportItemDTO getItemBySKU(String sku, int orderId) {
-        ExportItemDTO dto = null;
-
-        String sql = "SELECT p.sku, p.name, p.img_url, oi.price, " +
-                "(SELECT COUNT(*) FROM product_items pi " +
-                "WHERE pi.product_id = p.productid AND pi.status = 'AVAILABLE') AS available_quantity " +
-                "FROM order_items oi " +
-                "JOIN products p ON oi.productid = p.productid " +
-                "WHERE p.sku = ? AND oi.orderid = ? AND p.isactive = 1";
-
-        try (Connection conn = new DBContext().getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, sku);
-            ps.setInt(2, orderId);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    dto = mapResultSetToExportItemDTO(rs);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return dto;
-    }
-
     public ExportItemDTO getItemBySerial(String serial, int orderId) {
         ExportItemDTO dto = null;
 
@@ -104,54 +76,29 @@ public class ExportItemDAO {
             conn.setAutoCommit(false);
 
             try {
-                deleteDraftReceiptIfExists(conn, orderId);
-
-                String findProductItemSql =
-                        "SELECT pi.id, pi.product_id, pi.status, oi.id AS order_item_id, oi.price "
-                                + "FROM product_items pi "
-                                + "JOIN products p ON pi.product_id = p.productid "
-                                + "JOIN order_items oi ON pi.product_id = oi.productid "
-                                + "WHERE pi.serial = ? AND p.sku = ? AND oi.orderid = ?";
-                String updateOrderStatusSql =
+                String updateOrderSql =
                         "UPDATE orders SET status = 'COMPLETED', processedby = ?, "
-                                + "updatedat = CURRENT_TIMESTAMP, completedat = CURRENT_TIMESTAMP "
-                                + "WHERE id = ?";
-                String insertExportReceiptSql =
-                        "INSERT INTO export_receipts(order_id, status, created_by, exported_by, exported_at) "
-                                + "VALUES (?, 'COMPLETED', ?, ?, CURRENT_TIMESTAMP)";
-                String updateExportReceiptCodeSql =
-                        "UPDATE export_receipts SET code = ? WHERE id = ?";
-                String insertExportReceiptDetailSql =
-                        "INSERT INTO export_receipt_details(export_receipt_id, order_item_id, product_id, quantity, unit_price) "
-                                + "VALUES (?, ?, ?, ?, ?)";
-                String insertExportReceiptSerialSql =
-                        "INSERT INTO export_receipt_serials(export_receipt_detail_id, product_item_id) "
-                                + "VALUES (?, ?)";
-                String updateProductItemSql =
-                        "UPDATE product_items SET status = 'SOLD', export_price = ? WHERE id = ?";
-                String decreaseProductQuantitySql =
-                        "UPDATE inventory SET quantity = quantity - ? WHERE product_id = ?";
-                String insertStockMovementSql =
-                        "INSERT INTO stock_movement(productid, quantity, type, reference_type, reference_id) "
-                                + "VALUES (?, ?, 'DECREASED', 'EXPORT', ?)";
-
-                int exportReceiptId;
-
-                try (PreparedStatement updateOrderStatus =
-                             conn.prepareStatement(updateOrderStatusSql)) {
-                    updateOrderStatus.setInt(1, userId);
-                    updateOrderStatus.setInt(2, orderId);
-                    updateOrderStatus.executeUpdate();
+                        + "updatedat = CURRENT_TIMESTAMP, completedat = CURRENT_TIMESTAMP "
+                        + "WHERE id = ?";
+                try (PreparedStatement ps = conn.prepareStatement(updateOrderSql)) {
+                    ps.setInt(1, userId);
+                    ps.setInt(2, orderId);
+                    ps.executeUpdate();
                 }
 
-                try (PreparedStatement insertExportReceipt =
-                             conn.prepareStatement(insertExportReceiptSql, Statement.RETURN_GENERATED_KEYS)) {
-                    insertExportReceipt.setInt(1, orderId);
-                    insertExportReceipt.setInt(2, userId);
-                    insertExportReceipt.setInt(3, userId);
-                    insertExportReceipt.executeUpdate();
+                String createReceiptSql =
+                        "INSERT INTO export_receipts"
+                        + "(order_id, status, created_by, exported_by, exported_at) "
+                        + "VALUES (?, 'COMPLETED', ?, ?, CURRENT_TIMESTAMP)";
+                int exportReceiptId;
+                try (PreparedStatement ps = conn.prepareStatement(
+                        createReceiptSql, Statement.RETURN_GENERATED_KEYS)) {
+                    ps.setInt(1, orderId);
+                    ps.setInt(2, userId);
+                    ps.setInt(3, userId);
+                    ps.executeUpdate();
 
-                    try (ResultSet rs = insertExportReceipt.getGeneratedKeys()) {
+                    try (ResultSet rs = ps.getGeneratedKeys()) {
                         if (!rs.next()) {
                             throw new SQLException("Cannot create export receipt.");
                         }
@@ -159,196 +106,13 @@ public class ExportItemDAO {
                     }
                 }
 
-                try (PreparedStatement updateExportReceiptCode =
-                             conn.prepareStatement(updateExportReceiptCodeSql)) {
-                    updateExportReceiptCode.setString(1, "ER-" + exportReceiptId);
-                    updateExportReceiptCode.setInt(2, exportReceiptId);
-                    updateExportReceiptCode.executeUpdate();
-                }
-
-                List<Integer> productItemIds = new ArrayList<>();
-                List<Integer> itemOrderItemIds = new ArrayList<>();
-                List<Integer> productIds = new ArrayList<>();
-                List<Integer> quantities = new ArrayList<>();
-                List<Integer> detailOrderItemIds = new ArrayList<>();
-                List<Integer> detailProductIds = new ArrayList<>();
-                List<Integer> detailQuantities = new ArrayList<>();
-                List<Double> detailPrices = new ArrayList<>();
-                List<Integer> detailIds = new ArrayList<>();
-
-                try (PreparedStatement findProductItem =
-                             conn.prepareStatement(findProductItemSql);
-                     PreparedStatement updateProductItem =
-                             conn.prepareStatement(updateProductItemSql);
-                     PreparedStatement insertExportReceiptDetail =
-                             conn.prepareStatement(insertExportReceiptDetailSql, Statement.RETURN_GENERATED_KEYS);
-                     PreparedStatement insertExportReceiptSerial =
-                             conn.prepareStatement(insertExportReceiptSerialSql);
-                     PreparedStatement decreaseProductQuantity =
-                             conn.prepareStatement(decreaseProductQuantitySql);
-                     PreparedStatement insertStockMovement =
-                             conn.prepareStatement(insertStockMovementSql)) {
-
-                    for (ExportItemDTO item : exportList) {
-                        findProductItem.setString(1, item.getSerial());
-                        findProductItem.setString(2, item.getSku());
-                        findProductItem.setInt(3, orderId);
-
-                        int productItemId;
-                        int orderItemId;
-                        int productId;
-                        double price;
-
-                        try (ResultSet rs = findProductItem.executeQuery()) {
-                            if (!rs.next()) {
-                                throw new SQLException("Serial number " + item.getSerial()
-                                        + " does not exist or does not belong to the selected product.");
-                            }
-                            if (!"AVAILABLE".equalsIgnoreCase(rs.getString("status"))) {
-                                throw new SQLException("Serial number " + item.getSerial()
-                                        + " is currently " + rs.getString("status")
-                                        + " and cannot be exported.");
-                            }
-
-                            productItemId = rs.getInt("id");
-                            orderItemId = rs.getInt("order_item_id");
-                            productId = rs.getInt("product_id");
-                            price = rs.getDouble("price");
-                        }
-
-                        updateProductItem.setDouble(1, price);
-                        updateProductItem.setInt(2, productItemId);
-                        updateProductItem.executeUpdate();
-
-                        productItemIds.add(productItemId);
-                        itemOrderItemIds.add(orderItemId);
-
-                        int index = productIds.indexOf(productId);
-                        if (index == -1) {
-                            productIds.add(productId);
-                            quantities.add(1);
-                        } else {
-                            quantities.set(index, quantities.get(index) + 1);
-                        }
-
-                        int detailIndex = detailOrderItemIds.indexOf(orderItemId);
-                        if (detailIndex == -1) {
-                            detailOrderItemIds.add(orderItemId);
-                            detailProductIds.add(productId);
-                            detailQuantities.add(1);
-                            detailPrices.add(price);
-                        } else {
-                            detailQuantities.set(detailIndex,
-                                    detailQuantities.get(detailIndex) + 1);
-                        }
-                    }
-
-                    for (int i = 0; i < detailOrderItemIds.size(); i++) {
-                        insertExportReceiptDetail.setInt(1, exportReceiptId);
-                        insertExportReceiptDetail.setInt(2, detailOrderItemIds.get(i));
-                        insertExportReceiptDetail.setInt(3, detailProductIds.get(i));
-                        insertExportReceiptDetail.setInt(4, detailQuantities.get(i));
-                        insertExportReceiptDetail.setDouble(5, detailPrices.get(i));
-                        insertExportReceiptDetail.executeUpdate();
-
-                        try (ResultSet rs = insertExportReceiptDetail.getGeneratedKeys()) {
-                            if (!rs.next()) {
-                                throw new SQLException("Cannot create export receipt detail.");
-                            }
-                            detailIds.add(rs.getInt(1));
-                        }
-                    }
-
-                    for (int i = 0; i < productItemIds.size(); i++) {
-                        int detailIndex = detailOrderItemIds.indexOf(itemOrderItemIds.get(i));
-
-                        insertExportReceiptSerial.setInt(1, detailIds.get(detailIndex));
-                        insertExportReceiptSerial.setInt(2, productItemIds.get(i));
-                        insertExportReceiptSerial.executeUpdate();
-                    }
-
-                    for (int i = 0; i < productIds.size(); i++) {
-                        decreaseProductQuantity.setInt(1, quantities.get(i));
-                        decreaseProductQuantity.setInt(2, productIds.get(i));
-                        decreaseProductQuantity.executeUpdate();
-
-                        insertStockMovement.setInt(1, productIds.get(i));
-                        insertStockMovement.setInt(2, quantities.get(i));
-                        insertStockMovement.setInt(3, exportReceiptId);
-                        insertStockMovement.executeUpdate();
-                    }
-                }
-
-                conn.commit();
-                return "SUCCESS";
-            } catch (Exception e) {
-                try {
-                    conn.rollback();
-                } catch (SQLException rollbackError) {
-                    rollbackError.printStackTrace();
-                }
-                e.printStackTrace();
-                return e.getMessage() == null
-                        ? "Unknown system error while saving to Database!"
-                        : e.getMessage();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return e.getMessage() != null ? e.getMessage() : "Unknown system error while saving to Database!";
-        }
-    }
-
-    public String saveDraftExportReceipt(int orderId, int userId, List<ExportItemDTO> exportList) {
-        try (Connection conn = DBContext.getConnection()) {
-            conn.setAutoCommit(false);
-
-            try {
-                String currentStatus = getExportReceiptStatusByOrderId(orderId);
-                if ("COMPLETED".equalsIgnoreCase(currentStatus)) {
-                    return "This order has already been exported.";
-                }
-
-                deleteDraftReceiptIfExists(conn, orderId);
-
-                String findProductItemSql =
-                        "SELECT pi.id, pi.product_id, pi.status, oi.id AS order_item_id, oi.price "
-                                + "FROM product_items pi "
-                                + "JOIN products p ON pi.product_id = p.productid "
-                                + "JOIN order_items oi ON pi.product_id = oi.productid "
-                                + "WHERE pi.serial = ? AND p.sku = ? AND oi.orderid = ?";
-                String insertExportReceiptSql =
-                        "INSERT INTO export_receipts(order_id, status, created_by) "
-                                + "VALUES (?, 'DRAFT', ?)";
-                String updateExportReceiptCodeSql =
+                String updateReceiptCodeSql =
                         "UPDATE export_receipts SET code = ? WHERE id = ?";
-                String insertExportReceiptDetailSql =
-                        "INSERT INTO export_receipt_details(export_receipt_id, order_item_id, product_id, quantity, unit_price) "
-                                + "VALUES (?, ?, ?, ?, ?)";
-                String insertExportReceiptSerialSql =
-                        "INSERT INTO export_receipt_serials(export_receipt_detail_id, product_item_id) "
-                                + "VALUES (?, ?)";
-
-                int exportReceiptId;
-
-                try (PreparedStatement insertExportReceipt =
-                             conn.prepareStatement(insertExportReceiptSql, Statement.RETURN_GENERATED_KEYS)) {
-                    insertExportReceipt.setInt(1, orderId);
-                    insertExportReceipt.setInt(2, userId);
-                    insertExportReceipt.executeUpdate();
-
-                    try (ResultSet rs = insertExportReceipt.getGeneratedKeys()) {
-                        if (!rs.next()) {
-                            throw new SQLException("Cannot create draft export receipt.");
-                        }
-                        exportReceiptId = rs.getInt(1);
-                    }
-                }
-
-                try (PreparedStatement updateExportReceiptCode =
-                             conn.prepareStatement(updateExportReceiptCodeSql)) {
-                    updateExportReceiptCode.setString(1, "ER-" + exportReceiptId);
-                    updateExportReceiptCode.setInt(2, exportReceiptId);
-                    updateExportReceiptCode.executeUpdate();
+                try (PreparedStatement ps =
+                        conn.prepareStatement(updateReceiptCodeSql)) {
+                    ps.setString(1, "ER-" + exportReceiptId);
+                    ps.setInt(2, exportReceiptId);
+                    ps.executeUpdate();
                 }
 
                 List<Integer> productItemIds = new ArrayList<>();
@@ -357,34 +121,46 @@ public class ExportItemDAO {
                 List<Integer> detailProductIds = new ArrayList<>();
                 List<Integer> detailQuantities = new ArrayList<>();
                 List<Double> detailPrices = new ArrayList<>();
-                List<Integer> detailIds = new ArrayList<>();
+                List<Integer> productIds = new ArrayList<>();
+                List<Integer> productQuantities = new ArrayList<>();
 
-                try (PreparedStatement findProductItem =
-                             conn.prepareStatement(findProductItemSql);
-                     PreparedStatement insertExportReceiptDetail =
-                             conn.prepareStatement(insertExportReceiptDetailSql, Statement.RETURN_GENERATED_KEYS);
-                     PreparedStatement insertExportReceiptSerial =
-                             conn.prepareStatement(insertExportReceiptSerialSql)) {
+                String findItemSql =
+                        "SELECT pi.id, pi.product_id, pi.status, "
+                        + "oi.id AS order_item_id, oi.price "
+                        + "FROM product_items pi "
+                        + "JOIN products p ON pi.product_id = p.productid "
+                        + "JOIN order_items oi ON pi.product_id = oi.productid "
+                        + "WHERE pi.serial = ? AND p.sku = ? AND oi.orderid = ?";
+                String markItemSoldSql =
+                        "UPDATE product_items SET status = 'SOLD', export_price = ? "
+                        + "WHERE id = ?";
 
+                try (PreparedStatement findItem =
+                             conn.prepareStatement(findItemSql);
+                     PreparedStatement markItemSold =
+                             conn.prepareStatement(markItemSoldSql)) {
                     for (ExportItemDTO item : exportList) {
-                        findProductItem.setString(1, item.getSerial());
-                        findProductItem.setString(2, item.getSku());
-                        findProductItem.setInt(3, orderId);
+                        findItem.setString(1, item.getSerial());
+                        findItem.setString(2, item.getSku());
+                        findItem.setInt(3, orderId);
 
                         int productItemId;
                         int orderItemId;
                         int productId;
                         double price;
-
-                        try (ResultSet rs = findProductItem.executeQuery()) {
+                        try (ResultSet rs = findItem.executeQuery()) {
                             if (!rs.next()) {
-                                throw new SQLException("Serial number " + item.getSerial()
-                                        + " does not exist or does not belong to the selected product.");
+                                throw new SQLException("Serial number "
+                                        + item.getSerial()
+                                        + " does not exist or does not belong "
+                                        + "to the selected product.");
                             }
-                            if (!"AVAILABLE".equalsIgnoreCase(rs.getString("status"))) {
-                                throw new SQLException("Serial number " + item.getSerial()
-                                        + " is currently " + rs.getString("status")
-                                        + " and cannot be saved.");
+
+                            String status = rs.getString("status");
+                            if (!"AVAILABLE".equalsIgnoreCase(status)) {
+                                throw new SQLException("Serial number "
+                                        + item.getSerial() + " is currently "
+                                        + status + " and cannot be exported.");
                             }
 
                             productItemId = rs.getInt("id");
@@ -392,6 +168,10 @@ public class ExportItemDAO {
                             productId = rs.getInt("product_id");
                             price = rs.getDouble("price");
                         }
+
+                        markItemSold.setDouble(1, price);
+                        markItemSold.setInt(2, productItemId);
+                        markItemSold.executeUpdate();
 
                         productItemIds.add(productItemId);
                         itemOrderItemIds.add(orderItemId);
@@ -403,33 +183,85 @@ public class ExportItemDAO {
                             detailQuantities.add(1);
                             detailPrices.add(price);
                         } else {
-                            detailQuantities.set(detailIndex,
-                                    detailQuantities.get(detailIndex) + 1);
+                            int quantity = detailQuantities.get(detailIndex);
+                            detailQuantities.set(detailIndex, quantity + 1);
+                        }
+
+                        int productIndex = productIds.indexOf(productId);
+                        if (productIndex == -1) {
+                            productIds.add(productId);
+                            productQuantities.add(1);
+                        } else {
+                            int quantity = productQuantities.get(productIndex);
+                            productQuantities.set(productIndex, quantity + 1);
                         }
                     }
+                }
 
+                List<Integer> detailIds = new ArrayList<>();
+                String insertDetailSql =
+                        "INSERT INTO export_receipt_details"
+                        + "(export_receipt_id, order_item_id, product_id, "
+                        + "quantity, unit_price) VALUES (?, ?, ?, ?, ?)";
+                try (PreparedStatement ps = conn.prepareStatement(
+                        insertDetailSql, Statement.RETURN_GENERATED_KEYS)) {
                     for (int i = 0; i < detailOrderItemIds.size(); i++) {
-                        insertExportReceiptDetail.setInt(1, exportReceiptId);
-                        insertExportReceiptDetail.setInt(2, detailOrderItemIds.get(i));
-                        insertExportReceiptDetail.setInt(3, detailProductIds.get(i));
-                        insertExportReceiptDetail.setInt(4, detailQuantities.get(i));
-                        insertExportReceiptDetail.setDouble(5, detailPrices.get(i));
-                        insertExportReceiptDetail.executeUpdate();
+                        ps.setInt(1, exportReceiptId);
+                        ps.setInt(2, detailOrderItemIds.get(i));
+                        ps.setInt(3, detailProductIds.get(i));
+                        ps.setInt(4, detailQuantities.get(i));
+                        ps.setDouble(5, detailPrices.get(i));
+                        ps.executeUpdate();
 
-                        try (ResultSet rs = insertExportReceiptDetail.getGeneratedKeys()) {
+                        try (ResultSet rs = ps.getGeneratedKeys()) {
                             if (!rs.next()) {
-                                throw new SQLException("Cannot create draft export receipt detail.");
+                                throw new SQLException(
+                                        "Cannot create export receipt detail.");
                             }
                             detailIds.add(rs.getInt(1));
                         }
                     }
+                }
 
+                String insertSerialSql =
+                        "INSERT INTO export_receipt_serials"
+                        + "(export_receipt_detail_id, product_item_id) "
+                        + "VALUES (?, ?)";
+                try (PreparedStatement ps =
+                             conn.prepareStatement(insertSerialSql)) {
                     for (int i = 0; i < productItemIds.size(); i++) {
-                        int detailIndex = detailOrderItemIds.indexOf(itemOrderItemIds.get(i));
+                        int detailIndex = detailOrderItemIds.indexOf(
+                                itemOrderItemIds.get(i));
+                        if (detailIndex == -1) {
+                            throw new SQLException(
+                                    "Cannot find export receipt detail for a product.");
+                        }
+                        ps.setInt(1, detailIds.get(detailIndex));
+                        ps.setInt(2, productItemIds.get(i));
+                        ps.executeUpdate();
+                    }
+                }
 
-                        insertExportReceiptSerial.setInt(1, detailIds.get(detailIndex));
-                        insertExportReceiptSerial.setInt(2, productItemIds.get(i));
-                        insertExportReceiptSerial.executeUpdate();
+                String decreaseInventorySql =
+                        "UPDATE inventory SET quantity = quantity - ? "
+                        + "WHERE product_id = ?";
+                String insertMovementSql =
+                        "INSERT INTO stock_movement"
+                        + "(productid, quantity, type, reference_type, reference_id) "
+                        + "VALUES (?, ?, 'DECREASED', 'EXPORT', ?)";
+                try (PreparedStatement decreaseInventory =
+                             conn.prepareStatement(decreaseInventorySql);
+                     PreparedStatement insertMovement =
+                             conn.prepareStatement(insertMovementSql)) {
+                    for (int i = 0; i < productIds.size(); i++) {
+                        decreaseInventory.setInt(1, productQuantities.get(i));
+                        decreaseInventory.setInt(2, productIds.get(i));
+                        decreaseInventory.executeUpdate();
+
+                        insertMovement.setInt(1, productIds.get(i));
+                        insertMovement.setInt(2, productQuantities.get(i));
+                        insertMovement.setInt(3, exportReceiptId);
+                        insertMovement.executeUpdate();
                     }
                 }
 
@@ -442,66 +274,17 @@ public class ExportItemDAO {
                     rollbackError.printStackTrace();
                 }
                 e.printStackTrace();
-                return e.getMessage() == null
-                        ? "Unknown system error while saving draft!"
-                        : e.getMessage();
+                if (e.getMessage() == null || e.getMessage().trim().isEmpty()) {
+                    return "Unknown system error while saving to Database!";
+                }
+                return e.getMessage();
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return e.getMessage() != null ? e.getMessage() : "Unknown system error while saving draft!";
-        }
-    }
-
-    private void deleteDraftReceiptIfExists(Connection conn, int orderId) throws SQLException {
-        String findDraftReceiptSql =
-                "SELECT id, status FROM export_receipts WHERE order_id = ?";
-        String deleteDraftSerialsSql =
-                "DELETE ers FROM export_receipt_serials ers "
-                        + "JOIN export_receipt_details erd ON ers.export_receipt_detail_id = erd.id "
-                        + "WHERE erd.export_receipt_id = ?";
-        String deleteDraftDetailsSql =
-                "DELETE FROM export_receipt_details WHERE export_receipt_id = ?";
-        String deleteDraftReceiptSql =
-                "DELETE FROM export_receipts WHERE id = ?";
-
-        int exportReceiptId = 0;
-        String status = null;
-
-        try (PreparedStatement findDraftReceipt =
-                     conn.prepareStatement(findDraftReceiptSql)) {
-            findDraftReceipt.setInt(1, orderId);
-
-            try (ResultSet rs = findDraftReceipt.executeQuery()) {
-                if (rs.next()) {
-                    exportReceiptId = rs.getInt("id");
-                    status = rs.getString("status");
-                }
+            if (e.getMessage() == null || e.getMessage().trim().isEmpty()) {
+                return "Unknown system error while saving to Database!";
             }
-        }
-
-        if (exportReceiptId == 0) {
-            return;
-        }
-
-        if (!"DRAFT".equalsIgnoreCase(status)) {
-            throw new SQLException("This order has already been exported.");
-        }
-
-        try (PreparedStatement deleteDraftSerials =
-                     conn.prepareStatement(deleteDraftSerialsSql);
-             PreparedStatement deleteDraftDetails =
-                     conn.prepareStatement(deleteDraftDetailsSql);
-             PreparedStatement deleteDraftReceipt =
-                     conn.prepareStatement(deleteDraftReceiptSql)) {
-
-            deleteDraftSerials.setInt(1, exportReceiptId);
-            deleteDraftSerials.executeUpdate();
-
-            deleteDraftDetails.setInt(1, exportReceiptId);
-            deleteDraftDetails.executeUpdate();
-
-            deleteDraftReceipt.setInt(1, exportReceiptId);
-            deleteDraftReceipt.executeUpdate();
+            return e.getMessage();
         }
     }
 
@@ -595,52 +378,4 @@ public class ExportItemDAO {
         return null;
     }
 
-    public List<ExportItemDTO> getDraftItemsByOrderId(int orderId) {
-        List<ExportItemDTO> list = new ArrayList<>();
-
-        String sql = "SELECT p.sku, p.name, p.img_url, erd.unit_price AS price, "
-                + "pi.serial, "
-                + "(SELECT COUNT(*) FROM product_items pi2 "
-                + "WHERE pi2.product_id = p.productid AND pi2.status = 'AVAILABLE') AS available_quantity "
-                + "FROM export_receipts er "
-                + "JOIN export_receipt_details erd ON er.id = erd.export_receipt_id "
-                + "JOIN export_receipt_serials ers ON erd.id = ers.export_receipt_detail_id "
-                + "JOIN product_items pi ON ers.product_item_id = pi.id "
-                + "JOIN products p ON erd.product_id = p.productid "
-                + "WHERE er.order_id = ? AND er.status = 'DRAFT'";
-
-        try (Connection conn = new DBContext().getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, orderId);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    ExportItemDTO dto = new ExportItemDTO();
-                    dto.setSku(rs.getString("sku"));
-                    dto.setName(rs.getString("name"));
-                    dto.setImgUrl(rs.getString("img_url"));
-                    dto.setPrice(rs.getDouble("price"));
-                    dto.setStock(rs.getInt("available_quantity"));
-                    dto.setSerial(rs.getString("serial"));
-                    list.add(dto);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return list;
-    }
-
-    public static void main(String[] args) {
-        ExportItemDAO exportItemDAO = new ExportItemDAO();
-        ExportItemDTO dto = exportItemDAO.getItemBySKU("B12-423", 4);
-        System.out.println(dto);
-
-        List<ExportDetailItemDTO> list = exportItemDAO.getExportedItemsByOrderId(4);
-        for (ExportDetailItemDTO e : list) {
-            System.out.println(e);
-        }
-    }
 }

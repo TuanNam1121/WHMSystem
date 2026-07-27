@@ -26,13 +26,19 @@ public class BrandList extends HttpServlet {
         HttpSession session = request.getSession();
         BrandDAO brandDAO = new BrandDAO();
         List<Brand> brandList = new ArrayList<>();
-        String keyword = request.getParameter("keyword");
+        String keyword = InputValidationUtil.normalizeSearchText(
+                request.getParameter("keyword"), 100);
         String sortBy = request.getParameter("sortBy");
         String pageSizeRaw = request.getParameter("pageSize");
         String pageRaw = request.getParameter("page");
 
         int pageSize = 10;
         int page = 1;
+
+        if (sortBy != null && !List.of(
+                "nameAZ", "nameZA", "descriptionAZ", "descriptionZA").contains(sortBy)) {
+            sortBy = null;
+        }
 
         if (pageSizeRaw != null && !pageSizeRaw.trim().isEmpty()) {
             try {

@@ -12,6 +12,7 @@ import com.swp.whmsystem.model.Brand;
 import com.swp.whmsystem.model.Category;
 import com.swp.whmsystem.model.Product;
 import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.InputValidationUtil;
 import com.swp.whmsystem.utils.PermissionConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -37,7 +38,8 @@ public class ProductList extends HttpServlet {
         BrandDAO brandDAO = new BrandDAO();
         CategoryDAO categoryDAO = new CategoryDAO();
         List<Product> productList = new ArrayList<>();
-        String productName = request.getParameter("productName");
+        String productName = InputValidationUtil.normalizeSearchText(
+                request.getParameter("productName"), 100);
         String categoryIdRaw = request.getParameter("categoryId");
         String brandIdRaw = request.getParameter("brandId");
         String isActiveRaw = request.getParameter("isActive");
@@ -51,9 +53,18 @@ public class ProductList extends HttpServlet {
         int pageSize = 10;
         int page = 1;
 
+        if (sortBy != null && !List.of(
+                "nameAZ", "nameZA", "skuAZ", "skuZA",
+                "cateAZ", "cateZA", "brandAZ", "brandZA").contains(sortBy)) {
+            sortBy = null;
+        }
+
         if (categoryIdRaw != null && !categoryIdRaw.trim().isEmpty()) {
             try {
-                categoryId = Integer.parseInt(categoryIdRaw.trim());
+                int parsedCategoryId = Integer.parseInt(categoryIdRaw.trim());
+                if (parsedCategoryId > 0) {
+                    categoryId = parsedCategoryId;
+                }
             } catch (NumberFormatException e) {
                 categoryId = -1;
             }
@@ -61,7 +72,10 @@ public class ProductList extends HttpServlet {
 
         if (brandIdRaw != null && !brandIdRaw.trim().isEmpty()) {
             try {
-                brandId = Integer.parseInt(brandIdRaw.trim());
+                int parsedBrandId = Integer.parseInt(brandIdRaw.trim());
+                if (parsedBrandId > 0) {
+                    brandId = parsedBrandId;
+                }
             } catch (NumberFormatException e) {
                 brandId = -1;
             }

@@ -24,39 +24,53 @@ public class ExportDetail extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_EXPORT_HISTORY,
+                "You don't have permission to view export details!")) {
+            return;
+        }
 
         HttpSession session = request.getSession();
         String orderIdStr = request.getParameter("orderId");
 
-        if (orderIdStr != null && !orderIdStr.trim().isEmpty()) {
-            try {
-                int orderId = Integer.parseInt(orderIdStr.trim());
-                OrderDAO orderDAO = new OrderDAO();
-                Order order = orderDAO.getOrderById(orderId);
-
-                ExportItemDAO exportItemDAO = new ExportItemDAO();
-                List<ExportDetailItemDTO> detailList = exportItemDAO.getExportedItemsByOrderId(orderId);
-                String exportReceiptStatus = exportItemDAO.getExportReceiptStatusByOrderId(orderId);
-                ExportReceiptInfoDTO exportReceiptInfo = exportItemDAO.getExportReceiptInfoByOrderId(orderId);
-
-                if (order != null && exportReceiptStatus != null) {
-                    order.setStatus(exportReceiptStatus);
-                    double grandTotal = 0.0;
-                    for (ExportDetailItemDTO item : detailList) {
-                        grandTotal += item.getPrice();
-                    }
-                    session.setAttribute("order", order);
-                    session.setAttribute("itemList", detailList);
-                    request.setAttribute("grandTotal", grandTotal);
-                    request.setAttribute("exportReceiptInfo", exportReceiptInfo);
-                    request.getRequestDispatcher("WEB-INF/view/export/exportDetail.jsp").forward(request, response);
-                    return;
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Lỗi parse ID xem chi tiết: " + e.getMessage());
-            }
+        int orderId;
+        try {
+            orderId = Integer.parseInt(orderIdStr);
+        } catch (NumberFormatException e) {
+            response.sendRedirect("exportHistory");
+            return;
+        }
+        if (orderId <= 0) {
+            response.sendRedirect("exportHistory");
+            return;
         }
 
-        response.sendRedirect("exportHistory");
+        OrderDAO orderDAO = new OrderDAO();
+        Order order = orderDAO.getOrderById(orderId);
+
+        ExportItemDAO exportItemDAO = new ExportItemDAO();
+        String receiptStatus =
+                exportItemDAO.getExportReceiptStatusByOrderId(orderId);
+        if (order == null || receiptStatus == null) {
+            response.sendRedirect("exportHistory");
+            return;
+        }
+
+        List<ExportDetailItemDTO> detailList =
+                exportItemDAO.getExportedItemsByOrderId(orderId);
+        ExportReceiptInfoDTO receiptInfo =
+                exportItemDAO.getExportReceiptInfoByOrderId(orderId);
+
+        order.setStatus(receiptStatus);
+        double grandTotal = 0;
+        for (ExportDetailItemDTO item : detailList) {
+            grandTotal += item.getPrice();
+        }
+
+        session.setAttribute("order", order);
+        session.setAttribute("itemList", detailList);
+        request.setAttribute("grandTotal", grandTotal);
+        request.setAttribute("exportReceiptInfo", receiptInfo);
+        request.getRequestDispatcher(
+                "WEB-INF/view/export/exportDetail.jsp").forward(request, response);
     }
 }

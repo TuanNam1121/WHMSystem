@@ -47,6 +47,18 @@ public class ChangePassword extends HttpServlet {
         String newPass = request.getParameter("newPass");
         String cfNewPass = request.getParameter("cfNewPass");
 
+        if (currPass == null || currPass.isEmpty()) {
+            request.setAttribute("error", "Current password is required!");
+            request.getRequestDispatcher("WEB-INF/view/authentication/changePassword.jsp").forward(request, response);
+            return;
+        }
+
+        if (cfNewPass == null || cfNewPass.isEmpty()) {
+            request.setAttribute("error", "Confirm password is required!");
+            request.getRequestDispatcher("WEB-INF/view/authentication/changePassword.jsp").forward(request, response);
+            return;
+        }
+
         String currentHashedInDB = uDao.getPasswordById(user.getId());
         if (currentHashedInDB == null) {
             request.setAttribute("error", "System error, user not found!");
@@ -55,7 +67,8 @@ public class ChangePassword extends HttpServlet {
         }
 
         if (!InputValidationUtil.isValidPassword(newPass)) {
-            request.setAttribute("error", "New password must contain at least 1 uppercase, 1 digit and at least 6 characters!");
+            request.setAttribute("error",
+                    "New password must be 6-72 characters, contain at least 1 uppercase and 1 digit, with no whitespace!");
             request.getRequestDispatcher("WEB-INF/view/authentication/changePassword.jsp").forward(request, response);
             return;
         }
@@ -97,4 +110,3 @@ public class ChangePassword extends HttpServlet {
     }
 
 }
-

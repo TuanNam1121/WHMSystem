@@ -1,7 +1,11 @@
 package com.swp.whmsystem.controller.export;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import com.google.gson.JsonObject;
 import com.swp.whmsystem.dal.*;
@@ -23,59 +27,58 @@ public class ExportProduct extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.PROCESS_EXPORT,
                 "You don't have permission to process export products!")) {
             return;
         }
 
         HttpSession session = request.getSession();
-        String orderIdStr = request.getParameter("orderId");
+        OrderDAO orderDAO = new OrderDAO();
+        ExportItemDAO exportItemDAO = new ExportItemDAO();
 
-        if (orderIdStr == null || orderIdStr.trim().isEmpty()) {
-            response.sendRedirect("toExportList");
-            return;
-        }
-
+        int orderId;
         try {
-            int orderId = Integer.parseInt(orderIdStr.trim());
-            OrderDAO orderDAO = new OrderDAO();
-            Order order = orderDAO.getOrderById(orderId);
-
-            if (order == null) {
-                response.sendRedirect("toExportList");
-                return;
-            }
-
-            ExportItemDAO exportItemDAO = new ExportItemDAO();
-            String exportReceiptStatus = exportItemDAO.getExportReceiptStatusByOrderId(orderId);
-            if ("COMPLETED".equalsIgnoreCase(exportReceiptStatus)) {
-                response.sendRedirect("exportDetail?orderId=" + orderId);
-                return;
-            }
-
-            Order sessionOrder = (Order) session.getAttribute("order");
-            if (sessionOrder == null || sessionOrder.getId() != orderId) {
-                session.removeAttribute("scannedList");
-            }
-
-            if ("DRAFT".equalsIgnoreCase(exportReceiptStatus)
-                    && session.getAttribute("scannedList") == null) {
-                session.setAttribute("scannedList",
-                        exportItemDAO.getDraftItemsByOrderId(orderId));
-            }
-
-            List<OrderItemDetailDTO> pickingList = orderDAO.getOrderItemsByOrderId(orderId);
-            session.setAttribute("order", order);
-            session.setAttribute("pickingList", pickingList);
+            orderId = Integer.parseInt(request.getParameter("orderId"));
         } catch (NumberFormatException e) {
             response.sendRedirect("toExportList");
             return;
         }
+        if (orderId <= 0) {
+            response.sendRedirect("toExportList");
+            return;
+        }
+
+        Order order = orderDAO.getOrderById(orderId);
+        if (order == null) {
+            response.sendRedirect("toExportList");
+            return;
+        }
+
+        String receiptStatus =
+                exportItemDAO.getExportReceiptStatusByOrderId(orderId);
+        if ("COMPLETED".equalsIgnoreCase(receiptStatus)) {
+            response.sendRedirect("exportDetail?orderId=" + orderId);
+            return;
+        }
+        if (receiptStatus != null || !"NEW".equalsIgnoreCase(order.getStatus())) {
+            response.sendRedirect("toExportList");
+            return;
+        }
+
+        Order sessionOrder = (Order) session.getAttribute("order");
+        if (sessionOrder == null || sessionOrder.getId() != orderId) {
+            session.removeAttribute("scannedList");
+        }
+
+        List<OrderItemDetailDTO> pickingList =
+                orderDAO.getOrderItemsByOrderId(orderId);
+        session.setAttribute("order", order);
+        session.setAttribute("pickingList", pickingList);
 
         List<ExportItemDTO> scannedList = (List<ExportItemDTO>) session.getAttribute("scannedList");
-        double grandTotal = 0.0;
-
-        if (scannedList != null && !scannedList.isEmpty()) {
+        double grandTotal = 0;
+        if (scannedList != null) {
             for (ExportItemDTO item : scannedList) {
                 grandTotal += item.getTotalCost();
             }
@@ -86,78 +89,83 @@ public class ExportProduct extends HttpServlet {
     }
 
     /*
-     * CODE CŨ: Xử lý bằng backend và reload lại trang sau mỗi lần quét SKU.
+     * Backend reload version kept for reference.
+     * Comment the active JSON doPost method before enabling this version.
      *
      * @Override
      * protected void doPost(HttpServletRequest request, HttpServletResponse response)
      *         throws ServletException, IOException {
-     *     HttpSession session = request.getSession();
-     *     ExportItemDAO exportItemDAO = new ExportItemDAO();
-     *     int orderId;
-     *     String sku = request.getParameter("sku");
-     *     String orderIdRaw = request.getParameter("orderId");
-     *
-     *     if (orderIdRaw == null || orderIdRaw.trim().isEmpty()) {
-     *         response.sendRedirect("toExportList");
+     *     if (!AuthorizationUtils.checkAccess(
+     *             request,
+     *             response,
+     *             PermissionConstants.PROCESS_EXPORT,
+     *             "You don't have permission to process export products!")) {
      *         return;
      *     }
      *
+     *     HttpSession session = request.getSession();
+     *     String orderIdRaw = request.getParameter("orderId");
+     *     String serial = request.getParameter("serial");
+     *
+     *     int orderId;
      *     try {
-     *         orderId = Integer.parseInt(orderIdRaw.trim());
+     *         orderId = Integer.parseInt(orderIdRaw);
      *     } catch (NumberFormatException e) {
      *         response.sendRedirect("toExportList");
      *         return;
      *     }
+     *     if (orderId <= 0) {
+     *         response.sendRedirect("toExportList");
+     *         return;
+     *     }
+     *
+     *     if (serial == null || serial.trim().isEmpty()) {
+     *         session.setAttribute("error", "Serial number is required.");
+     *         response.sendRedirect("exportProduct?orderId=" + orderId);
+     *         return;
+     *     }
+     *     serial = serial.trim();
+     *
+     *     OrderDAO orderDAO = new OrderDAO();
+     *     List<OrderItemDetailDTO> orderItems =
+     *             orderDAO.getOrderItemsByOrderId(orderId);
+     *     Map<String, Integer> requiredQuantities = new HashMap<>();
+     *     for (OrderItemDetailDTO orderItem : orderItems) {
+     *         if (orderItem.getSku() != null) {
+     *             String sku = orderItem.getSku().toUpperCase(Locale.ROOT);
+     *             int quantity = orderItem.getQuantity();
+     *             if (requiredQuantities.get(sku) != null) {
+     *                 quantity += requiredQuantities.get(sku);
+     *             }
+     *             requiredQuantities.put(sku, quantity);
+     *         }
+     *     }
+     *     ExportItemDAO exportItemDAO = new ExportItemDAO();
      *
      *     synchronized (session) {
-     *         List<ExportItemDTO> scannedList =
+     *         List<ExportItemDTO> oldList =
      *                 (List<ExportItemDTO>) session.getAttribute("scannedList");
-     *         if (scannedList == null) {
-     *             scannedList = new ArrayList<>();
+     *         List<ExportItemDTO> scannedList = new ArrayList<>();
+     *         if (oldList != null) {
+     *             scannedList.addAll(oldList);
+     *         }
+     *         ExportItemDTO product = exportItemDAO.getItemBySerial(serial, orderId);
+     *         String errorMessage = validateScan(
+     *                 product, serial, requiredQuantities, scannedList);
+     *
+     *         if (errorMessage == null) {
+     *             ExportItemDTO addedItem = new ExportItemDTO();
+     *             addedItem.setSku(product.getSku());
+     *             addedItem.setName(product.getName());
+     *             addedItem.setImgUrl(product.getImgUrl());
+     *             addedItem.setStock(product.getStock());
+     *             addedItem.setPrice(product.getPrice());
+     *             addedItem.setSerial(product.getSerial());
+     *             scannedList.add(0, addedItem);
+     *             session.removeAttribute("error");
      *         } else {
-     *             scannedList = new ArrayList<>(scannedList);
+     *             session.setAttribute("error", errorMessage);
      *         }
-     *
-     *         if (sku != null && !sku.trim().isEmpty()) {
-     *             sku = sku.trim();
-     *             ExportItemDTO productFromDB =
-     *                     exportItemDAO.getItemBySKU(sku, orderId);
-     *
-     *             if (productFromDB != null) {
-     *                 int currentScannedQty = 0;
-     *                 for (ExportItemDTO item : scannedList) {
-     *                     if (item.getSku().equalsIgnoreCase(sku)) {
-     *                         currentScannedQty += item.getQty();
-     *                     }
-     *                 }
-     *
-     *                 if (productFromDB.getStock() <= 0) {
-     *                     session.setAttribute("error",
-     *                             productFromDB.getName()
-     *                                     + " is currently out of stock.");
-     *                 } else if (currentScannedQty >= productFromDB.getStock()) {
-     *                     session.setAttribute("error",
-     *                             "Cannot add more " + productFromDB.getName()
-     *                                     + ". Available stock: "
-     *                                     + productFromDB.getStock() + ".");
-     *                 } else {
-     *                     ExportItemDTO newItem = new ExportItemDTO();
-     *                     newItem.setSku(productFromDB.getSku());
-     *                     newItem.setName(productFromDB.getName());
-     *                     newItem.setImgUrl(productFromDB.getImgUrl());
-     *                     newItem.setStock(productFromDB.getStock());
-     *                     newItem.setPrice(productFromDB.getPrice());
-     *
-     *                     scannedList.add(0, newItem);
-     *                     session.removeAttribute("error");
-     *                 }
-     *             } else {
-     *                 session.setAttribute("error",
-     *                         "The product with SKU " + sku
-     *                                 + " is not included in this order.");
-     *             }
-     *         }
-     *
      *         session.setAttribute("scannedList", scannedList);
      *     }
      *
@@ -165,7 +173,6 @@ public class ExportProduct extends HttpServlet {
      * }
      */
 
-    // CODE MỚI: Trả JSON để JavaScript thêm sản phẩm mà không reload trang.
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -176,146 +183,166 @@ public class ExportProduct extends HttpServlet {
 
         HttpSession session = request.getSession();
         ExportItemDAO exportItemDAO = new ExportItemDAO();
+        OrderDAO orderDAO = new OrderDAO();
         String serial = request.getParameter("serial");
         String orderIdRaw = request.getParameter("orderId");
 
-        if (orderIdRaw == null || orderIdRaw.trim().isEmpty()) {
-            sendAjaxResponse(response, false, "Order ID is missing.", null, 0);
-            return;
-        }
-
         int orderId;
         try {
-            orderId = Integer.parseInt(orderIdRaw.trim());
+            orderId = Integer.parseInt(orderIdRaw);
         } catch (NumberFormatException e) {
             sendAjaxResponse(response, false, "Invalid order ID.", null, 0);
             return;
         }
+        if (orderId <= 0) {
+            sendAjaxResponse(response, false, "Invalid order ID.", null, 0);
+            return;
+        }
 
-        if ("COMPLETED".equalsIgnoreCase(exportItemDAO.getExportReceiptStatusByOrderId(orderId))) {
+        Order order = orderDAO.getOrderById(orderId);
+        String exportReceiptStatus = exportItemDAO.getExportReceiptStatusByOrderId(orderId);
+        if (order == null) {
+            sendAjaxResponse(response, false, "Order was not found.", null, 0);
+            return;
+        }
+        if (exportReceiptStatus != null) {
             sendAjaxResponse(response, false,
                     "This order has already been exported.", null, 0);
             return;
         }
+        if (!"NEW".equalsIgnoreCase(order.getStatus())) {
+            sendAjaxResponse(response, false,
+                    "This order is not available for export.", null, 0);
+            return;
+        }
 
-        OrderDAO orderDAO = new OrderDAO();
-        Map<String, Integer> requiredQuantities = getRequiredQuantitiesBySku(
-                orderDAO.getOrderItemsByOrderId(orderId));
+        Order sessionOrder = (Order) session.getAttribute("order");
+        if (sessionOrder == null || sessionOrder.getId() != orderId) {
+            sendAjaxResponse(response, false,
+                    "The selected order does not match the current export session.", null, 0);
+            return;
+        }
+
+        if (serial == null || serial.trim().isEmpty()) {
+            sendAjaxResponse(response, false, "Serial number is required.", null, 0);
+            return;
+        }
+        serial = serial.trim();
+        if (serial.length() > 100) {
+            sendAjaxResponse(response, false,
+                    "Serial number must not exceed 100 characters.", null, 0);
+            return;
+        }
+
+        List<OrderItemDetailDTO> orderItems =
+                orderDAO.getOrderItemsByOrderId(orderId);
+        Map<String, Integer> requiredQuantities = new HashMap<>();
+        if (orderItems != null) {
+            for (OrderItemDetailDTO orderItem : orderItems) {
+                if (orderItem.getSku() != null) {
+                    String sku = orderItem.getSku().toUpperCase(Locale.ROOT);
+                    int quantity = orderItem.getQuantity();
+                    if (requiredQuantities.get(sku) != null) {
+                        quantity += requiredQuantities.get(sku);
+                    }
+                    requiredQuantities.put(sku, quantity);
+                }
+            }
+        }
 
         ExportItemDTO addedItem = null;
-        String errorMessage = null;
-        double grandTotal = 0;
+        String errorMessage;
+        double grandTotal;
 
         synchronized (session) {
-            List<ExportItemDTO> scannedList =
+            List<ExportItemDTO> oldList =
                     (List<ExportItemDTO>) session.getAttribute("scannedList");
-            if (scannedList == null) {
-                scannedList = new ArrayList<>();
-            } else {
-                scannedList = new ArrayList<>(scannedList);
+            List<ExportItemDTO> scannedList = new ArrayList<>();
+            if (oldList != null) {
+                scannedList.addAll(oldList);
             }
 
-            if (serial != null && !serial.trim().isEmpty()) {
-                serial = serial.trim();
-                int requiredTotalQuantity = getTotalRequiredQuantity(requiredQuantities);
-                int currentTotalScannedQty = getTotalScannedQuantity(scannedList);
+            int requiredTotalQuantity = 0;
+            for (Integer quantity : requiredQuantities.values()) {
+                requiredTotalQuantity += quantity;
+            }
+            int currentTotalScannedQty = 0;
+            for (ExportItemDTO item : scannedList) {
+                currentTotalScannedQty += item.getQty();
+            }
 
-                if (requiredTotalQuantity > 0 && currentTotalScannedQty >= requiredTotalQuantity) {
-                    errorMessage = "This order already has enough items to export.";
-                } else {
-                    ExportItemDTO productFromDB =
-                            exportItemDAO.getItemBySerial(serial, orderId);
+            if (requiredTotalQuantity > 0 && currentTotalScannedQty >= requiredTotalQuantity) {
+                errorMessage = "This order already has enough items to export.";
+            } else {
+                ExportItemDTO product = exportItemDAO.getItemBySerial(serial, orderId);
+                errorMessage = validateScan(
+                        product, serial, requiredQuantities, scannedList);
 
-                    if (productFromDB == null) {
-                        errorMessage = "Serial number " + serial
-                                + " is not available or is not included in this order.";
-                    } else {
-                        String normalizedSku = productFromDB.getSku().toUpperCase();
-                        int requiredQuantity = requiredQuantities.getOrDefault(normalizedSku, 0);
-                        boolean serialAlreadyScanned = false;
-                        int currentScannedQty = 0;
-                        for (ExportItemDTO item : scannedList) {
-                            if (item.getSku().equalsIgnoreCase(productFromDB.getSku())) {
-                                currentScannedQty += item.getQty();
-                            }
-                            if (serial.equalsIgnoreCase(item.getSerial())) {
-                                serialAlreadyScanned = true;
-                            }
-                        }
-
-                        if (serialAlreadyScanned) {
-                            errorMessage = "Serial number " + serial + " was scanned already.";
-                        } else if (requiredQuantity <= 0) {
-                            errorMessage = productFromDB.getName()
-                                    + " is not included in this order.";
-                        } else if (currentScannedQty >= requiredQuantity) {
-                            errorMessage = "Cannot scan more " + productFromDB.getName()
-                                    + ". Required quantity: " + requiredQuantity + ".";
-                        } else if (productFromDB.getStock() <= 0) {
-                            errorMessage = productFromDB.getName()
-                                    + " is currently out of stock.";
-                        } else if (currentScannedQty >= productFromDB.getStock()) {
-                            errorMessage = "Cannot add more " + productFromDB.getName()
-                                    + ". Available stock: "
-                                    + productFromDB.getStock() + ".";
-                        } else {
-                            addedItem = new ExportItemDTO();
-                            addedItem.setSku(productFromDB.getSku());
-                            addedItem.setName(productFromDB.getName());
-                            addedItem.setImgUrl(productFromDB.getImgUrl());
-                            addedItem.setStock(productFromDB.getStock());
-                            addedItem.setPrice(productFromDB.getPrice());
-                            addedItem.setSerial(productFromDB.getSerial());
-                            scannedList.add(0, addedItem);
-                        }
-                    }
+                if (errorMessage == null) {
+                    addedItem = new ExportItemDTO();
+                    addedItem.setSku(product.getSku());
+                    addedItem.setName(product.getName());
+                    addedItem.setImgUrl(product.getImgUrl());
+                    addedItem.setStock(product.getStock());
+                    addedItem.setPrice(product.getPrice());
+                    addedItem.setSerial(product.getSerial());
+                    scannedList.add(0, addedItem);
                 }
             }
 
             session.setAttribute("scannedList", scannedList);
-
+            grandTotal = 0;
             for (ExportItemDTO item : scannedList) {
                 grandTotal += item.getTotalCost();
             }
         }
 
-        sendAjaxResponse(response, errorMessage == null,
-                errorMessage, addedItem, grandTotal);
+        boolean success = errorMessage == null;
+        sendAjaxResponse(response, success, errorMessage, addedItem, grandTotal);
     }
 
-    private Map<String, Integer> getRequiredQuantitiesBySku(List<OrderItemDetailDTO> orderItems) {
-        Map<String, Integer> requiredQuantities = new HashMap<>();
-        if (orderItems == null) {
-            return requiredQuantities;
+    private String validateScan(ExportItemDTO product, String serial,
+                                Map<String, Integer> requiredQuantities,
+                                List<ExportItemDTO> scannedList) {
+        if (product == null) {
+            return "Serial number " + serial
+                    + " is not available or is not included in this order.";
         }
 
-        for (OrderItemDetailDTO orderItem : orderItems) {
-            if (orderItem.getSku() == null) {
-                continue;
-            }
-
-            String sku = orderItem.getSku().toUpperCase();
-            requiredQuantities.put(sku,
-                    requiredQuantities.getOrDefault(sku, 0) + orderItem.getQuantity());
-        }
-
-        return requiredQuantities;
-    }
-
-    private int getTotalRequiredQuantity(Map<String, Integer> requiredQuantities) {
-        int totalQuantity = 0;
-        for (Integer quantity : requiredQuantities.values()) {
-            totalQuantity += quantity;
-        }
-        return totalQuantity;
-    }
-
-    private int getTotalScannedQuantity(List<ExportItemDTO> scannedList) {
-        int totalQuantity = 0;
         for (ExportItemDTO item : scannedList) {
-            totalQuantity += item.getQty();
+            if (serial.equalsIgnoreCase(item.getSerial())) {
+                return "Serial number " + serial + " was scanned already.";
+            }
         }
-        return totalQuantity;
+
+        if (product.getSku() == null) {
+            return product.getName() + " is not included in this order.";
+        }
+        String sku = product.getSku().toUpperCase(Locale.ROOT);
+        Integer requiredQuantity = requiredQuantities.get(sku);
+        if (requiredQuantity == null || requiredQuantity <= 0) {
+            return product.getName() + " is not included in this order.";
+        }
+
+        int scannedQuantity = 0;
+        for (ExportItemDTO item : scannedList) {
+            if (product.getSku().equalsIgnoreCase(item.getSku())) {
+                scannedQuantity += item.getQty();
+            }
+        }
+        if (scannedQuantity >= requiredQuantity) {
+            return "Cannot scan more " + product.getName()
+                    + ". Required quantity: " + requiredQuantity + ".";
+        }
+        if (product.getStock() <= 0) {
+            return product.getName() + " is currently out of stock.";
+        }
+        if (scannedQuantity >= product.getStock()) {
+            return "Cannot add more " + product.getName()
+                    + ". Available stock: " + product.getStock() + ".";
+        }
+
+        return null;
     }
 
     private void sendAjaxResponse(HttpServletResponse response, boolean success,
@@ -323,7 +350,10 @@ public class ExportProduct extends HttpServlet {
                                   double grandTotal) throws IOException {
         JsonObject json = new JsonObject();
         json.addProperty("success", success);
-        json.addProperty("message", message == null ? "" : message);
+        if (message == null) {
+            message = "";
+        }
+        json.addProperty("message", message);
         json.addProperty("grandTotal", grandTotal);
 
         if (item != null) {
@@ -342,11 +372,6 @@ public class ExportProduct extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(json.toString());
-    }
-
-    @Override
-    public String getServletInfo() {
-        return "Short description";
     }
 
 }

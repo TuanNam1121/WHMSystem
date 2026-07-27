@@ -38,7 +38,6 @@ public class SubmitExport extends HttpServlet {
         String[] tempIds = request.getParameterValues("tempIds");
         String[] serialNumbers = request.getParameterValues("sn");
         String submitAction = request.getParameter("submitAction");
-        boolean saveDraft = "DRAFT".equalsIgnoreCase(submitAction);
 
         if (user == null) {
             response.sendRedirect("login");
@@ -50,9 +49,19 @@ public class SubmitExport extends HttpServlet {
             return;
         }
 
+        if (!"COMPLETE".equalsIgnoreCase(submitAction)) {
+            session.setAttribute("error", "Invalid submit action.");
+            response.sendRedirect("toExportList");
+            return;
+        }
+
         int orderId;
         try {
             orderId = Integer.parseInt(orderIdRaw.trim());
+            if (orderId <= 0) {
+                response.sendRedirect("toExportList");
+                return;
+            }
         } catch (NumberFormatException e) {
             response.sendRedirect("toExportList");
             return;
@@ -62,68 +71,90 @@ public class SubmitExport extends HttpServlet {
         List<ExportItemDTO> scannedList = (List<ExportItemDTO>) session.getAttribute("scannedList");
         OrderDAO orderDAO = new OrderDAO();
         Order currentOrder = orderDAO.getOrderById(orderId);
+        Order sessionOrder = (Order) session.getAttribute("order");
 
-        if (scannedList != null && currentOrder != null) {
+        if (currentOrder == null || !"NEW".equalsIgnoreCase(currentOrder.getStatus())) {
+            session.setAttribute("error", "This order is not available for export.");
+            response.sendRedirect("toExportList");
+            return;
+        }
 
-            if (tempIds != null && serialNumbers != null && tempIds.length == serialNumbers.length) {
-                for (int i = 0; i < tempIds.length; i++) {
-                    String idToFind = tempIds[i];
-                    String snToSet = serialNumbers[i];
+        if (sessionOrder == null || sessionOrder.getId() != orderId) {
+            session.setAttribute("error",
+                    "The selected order does not match the current export session.");
+            response.sendRedirect("toExportList");
+            return;
+        }
 
-                    for (ExportItemDTO item : scannedList) {
-                        if (idToFind.equals(item.getTempId())) {
-                            item.setSerial(snToSet == null ? "" : snToSet.trim());
-                            break;
-                        }
-                    }
-                }
-            } else if (!scannedList.isEmpty()) {
-                session.setAttribute("error", "Invalid data submitted. Please check again!");
-                response.sendRedirect("exportProduct?orderId=" + orderId);
-                return;
-            }
-
-            List<OrderItemDetailDTO> orderItems = orderDAO.getOrderItemsByOrderId(orderId);
-            String validationError = saveDraft
-                    ? validateDraft(scannedList, orderItems)
-                    : validateExport(scannedList, orderItems);
-
-            if (validationError != null) {
-                session.setAttribute("error", validationError);
-                response.sendRedirect("exportProduct?orderId=" + orderId);
-                return;
-            }
-
-            ExportItemDAO exportItemDAO = new ExportItemDAO();
-            // 2. GỌI DAO VÀ HỨNG KẾT QUẢ TRẢ VỀ LÀ DẠNG STRING
-            String result = saveDraft
-                    ? exportItemDAO.saveDraftExportReceipt(orderId, user.getId(), scannedList)
-                    : exportItemDAO.processExportTransaction(orderId, user.getId(), scannedList);
-
-            if ("SUCCESS".equals(result)) {
-                if (!saveDraft) {
-                    session.removeAttribute("scannedList");
-                }
-                // (Tùy chọn) Xóa session order nếu muốn quay về danh sách trống
-                // session.removeAttribute("order");
-
-                if (saveDraft) {
-                    session.setAttribute("successMessage", "Draft saved successfully!");
-                    response.sendRedirect("exportProduct?orderId=" + orderId);
-                } else {
-                    session.setAttribute("successMessage", "Export successful!");
-                    response.sendRedirect("exportDetail?orderId=" + orderId);
-                }
-            } else {
-                // NẾU CÓ LỖI (S/N KHÔNG AVAILABLE), NÉM CHÍNH XÁC LỖI ĐÓ LÊN MÀN HÌNH
-                session.setAttribute("error", result);
-                response.sendRedirect("exportProduct?orderId=" + orderId);
-            }
-
-        } else {
+        if (scannedList == null) {
             session.setAttribute("error", "Invalid data submitted. Please check again!");
             response.sendRedirect("exportProduct?orderId=" + orderId);
+            return;
         }
+
+        if (!scannedList.isEmpty()) {
+            if (tempIds == null || serialNumbers == null
+                    || tempIds.length != serialNumbers.length
+                    || tempIds.length != scannedList.size()) {
+                session.setAttribute("error",
+                        "Invalid data submitted. Please check again!");
+                response.sendRedirect("exportProduct?orderId=" + orderId);
+                return;
+            }
+
+            List<String> submittedTempIds = new ArrayList<>();
+            for (int i = 0; i < tempIds.length; i++) {
+                if (tempIds[i] == null || submittedTempIds.contains(tempIds[i])) {
+                    session.setAttribute("error",
+                            "Invalid product data submitted. Please scan the products again.");
+                    response.sendRedirect("exportProduct?orderId=" + orderId);
+                    return;
+                }
+                submittedTempIds.add(tempIds[i]);
+
+                ExportItemDTO matchedItem = null;
+                for (ExportItemDTO item : scannedList) {
+                    if (tempIds[i].equals(item.getTempId())) {
+                        matchedItem = item;
+                        break;
+                    }
+                }
+                if (matchedItem == null) {
+                    session.setAttribute("error",
+                            "Invalid product data submitted. Please scan the products again.");
+                    response.sendRedirect("exportProduct?orderId=" + orderId);
+                    return;
+                }
+
+                String serial = "";
+                if (serialNumbers[i] != null) {
+                    serial = serialNumbers[i].trim();
+                }
+                matchedItem.setSerial(serial);
+            }
+        }
+
+        List<OrderItemDetailDTO> orderItems = orderDAO.getOrderItemsByOrderId(orderId);
+        String validationError = validateExport(scannedList, orderItems);
+        if (validationError != null) {
+            session.setAttribute("error", validationError);
+            response.sendRedirect("exportProduct?orderId=" + orderId);
+            return;
+        }
+
+        ExportItemDAO exportItemDAO = new ExportItemDAO();
+        String result = exportItemDAO.processExportTransaction(
+                orderId, user.getId(), scannedList);
+
+        if ("SUCCESS".equals(result)) {
+            session.removeAttribute("scannedList");
+            session.setAttribute("successMessage", "Export successful!");
+            response.sendRedirect("exportDetail?orderId=" + orderId);
+            return;
+        }
+
+        session.setAttribute("error", result);
+        response.sendRedirect("exportProduct?orderId=" + orderId);
     }
 
     private String validateExport(List<ExportItemDTO> scannedList,
@@ -132,52 +163,35 @@ public class SubmitExport extends HttpServlet {
             return "This order does not contain any products.";
         }
 
-        List<String> orderSkus = new ArrayList<>();
-        List<String> orderProductNames = new ArrayList<>();
-        List<Integer> orderQuantities = new ArrayList<>();
-
+        int requiredTotal = 0;
         for (OrderItemDetailDTO orderItem : orderItems) {
-            int index = orderSkus.indexOf(orderItem.getSku());
-
-            if (index == -1) {
-                orderSkus.add(orderItem.getSku());
-                orderProductNames.add(orderItem.getName());
-                orderQuantities.add(orderItem.getQuantity());
-            } else {
-                orderQuantities.set(index,
-                        orderQuantities.get(index) + orderItem.getQuantity());
+            if (orderItem.getSku() == null
+                    || orderItem.getSku().trim().isEmpty()) {
+                return "This order contains an invalid product.";
             }
+            requiredTotal += orderItem.getQuantity();
         }
 
-        int requiredQuantity = 0;
-        for (int quantity : orderQuantities) {
-            requiredQuantity += quantity;
-        }
-
-        if (scannedList.size() != requiredQuantity) {
-            return "The order requires " + requiredQuantity
+        if (scannedList.size() != requiredTotal) {
+            return "The order requires " + requiredTotal
                     + " items, but you entered " + scannedList.size() + ".";
         }
 
-        for (int i = 0; i < orderSkus.size(); i++) {
-            int scannedQuantity = 0;
+        for (int i = 0; i < scannedList.size(); i++) {
+            ExportItemDTO scannedItem = scannedList.get(i);
+            if (scannedItem.getSku() == null
+                    || scannedItem.getSku().trim().isEmpty()) {
+                return scannedItem.getName() + " is not included in this order.";
+            }
 
-            for (ExportItemDTO scannedItem : scannedList) {
-                if (orderSkus.get(i).equalsIgnoreCase(scannedItem.getSku())) {
-                    scannedQuantity++;
+            boolean productInOrder = false;
+            for (OrderItemDetailDTO orderItem : orderItems) {
+                if (scannedItem.getSku().equalsIgnoreCase(orderItem.getSku())) {
+                    productInOrder = true;
+                    break;
                 }
             }
-
-            if (scannedQuantity != orderQuantities.get(i)) {
-                return orderProductNames.get(i) + " requires " + orderQuantities.get(i)
-                        + " items, but you entered " + scannedQuantity + ".";
-            }
-        }
-
-        List<String> usedSerials = new ArrayList<>();
-
-        for (ExportItemDTO scannedItem : scannedList) {
-            if (!orderSkus.contains(scannedItem.getSku())) {
+            if (!productInOrder) {
                 return scannedItem.getName() + " is not included in this order.";
             }
 
@@ -185,52 +199,52 @@ public class SubmitExport extends HttpServlet {
             if (serial == null || serial.trim().isEmpty()) {
                 return "Please enter all serial numbers.";
             }
-
-            String normalizedSerial = serial.trim().toUpperCase();
-            if (usedSerials.contains(normalizedSerial)) {
-                return "Serial number " + serial + " was entered more than once.";
+            if (serial.trim().length() > 100) {
+                return "Serial number must not exceed 100 characters.";
             }
-            usedSerials.add(normalizedSerial);
-        }
 
-        return null;
-    }
-
-    private String validateDraft(List<ExportItemDTO> scannedList,
-                                 List<OrderItemDetailDTO> orderItems) {
-        if (scannedList == null || scannedList.isEmpty()) {
-            return "Please scan at least one product before saving draft.";
-        }
-
-        if (orderItems == null || orderItems.isEmpty()) {
-            return "This order does not contain any products.";
-        }
-
-        List<String> orderSkus = new ArrayList<>();
-
-        for (OrderItemDetailDTO orderItem : orderItems) {
-            if (!orderSkus.contains(orderItem.getSku())) {
-                orderSkus.add(orderItem.getSku());
+            for (int j = 0; j < i; j++) {
+                String previousSerial = scannedList.get(j).getSerial();
+                if (previousSerial != null
+                        && serial.trim().equalsIgnoreCase(previousSerial.trim())) {
+                    return "Serial number " + serial
+                            + " was entered more than once.";
+                }
             }
         }
 
-        List<String> usedSerials = new ArrayList<>();
-
-        for (ExportItemDTO scannedItem : scannedList) {
-            if (!orderSkus.contains(scannedItem.getSku())) {
-                return scannedItem.getName() + " is not included in this order.";
+        for (int i = 0; i < orderItems.size(); i++) {
+            OrderItemDetailDTO orderItem = orderItems.get(i);
+            boolean alreadyChecked = false;
+            for (int j = 0; j < i; j++) {
+                if (orderItem.getSku().equalsIgnoreCase(
+                        orderItems.get(j).getSku())) {
+                    alreadyChecked = true;
+                    break;
+                }
+            }
+            if (alreadyChecked) {
+                continue;
             }
 
-            String serial = scannedItem.getSerial();
-            if (serial == null || serial.trim().isEmpty()) {
-                return "Please enter all serial numbers before saving draft.";
+            int requiredQuantity = 0;
+            for (OrderItemDetailDTO item : orderItems) {
+                if (orderItem.getSku().equalsIgnoreCase(item.getSku())) {
+                    requiredQuantity += item.getQuantity();
+                }
             }
 
-            String normalizedSerial = serial.trim().toUpperCase();
-            if (usedSerials.contains(normalizedSerial)) {
-                return "Serial number " + serial + " was entered more than once.";
+            int scannedQuantity = 0;
+            for (ExportItemDTO item : scannedList) {
+                if (orderItem.getSku().equalsIgnoreCase(item.getSku())) {
+                    scannedQuantity++;
+                }
             }
-            usedSerials.add(normalizedSerial);
+
+            if (scannedQuantity != requiredQuantity) {
+                return orderItem.getName() + " requires " + requiredQuantity
+                        + " items, but you entered " + scannedQuantity + ".";
+            }
         }
 
         return null;

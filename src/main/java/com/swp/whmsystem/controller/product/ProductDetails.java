@@ -4,6 +4,8 @@ import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.model.Product;
 import com.swp.whmsystem.model.ProductItem;
 import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.DateUtils;
+import com.swp.whmsystem.utils.InputValidationUtil;
 import com.swp.whmsystem.utils.PermissionConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -21,22 +23,57 @@ public class ProductDetails extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_PRODUCT,
+                "You don't have permission to view product details!")) {
+            return;
+        }
         
         HttpSession session = request.getSession();
         ProductDAO productDAO = new ProductDAO();
         List<ProductItem> productItemList = new ArrayList<>();
 
         String productIdRaw = request.getParameter("productId");
-        String serial = request.getParameter("serial");
+        String serial = InputValidationUtil.normalizeSearchText(
+                request.getParameter("serial"), 100);
         String date = request.getParameter("date");
         String status = request.getParameter("status");
         String sortBy = request.getParameter("sortBy");
         String pageSizeRaw = request.getParameter("pageSize");
         String pageRaw = request.getParameter("page");
 
-        int productId = Integer.parseInt(productIdRaw);
+        int productId;
+        try {
+            productId = Integer.parseInt(productIdRaw);
+            if (productId <= 0) {
+                response.sendRedirect("productlist");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            response.sendRedirect("productlist");
+            return;
+        }
+
+        Product product = productDAO.getProductFromId(productId);
+        if (product == null) {
+            response.sendRedirect("productlist");
+            return;
+        }
+
         int pageSize = 10;
         int page = 1;
+
+        if (date != null && !date.trim().isEmpty()
+                && DateUtils.parseStrictDate(date) == null) {
+            request.setAttribute("error", "Date must be a valid date in DD-MM-YYYY format.");
+            date = null;
+        }
+
+        if (sortBy != null && !List.of(
+                "serialAZ", "serialZA", "dateNewest", "dateOldest",
+                "importPriceLow", "importPriceHigh",
+                "exportPriceLow", "exportPriceHigh").contains(sortBy)) {
+            sortBy = null;
+        }
 
         if (status != null && !status.trim().isEmpty()) {
             if (!status.equals("AVAILABLE") && !status.equals("UNAVAILABLE") && !status.equals("SOLD")) {
@@ -73,8 +110,6 @@ public class ProductDetails extends HttpServlet {
                 productId, serial, date, status, sortBy, pageSize, page
         );
         
-        Product product = productDAO.getProductFromId(productId);
-
         session.setAttribute("product", product);
         session.setAttribute("productItemList", productItemList);
         request.setAttribute("pageSize", pageSize);

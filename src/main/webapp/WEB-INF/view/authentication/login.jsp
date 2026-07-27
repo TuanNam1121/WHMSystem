@@ -51,7 +51,8 @@
                         <div class="form-login">
                             <label>Username</label>
                             <div class="form-addons">
-                                <input type="text" name="username" placeholder="Enter your username" required>
+                                <input type="text" name="username" maxlength="50"
+                                       placeholder="Enter your username" required>
                                 <img src="assets/img/icons/mail.svg" alt="img">
                             </div>
                         </div>

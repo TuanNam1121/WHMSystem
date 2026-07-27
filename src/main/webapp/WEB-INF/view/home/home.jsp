@@ -165,7 +165,7 @@
                                     </button>
                                     <div class="dropdown-menu chart-year-menu" aria-labelledby="chartYearDropdown"
                                          tabindex="0">
-                                        <c:if test="${requestScope.chartYear < 9999}">
+                                        <c:if test="${requestScope.chartYear < requestScope.maxChartYear}">
                                             <a href="home?year=${requestScope.chartYear + 1}"
                                                class="dropdown-item">${requestScope.chartYear + 1}</a>
                                         </c:if>
@@ -190,18 +190,21 @@
                     <div class="card flex-fill">
                         <div class="card-header pb-0 d-flex justify-content-between align-items-center">
                             <h4 class="card-title mb-0">Low Stock Products</h4>
-                            <div class="dropdown">
-                                <a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false"
-                                   class="dropset">
-                                    <i class="fa fa-ellipsis-v"></i>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <li>
-                                        <a href="inventory?stockStatus=lowStock&sortBy=quantityAsc"
-                                           class="dropdown-item">Inventory List</a>
-                                    </li>
-                                </ul>
-                            </div>
+                            <c:if test="${sessionScope.user.roleId != 1 &&
+                                          sessionScope.userPermissions.contains('VIEW_INVENTORY')}">
+                                <div class="dropdown">
+                                    <a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false"
+                                       class="dropset">
+                                        <i class="fa fa-ellipsis-v"></i>
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <li>
+                                            <a href="inventory?stockStatus=lowStock&sortBy=quantityAsc"
+                                               class="dropdown-item">Inventory List</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </c:if>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive dataview low-stock-scroll">
@@ -218,11 +221,22 @@
                                         <tr>
                                             <td>${v.index + 1}</td>
                                             <td class="productimgname">
-                                                <a href="productDetails?productId=${item.productId}" class="product-img">
-                                                    <img src="${not empty item.imgUrl ? item.imgUrl : 'assets/img/product/product7.jpg'}"
-                                                         alt="product">
-                                                </a>
-                                                <a href="productDetails?productId=${item.productId}">${item.productName}</a>
+                                                <c:choose>
+                                                    <c:when test="${sessionScope.userPermissions.contains('VIEW_PRODUCT')}">
+                                                        <a href="productDetails?productId=${item.productId}" class="product-img">
+                                                            <img src="${not empty item.imgUrl ? item.imgUrl : 'assets/img/product/product7.jpg'}"
+                                                                 alt="product">
+                                                        </a>
+                                                        <a href="productDetails?productId=${item.productId}">${item.productName}</a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="product-img">
+                                                            <img src="${not empty item.imgUrl ? item.imgUrl : 'assets/img/product/product7.jpg'}"
+                                                                 alt="product">
+                                                        </span>
+                                                        <span>${item.productName}</span>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </td>
                                             <td>
                                                 <span class="low-stock-quantity ${item.statusClass}">${item.quantity}</span>
@@ -261,11 +275,22 @@
                                 <tr>
                                     <td>${v.index + 1}</td>
                                     <td class="productimgname">
-                                        <a class="product-img" href="productDetails?productId=${item.productId}">
-                                            <img src="${not empty item.imgUrl ? item.imgUrl : 'assets/img/product/product7.jpg'}"
-                                                 alt="product">
-                                        </a>
-                                        <a href="productDetails?productId=${item.productId}">${item.productName}</a>
+                                        <c:choose>
+                                            <c:when test="${sessionScope.userPermissions.contains('VIEW_PRODUCT')}">
+                                                <a class="product-img" href="productDetails?productId=${item.productId}">
+                                                    <img src="${not empty item.imgUrl ? item.imgUrl : 'assets/img/product/product7.jpg'}"
+                                                         alt="product">
+                                                </a>
+                                                <a href="productDetails?productId=${item.productId}">${item.productName}</a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="product-img">
+                                                    <img src="${not empty item.imgUrl ? item.imgUrl : 'assets/img/product/product7.jpg'}"
+                                                         alt="product">
+                                                </span>
+                                                <span>${item.productName}</span>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </td>
                                     <td>${item.brandName}</td>
                                     <td>${item.categoryName}</td>

@@ -317,6 +317,20 @@ public class UserDAO {
         return false;
     }
 
+    public boolean existsByPhoneExceptUserId(String phone, int userId) {
+        String sql = "SELECT 1 FROM users WHERE phone = ? AND userid != ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, phone);
+            ps.setInt(2, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return false;
+    }
+
     public boolean updateUserInformation(User user) {
         String sql = "Update Users SET username = ?, roleid = ? , phone = ?, email = ?, gender = ?, fullname = ?, isActive = ? where userid = ?";
         try (Connection conn = DBContext.getConnection()) {

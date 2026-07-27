@@ -22,6 +22,7 @@ public class ProductValidation {
         if(p.getSku()== null || p.getSku().isBlank()) return "Product must have SKU";
         if(p.getName() == null || p.getName().isBlank()) return "Product Name can't be empty";
         if(p.getCategory() == null) return "Product must be have category";
+        
         if(p.getCategory().getName().contains("Laptop")){
             String error = "Laptop must be have ";
             if(p.getBrand() == null) return error + "brand";
@@ -31,7 +32,7 @@ public class ProductValidation {
             if(p.getRom() == null) return error + "rom";
             if(p.getChip() == null) return error + "chip";
         }
-        else if(p.getCategory().getName().equals("RAM")){
+        else if(p.getCategory().getCategoryId() == 2){
             String error = "RAM must be have ";
             if(p.getBrand() == null) return error + "brand";
             if(p.getUnit() == null) return error + "unit";
@@ -40,15 +41,16 @@ public class ProductValidation {
             if (p.getChip() != null) return "RAM product must not have Chip";
             if (p.getModel() != null) return "RAM product must not have Model";
         }
-        else if(p.getCategory().getName().equals("ROM")){
+        else if(p.getCategory().getCategoryId() == 3){
             String error = "ROM must be have ";
             if(p.getBrand() == null) return error + "brand";
             if(p.getUnit() == null) return error + "unit";
             if(p.getRom() == null) return error + "rom";
-            if (p.getRam() != null) return "ROM product must not have RAM";
-            if (p.getChip() != null) return "ROM product must not have Chip";
-            if (p.getModel() != null) return "ROM product must not have Model";
+            if (p.getRam() != null) return "Storage product must not have RAM";
+            if (p.getChip() != null) return "Storage product must not have Chip";
+            if (p.getModel() != null) return "Storage product must not have Model";
         }
+        
         String imageValid = validateImage(filePart);
         if(imageValid != null){
             return imageValid;

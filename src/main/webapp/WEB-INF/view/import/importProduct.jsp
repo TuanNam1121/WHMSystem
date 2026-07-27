@@ -435,15 +435,6 @@
 
                                                                    // Excel import button
                                                                    $('#btn-excel-import').on('click', function () {
-                                                                       if (!fileInput.files || fileInput.files.length === 0) {
-                                                                           Swal.fire({
-                                                                               title: 'No file selected',
-                                                                               text: 'Please select an Excel file to import.',
-                                                                               icon: 'warning',
-                                                                               confirmButtonColor: '#28C76F'
-                                                                           });
-                                                                           return;
-                                                                       }
                                                                        var invoiceVal = $('#excel-invoice-number').val().trim();
                                                                        if (!invoiceVal) {
                                                                            Swal.fire({

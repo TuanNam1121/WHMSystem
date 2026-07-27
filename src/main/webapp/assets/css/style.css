@@ -583,31 +583,8 @@ strong {
     color: #fff
 }
 
-.btn-draft {
-    min-width: 120px;
-    background: #fff3cd;
-    color: #ff9f43;
-    border: 1px solid #ffdf9e;
-    font-size: 14px;
-    font-weight: 700;
-    padding: 14px 10px;
-    -webkit-transition: all .2s ease;
-    -ms-transition: all .2s ease;
-    transition: all .2s ease
-}
-
-.btn-draft:hover {
-    background: #ffe8ad;
-    color: #fe820e
-}
-
 @media (max-width: 991px) {
     .btn-submit {
-        min-width: auto;
-        padding: 5px 7px
-    }
-
-    .btn-draft {
         min-width: auto;
         padding: 5px 7px
     }
@@ -2971,31 +2948,50 @@ div.dataTables_wrapper div.dataTables_info {
 }
 
 .header .profilename .user-img .status {
-    bottom: 10px
+    bottom: -1px
+}
+
+.header .userset {
+    display: flex;
+    align-items: center;
+    height: 60px
 }
 
 .header .user-img {
     display: inline-block;
-    position: relative
+    position: relative;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    line-height: 0;
+    vertical-align: middle
 }
 
 .header .user-img img {
-    width: 38px;
+    display: block;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
-    margin-top: 25px
+    margin-top: 0;
+    border: 2px solid #fff;
+    box-sizing: border-box;
+    object-fit: cover;
+    object-position: center;
+    box-shadow: 0 2px 8px rgba(33, 43, 54, .18)
 }
 
 .header .user-img .status {
     border: 2px solid #fff;
-    height: 10px;
-    width: 10px;
+    height: 12px;
+    width: 12px;
     margin: 0;
     position: absolute;
-    right: 0;
-    bottom: 30px;
+    right: -1px;
+    bottom: -1px;
     border-radius: 50%;
     display: inline-block;
-    background: #28c76f
+    background: #28c76f;
+    box-sizing: border-box
 }
 
 .header .mobile-user-menu {
@@ -4207,26 +4203,30 @@ span.select2-container.select2-container--default.select2-container--open {
         width: 80px
     }
 
-    .expand-menu .sidebar-right {
+    .mini-sidebar.expand-menu .sidebar-right {
         display: block;
         -webkit-transition: all .2s ease;
         -ms-transition: all .2s ease;
         transition: all .2s ease
     }
 
-    .expand-menu .sidebar {
+    .mini-sidebar.expand-menu .sidebar {
         width: 260px
     }
 
-    .expand-menu .sidebar .sidebar-menu ul > li > a {
+    .mini-sidebar.expand-menu .sidebar .sidebar-menu ul > li > a {
         padding: 10px 15px
     }
 
-    .expand-menu .sidebar .sidebar-menu ul > li > a span {
+    .mini-sidebar.expand-menu .sidebar .sidebar-menu ul > li > a span {
         display: block
     }
 
-    .expand-menu .header-left {
+    .mini-sidebar.expand-menu .sidebar .sidebar-menu > ul > li > a .sidebar-notification-badge {
+        display: inline-flex
+    }
+
+    .mini-sidebar.expand-menu .header-left {
         width: 260px
     }
 
@@ -7822,6 +7822,7 @@ span.select2-container.select2-container--default.select2-container--open {
     width: 100%;
     height: 100%
 }
+
 
 .product-detail-image-card .card-body,
 .product-detail-image-card .slider-product-details,

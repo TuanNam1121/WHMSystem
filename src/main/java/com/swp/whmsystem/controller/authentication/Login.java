@@ -32,6 +32,20 @@ public class Login extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
+        if (username == null || username.trim().isEmpty()
+                || password == null || password.isEmpty()) {
+            request.setAttribute("error", "Username and password are required!");
+            request.getRequestDispatcher("WEB-INF/view/authentication/login.jsp").forward(request, response);
+            return;
+        }
+
+        username = username.trim();
+        if (username.length() > 50) {
+            request.setAttribute("error", "Username or Password is not correct!");
+            request.getRequestDispatcher("WEB-INF/view/authentication/login.jsp").forward(request, response);
+            return;
+        }
+
         UserDAO userDAO = new UserDAO();
         RoleDAO roleDAO = new RoleDAO();
 

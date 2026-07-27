@@ -46,12 +46,23 @@
                 <div class="card">
                     <div class="card-body">
                         <c:if test="${not empty sessionScope.error}">
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <div class="alert alert-danger alert-dismissible fade show profile-message"
+                                 role="alert">
                                 <strong>${sessionScope.error}</strong>
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"
                                         aria-label="Close"></button>
                             </div>
-                            <% session.removeAttribute("error"); %>
+                            <c:remove var="error" scope="session"/>
+                        </c:if>
+
+                        <c:if test="${not empty sessionScope.successMessage}">
+                            <div class="alert alert-success alert-dismissible fade show profile-message"
+                                 role="alert">
+                                <strong>${sessionScope.successMessage}</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                            </div>
+                            <c:remove var="successMessage" scope="session"/>
                         </c:if>
 
                         <div class="profile-set">
@@ -87,27 +98,29 @@
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>First Name</label>
-                                    <input type="text" name="firstname"
+                                    <input type="text" name="firstname" maxlength="50"
                                            placeholder="${sessionScope.user.firstname}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Last Name</label>
-                                    <input type="text" name="lastname"
+                                    <input type="text" name="lastname" maxlength="50"
                                            placeholder="${sessionScope.user.lastname}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Email</label>
-                                    <input type="text" name="email" placeholder=${sessionScope.user.email}>
+                                    <input type="text" name="email" maxlength="100"
+                                           placeholder="${sessionScope.user.email}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Phone</label>
-                                    <input type="text" name="phone" placeholder=${sessionScope.user.phone}>
+                                    <input type="text" name="phone" maxlength="20"
+                                           placeholder="${sessionScope.user.phone}">
                                 </div>
                             </div>
 
@@ -150,18 +163,13 @@
 <script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
-<%--<script src="assets/js/script.js">--%>
-<%--    window.addEventListener('load', function () {--%>
-<%--        setTimeout(finalClearAutofill, 50);--%>
-<%--    });--%>
-
-<%--    function finalClearAutofill() {--%>
-<%--        var usernameInput = document.querySelector('input[name="username"]');--%>
-<%--        var passwordInput = document.querySelector('input[name="password"]');--%>
-
-<%--        if (usernameInput) usernameInput.value = '';--%>
-<%--        if (passwordInput) passwordInput.value = '';--%>
-<%--    }--%>
-<%--</script>--%>
+<script src="assets/js/script.js"></script>
+<script>
+    setTimeout(function () {
+        document.querySelectorAll(".profile-message").forEach(function (message) {
+            message.style.display = "none";
+        });
+    }, 5000);
+</script>
 </body>
 </html>

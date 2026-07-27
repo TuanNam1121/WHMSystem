@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,9 +46,11 @@
                     <h6>Manage your Brand</h6>
                 </div>
                 <div class="page-btn">
-                    <a href="${pageContext.request.contextPath}/AddBrand" class="btn btn-added"><img
-                            src="assets/img/icons/plus.svg" class="me-2"
-                            alt="img">Add Brand</a>
+                    <c:if test="${sessionScope.userPermissions.contains('CREATE_BRAND')}">
+                        <a href="${pageContext.request.contextPath}/AddBrand" class="btn btn-added"><img
+                                src="assets/img/icons/plus.svg" class="me-2"
+                                alt="img">Add Brand</a>
+                    </c:if>
                 </div>
             </div>
 
@@ -62,7 +65,8 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <input type="text" name="keyword" value="${param.keyword}"
+                                                    <input type="text" name="keyword" maxlength="100"
+                                                           value="${fn:escapeXml(param.keyword)}"
                                                            placeholder="Search brand name / description...">
                                                 </div>
                                             </div>
@@ -109,7 +113,9 @@
                                     <th>Image</th>
                                     <th>Brand Name</th>
                                     <th>Brand Description</th>
-                                    <th>Action</th>
+                                    <c:if test="${sessionScope.userPermissions.contains('UPDATE_BRAND')}">
+                                        <th>Action</th>
+                                    </c:if>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -125,12 +131,14 @@
                                             <a href="javascript:void(0);">${b.name}</a>
                                         </td>
                                         <td style="max-width: 400px; overflow: hidden">${b.description}</td>
-                                        <td>
-                                            <a class="me-3"
-                                               href="${pageContext.request.contextPath}/BrandDetail?id=${b.id}">
-                                                <img src="assets/img/icons/edit.svg" alt="img">
-                                            </a>
-                                        </td>
+                                        <c:if test="${sessionScope.userPermissions.contains('UPDATE_BRAND')}">
+                                            <td>
+                                                <a class="me-3"
+                                                   href="${pageContext.request.contextPath}/BrandDetail?id=${b.id}">
+                                                    <img src="assets/img/icons/edit.svg" alt="img">
+                                                </a>
+                                            </td>
+                                        </c:if>
                                     </tr>
                                 </c:forEach>
 

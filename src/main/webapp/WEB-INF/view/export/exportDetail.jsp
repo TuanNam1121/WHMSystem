@@ -18,7 +18,7 @@
           content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>Export Product - WHM System</title>
+    <title>Export Detail - WHM System</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
@@ -44,8 +44,8 @@
         <div class="content">
             <div class="page-header">
                 <div class="page-title">
-                    <h4>Export Product</h4>
-                    <h6>Export products from Order.</h6>
+                    <h4>Export Details</h4>
+                    <h6>View details of export receipt.</h6>
                 </div>
                 <div class="page-btn">
                     <c:choose>
@@ -122,17 +122,33 @@
                         <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Sale Created By</label>
-                                <input type="text" class="form-control"
-                                       value="${not empty exportReceiptInfo.saleCreatedBy ? exportReceiptInfo.saleCreatedBy : '-'}"
-                                       readonly="readonly">
+                                <c:choose>
+                                    <c:when test="${not empty exportReceiptInfo.saleCreatedBy}">
+                                        <input type="text" class="form-control"
+                                               value="${exportReceiptInfo.saleCreatedBy}"
+                                               readonly="readonly">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <input type="text" class="form-control"
+                                               value="-" readonly="readonly">
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                         </div>
                         <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Sale Processed By</label>
-                                <input type="text" class="form-control"
-                                       value="${not empty exportReceiptInfo.saleProcessedBy ? exportReceiptInfo.saleProcessedBy : '-'}"
-                                       readonly="readonly">
+                                <c:choose>
+                                    <c:when test="${not empty exportReceiptInfo.saleProcessedBy}">
+                                        <input type="text" class="form-control"
+                                               value="${exportReceiptInfo.saleProcessedBy}"
+                                               readonly="readonly">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <input type="text" class="form-control"
+                                               value="-" readonly="readonly">
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                         </div>
 

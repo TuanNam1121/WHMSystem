@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpSession;
 import com.swp.whmsystem.dal.*;
 import com.swp.whmsystem.model.*;
 import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.InputValidationUtil;
 import com.swp.whmsystem.utils.PermissionConstants;
 
 import java.util.*;
@@ -29,7 +30,8 @@ public class CategoryList extends HttpServlet {
         HttpSession session = request.getSession();
         CategoryDAO categoryDAO = new CategoryDAO();
         List<Category> searchedCategoryList = new ArrayList<>();
-        String keyword = request.getParameter("keyword");
+        String keyword = InputValidationUtil.normalizeSearchText(
+                request.getParameter("keyword"), 100);
         String isActiveRaw = request.getParameter("isActive");
         String sortBy = request.getParameter("sortBy");
         String pageSizeRaw = request.getParameter("pageSize");
@@ -38,6 +40,11 @@ public class CategoryList extends HttpServlet {
         int isActive = -1;
         int pageSize = 10;
         int page = 1;
+
+        if (sortBy != null && !List.of(
+                "nameAZ", "nameZA", "active", "inactive").contains(sortBy)) {
+            sortBy = null;
+        }
 
         if (isActiveRaw != null && !isActiveRaw.trim().isEmpty()) {
             try {

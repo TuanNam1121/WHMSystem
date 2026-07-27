@@ -8,6 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,6 +64,10 @@
                     </a>
                 </div>
             </div>
+
+            <c:if test="${not empty requestScope.error}">
+                <div class="alert alert-danger">${requestScope.error}</div>
+            </c:if>
 
             <div class="row product-detail-summary-row">
                 <div class="col-lg-8 col-sm-12">
@@ -122,7 +127,7 @@
                 <div class="card-body">
 
                     <form action="productDetails" method="get">
-                        <input type="hidden" name="productId" value="${param.productId}">
+                        <input type="hidden" name="productId" value="${sessionScope.product.productId}">
                         <div class="card mb-0" id="filter_inputs" style="display: block !important;">
                             <div class="card-body pb-0">
                                 <div class="row">
@@ -131,7 +136,8 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <input type="text" name="serial" value="${param.serial}"
+                                                    <input type="text" name="serial" maxlength="100"
+                                                           value="${fn:escapeXml(param.serial)}"
                                                            placeholder="Search serial...">
                                                 </div>
                                             </div>
@@ -139,7 +145,8 @@
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
                                                     <div class="input-groupicon">
-                                                        <input type="text" name="date" value="${param.date}"
+                                                        <input type="text" name="date" maxlength="10"
+                                                               value="${fn:escapeXml(param.date)}"
                                                                placeholder="DD-MM-YYYY" class="datetimepicker">
                                                         <div class="addonset">
                                                             <img src="assets/img/icons/calendars.svg" alt="calendar">

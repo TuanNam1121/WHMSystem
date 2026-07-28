@@ -13,8 +13,8 @@ public class EmailApi {
 
     public static boolean sendEmail(String toEmail, String userPass) {
         // Cấu hình SMTP của Gmail
-        final String fromEmail = "nduc6504@gmail.com";
-        final String password = "oway tzlp hrax vbre";
+        final String fromEmail = "ducanh06tb@gmail.com";
+        final String password = "mwwj uqlx voih ldun";
 
         //thiết lập cấu hình trong java để kết nối tới máy chủ gửi email của google
         Properties props = new Properties();                //đối tượng properties lưu thông số cấu hình dưới dạng key - value

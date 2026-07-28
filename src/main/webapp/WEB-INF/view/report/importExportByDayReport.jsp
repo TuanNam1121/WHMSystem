@@ -502,34 +502,6 @@
                             </div>
                         </div>
 
-                        <!-- ===== CHARTS + RANKING ===== -->
-                        <div class="row mb-3">
-                            <!-- Pie Chart: Số lượng giao dịch -->
-                            <div class="col-lg-5 col-sm-12 mb-3">
-                                <div class="chart-card">
-                                    <div class="chart-card-title">
-                                        <i class="fas fa-chart-pie"></i>
-                                        Daily Transaction Quantity Distribution
-                                    </div>
-                                    <div
-                                        style="position: relative; height: 260px; display:flex; align-items:center; justify-content:center;">
-                                        <canvas id="transactionPieChart"></canvas>
-                                    </div>
-                                    <div class="d-flex justify-content-center gap-3 mt-3" style="font-size:12px;">
-                                        <span>
-                                            <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#28c76f;margin-right:4px;"></span> Import
-                                            <span>
-                                                <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#ea5455;margin-right:4px;"></span> Export
-                                            </span>
-                                            <span>
-                                                <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#ff9f43;margin-right:4px;"></span> Adjust
-                                            </span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
                             <!-- ===== FILTER + DETAIL TABLE ===== -->
                             <div class="card">
                                 <div class="card-body">
@@ -579,11 +551,8 @@
                                                                         ${item.sku}
                                                                     </span>
                                                                 </td>
-                                                                <td class="td-name"><a href="${pageContext.request.contextPath}/ConvertDetailReport?productId=${item.productId}&fromDate=${param.date}&toDate=${param.date}&source=dailyTransaction&backDate=${param.date}&keyword=${param.keyword}&sortBy=${param.sortBy}&sortDir=${param.sortDir}&page=${page}&pageSize=${pageSize}"
-                                                                                       class="text-dark fw-bold"
-                                                                                       style="text-decoration: none;"
-                                                                                       title="View import/export transactions history">
-                                                                        ${item.productName}</a>
+                                                                <td class="td-name">
+                                                                        ${item.productName}
                                                                 </td>
                                                                 <td>${item.unit}</td>
                                                                 <td>

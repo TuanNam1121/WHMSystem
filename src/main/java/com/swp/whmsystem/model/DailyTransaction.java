@@ -18,6 +18,7 @@ public class DailyTransaction {
     private Date date;
     private Long totalImport;
     private Long totalExport;
+    private Long totalAdjust;
 
     public DailyTransaction() {
     }
@@ -32,7 +33,14 @@ public class DailyTransaction {
         this.totalExport = totalExport;
     }
 
-    
+    public Long getTotalAdjust() {
+        return totalAdjust;
+    }
+
+    public void setTotalAdjust(Long totalAdjust) {
+        this.totalAdjust = totalAdjust;
+    }
+
     public Date getDate() {
         return date;
     }

@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.mindrot.jbcrypt.BCrypt;
 
-@WebServlet(name = "SolveRequest", urlPatterns = {"/solveRequest"})
+@WebServlet(name = "SolveRequest", urlPatterns = {"/solveRequest", "/solverequest"})
 public class SolveRequest extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -89,10 +89,10 @@ public class SolveRequest extends HttpServlet {
             if (isEmailSent) {
                 request.setAttribute("message", "Change password successfully and email sent!");
             } else {
-                request.setAttribute("message", "Error occur in updating!");
+                request.setAttribute("message", "Change password successfully! (Note: Failed to send email)");
             }
         } else {
-            request.setAttribute("message", "Error! Please try again!");
+            request.setAttribute("error", "Error! Please try again!");
         }
         request.getRequestDispatcher("AdminDashBoard").forward(request, response);
     }

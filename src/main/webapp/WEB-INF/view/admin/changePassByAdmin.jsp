@@ -41,7 +41,7 @@
                         </div>
                     </c:if>
 
-                    <form action="solverequest" method="POST">
+                    <form action="solveRequest" method="POST">
                         <input type="hidden" name="userId" value="${userId}">
 
                         <div class="row">

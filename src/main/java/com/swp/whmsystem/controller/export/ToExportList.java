@@ -3,6 +3,8 @@ package com.swp.whmsystem.controller.export;
 import com.swp.whmsystem.dal.OrderDAO;
 import com.swp.whmsystem.model.Order;
 import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.DateUtils;
+import com.swp.whmsystem.utils.InputValidationUtil;
 import com.swp.whmsystem.utils.PermissionConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 
 @WebServlet(name = "ToExportList", urlPatterns = {"/toExportList"})
@@ -27,11 +29,10 @@ public class ToExportList extends HttpServlet {
 
         HttpSession session = request.getSession();
         OrderDAO orderDAO = new OrderDAO();
-        List<Order> orderList = new ArrayList<>();
-        String keyword = request.getParameter("keyword");
+        String keyword = InputValidationUtil.normalizeSearchText(
+                request.getParameter("keyword"), 100);
         String fromDate = request.getParameter("fromDate");
         String toDate = request.getParameter("toDate");
-        String status = request.getParameter("status");
         String sortBy = request.getParameter("sortBy");
         String pageSizeRaw = request.getParameter("pageSize");
         String pageRaw = request.getParameter("page");
@@ -39,10 +40,28 @@ public class ToExportList extends HttpServlet {
         int pageSize = 10;
         int page = 1;
 
-        if (status != null && !status.trim().isEmpty()) {
-            if (!status.equals("NEW") && !status.equals("DRAFT")) {
-                status = null;
-            }
+        if (sortBy != null && !List.of(
+                "dateNewest", "dateOldest", "totalLow", "totalHigh").contains(sortBy)) {
+            sortBy = null;
+        }
+
+        LocalDate parsedFromDate = DateUtils.parseStrictDate(fromDate);
+        LocalDate parsedToDate = DateUtils.parseStrictDate(toDate);
+        boolean invalidFromDate = fromDate != null && !fromDate.trim().isEmpty()
+                && parsedFromDate == null;
+        boolean invalidToDate = toDate != null && !toDate.trim().isEmpty()
+                && parsedToDate == null;
+        boolean invalidDate = invalidFromDate || invalidToDate;
+
+        if (invalidDate) {
+            request.setAttribute("error", "Date must be a valid date in DD-MM-YYYY format.");
+            fromDate = null;
+            toDate = null;
+        } else if (parsedFromDate != null && parsedToDate != null
+                && parsedFromDate.isAfter(parsedToDate)) {
+            request.setAttribute("error", "From Date cannot be later than To Date.");
+            fromDate = null;
+            toDate = null;
         }
 
         if (pageSizeRaw != null && !pageSizeRaw.trim().isEmpty()) {
@@ -64,32 +83,21 @@ public class ToExportList extends HttpServlet {
             }
         }
 
-        int totalOrders = orderDAO.countOrdersToExport(keyword, fromDate, toDate, status);
+        int totalOrders = orderDAO.countOrdersToExport(keyword, fromDate, toDate);
         int totalPages = Math.max(1, (int) Math.ceil((double) totalOrders / pageSize));
         page = Math.min(page, totalPages);
 
-        orderList = orderDAO.searchOrdersToExport(
-                keyword, fromDate, toDate, status, sortBy, pageSize, page
+        List<Order> orderList = orderDAO.searchOrdersToExport(
+                keyword, fromDate, toDate, sortBy, pageSize, page
         );
 
         session.setAttribute("orderList", orderList);
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);
-        request.setAttribute("focusTable",
-                keyword != null || fromDate != null || toDate != null || status != null
-                        || sortBy != null || pageSizeRaw != null || pageRaw != null);
+        boolean focusTable = keyword != null || fromDate != null || toDate != null
+                || sortBy != null || pageSizeRaw != null || pageRaw != null;
+        request.setAttribute("focusTable", focusTable);
         request.getRequestDispatcher("WEB-INF/view/export/toExportList.jsp").forward(request, response);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-    }
-
-    @Override
-    public String getServletInfo() {
-        return "Short description";
     }
 }

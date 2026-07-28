@@ -172,9 +172,10 @@
                                         <div class="col-lg-12">
                                             <div class="form-group">
                                                 <label> Product Image</label>
-                                                <c:if test="${p != null && p.imgUrl != null}">
+                                                <c:if test="${not empty p.imgUrl}">
                                                     <img style="width: 350px; height: 350px" src="${p.imgUrl}" alt="img">
                                                 </c:if>
+
                                                 <div class="image-upload">
                                                     <input type="file" name="image" id="imageInput" accept="image/*">
                                                     <div class="image-uploads">

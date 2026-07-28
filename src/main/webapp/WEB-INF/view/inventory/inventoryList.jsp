@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -148,7 +149,8 @@
                                         <div class="row">
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <input type="text" name="keyword" value="${keyword}"
+                                                    <input type="text" name="keyword" maxlength="100"
+                                                           value="${fn:escapeXml(keyword)}"
                                                            placeholder="Search product or SKU...">
                                                 </div>
                                             </div>

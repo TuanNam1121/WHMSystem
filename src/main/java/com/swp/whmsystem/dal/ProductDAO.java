@@ -21,7 +21,7 @@ import java.util.List;
 public class ProductDAO {
 
     public boolean addProduct(Product p) {
-        if (p.getCategory().getCategoryId() == 1) {
+        if (p.getCategory().getName().contains("Laptop")) {
             String sql = "insert into products(name, description, img_url, isactive, ramid, romid, chipid, brandid, modelid, unitid, categoryid, sku) values (?,?,?,?,?,?,?,?,?,?,?,?)";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
@@ -57,7 +57,7 @@ public class ProductDAO {
                 e.printStackTrace();
             }
         } else if (p.getCategory().getCategoryId() == 3) {
-            String sql = "insert into products(name, description, img_url, isactive, romid, brandid, unitid, categoryid, sku, price) values (?,?,?,?,?,?,?,?,?)";
+            String sql = "insert into products(name, description, img_url, isactive, romid, brandid, unitid, categoryid, sku) values (?,?,?,?,?,?,?,?,?)";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
                 ps.setString(2, p.getDescription());
@@ -337,8 +337,8 @@ public class ProductDAO {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if (p.getCategory().getName().equals("RAM")) {
-            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, ramid = ?, unitid = ? , categoryid = ? , brandid = ?, sku = ?,romid = ?, chipid = ?, modelid = ?  WHERE productid = ?";
+        } else if (p.getCategory().getCategoryId() == 2) {
+            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, ramid = ?, unitid = ? , categoryid = ? , brandid = ?, sku = ?,ramid = ?, chipid = ?, modelid = ?  WHERE productid = ?";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
                 ps.setString(2, p.getDescription());
@@ -358,8 +358,8 @@ public class ProductDAO {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if (p.getCategory().getName().equals("Storage")) {
-            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, romid = ?, unitid = ? , categoryid = ? , brandid = ?, sku = ?, ramid = ?, chipid = ?, modelid = ?  WHERE productid = ? ";
+        } else if (p.getCategory().getCategoryId() == 3) {
+            String sql = "UPDATE products SET name = ?, description = ?, img_url = ?, isactive = ?, romid = ?, unitid = ? , categoryid = ? , brandid = ?, sku = ?, romid = ?, chipid = ?, modelid = ?  WHERE productid = ? ";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql);) {
                 ps.setString(1, p.getName());
                 ps.setString(2, p.getDescription());
@@ -381,7 +381,7 @@ public class ProductDAO {
             }
         } else {
             String sql = "UPDATE products SET name=?, description=?, img_url=?, isactive=?, "
-                    + "ramid=?, romid=?, chipid=?, brandid=?, modelid=?, unitid=?, categoryid=?"
+                    + "ramid=?, romid=?, chipid=?, brandid=?, modelid=?, unitid=?, categoryid=?, sku=? "
                     + "WHERE productid = ?";
             try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, p.getName());
@@ -423,7 +423,8 @@ public class ProductDAO {
                 } else {
                     ps.setNull(11, java.sql.Types.INTEGER);
                 }
-                ps.setInt(12, p.getProductId());
+                ps.setString(12, p.getSku());
+                ps.setInt(13, p.getProductId());
                 return ps.executeUpdate() != 0;
             } catch (Exception e) {
                 e.printStackTrace();

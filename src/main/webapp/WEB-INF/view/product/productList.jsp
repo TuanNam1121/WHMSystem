@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,8 +56,10 @@
                     <h6>Manage your products</h6>
                 </div>
                 <div class="page-btn">
-                    <a href="AddProduct" class="btn btn-added"><img src="assets/img/icons/plus.svg" alt="img"
-                                                                    class="me-1">Add New Product</a>
+                    <c:if test="${sessionScope.userPermissions.contains('CREATE_PRODUCT')}">
+                        <a href="AddProduct" class="btn btn-added"><img src="assets/img/icons/plus.svg" alt="img"
+                                                                        class="me-1">Add New Product</a>
+                    </c:if>
                 </div>
             </div>
 
@@ -72,7 +75,8 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <input type="text" name="productName" value="${param.productName}"
+                                                    <input type="text" name="productName" maxlength="100"
+                                                           value="${fn:escapeXml(param.productName)}"
                                                            placeholder="Search...">
                                                 </div>
                                             </div>
@@ -199,9 +203,11 @@
                                             <a class="me-3" href="productDetails?productId=${p.productId}">
                                                 <img src="assets/img/icons/eye.svg" alt="img">
                                             </a>
-                                            <a class="me-3" href="UpdateProduct?productid=${p.productId}">
-                                                <img src="assets/img/icons/edit.svg" alt="img">
-                                            </a>
+                                            <c:if test="${sessionScope.userPermissions.contains('UPDATE_PRODUCT')}">
+                                                <a class="me-3" href="UpdateProduct?productid=${p.productId}">
+                                                    <img src="assets/img/icons/edit.svg" alt="img">
+                                                </a>
+                                            </c:if>
                                         </td>
                                     </tr>
                                 </c:forEach>

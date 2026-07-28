@@ -156,13 +156,13 @@ public class UpdateProduct extends HttpServlet {
         Unit unit = unitIdInt != null ? unitDao.getUnitById(unitIdInt) : null;
         Brand brand = brandIdInt != null ? brandDao.getBrandById(brandIdInt) : null;
 
-        List<Ram> ramList = ramDao.getAllRam();
-        List<Rom> romList = romDao.getAllRom();
-        List<Chip> chipList = chipDao.getAllChip();
-        List<Model> modelList = modelDao.getAll();
+        List<Ram> ramList = ramDao.getAllRamToAssign();
+        List<Rom> romList = romDao.getAllRomToAssign();
+        List<Chip> chipList = chipDao.getAllChipToAssign();
+        List<Model> modelList = modelDao.getAllModelToAssign();
         List<Brand> brandList = brandDao.getAllBrand();
         List<Unit> unitList = unitDao.getAllUnit();
-        List<Category> categoryList = categoryDao.getAllCategory();
+        List<Category> categoryList = categoryDao.getAllCategoryToAssign();
         request.setAttribute("ramList", ramList);
         request.setAttribute("romList", romList);
         request.setAttribute("chipList", chipList);
@@ -183,7 +183,7 @@ public class UpdateProduct extends HttpServlet {
             product.setDescription(description);
         }
         if (!sku.equals(product.getSku())) {
-            product.setSku(sku);
+            product.setSku(sku.toUpperCase());
         }
 
 
@@ -223,7 +223,7 @@ public class UpdateProduct extends HttpServlet {
                     product.setModel(model);
                 } else if (newCate.equals("RAM")) {
                     product.setRam(ram);
-                } else if (newCate.equals("ROM")) {
+                } else if (newCate.equals("Storage")) {
                     product.setRom(rom);
                 } else {
                     if (ram != null) {

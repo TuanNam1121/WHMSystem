@@ -17,7 +17,6 @@ import com.swp.whmsystem.model.*;
 @WebServlet(name = "Home", urlPatterns = {"/home"})
 public class Home extends HttpServlet {
     private static final int MIN_CHART_YEAR = 2021;
-    private static final int MAX_CHART_YEAR = 9999;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -62,39 +61,57 @@ public class Home extends HttpServlet {
 
         // -------------------------------------------------------------------------------------------------------------
         // Purchase and sales chart.
-        int chartYear = getChartYear(request);
+        int currentYear = Year.now().getValue();
+        int chartYear = currentYear;
+        String yearRaw = request.getParameter("year");
+        if (yearRaw != null && !yearRaw.trim().isEmpty()) {
+            try {
+                int selectedYear = Integer.parseInt(yearRaw.trim());
+                if (selectedYear >= MIN_CHART_YEAR && selectedYear <= currentYear) {
+                    chartYear = selectedYear;
+                }
+            } catch (NumberFormatException ignored) {
+                chartYear = currentYear;
+            }
+        }
+
+        List<BigDecimal> monthlySales = orderDAO.getMonthlySaleTotals(chartYear);
+        StringBuilder salesJson = new StringBuilder("[");
+        for (int i = 0; i < monthlySales.size(); i++) {
+            if (i > 0) {
+                salesJson.append(",");
+            }
+            BigDecimal value = monthlySales.get(i);
+            if (value == null) {
+                salesJson.append("0");
+            } else {
+                salesJson.append(value.stripTrailingZeros().toPlainString());
+            }
+        }
+        salesJson.append("]");
+
+        List<BigDecimal> monthlyPurchases =
+                purchaseRequestDAO.getMonthlyPurchaseTotals(chartYear);
+        StringBuilder purchaseJson = new StringBuilder("[");
+        for (int i = 0; i < monthlyPurchases.size(); i++) {
+            if (i > 0) {
+                purchaseJson.append(",");
+            }
+            BigDecimal value = monthlyPurchases.get(i);
+            if (value == null) {
+                purchaseJson.append("0");
+            } else {
+                purchaseJson.append(value.stripTrailingZeros().toPlainString());
+            }
+        }
+        purchaseJson.append("]");
+
         request.setAttribute("chartYear", chartYear);
-        request.setAttribute("monthlySalesChartData", toJsonArray(orderDAO.getMonthlySaleTotals(chartYear)));
-        request.setAttribute("monthlyPurchaseChartData", toJsonArray(purchaseRequestDAO.getMonthlyPurchaseTotals(chartYear)));
+        request.setAttribute("maxChartYear", currentYear);
+        request.setAttribute("monthlySalesChartData", salesJson.toString());
+        request.setAttribute("monthlyPurchaseChartData", purchaseJson.toString());
 
         request.getRequestDispatcher("WEB-INF/view/home/home.jsp").forward(request, response);
-    }
-
-    private int getChartYear(HttpServletRequest request) {
-        String yearRaw = request.getParameter("year");
-        int currentYear = Year.now().getValue();
-        if (yearRaw == null || yearRaw.trim().isEmpty()) {
-            return currentYear;
-        }
-        try {
-            int year = Integer.parseInt(yearRaw.trim());
-            return year >= MIN_CHART_YEAR && year <= MAX_CHART_YEAR ? year : currentYear;
-        } catch (NumberFormatException e) {
-            return currentYear;
-        }
-    }
-
-    private String toJsonArray(List<BigDecimal> values) {
-        StringBuilder json = new StringBuilder("[");
-        for (int i = 0; i < values.size(); i++) {
-            if (i > 0) {
-                json.append(",");
-            }
-            BigDecimal value = values.get(i);
-            json.append(value == null ? BigDecimal.ZERO.toPlainString() : value.stripTrailingZeros().toPlainString());
-        }
-        json.append("]");
-        return json.toString();
     }
 
     @Override

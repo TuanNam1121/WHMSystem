@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -70,7 +71,8 @@
 
                                             <div class="col-lg col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <input type="text" name="keyword" value="${param.keyword}"
+                                                    <input type="text" name="keyword" maxlength="100"
+                                                           value="${fn:escapeXml(param.keyword)}"
                                                            placeholder="Search category name / description...">
                                                 </div>
                                             </div>

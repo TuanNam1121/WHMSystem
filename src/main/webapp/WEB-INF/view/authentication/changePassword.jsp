@@ -66,7 +66,7 @@
                             <div class="profile-top">
                                 <div class="profile-content">
                                     <div class="profile-contentimg">
-                                        <img src="assets/img/customer/customer5.jpg" alt="img" id="blah">
+                                        <img src="assets/img/profiles/jb.jpg" alt="Avatar" id="blah">
                                         <div class="profileupload">
                                             <input type="file" id="imgInp">
                                             <a href="javascript:void(0);"><img src="assets/img/icons/edit-set.svg"
@@ -92,27 +92,20 @@
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>New Password</label>
-                                    <input type="password" name="newPass" required>
+                                    <input type="password" name="newPass" minlength="6" maxlength="72" required>
                                 </div>
                             </div>
 
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Confirm New Password</label>
-                                    <input type="password" name="cfNewPass" required>
+                                    <input type="password" name="cfNewPass" minlength="6" maxlength="72" required>
                                 </div>
                             </div>
 
                             <div class="col-12">
                                 <button type="submit" class="btn btn-submit d-inline-block me-2">Submit</button>
                                 <a href="viewprofile" class="btn btn-cancel">Cancel</a>
-                            </div>
-
-
-                            <div style="padding-bottom: 20px">
-                                <form action="changePassword" method="post" id="changePasswordForm">
-
-                                </form>
                             </div>
                         </div>
                     </div>
@@ -140,18 +133,6 @@
 <script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
 
-<script src="assets/js/script.js">
-    window.addEventListener('load', function () {
-        setTimeout(finalClearAutofill, 50);
-    });
-
-    function finalClearAutofill() {
-        var usernameInput = document.querySelector('input[name="username"]');
-        var passwordInput = document.querySelector('input[name="password"]');
-
-        if (usernameInput) usernameInput.value = '';
-        if (passwordInput) passwordInput.value = '';
-    }
-</script>
+<script src="assets/js/script.js"></script>
 </body>
 </html>

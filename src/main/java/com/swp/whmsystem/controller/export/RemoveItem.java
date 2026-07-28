@@ -19,41 +19,6 @@ import java.util.List;
 @WebServlet("/removeItem")
 public class RemoveItem extends HttpServlet {
 
-    /*
-     * CODE CŨ: Xoá sản phẩm trong session rồi reload lại toàn bộ trang.
-     *
-     * @Override
-     * protected void doGet(HttpServletRequest request, HttpServletResponse response)
-     *         throws ServletException, IOException {
-     *     HttpSession session = request.getSession();
-     *     String tempId = request.getParameter("tempId");
-     *     String orderId = request.getParameter("orderId");
-     *
-     *     synchronized (session) {
-     *         List<ExportItemDTO> scannedList =
-     *                 (List<ExportItemDTO>) session.getAttribute("scannedList");
-     *
-     *         if (scannedList != null && tempId != null
-     *                 && !tempId.trim().isEmpty()) {
-     *             List<ExportItemDTO> updatedList =
-     *                     new ArrayList<>(scannedList);
-     *             updatedList.removeIf(
-     *                     item -> tempId.equals(item.getTempId()));
-     *             session.setAttribute("scannedList", updatedList);
-     *             session.removeAttribute("error");
-     *         }
-     *     }
-     *
-     *     if (orderId == null || orderId.trim().isEmpty()) {
-     *         response.sendRedirect("toExportList");
-     *     } else {
-     *         response.sendRedirect(
-     *                 "exportProduct?orderId=" + orderId);
-     *     }
-     * }
-     */
-
-    // CODE MỚI: Xoá trong session và trả JSON, không reload trang.
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -67,11 +32,23 @@ public class RemoveItem extends HttpServlet {
         boolean removed = false;
         double grandTotal = 0;
 
+        if (tempId == null || tempId.trim().isEmpty()) {
+            JsonObject json = new JsonObject();
+            json.addProperty("success", false);
+            json.addProperty("message",
+                    "Product was not found in the scanned list.");
+            json.addProperty("grandTotal", grandTotal);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(json.toString());
+            return;
+        }
+
         synchronized (session) {
             List<ExportItemDTO> scannedList =
                     (List<ExportItemDTO>) session.getAttribute("scannedList");
 
-            if (scannedList != null && tempId != null && !tempId.trim().isEmpty()) {
+            if (scannedList != null) {
                 List<ExportItemDTO> updatedList = new ArrayList<>(scannedList);
                 for (ExportItemDTO item : scannedList) {
                     if (tempId.equals(item.getTempId())) {
@@ -82,19 +59,20 @@ public class RemoveItem extends HttpServlet {
                 }
 
                 session.setAttribute("scannedList", updatedList);
-
                 for (ExportItemDTO item : updatedList) {
                     grandTotal += item.getTotalCost();
                 }
             }
         }
 
+        String message = "";
+        if (!removed) {
+            message = "Product was not found in the scanned list.";
+        }
         JsonObject json = new JsonObject();
         json.addProperty("success", removed);
-        json.addProperty("message",
-                removed ? "" : "Product was not found in the scanned list.");
+        json.addProperty("message", message);
         json.addProperty("grandTotal", grandTotal);
-
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(json.toString());

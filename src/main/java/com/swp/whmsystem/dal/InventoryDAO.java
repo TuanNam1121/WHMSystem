@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,8 +60,23 @@ public class InventoryDAO {
         }
 
         sql.append(" group by p.productid, p.name, p.sku, p.img_url, u.name");
-        addStatusCondition(sql, stockStatus);
-        addSortCondition(sql, sortBy);
+        if ("inStock".equals(stockStatus)) {
+            sql.append(" having quantity > 10");
+        } else if ("lowStock".equals(stockStatus)) {
+            sql.append(" having quantity > 0 and quantity <= 10");
+        } else if ("outOfStock".equals(stockStatus)) {
+            sql.append(" having quantity = 0");
+        }
+
+        if ("quantityAsc".equals(sortBy)) {
+            sql.append(" order by quantity asc, p.name asc");
+        } else if ("valueDesc".equals(sortBy)) {
+            sql.append(" order by total_value desc, p.name asc");
+        } else if ("valueAsc".equals(sortBy)) {
+            sql.append(" order by total_value asc, p.name asc");
+        } else {
+            sql.append(" order by quantity desc, p.name asc");
+        }
         sql.append(" limit ? offset ?");
 
         int offset = (page - 1) * pageSize;
@@ -71,7 +85,9 @@ public class InventoryDAO {
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-            setParameters(ps, parameters);
+            for (int i = 0; i < parameters.size(); i++) {
+                ps.setObject(i + 1, parameters.get(i));
+            }
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 list.add(mapInventoryItem(rs));
@@ -119,12 +135,20 @@ public class InventoryDAO {
         }
 
         sql.append(" group by p.productid");
-        addStatusCondition(sql, stockStatus);
+        if ("inStock".equals(stockStatus)) {
+            sql.append(" having quantity > 10");
+        } else if ("lowStock".equals(stockStatus)) {
+            sql.append(" having quantity > 0 and quantity <= 10");
+        } else if ("outOfStock".equals(stockStatus)) {
+            sql.append(" having quantity = 0");
+        }
         sql.append(") inventory_result");
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-            setParameters(ps, parameters);
+            for (int i = 0; i < parameters.size(); i++) {
+                ps.setObject(i + 1, parameters.get(i));
+            }
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1);
@@ -133,34 +157,6 @@ public class InventoryDAO {
             e.printStackTrace();
         }
         return 0;
-    }
-
-    private void addStatusCondition(StringBuilder sql, String stockStatus) {
-        if ("inStock".equals(stockStatus)) {
-            sql.append(" having quantity > 10");
-        } else if ("lowStock".equals(stockStatus)) {
-            sql.append(" having quantity > 0 and quantity <= 10");
-        } else if ("outOfStock".equals(stockStatus)) {
-            sql.append(" having quantity = 0");
-        }
-    }
-
-    private void addSortCondition(StringBuilder sql, String sortBy) {
-        if ("quantityAsc".equals(sortBy)) {
-            sql.append(" order by quantity asc, p.name asc");
-        } else if ("valueDesc".equals(sortBy)) {
-            sql.append(" order by total_value desc, p.name asc");
-        } else if ("valueAsc".equals(sortBy)) {
-            sql.append(" order by total_value asc, p.name asc");
-        } else {
-            sql.append(" order by quantity desc, p.name asc");
-        }
-    }
-
-    private void setParameters(PreparedStatement ps, List<Object> parameters) throws SQLException {
-        for (int i = 0; i < parameters.size(); i++) {
-            ps.setObject(i + 1, parameters.get(i));
-        }
     }
 
     private InventoryItemDTO mapInventoryItem(ResultSet rs) throws Exception {
@@ -173,7 +169,10 @@ public class InventoryDAO {
         item.setQuantity(rs.getInt("quantity"));
 
         BigDecimal totalValue = rs.getBigDecimal("total_value");
-        item.setTotalValue(totalValue == null ? BigDecimal.ZERO : totalValue);
+        if (totalValue == null) {
+            totalValue = BigDecimal.ZERO;
+        }
+        item.setTotalValue(totalValue);
         return item;
     }
     

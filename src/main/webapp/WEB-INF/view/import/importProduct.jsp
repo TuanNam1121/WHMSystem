@@ -210,7 +210,9 @@
                             <form action="ImportExcel" method="POST" enctype="multipart/form-data"
                                   id="excel-import-form">
                                 <input type="hidden" name="purchaseRequestId" value="${sessionScope.prCode}">
+                                
                                 <div class="excel-upload-area" id="excel-upload-area">
+                                    
                                     <div class="excel-upload-content">
                                         <i class="fas fa-cloud-upload-alt excel-upload-icon"></i>
                                         <p class="excel-upload-text">Drag and drop your Excel file here, or click to browse</p>
@@ -218,14 +220,17 @@
                                         <input type="file" name="excelFile" id="excelFileInput"
                                                accept=".xlsx,.xls" class="excel-file-input">
                                     </div>
+                                    
                                     <div class="excel-file-info" id="excel-file-info" style="display: none;">
                                         <i class="fas fa-file-excel excel-file-icon"></i>
                                         <span class="excel-file-name" id="excel-file-name"></span>
                                         <span class="excel-file-size" id="excel-file-size"></span>
+                                        
                                         <button type="button" class="btn-remove-file" id="btn-remove-file">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     </div>
+                                    
                                 </div>
                                 <div class="excel-import-actions mt-3">
                                     <button type="submit" class="btn-excel-import" id="btn-excel-import">
@@ -435,15 +440,6 @@
 
                                                                    // Excel import button
                                                                    $('#btn-excel-import').on('click', function () {
-                                                                       if (!fileInput.files || fileInput.files.length === 0) {
-                                                                           Swal.fire({
-                                                                               title: 'No file selected',
-                                                                               text: 'Please select an Excel file to import.',
-                                                                               icon: 'warning',
-                                                                               confirmButtonColor: '#28C76F'
-                                                                           });
-                                                                           return;
-                                                                       }
                                                                        var invoiceVal = $('#excel-invoice-number').val().trim();
                                                                        if (!invoiceVal) {
                                                                            Swal.fire({

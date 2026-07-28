@@ -2,11 +2,16 @@ package com.swp.whmsystem.controller.inventory;
 
 import com.swp.whmsystem.dal.InventoryDAO;
 import com.swp.whmsystem.dto.InventoryItemDTO;
+import com.swp.whmsystem.model.User;
+import com.swp.whmsystem.utils.AuthorizationUtils;
+import com.swp.whmsystem.utils.InputValidationUtil;
+import com.swp.whmsystem.utils.PermissionConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -14,12 +19,28 @@ import java.util.List;
 
 @WebServlet(name = "InventoryList", urlPatterns = {"/inventory"})
 public class InventoryList extends HttpServlet {
+    private static final int ADMIN_ROLE_ID = 1;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!AuthorizationUtils.checkAccess(request, response, PermissionConstants.VIEW_INVENTORY,
+                "You don't have permission to view inventory!")) {
+            return;
+        }
+
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser.getRoleId() == ADMIN_ROLE_ID) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            request.setAttribute("errorMessage", "Administrators are not allowed to view inventory!");
+            request.getRequestDispatcher("/WEB-INF/view/error/error-403.jsp").forward(request, response);
+            return;
+        }
+
         InventoryDAO inventoryDAO = new InventoryDAO();
-        String keyword = request.getParameter("keyword");  
+        String keyword = InputValidationUtil.normalizeSearchText(
+                request.getParameter("keyword"), 100);
         String stockStatus = request.getParameter("stockStatus");
         String sortBy = request.getParameter("sortBy");
         String pageSizeRaw = request.getParameter("pageSize");
@@ -28,7 +49,13 @@ public class InventoryList extends HttpServlet {
         int pageSize = 10;
         int page = 1;
 
-        if (sortBy == null || sortBy.trim().isEmpty()) {
+        if (stockStatus != null && !List.of(
+                "inStock", "lowStock", "outOfStock").contains(stockStatus)) {
+            stockStatus = null;
+        }
+
+        if (sortBy == null || !List.of(
+                "quantityAsc", "quantityDesc", "valueAsc", "valueDesc").contains(sortBy)) {
             sortBy = "quantityDesc";
         }
 

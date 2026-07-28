@@ -1,5 +1,6 @@
 package com.swp.whmsystem.controller.importProduct;
 
+import com.swp.whmsystem.dal.GoodReceiptItemDAO;
 import com.swp.whmsystem.dal.ProductDAO;
 import com.swp.whmsystem.dal.PurchaseItemDAO;
 import com.swp.whmsystem.dto.ProductItemRowDTO;
@@ -22,12 +23,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 @WebServlet(name = "ImportExcel", urlPatterns = { "/ImportExcel" })
-@MultipartConfig(fileSizeThreshold = 1024 * 1024, // 1 MB
+@MultipartConfig(
         maxFileSize = 1024 * 1024 * 10, // 10 MB
         maxRequestSize = 1024 * 1024 * 15 // 15 MB
 )
@@ -90,7 +92,7 @@ public class ImportExcelServlet extends HttpServlet {
             cell2.setCellStyle(headerStyle);
 
             // Group items by productId preserving order
-            Map<Integer, List<ProductItemRowDTO>> grouped = new java.util.LinkedHashMap<>();
+            Map<Integer, List<ProductItemRowDTO>> grouped = new LinkedHashMap<>();
             for (ProductItemRowDTO item : list) {
                 grouped.computeIfAbsent(item.getProductId(), k -> new ArrayList<>()).add(item);
             }
@@ -178,18 +180,26 @@ public class ImportExcelServlet extends HttpServlet {
                 return;
             }
 
-            // Build a map of productId -> price from the PurchaseItems of this PR
+            // Build maps for productId -> price and remaining quantity from the PurchaseItems
             PurchaseItemDAO purchaseItemDAO = new PurchaseItemDAO();
             List<PurchaseItem> purchaseItems = purchaseItemDAO.getItemsByPurchaseRequestId(purchaseRequestId);
+            
+            GoodReceiptItemDAO griDao = new GoodReceiptItemDAO();
+            Map<Integer, Integer> importedProductQuantity = griDao.getReceivedQuantityByPurchaseRequestId(purchaseRequestId);
+
             Map<Integer, Integer> productPriceMap = new HashMap<>();
+            Map<Integer, Integer> productRemainingQtyMap = new HashMap<>();
             for (PurchaseItem pi : purchaseItems) {
                 productPriceMap.put(pi.getProductId(), pi.getPrice());
+                int remaining = pi.getRequiredQty() - importedProductQuantity.getOrDefault(pi.getProductId(), 0);
+                productRemainingQtyMap.put(pi.getProductId(), remaining);
             }
 
             // Parse Excel file
             ProductDAO productDAO = new ProductDAO();
             List<ProductItemRowDTO> filledList = new ArrayList<>();
             List<String> errors = new ArrayList<>();
+            Map<Integer, Integer> currentImportQtyMap = new HashMap<>();
 
             try (InputStream inputStream = filePart.getInputStream();
                     Workbook workbook = new XSSFWorkbook(inputStream)) {
@@ -246,6 +256,16 @@ public class ImportExcelServlet extends HttpServlet {
                                 + ") is not in this Purchase Request.");
                         continue;
                     }
+
+                    // Check quantity
+                    int currentCount = currentImportQtyMap.getOrDefault(productId, 0) + 1;
+                    int allowedCount = productRemainingQtyMap.getOrDefault(productId, 0);
+                    if (currentCount > allowedCount) {
+                        errors.add("Row " + (i + 1) + ": Quantity for Product SKU '" + sku + "' (" + product.getName() 
+                                + ") exceeds the remaining required quantity (" + allowedCount + ").");
+                        continue;
+                    }
+                    currentImportQtyMap.put(productId, currentCount);
 
                     int itemPrice = productPriceMap.get(productId);
 
